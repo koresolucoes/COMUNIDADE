@@ -62,7 +62,7 @@ const handleGet = async (req: any, res: any) => {
             const { data, error } = await supabase
                 .from('posts')
                 .select('*')
-                .order('date', { ascending: false });
+                .order('published_at', { ascending: false });
 
             if (error) throw error;
             
@@ -119,7 +119,7 @@ const handlePost = async (req: any, res: any) => {
             author,
             summary,
             content,
-            date: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
+            published_at: new Date().toISOString(),
             user_id: userId // Can be null if using master key
         };
 
@@ -161,6 +161,6 @@ export default async (req: any, res: any) => {
   } else {
     res.statusCode = 405;
     res.setHeader('Allow', 'GET, POST');
-    res.end(JSON.stringify({ error: `Método ${req.method} не permitido.` }));
+    res.end(JSON.stringify({ error: `Método ${req.method} não permitido.` }));
   }
 };

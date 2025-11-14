@@ -27,8 +27,9 @@ export class BlogService {
       if (!response.ok) {
         throw new Error('Falha ao buscar os posts.');
       }
-      const postsData = await response.json();
-      this.posts.set(postsData);
+      const postsData: any[] = await response.json();
+      const mappedPosts = postsData.map(p => ({ ...p, date: p.published_at }));
+      this.posts.set(mappedPosts);
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Ocorreu um erro desconhecido.');
     } finally {
@@ -58,7 +59,9 @@ export class BlogService {
       if (!response.ok) {
         throw new Error('Falha ao buscar o post.');
       }
-      const postData: BlogPost = await response.json();
+      const postDataRaw = await response.json();
+      const postData: BlogPost = { ...postDataRaw, date: postDataRaw.published_at };
+      
       // Adiciona ao cache para futuras navegações
       this.posts.update(posts => {
         const postExists = posts.some(p => p.slug === postData.slug);
