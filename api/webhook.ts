@@ -96,30 +96,40 @@ export default async (req: any, res: any) => {
     if (!action || action === 'test') {
         const body = await readRequestBody(req);
         
+        // Ensure headers and query are always valid objects to prevent frontend errors.
         const headers: Record<string, string> = {};
-        for (const key in req.headers) {
-            const value = req.headers[key];
-            if (value !== undefined) {
-                headers[key] = Array.isArray(value) ? value.join(', ') : String(value);
+        if (req.headers && typeof req.headers === 'object') {
+            for (const key in req.headers) {
+                const value = req.headers[key];
+                if (value !== undefined) {
+                    headers[key] = Array.isArray(value) ? value.join(', ') : String(value);
+                }
             }
         }
 
         const query: Record<string, string> = {};
-        for (const key in req.query) {
-             if (key !== 'uuid' && key !== 'action') {
-                const value = req.query[key];
-                query[key] = Array.isArray(value) ? value.join(', ') : String(value);
+        if (req.query && typeof req.query === 'object') {
+            for (const key in req.query) {
+                 if (key !== 'uuid' && key !== 'action') {
+                    const value = req.query[key];
+                    query[key] = Array.isArray(value) ? value.join(', ') : String(value);
+                }
             }
         }
 
         const newRequest = {
             id: crypto.randomUUID(),
-            method: req.method,
-            headers,
-            query,
+            method: req.method || 'UNKNOWN',
+            headers: headers, // Guaranteed to be an object
+            query: query,     // Guaranteed to be an object
             body,
             receivedAt: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
         };
+        
+        // Add detailed logging as requested for easier debugging
+        console.log('--- KORE WEBHOOK CAPTURED ---');
+        console.log(JSON.stringify(newRequest, null, 2));
+        console.log('-----------------------------');
 
         await acquireLock(filePath);
         try {
