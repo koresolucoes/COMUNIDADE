@@ -28,12 +28,22 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
   requests = signal<WebhookRequest[]>([]);
   selectedRequest = signal<WebhookRequest | null>(null);
   copyButtonText = signal('Copiar');
+  detailsTab = signal<'pretty' | 'raw'>('pretty');
   
   webhookUrl = computed(() => {
     const currentHost = window.location.host;
     const protocol = window.location.protocol;
     // Public URL for receiving webhooks. The action is determined by the HTTP method on the backend.
     return `${protocol}//${currentHost}/api/webhook?uuid=${this.uuid()}`;
+  });
+
+  rawRequestJson = computed(() => {
+    if (!this.selectedRequest()) return '';
+    try {
+      return JSON.stringify(this.selectedRequest(), null, 2);
+    } catch {
+      return 'Erro ao serializar o objeto da requisição.';
+    }
   });
 
   ngOnInit() {

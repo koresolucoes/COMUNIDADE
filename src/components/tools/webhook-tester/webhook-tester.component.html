@@ -57,44 +57,55 @@
 
     <!-- Request Details -->
     <div class="md:col-span-2 flex flex-col min-h-0">
-      <h2 class="text-lg font-semibold text-white mb-2">Detalhes da Requisição</h2>
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex border-b border-gray-700">
+          <button (click)="detailsTab.set('pretty')" [class.bg-gray-900]="detailsTab() === 'pretty'" class="px-4 py-2 text-sm font-medium" [class.text-white]="detailsTab() === 'pretty'" [class.text-gray-400]="detailsTab() !== 'pretty'">Visualização</button>
+          <button (click)="detailsTab.set('raw')" [class.bg-gray-900]="detailsTab() === 'raw'" class="px-4 py-2 text-sm font-medium" [class.text-white]="detailsTab() === 'raw'" [class.text-gray-400]="detailsTab() !== 'raw'">Dados Brutos (Raw)</button>
+        </div>
+      </div>
       <div class="bg-gray-900 border border-gray-800 rounded-lg flex-grow overflow-y-auto">
         @if(selectedRequest(); as req) {
-          <div class="p-4 space-y-4">
-            <!-- Query Parameters -->
-            <div>
-              <h3 class="font-semibold text-gray-300 mb-2">Query Parameters</h3>
-              @if(req.query && Object.keys(req.query).length > 0) {
+          @if(detailsTab() === 'pretty') {
+            <div class="p-4 space-y-4">
+              <!-- Query Parameters -->
+              <div>
+                <h3 class="font-semibold text-gray-300 mb-2">Query Parameters</h3>
+                @if(req.query && Object.keys(req.query).length > 0) {
+                  <div class="bg-gray-800 p-2 rounded-md font-mono text-sm space-y-1">
+                    @for(param of Object.entries(req.query); track param[0]) {
+                      <div>
+                        <span class="text-cyan-300">{{ param[0] }}</span>: <span class="text-green-accent">"{{ param[1] }}"</span>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="text-xs text-gray-500">Nenhum parâmetro de consulta.</p>
+                }
+              </div>
+
+              <!-- Headers -->
+              <div>
+                <h3 class="font-semibold text-gray-300 mb-2">Headers</h3>
                 <div class="bg-gray-800 p-2 rounded-md font-mono text-sm space-y-1">
-                  @for(param of Object.entries(req.query); track param[0]) {
+                  @for(header of Object.entries(req.headers || {}); track header[0]) {
                     <div>
-                      <span class="text-cyan-300">{{ param[0] }}</span>: <span class="text-green-accent">"{{ param[1] }}"</span>
+                      <span class="text-cyan-300">{{ header[0] }}</span>: <span class="text-green-accent">"{{ header[1] }}"</span>
                     </div>
                   }
                 </div>
-              } @else {
-                <p class="text-xs text-gray-500">Nenhum parâmetro de consulta.</p>
-              }
-            </div>
-
-            <!-- Headers -->
-            <div>
-              <h3 class="font-semibold text-gray-300 mb-2">Headers</h3>
-              <div class="bg-gray-800 p-2 rounded-md font-mono text-sm space-y-1">
-                @for(header of Object.entries(req.headers || {}); track header[0]) {
-                  <div>
-                    <span class="text-cyan-300">{{ header[0] }}</span>: <span class="text-green-accent">"{{ header[1] }}"</span>
-                  </div>
-                }
+              </div>
+              
+              <!-- Body -->
+              <div>
+                <h3 class="font-semibold text-gray-300 mb-2">Body (Corpo)</h3>
+                <pre class="w-full bg-gray-800 rounded-md p-3 overflow-auto"><code class="text-sm whitespace-pre-wrap">{{ getFormattedBody() || '(vazio)' }}</code></pre>
               </div>
             </div>
-            
-            <!-- Body -->
-            <div>
-              <h3 class="font-semibold text-gray-300 mb-2">Body (Corpo)</h3>
-              <pre class="w-full bg-gray-800 rounded-md p-3 overflow-auto"><code class="text-sm">{{ getFormattedBody() || '(vazio)' }}</code></pre>
+          } @else {
+            <div class="p-4">
+              <pre><code class="text-sm text-gray-300 whitespace-pre-wrap">{{ rawRequestJson() }}</code></pre>
             </div>
-          </div>
+          }
         } @else {
            <div class="p-4 text-center text-gray-500 text-sm h-full flex flex-col items-center justify-center">
              <span class="material-icons-outlined text-4xl text-gray-600 mb-2">info</span>
