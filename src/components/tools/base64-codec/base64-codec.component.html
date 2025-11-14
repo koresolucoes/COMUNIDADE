@@ -37,11 +37,21 @@
               <textarea 
                 id="input-b64-file" 
                 class="w-full bg-gray-900 border-gray-600 font-mono text-gray-300 rounded-md p-3 focus:ring-blue-accent focus:border-blue-accent resize-y min-h-[8rem]" 
-                placeholder="Cole a string Base64 aqui..." 
+                placeholder="Cole a string Base64 ou um data URI aqui..." 
                 [ngModel]="inputText()" 
                 (ngModelChange)="inputText.set($event)" 
                 spellcheck="false">
               </textarea>
+              <div class="mt-2">
+                <label for="mime-type-input" class="text-xs font-medium text-gray-400">MIME Type (se não for um data URI)</label>
+                <input 
+                  type="text"
+                  id="mime-type-input"
+                  class="w-full mt-1 bg-gray-900 border-gray-600 text-white rounded-md p-2 text-sm focus:ring-blue-accent focus:border-blue-accent"
+                  placeholder="ex: image/png, application/pdf"
+                  [ngModel]="fileMimeType()"
+                  (ngModelChange)="fileMimeType.set($event)">
+              </div>
             </div>
 
             <div class="flex items-center gap-4">
@@ -195,7 +205,7 @@
       }
       <span>{{ isEncryptionEnabled() ? 'Criptografar' : 'Codificar' }}</span>
     </button>
-    <button (click)="handleDecode()" [disabled]="isProcessing() || (codecMode() === 'text' && !inputText())" class="px-4 py-2 bg-green-accent/80 text-white rounded-md font-semibold hover:bg-green-accent transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+    <button (click)="handleDecode()" [disabled]="isProcessing() || !inputText()" class="px-4 py-2 bg-green-accent/80 text-white rounded-md font-semibold hover:bg-green-accent transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
        @if(isProcessing()) {
         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
