@@ -1,26 +1,54 @@
-// This is a Vercel serverless function that acts as a CORS proxy.
+// This is a Vercel serverless function that acts as a CORS proxy for the Node.js runtime.
 
-export default async (req: Request) => {
-  // Only allow POST requests for this proxy
+const readBody = (req: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', (chunk: any) => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      if (body) {
+        try {
+          resolve(JSON.parse(body));
+        } catch (e) {
+          reject(new Error('Corpo da requisição não é um JSON válido.'));
+        }
+      } else {
+        resolve({}); // Resolve with empty object if no body
+      }
+    });
+    req.on('error', (err: any) => {
+      reject(err);
+    });
+  });
+};
+
+export default async (req: any, res: any) => {
+  const writeError = (statusCode: number, message: string) => {
+    res.statusCode = statusCode;
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.end(JSON.stringify({ error: message }));
+  };
+
   if (req.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 });
+    res.statusCode = 405;
+    res.end('Method Not Allowed');
+    return;
   }
 
   try {
-    const { url, method, headers, body } = await req.json();
+    const { url, method, headers, body } = await readBody(req);
 
     if (!url || !method) {
-      return new Response(JSON.stringify({ error: 'URL e método são obrigatórios.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      });
+      return writeError(400, 'URL e método são obrigatórios.');
     }
 
     const targetResponse = await fetch(url, {
       method,
       headers,
       body: body,
-      redirect: 'follow', // Follow redirects
+      redirect: 'follow',
     });
 
     const responseBody = await targetResponse.text();
@@ -36,22 +64,13 @@ export default async (req: Request) => {
       body: responseBody,
     };
 
-    return new Response(JSON.stringify(proxyResponseData), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.end(JSON.stringify(proxyResponseData));
 
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Erro interno do proxy.';
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
+    return writeError(500, message);
   }
 };

@@ -1,8 +1,4 @@
-// This is a Vercel serverless function to handle webhook testing.
-// It uses the /tmp directory for ephemeral storage, which is suitable for this use case.
-// NOTE: This will not work in a multi-region deployment as /tmp is not shared.
-// It's a best-effort implementation for a simple, stateless environment.
-
+// This is a Vercel serverless function to handle webhook testing for the Node.js runtime.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
@@ -40,14 +36,28 @@ async function writeJsonFile(filePath: string, data: any[]): Promise<void> {
     await fs.writeFile(filePath, JSON.stringify(data), 'utf-8');
 }
 
+const readRequestBody = (req: any): Promise<string> => {
+    return new Promise((resolve) => {
+        let body = '';
+        req.on('data', (chunk: any) => {
+            body += chunk.toString();
+        });
+        req.on('end', () => {
+            resolve(body);
+        });
+    });
+};
 
-export default async (req: Request) => {
-    const url = new URL(req.url, `http://${req.headers.get('host')}`);
+
+export default async (req: any, res: any) => {
+    const url = new URL(req.url, `http://${req.headers.host}`);
     // Path format: /api/webhook/{action}/{uuid}
     const pathParts = url.pathname.split('/').filter(p => p);
     
-    if (pathParts.length !== 4 || pathParts[0] !== 'api' || pathParts[1] !== 'webhook') {
-        return new Response('Invalid path structure.', { status: 400 });
+    if (pathParts.length < 4 || pathParts[0] !== 'api' || pathParts[1] !== 'webhook') {
+        res.statusCode = 400;
+        res.end('Invalid path structure.');
+        return;
     }
 
     const [, , action, uuid] = pathParts;
@@ -56,11 +66,14 @@ export default async (req: Request) => {
 
     // --- ACTION: test (receives a webhook) ---
     if (action === 'test') {
-        const body = await req.text();
+        const body = await readRequestBody(req);
         const headers: Record<string, string> = {};
-        req.headers.forEach((value, key) => {
-            headers[key] = value;
-        });
+        for (const [key, value] of Object.entries(req.headers)) {
+            if (value !== undefined) {
+                // FIX: Explicitly convert header value to string to handle potential non-string types.
+                headers[key] = Array.isArray(value) ? value.join(', ') : String(value);
+            }
+        }
 
         const query: Record<string, string> = {};
         url.searchParams.forEach((value, key) => {
@@ -80,7 +93,6 @@ export default async (req: Request) => {
         try {
             const existingRequests = await readJsonFile(filePath);
             existingRequests.unshift(newRequest); // Add to the beginning
-            // Limit to 50 requests to prevent abuse
             if (existingRequests.length > 50) {
                 existingRequests.length = 50;
             }
@@ -89,7 +101,9 @@ export default async (req: Request) => {
             releaseLock(filePath);
         }
         
-        return new Response('Webhook received', { status: 200 });
+        res.statusCode = 200;
+        res.end('Webhook received');
+        return;
     }
 
     // --- ACTION: poll (client checks for new webhooks) ---
@@ -98,7 +112,6 @@ export default async (req: Request) => {
         await acquireLock(filePath);
         try {
             requests = await readJsonFile(filePath);
-            // Clear the file after polling to not send the same requests again
             if (requests.length > 0) {
                 await writeJsonFile(filePath, []);
             }
@@ -106,25 +119,25 @@ export default async (req: Request) => {
             releaseLock(filePath);
         }
 
-        return new Response(JSON.stringify(requests), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        });
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(requests));
+        return;
     }
 
     // --- ACTION: clear (client is closing/clearing) ---
     if (action === 'clear') {
          await acquireLock(filePath);
          try {
-            await fs.unlink(filePath);
-         } catch (e) {
-            // Ignore error if file doesn't exist
+            await fs.unlink(filePath).catch(() => {}); // Ignore error if file doesn't exist
          } finally {
             releaseLock(filePath);
          }
-         return new Response('Session cleared', { status: 200 });
+         res.statusCode = 200;
+         res.end('Session cleared');
+         return;
     }
 
-
-    return new Response('Not Found', { status: 404 });
+    res.statusCode = 404;
+    res.end('Not Found');
 };

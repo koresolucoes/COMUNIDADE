@@ -1,15 +1,26 @@
-// This is a Vercel serverless function for DNS lookups.
+// This is a Vercel serverless function for DNS lookups for the Node.js runtime.
 
-export default async (req: Request) => {
-  const url = new URL(req.url, `http://${req.headers.get('host')}`);
+export default async (req: any, res: any) => {
+  const url = new URL(req.url, `http://${req.headers.host}`);
   const domain = url.searchParams.get('domain');
   const type = url.searchParams.get('type');
 
+  const writeError = (statusCode: number, message: string) => {
+    res.statusCode = statusCode;
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.end(JSON.stringify({ error: message }));
+  };
+  
+  const writeSuccess = (data: any) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.end(JSON.stringify(data));
+  };
+
   if (!domain || !type) {
-    return new Response(JSON.stringify({ error: 'Parâmetros "domain" e "type" são obrigatórios.' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    });
+    return writeError(400, 'Parâmetros "domain" e "type" são obrigatórios.');
   }
 
   try {
@@ -31,23 +42,14 @@ export default async (req: Request) => {
     if (data.Status !== 0) {
       // Return an empty answer list for common cases like NXDOMAIN (3)
       if (data.Status === 3) {
-          return new Response(JSON.stringify({ Answer: [] }), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        });
+          return writeSuccess({ Answer: [] });
       }
       throw new Error(`DNS query falhou com o status: ${data.Status}`);
     }
 
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    });
+    return writeSuccess(data);
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Erro desconhecido no servidor.';
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    });
+    return writeError(500, message);
   }
 };
