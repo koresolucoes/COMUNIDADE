@@ -1,0 +1,79 @@
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Gerador de Hash</h1>
+    <p class="mt-2 text-gray-400">Calcule o hash de uma string usando algoritmos populares. Essencial para verificar a integridade de dados.</p>
+  </div>
+
+  <div class="flex flex-col space-y-4">
+    <label for="input-text" class="block text-sm font-medium text-gray-400">Texto de Entrada</label>
+    <textarea 
+      id="input-text"
+      class="w-full h-48 bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y"
+      placeholder="Digite ou cole o texto aqui para gerar os hashes"
+      [ngModel]="inputText()"
+      (ngModelChange)="inputText.set($event)"
+      spellcheck="false">
+    </textarea>
+  </div>
+
+  <div class="space-y-4">
+    <h2 class="text-xl font-semibold text-white">Resultados</h2>
+    
+    <!-- MD5 -->
+    <div class="p-4 bg-gray-900 border border-gray-800 rounded-lg">
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-semibold text-white">MD5</h3>
+        <span class="text-xs bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded-full">Inseguro para senhas</span>
+      </div>
+      <div class="relative mt-2">
+        <input 
+          type="text" 
+          readonly 
+          [value]="md5Hash()" 
+          class="w-full bg-gray-800 border-gray-700 text-green-accent font-mono rounded-md p-3 pr-12"
+          placeholder="Hash MD5 aparecerá aqui...">
+        @if(md5Hash()) {
+          <button (click)="copyToClipboard(md5Hash())" title="Copiar" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-white">
+            <span class="material-icons-outlined text-base">content_copy</span>
+          </button>
+        }
+      </div>
+    </div>
+    
+    <!-- SHA-256 -->
+    <div class="p-4 bg-gray-900 border border-gray-800 rounded-lg">
+      <h3 class="text-lg font-semibold text-white">SHA-256</h3>
+      <div class="relative mt-2">
+        <input 
+          type="text" 
+          readonly 
+          [value]="sha256Hash()" 
+          class="w-full bg-gray-800 border-gray-700 text-green-accent font-mono rounded-md p-3 pr-12"
+          placeholder="Hash SHA-256 aparecerá aqui...">
+        @if(sha256Hash()) {
+          <button (click)="copyToClipboard(sha256Hash())" title="Copiar" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-white">
+            <span class="material-icons-outlined text-base">content_copy</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- SHA-512 -->
+    <div class="p-4 bg-gray-900 border border-gray-800 rounded-lg">
+      <h3 class="text-lg font-semibold text-white">SHA-512</h3>
+      <div class="relative mt-2">
+        <input 
+          type="text" 
+          readonly 
+          [value]="sha512Hash()" 
+          class="w-full bg-gray-800 border-gray-700 text-green-accent font-mono rounded-md p-3 pr-12"
+          placeholder="Hash SHA-512 aparecerá aqui...">
+        @if(sha512Hash()) {
+          <button (click)="copyToClipboard(sha512Hash())" title="Copiar" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-white">
+            <span class="material-icons-outlined text-base">content_copy</span>
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+</div>

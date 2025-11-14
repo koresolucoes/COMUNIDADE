@@ -6,6 +6,10 @@ import { MethodDefinition } from './methods/method.interface';
 export class MethodRegistryService {
   private allMethods: MethodDefinition[] = ALL_METHODS;
 
+  getMethodByName(name: string): MethodDefinition | undefined {
+    return this.allMethods.find(m => m.name === name);
+  }
+
   getMethodsForValue(value: any): MethodDefinition[] {
     const valueType = this.getValueType(value);
 

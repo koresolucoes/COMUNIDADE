@@ -21,7 +21,8 @@ export const OBJECT_METHODS: MethodDefinition[] = [
     appliesTo: ['object'],
     category: 'Suggested',
     description: 'Verifica se um objeto possui a propriedade especificada.',
-    example: "{ a: 1 }.hasField('a')\n// Result: true"
+    example: "{ a: 1 }.hasField('a')\n// Result: true",
+    parameters: [{ name: 'fieldName', type: 'string', description: 'Nome do campo a ser verificado.' }]
   },
   // Other
   {
@@ -29,21 +30,24 @@ export const OBJECT_METHODS: MethodDefinition[] = [
     appliesTo: ['object'],
     category: 'Other',
     description: 'Mantém apenas os campos cujo nome contém a string fornecida.',
-    example: "{'id_user':1, 'name':'Max'}.keepFieldsContaining('user')\n// Result: {'id_user': 1}"
+    example: "{'id_user':1, 'name':'Max'}.keepFieldsContaining('user')\n// Result: {'id_user': 1}",
+    parameters: [{ name: 'substring', type: 'string', description: 'Substring a ser procurada nos nomes dos campos.' }]
   },
   {
     name: 'removeField()',
     appliesTo: ['object'],
     category: 'Other',
     description: 'Remove um campo específico de um objeto.',
-    example: "{ a: 1, b: 2 }.removeField('b')\n// Result: { a: 1 }"
+    example: "{ a: 1, b: 2 }.removeField('b')\n// Result: { a: 1 }",
+    parameters: [{ name: 'fieldName', type: 'string', description: 'Nome do campo a ser removido.' }]
   },
   {
     name: 'removeFieldsContaining()',
     appliesTo: ['object'],
     category: 'Other',
     description: 'Remove todos os campos cujo nome contém a string fornecida.',
-    example: "{'id_user':1, 'name':'Max'}.removeFieldsContaining('id')\n// Result: {'name': 'Max'}"
+    example: "{'id_user':1, 'name':'Max'}.removeFieldsContaining('id')\n// Result: {'name': 'Max'}",
+    parameters: [{ name: 'substring', type: 'string', description: 'Substring para procurar nos nomes dos campos a remover.' }]
   },
   {
     name: 'toJsonString()',

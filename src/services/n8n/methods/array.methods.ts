@@ -21,7 +21,11 @@ export const ARRAY_METHODS: MethodDefinition[] = [
     appliesTo: ['array', 'string'],
     category: 'Suggested',
     description: 'Verifica se um array contém um determinado elemento ou se uma string contém uma substring.',
-    example: "['Bob', 'Bill'].includes('Bill')\n// Result: true"
+    example: "['Bob', 'Bill'].includes('Bill')\n// Result: true",
+    parameters: [
+      { name: 'element', type: 'any', description: 'O valor a ser pesquisado.' },
+      { name: 'start', type: 'number', optional: true, description: 'O índice inicial da busca.' }
+    ]
   },
   {
     name: 'map()',
@@ -42,15 +46,17 @@ export const ARRAY_METHODS: MethodDefinition[] = [
     name: 'append()',
     appliesTo: ['array'],
     category: 'Other',
-    description: 'Adiciona um ou mais elementos ao final de um array e retorna o novo array.',
-    example: "[1, 2].append(3, 4)\n// Result: [1, 2, 3, 4]"
+    description: 'Adiciona um elemento ao final de um array e retorna o novo array.',
+    example: "[1, 2].append(3)\n// Result: [1, 2, 3]",
+     parameters: [{ name: 'element', type: 'any', description: 'Elemento a adicionar.' }]
   },
   {
     name: 'chunk()',
     appliesTo: ['array'],
     category: 'Other',
     description: 'Cria um array de elementos divididos em grupos do tamanho de `size`.',
-    example: "['a', 'b', 'c', 'd'].chunk(2)\n// Result: [['a', 'b'], ['c', 'd']]"
+    example: "['a', 'b', 'c', 'd'].chunk(2)\n// Result: [['a', 'b'], ['c', 'd']]",
+    parameters: [{ name: 'size', type: 'number', description: 'Tamanho de cada parte.', defaultValue: 1 }]
   },
   {
     name: 'compact()',
@@ -78,13 +84,18 @@ export const ARRAY_METHODS: MethodDefinition[] = [
     appliesTo: ['array'],
     category: 'Other',
     description: 'Retorna o primeiro índice em que um determinado elemento pode ser encontrado no array, ou -1 se não estiver presente.',
-    example: "[1, 2, 1, 2].indexOf(2)\n// Result: 1"
+    example: "[1, 2, 1, 2].indexOf(2)\n// Result: 1",
+    parameters: [
+      { name: 'searchElement', type: 'any', description: 'Elemento a ser localizado.' },
+      { name: 'fromIndex', type: 'number', optional: true, description: 'O índice para iniciar a busca.' }
+    ]
   },
   {
     name: 'join()',
     appliesTo: ['array'],
     category: 'Other',
     description: 'Junta todos os elementos de um array em uma string.',
-    example: "['a', 'b', 'c'].join('~')\n// Result: 'a~b~c'"
+    example: "['a', 'b', 'c'].join('~')\n// Result: 'a~b~c'",
+    parameters: [{ name: 'separator', type: 'string', optional: true, description: 'O separador. Padrão é ",".' }]
   },
 ];

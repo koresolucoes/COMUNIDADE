@@ -8,6 +8,16 @@ interface NavItem {
   children?: NavItem[];
 }
 
+interface ToolLink {
+  path: string;
+  label: string;
+}
+
+interface ToolCategory {
+  label: string;
+  tools: ToolLink[];
+}
+
 @Component({
   selector: 'app-header',
   standalone: true,
@@ -32,17 +42,41 @@ export class HeaderComponent {
     { 
       path: '/tools', 
       label: 'Ferramentas', 
-      icon: 'construction',
-      children: [
-        { path: '/tools/gerador-cron', label: 'Gerador CRON', icon: '' },
-        { path: '/tools/formatador-json', label: 'Formatador JSON', icon: '' },
-        { path: '/tools/n8n-expression-simulator', label: 'Simulador n8n', icon: '' },
-        { path: '/tools/url-codec', label: 'Codec de URL', icon: '' },
-        { path: '/tools/base64-codec', label: 'Codec Base64', icon: '' },
-        { path: '/tools/jwt-decoder', label: 'Decoder JWT', icon: '' },
-        { path: '/tools/timestamp-converter', label: 'Conversor Timestamp', icon: '' },
-        { path: '/tools/data-converter', label: 'Conversor de Dados', icon: '' },
-        { path: '/tools/webhook-tester', label: 'Testador Webhook', icon: '' },
+      icon: 'construction'
+    }
+  ];
+
+  toolCategories: ToolCategory[] = [
+    {
+      label: 'Codificadores & Decodificadores',
+      tools: [
+        { path: '/tools/url-codec', label: 'Codec de URL' },
+        { path: '/tools/base64-codec', label: 'Codec Base64' },
+        { path: '/tools/jwt-decoder', label: 'Decoder JWT' },
+      ]
+    },
+    {
+      label: 'Segurança & Criptografia',
+      tools: [
+        { path: '/tools/gerador-hash', label: 'Gerador de Hash' },
+        { path: '/tools/gerador-senha', label: 'Gerador de Senhas' },
+        { path: '/tools/gerador-uuid', label: 'Gerador de UUID' },
+      ]
+    },
+    {
+      label: 'Automação & DevOps',
+      tools: [
+        { path: '/tools/gerador-cron', label: 'Gerador CRON' },
+        { path: '/tools/n8n-expression-simulator', label: 'Simulador de Expressão n8n' },
+        { path: '/tools/webhook-tester', label: 'Testador Webhook' },
+      ]
+    },
+    {
+      label: 'Dados & Formatação',
+      tools: [
+        { path: '/tools/formatador-json', label: 'Formatador JSON' },
+        { path: '/tools/timestamp-converter', label: 'Conversor Timestamp' },
+        { path: '/tools/data-converter', label: 'Conversor de Dados' },
       ]
     }
   ];

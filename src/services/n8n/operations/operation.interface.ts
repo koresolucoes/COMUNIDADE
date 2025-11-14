@@ -18,6 +18,7 @@ export interface MapParams {
 
 export interface CallMethodParams {
   methodName: string;
+  args?: { [key: string]: any };
 }
 
 export type StepParams = GetPropertyParams | FilterParams | MapParams | CallMethodParams | {};

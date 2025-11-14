@@ -13,7 +13,16 @@ export class FilterOperation implements IOperation<FilterParams> {
     if (!params.property) {
       return `${previousCode}?.filter(() => true)`;
     }
-    const value = typeof params.value === 'string' ? `'${params.value.replace(/'/g, "\\'")}'` : params.value;
+
+    const valueStr = String(params.value);
+    // Check if the value is a number, but don't convert empty string to 0.
+    const isNumeric = valueStr.trim() !== '' && !isNaN(Number(valueStr));
+
+    // If it's not a number, wrap it in quotes. Otherwise, use the raw number.
+    const value = isNumeric 
+        ? valueStr
+        : `'${valueStr.replace(/'/g, "\\'")}'`;
+
     return `${previousCode}?.filter(item => item?.${params.property} ${params.operator} ${value})`;
   }
 
@@ -26,7 +35,10 @@ export class FilterOperation implements IOperation<FilterParams> {
     }
 
     // A simple evaluation for the preview
-    const val = isNaN(Number(params.value)) ? params.value : Number(params.value);
+    const valueStr = String(params.value);
+    const isNumeric = valueStr.trim() !== '' && !isNaN(Number(valueStr));
+    const val = isNumeric ? Number(valueStr) : valueStr;
+
 
     return previousData.filter(item => {
       if (typeof item !== 'object' || item === null) return false;

@@ -1,14 +1,18 @@
-<div class="flex flex-col h-screen w-full bg-gray-950">
-  <app-header 
-    (openCommandPalette)="toggleCommandPalette()"
-    (toggleTheme)="toggleTheme()"
-    [isDarkMode]="isDarkMode()">
-  </app-header>
+<div class="flex h-screen bg-gray-950">
+  <app-sidebar [isExpanded]="isSidebarExpanded()" (toggle)="toggleSidebar()" class="hidden md:flex"></app-sidebar>
+  
+  <div class="flex flex-col flex-1 w-full overflow-hidden">
+    <app-header 
+      (openCommandPalette)="toggleCommandPalette()"
+      (toggleTheme)="toggleTheme()"
+      [isDarkMode]="isDarkMode()">
+    </app-header>
 
-  <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-20 md:pb-6 lg:pb-8">
-    <router-outlet></router-outlet>
-  </main>
-
+    <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-20 md:pb-8">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+  
   <app-bottom-nav></app-bottom-nav>
 </div>
 

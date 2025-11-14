@@ -3,13 +3,14 @@ import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/shared/header/header.component';
 import { BottomNavComponent } from './components/shared/bottom-nav/bottom-nav.component';
 import { CommandPaletteComponent } from './components/shared/command-palette/command-palette.component';
+import { SidebarComponent } from './components/shared/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, BottomNavComponent, CommandPaletteComponent],
+  imports: [RouterOutlet, HeaderComponent, BottomNavComponent, CommandPaletteComponent, SidebarComponent],
   host: {
     '(keydown.meta.k)': 'toggleCommandPalette($event)',
     '(keydown.control.k)': 'toggleCommandPalette($event)',
@@ -18,6 +19,7 @@ import { CommandPaletteComponent } from './components/shared/command-palette/com
 export class AppComponent {
   isCommandPaletteVisible = signal(false);
   isDarkMode = signal(true);
+  isSidebarExpanded = signal(true);
 
   constructor() {
     effect(() => {
@@ -36,5 +38,9 @@ export class AppComponent {
 
   toggleTheme() {
     this.isDarkMode.update(v => !v);
+  }
+
+  toggleSidebar() {
+    this.isSidebarExpanded.update(v => !v);
   }
 }

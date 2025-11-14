@@ -116,7 +116,23 @@
                       </select>
                     }
                     @case('callMethod') {
+                      @let methodDef = getMethodDefinition(params.methodName);
                       <p class="text-sm font-mono text-cyan-300 bg-gray-800 px-3 py-2 rounded-md">.{{ params.methodName }}</p>
+                       @if(methodDef?.parameters) {
+                        <div class="mt-2 space-y-2">
+                          @for(param of methodDef.parameters; track param.name) {
+                            <div class="grid grid-cols-3 gap-2 items-center">
+                              <label class="text-xs text-gray-400 col-span-1 truncate" [title]="param.name">{{ param.name }}{{ param.optional ? ' (opcional)' : '' }}</label>
+                              <input 
+                                [type]="param.type === 'number' ? 'number' : 'text'" 
+                                [ngModel]="params.args?.[param.name]"
+                                (ngModelChange)="updateMethodArgument(step.id, param.name, $event)"
+                                [placeholder]="param.description"
+                                class="bg-gray-800 border-gray-700 text-white rounded-md p-1.5 text-sm col-span-2">
+                            </div>
+                          }
+                        </div>
+                      }
                     }
                     @case('reduceSum') {
                       <p class="text-sm text-gray-400">Soma todos os valores numéricos no array.</p>

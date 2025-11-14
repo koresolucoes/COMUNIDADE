@@ -5,7 +5,18 @@ interface NavItem {
   path: string;
   label: string;
   icon: string;
-  children?: NavItem[];
+  children?: (ChildNavItem | NavCategory)[];
+}
+
+interface ChildNavItem {
+  path: string;
+  label: string;
+  isCategory?: false;
+}
+
+interface NavCategory {
+  isCategory: true;
+  label: string;
 }
 
 @Component({
@@ -30,15 +41,22 @@ export class SidebarComponent {
       label: 'Ferramentas', 
       icon: 'construction',
       children: [
-        { path: '/tools/gerador-cron', label: 'Gerador CRON', icon: '' },
-        { path: '/tools/formatador-json', label: 'Formatador JSON', icon: '' },
-        { path: '/tools/n8n-expression-simulator', label: 'Simulador n8n', icon: '' },
-        { path: '/tools/url-codec', label: 'Codec de URL', icon: '' },
-        { path: '/tools/base64-codec', label: 'Codec Base64', icon: '' },
-        { path: '/tools/jwt-decoder', label: 'Decoder JWT', icon: '' },
-        { path: '/tools/timestamp-converter', label: 'Conversor Timestamp', icon: '' },
-        { path: '/tools/data-converter', label: 'Conversor de Dados', icon: '' },
-        { path: '/tools/webhook-tester', label: 'Testador Webhook', icon: '' },
+        { isCategory: true, label: 'Codificadores & Decodificadores' },
+        { path: '/tools/url-codec', label: 'Codec de URL' },
+        { path: '/tools/base64-codec', label: 'Codec Base64' },
+        { path: '/tools/jwt-decoder', label: 'Decoder JWT' },
+        { isCategory: true, label: 'Segurança & Criptografia' },
+        { path: '/tools/gerador-hash', label: 'Gerador de Hash' },
+        { path: '/tools/gerador-senha', label: 'Gerador de Senhas' },
+        { path: '/tools/gerador-uuid', label: 'Gerador de UUID' },
+        { isCategory: true, label: 'Automação & DevOps' },
+        { path: '/tools/gerador-cron', label: 'Gerador CRON' },
+        { path: '/tools/n8n-expression-simulator', label: 'Simulador de Expressão n8n' },
+        { path: '/tools/webhook-tester', label: 'Testador Webhook' },
+        { isCategory: true, label: 'Dados & Formatação' },
+        { path: '/tools/formatador-json', label: 'Formatador JSON' },
+        { path: '/tools/timestamp-converter', label: 'Conversor Timestamp' },
+        { path: '/tools/data-converter', label: 'Conversor de Dados' },
       ]
     }
   ];

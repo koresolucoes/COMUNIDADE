@@ -8,7 +8,7 @@
     </a>
     <nav class="hidden md:flex items-center gap-6 text-sm font-medium ml-10">
       @for(item of navItems; track item.path) {
-        @if (!item.children) {
+        @if (item.path !== '/tools') {
           <a [routerLink]="item.path" routerLinkActive="text-blue-accent" [routerLinkActiveOptions]="{exact: item.path === '/'}" class="text-gray-400 hover:text-white transition-colors">
             {{ item.label }}
           </a>
@@ -21,11 +21,18 @@
               </svg>
             </button>
             @if(isToolsMenuOpen()) {
-              <div (click)="$event.stopPropagation()" class="absolute top-full mt-3 w-64 bg-gray-900 border border-gray-700 rounded-md shadow-lg py-1 z-50">
-                @for(child of item.children; track child.path) {
-                  <a [routerLink]="child.path" routerLinkActive="bg-gray-800 text-blue-accent" (click)="closeToolsMenu()" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white">
-                    {{ child.label }}
-                  </a>
+              <div (click)="$event.stopPropagation()" class="absolute top-full mt-3 w-[32rem] grid grid-cols-2 gap-x-4 bg-gray-900 border border-gray-700 rounded-md shadow-lg p-4 z-50">
+                @for(category of toolCategories; track category.label) {
+                  <div>
+                    <h3 class="px-2 pb-2 text-sm font-semibold text-gray-400">{{ category.label }}</h3>
+                    <div class="flex flex-col">
+                       @for(tool of category.tools; track tool.path) {
+                        <a [routerLink]="tool.path" routerLinkActive="bg-gray-800 text-blue-accent" (click)="closeToolsMenu()" class="block px-2 py-1.5 text-sm text-gray-300 hover:bg-gray-800 hover:text-white rounded-md">
+                          {{ tool.label }}
+                        </a>
+                      }
+                    </div>
+                  </div>
                 }
               </div>
             }

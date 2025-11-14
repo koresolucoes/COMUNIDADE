@@ -10,6 +10,9 @@ import { JwtDecoderComponent } from './components/tools/jwt-decoder/jwt-decoder.
 import { TimestampConverterComponent } from './components/tools/timestamp-converter/timestamp-converter.component';
 import { N8nExpressionSimulatorComponent } from './components/tools/n8n-expression-simulator/n8n-expression-simulator.component';
 import { DataConverterComponent } from './components/tools/data-converter/data-converter.component';
+import { HashGeneratorComponent } from './components/tools/hash-generator/hash-generator.component';
+import { PasswordGeneratorComponent } from './components/tools/password-generator/password-generator.component';
+import { UuidGeneratorComponent } from './components/tools/uuid-generator/uuid-generator.component';
 
 export const APP_ROUTES: Routes = [
   { path: '', component: HomeComponent },
@@ -32,6 +35,9 @@ export const APP_ROUTES: Routes = [
   { path: 'tools/timestamp-converter', component: TimestampConverterComponent },
   { path: 'tools/n8n-expression-simulator', component: N8nExpressionSimulatorComponent },
   { path: 'tools/data-converter', component: DataConverterComponent },
+  { path: 'tools/gerador-hash', component: HashGeneratorComponent },
+  { path: 'tools/gerador-senha', component: PasswordGeneratorComponent },
+  { path: 'tools/gerador-uuid', component: UuidGeneratorComponent },
   { 
     path: 'tools/webhook-tester',
     component: PlaceholderComponent, 

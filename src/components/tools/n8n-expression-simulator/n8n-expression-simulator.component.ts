@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ExpressionContextService } from '../../../services/n8n/expression-context.service';
 import { ExpressionExecutorService } from '../../../services/n8n/expression-executor.service';
 import { OperationRegistryService } from '../../../services/n8n/operation-registry.service';
-import { Step, StepOperation } from '../../../services/n8n/operations/operation.interface';
+import { Step, StepOperation, CallMethodParams } from '../../../services/n8n/operations/operation.interface';
 import { MethodSuggestionComponent } from './method-suggestion/method-suggestion.component';
 import { MethodRegistryService } from '../../../services/n8n/method-registry.service';
 import { MethodDefinition } from '../../../services/n8n/methods/method.interface';
@@ -157,21 +157,45 @@ return item;`;
 
   // --- Final Output Calculation ---
   finalResult = computed(() => {
-    const expression = this.expressionInput().trim();
     const contextValue = this.contextService.context();
-
     if (contextValue.error) {
-        return { value: contextValue.error, isError: true };
+      return { value: contextValue.error, isError: true };
     }
+
+    // In builder mode, the result is the output of the last step.
+    // This is more reliable than re-executing the generated expression string.
+    if (this.mode() === 'builder') {
+      const lastStepData = this.currentStepData();
+      let value: string;
+      try {
+        value = typeof lastStepData === 'undefined' ? 'undefined' : JSON.stringify(lastStepData, null, 2);
+      } catch (e) {
+        // Handle circular references or other stringify errors
+        return { value: e instanceof Error ? e.message : String(e), isError: true };
+      }
+      return { value, isError: false };
+    }
+    
+    // In code mode, we execute the user's expression.
+    const expression = this.expressionInput().trim();
     if (!expression) {
-        return null;
+      return null;
     }
     
     const executionResult = this.executorService.execute(expression, contextValue.data!);
-    const value = typeof executionResult.value === 'undefined' ? 'undefined' 
-                : JSON.stringify(executionResult.value, null, 2);
+    
+    if (executionResult.isError) {
+      return executionResult; // Value is already an error string
+    }
 
-    return { ...executionResult, value };
+    let value: string;
+    try {
+      value = typeof executionResult.value === 'undefined' ? 'undefined' : JSON.stringify(executionResult.value, null, 2);
+    } catch (e) {
+      return { value: e instanceof Error ? e.message : String(e), isError: true };
+    }
+
+    return { value, isError: false };
   });
 
 
@@ -229,13 +253,40 @@ return item;`;
 
   openSuggestionModal() {
     const methods = this.methodRegistry.getMethodsForValue(this.currentStepData());
-    this.suggestionMethods.set(methods);
+    // Filter out methods that have dedicated buttons to avoid redundancy.
+    const filteredMethods = methods.filter(method => 
+      method.name !== 'filter()' && method.name !== 'map()'
+    );
+    this.suggestionMethods.set(filteredMethods);
     this.isSuggestionVisible.set(true);
   }
 
   onMethodSelected(method: MethodDefinition) {
-    this.addStep('callMethod', { methodName: method.name });
+    const params: CallMethodParams = { methodName: method.name, args: {} };
+    if (method.parameters) {
+      for (const p of method.parameters) {
+        if (p.defaultValue !== undefined) {
+          params.args![p.name] = p.defaultValue;
+        }
+      }
+    }
+    this.addStep('callMethod', params);
     this.isSuggestionVisible.set(false);
+  }
+
+  getMethodDefinition(methodName: string): MethodDefinition | undefined {
+    return this.methodRegistry.getMethodByName(methodName);
+  }
+
+  updateMethodArgument(stepId: string, argName: string, value: any) {
+    const step = this.steps().find(s => s.id === stepId);
+    if (step && step.type === 'callMethod') {
+      const newArgs = {
+        ...((step.params as CallMethodParams).args || {}),
+        [argName]: value
+      };
+      this.updateStepParam(stepId, 'args', newArgs);
+    }
   }
 
   formatInput(tab: 'json' | 'node' | 'env') {
