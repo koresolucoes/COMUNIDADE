@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
+import { ActivatedRoute } from '@angular/router';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
 type ResponseTab = 'body' | 'headers';
@@ -27,7 +28,10 @@ interface ResponseState {
   templateUrl: './rest-client.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RestClientComponent {
+export class RestClientComponent implements OnInit {
+  // FIX: Explicitly type the injected ActivatedRoute to resolve type inference issue.
+  private route: ActivatedRoute = inject(ActivatedRoute);
+
   // Request state
   method = signal<HttpMethod>('GET');
   url = signal('https://jsonplaceholder.typicode.com/todos/1');
@@ -45,6 +49,14 @@ export class RestClientComponent {
 
   // Response state
   response = signal<ResponseState | null>(null);
+
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      if (params['url']) {
+        this.url.set(params['url']);
+      }
+    });
+  }
 
   addHeader() {
     this.headers.update(h => [...h, { id: this.nextHeaderId++, key: '', value: '', enabled: true }]);

@@ -1,4 +1,5 @@
-import { Component, ChangeDetectionStrategy, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, OnInit, OnDestroy, inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 interface WebhookRequest {
   id: string;
@@ -9,6 +10,8 @@ interface WebhookRequest {
   receivedAt: string;
 }
 
+const WEBHOOK_TESTER_SESSION_ID_KEY = 'kore-webhook-tester-session-id';
+
 @Component({
   selector: 'app-webhook-tester',
   standalone: true,
@@ -17,7 +20,9 @@ interface WebhookRequest {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WebhookTesterComponent implements OnInit, OnDestroy {
-  private readonly uuid = signal(crypto.randomUUID());
+  // FIX: Explicitly type the injected Router to resolve type inference issue.
+  private readonly router: Router = inject(Router);
+  private readonly uuid = signal<string>(this.getOrCreateSessionId());
   private pollingInterval: any;
 
   requests = signal<WebhookRequest[]>([]);
@@ -38,6 +43,20 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
     this.stopPolling();
     // Inform the backend to clean up any lingering data for this session
     navigator.sendBeacon(`/api/webhook/clear/${this.uuid()}`);
+  }
+
+  private getOrCreateSessionId(): string {
+    try {
+        let sessionId = localStorage.getItem(WEBHOOK_TESTER_SESSION_ID_KEY);
+        if (!sessionId) {
+          sessionId = crypto.randomUUID();
+          localStorage.setItem(WEBHOOK_TESTER_SESSION_ID_KEY, sessionId);
+        }
+        return sessionId;
+    } catch (e) {
+        console.warn('localStorage is not available. Webhook URL will not be persistent.');
+        return crypto.randomUUID();
+    }
   }
 
   private startPolling() {
@@ -85,6 +104,10 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
       this.copyButtonText.set('Copiado!');
       setTimeout(() => this.copyButtonText.set('Copiar'), 2000);
     });
+  }
+
+  testWithRestClient() {
+    this.router.navigate(['/tools/cliente-rest'], { queryParams: { url: this.webhookUrl() } });
   }
 
   getFormattedBody(): string {
