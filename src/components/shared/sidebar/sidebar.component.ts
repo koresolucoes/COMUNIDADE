@@ -59,10 +59,12 @@ export class SidebarComponent {
         { path: '/tools/n8n-expression-simulator', label: 'Simulador de Expressão n8n' },
         { path: '/tools/testador-regex', label: 'Testador Regex' },
         { path: '/tools/gerador-dados-falsos', label: 'Gerador de Dados' },
+        { path: '/tools/docker-compose-generator', label: 'Construtor Docker-Compose' },
         { isCategory: true, label: 'Dados & Formatação' },
         { path: '/tools/formatador-json', label: 'Formatador JSON' },
         { path: '/tools/timestamp-converter', label: 'Conversor Timestamp' },
         { path: '/tools/data-converter', label: 'Conversor de Dados' },
+        { path: '/tools/comparador-texto', label: 'Comparador de Texto' },
       ]
     }
   ];

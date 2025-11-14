@@ -1,0 +1,136 @@
+<div class="space-y-8 h-full flex flex-col">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Construtor de Docker Compose</h1>
+    <p class="mt-2 text-gray-400">Crie arquivos <code class="bg-gray-800 px-1 py-0.5 rounded">docker-compose.yml</code> visualmente com templates para serviços populares em modo Swarm.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-grow min-h-0">
+    <!-- Left Column: Controls -->
+    <div class="flex flex-col min-h-0">
+      <h2 class="text-lg font-semibold text-white mb-4">1. Selecione os Serviços</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+        @for(service of availableServices; track service.id) {
+          <label class="flex flex-col items-center justify-center p-3 bg-gray-900 border-2 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors" [class.border-blue-accent]="stateService.selectedServices()[service.id]" [class.border-gray-700]="!stateService.selectedServices()[service.id]">
+            <input type="checkbox" class="sr-only" [checked]="stateService.selectedServices()[service.id]" (change)="toggleService(service.id, $event)">
+            <!-- Simple placeholder for logo -->
+            <div class="w-10 h-10 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-white font-bold">{{ service.name.substring(0,1) }}</div>
+            <span class="text-sm text-center font-medium text-gray-300">{{ service.name }}</span>
+          </label>
+        }
+      </div>
+
+      <h2 class="text-lg font-semibold text-white mb-4">2. Configure os Serviços</h2>
+      <div class="w-full flex-grow bg-gray-900 border border-gray-800 rounded-md p-4 space-y-4 overflow-y-auto">
+        @if(stateService.selectedServiceIds().length > 0) {
+          @for(serviceId of stateService.selectedServiceIds(); track serviceId) {
+            @if(stateService.serviceConfigs()[serviceId]; as config) {
+              <div class="p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
+                <h3 class="text-xl font-bold text-white mb-3">{{ getServiceName(serviceId) }}</h3>
+                <div class="space-y-4">
+                  @for(key of objectKeys(config); track key) {
+                    <div>
+                      <h4 class="text-sm font-semibold text-gray-400 capitalize mb-2">{{ formatConfigKey(key) }}</h4>
+                      @if (isSelect(key)) {
+                         <select class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="config[key]" (change)="stateService.updateConfigValue(serviceId, [key], $any($event.target).value)">
+                           @for(opt of getSelectOptions(key); track opt) {
+                              <option [value]="opt">{{ opt }}</option>
+                           }
+                         </select>
+                      } @else if (isResourcesObject(config[key])) {
+                        <!-- Resources -->
+                        <div class="space-y-2">
+                          @if(config[key].limits; as limits) {
+                            <div class="grid grid-cols-3 gap-2 items-center">
+                                <label class="text-xs text-gray-300">limits.cpus</label>
+                                <input type="text" class="col-span-2 w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="limits.cpus" (change)="stateService.updateConfigValue(serviceId, [key, 'limits', 'cpus'], $any($event.target).value)">
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 items-center">
+                                <label class="text-xs text-gray-300">limits.memory</label>
+                                <input type="text" class="col-span-2 w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="limits.memory" (change)="stateService.updateConfigValue(serviceId, [key, 'limits', 'memory'], $any($event.target).value)">
+                            </div>
+                          }
+                        </div>
+                      } @else if (isObject(config[key])) {
+                        <!-- Environment Variables / Nested Config -->
+                        <div class="space-y-2">
+                          @for(subKey of objectKeys(config[key]); track subKey) {
+                            <div class="grid grid-cols-3 gap-2 items-center">
+                              <label class="text-xs text-gray-300 truncate flex items-center gap-1.5" [title]="subKey">
+                                <span>{{ subKey }}</span>
+                                @if(n8nEnvTooltips[subKey]) {
+                                  <span class="material-icons-outlined text-gray-500 text-sm cursor-help" [title]="n8nEnvTooltips[subKey]">help_outline</span>
+                                }
+                              </label>
+                              @if(typeof config[key][subKey] === 'number') {
+                                <input type="number" class="col-span-2 w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="config[key][subKey]" (change)="stateService.updateConfigValue(serviceId, [key, subKey], +$any($event.target).value)">
+                              } @else {
+                                <input type="text" class="col-span-2 w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="config[key][subKey]" (change)="stateService.updateConfigValue(serviceId, [key, subKey], $any($event.target).value)">
+                              }
+                            </div>
+                          }
+                        </div>
+                      } @else if (isStringArray(config[key])) {
+                        <!-- Volumes, Commands, Networks etc. -->
+                        <div class="space-y-2">
+                          @for(item of config[key]; track i; let i = $index) {
+                            <div class="flex items-center gap-2">
+                              <input type="text" class="flex-1 w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="item" (change)="stateService.updateConfigValue(serviceId, [key, i], $any($event.target).value)">
+                              <button (click)="stateService.removeArrayItem(serviceId, key, i)" class="p-1 text-gray-500 hover:text-red-400 rounded-full hover:bg-gray-600">
+                                <span class="material-icons-outlined text-base leading-none">remove_circle_outline</span>
+                              </button>
+                            </div>
+                          }
+                          <button (click)="stateService.addArrayItem(serviceId, key)" class="w-full text-xs text-blue-accent hover:underline mt-1">+ Adicionar item</button>
+                        </div>
+                      } @else if (isArrayOfObjects(config[key])) {
+                        <!-- Ports -->
+                         @for(port of config[key]; track port; let i = $index) {
+                            <div class="grid grid-cols-3 gap-2 items-center mb-2">
+                               <input type="number" placeholder="Target" class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="port.target" (change)="stateService.updateConfigValue(serviceId, [key, i, 'target'], +$any($event.target).value)">
+                               <input type="number" placeholder="Published" class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="port.published" (change)="stateService.updateConfigValue(serviceId, [key, i, 'published'], +$any($event.target).value)">
+                               <select class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm" [value]="port.mode" (change)="stateService.updateConfigValue(serviceId, [key, i, 'mode'], $any($event.target).value)">
+                                 <option value="host">host</option>
+                                 <option value="ingress">ingress</option>
+                               </select>
+                            </div>
+                         }
+                      } @else {
+                        <!-- Simple string value like email -->
+                         <input type="text" class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="config[key]" (change)="stateService.updateConfigValue(serviceId, [key], $any($event.target).value)">
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            }
+          }
+        } @else {
+          <div class="text-center text-gray-500 py-8">
+            <p>Selecione um serviço para configurar.</p>
+          </div>
+        }
+      </div>
+    </div>
+    
+    <!-- Right Column: Output -->
+    <div class="flex flex-col min-h-0">
+      <h2 class="text-lg font-semibold text-white mb-4">3. Resultado <code class="text-base bg-gray-800 px-1 py-0.5 rounded">docker-compose.yml</code></h2>
+       <div class="relative w-full h-full">
+        <textarea 
+          readonly
+          class="w-full h-full bg-gray-950 border border-gray-700 font-mono text-gray-300 rounded-md p-4 resize-y"
+          placeholder="Selecione serviços para gerar o arquivo docker-compose.yml"
+          [value]="generatedYaml()">
+        </textarea>
+      </div>
+       <div class="flex items-center gap-4 pt-4">
+          <button (click)="copyToClipboard()" class="flex-1 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center justify-center gap-2">
+            <span class="material-icons-outlined">content_copy</span> {{ copyButtonText() }}
+          </button>
+          <button (click)="downloadYaml()" class="flex-1 px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2">
+            <span class="material-icons-outlined">download</span> Baixar .yml
+          </button>
+        </div>
+    </div>
+  </div>
+</div>

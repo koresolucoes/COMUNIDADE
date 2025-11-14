@@ -1,7 +1,7 @@
 <div class="space-y-8 h-full flex flex-col">
   <div>
     <h1 class="text-3xl md:text-4xl font-bold text-white">Conversor de Dados</h1>
-    <p class="mt-2 text-gray-400">Converta dados entre formatos populares como JSON, XML e CSV.</p>
+    <p class="mt-2 text-gray-400">Converta dados entre formatos populares como JSON, XML, CSV e YAML.</p>
   </div>
   
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-0">
@@ -13,7 +13,7 @@
           <option value="json">JSON</option>
           <option value="xml">XML</option>
           <option value="csv">CSV</option>
-          <option value="yaml" disabled>YAML (em breve)</option>
+          <option value="yaml">YAML</option>
         </select>
       </div>
       <textarea 
@@ -33,7 +33,7 @@
           <option value="json">JSON</option>
           <option value="xml">XML</option>
           <option value="csv">CSV</option>
-          <option value="yaml" disabled>YAML (em breve)</option>
+          <option value="yaml">YAML</option>
         </select>
       </div>
       <div class="relative w-full h-full">
@@ -112,6 +112,9 @@
           <li>
               <strong class="text-white">JSON:</strong> O módulo nativo <code class="bg-gray-800 px-1 py-0.5 rounded">json</code> com <code class="bg-gray-800 px-1 py-0.5 rounded">json.loads()</code> e <code class="bg-gray-800 px-1 py-0.5 rounded">json.dumps()</code>.
           </li>
+           <li>
+              <strong class="text-white">YAML:</strong> A biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded">PyYAML</code> (<code class="bg-gray-800 px-1 py-0.5 rounded">pip install pyyaml</code>) é o padrão para manipular YAML.
+          </li>
           <li>
               <strong class="text-white">XML:</strong> O módulo nativo <code class="bg-gray-800 px-1 py-0.5 rounded">xml.etree.ElementTree</code> para análise e criação de XML.
           </li>
@@ -123,10 +126,13 @@
   </div>
   <div tab="javascript">
      <div class="text-gray-300 space-y-4 text-sm">
-      <p>Em Node.js, você geralmente usará bibliotecas externas para conversões complexas, especialmente para XML e CSV.</p>
+      <p>Em Node.js, você geralmente usará bibliotecas externas para conversões complexas, especialmente para XML, CSV e YAML.</p>
       <ul class="list-disc list-inside space-y-2 pl-2">
           <li>
               <strong class="text-white">JSON:</strong> O objeto nativo <code class="bg-gray-800 px-1 py-0.5 rounded">JSON</code> com <code class="bg-gray-800 px-1 py-0.5 rounded">JSON.parse()</code> e <code class="bg-gray-800 px-1 py-0.5 rounded">JSON.stringify()</code>.
+          </li>
+           <li>
+              <strong class="text-white">YAML:</strong> A biblioteca mais popular é a <code class="bg-gray-800 px-1 py-0.5 rounded">js-yaml</code>.
           </li>
           <li>
               <strong class="text-white">XML:</strong> Bibliotecas populares como <code class="bg-gray-800 px-1 py-0.5 rounded">fast-xml-parser</code> ou <code class="bg-gray-800 px-1 py-0.5 rounded">xml2js</code>.

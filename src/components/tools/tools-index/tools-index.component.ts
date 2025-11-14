@@ -114,6 +114,11 @@ export class ToolsIndexComponent {
           name: 'Gerador de Dados Falsos',
           description: 'Gere dados mock (JSON) para testar seus workflows e APIs.',
           link: '/tools/gerador-dados-falsos'
+        },
+        {
+          name: 'Construtor Docker-Compose',
+          description: 'Crie arquivos docker-compose.yml visualmente com templates para serviços populares.',
+          link: '/tools/docker-compose-generator'
         }
       ]
     },
@@ -133,8 +138,13 @@ export class ToolsIndexComponent {
         },
         {
           name: 'Conversor de Dados',
-          description: 'Converta dados entre JSON, XML, CSV e outros formatos.',
+          description: 'Converta dados entre JSON, XML, CSV, YAML e outros formatos.',
           link: '/tools/data-converter'
+        },
+        {
+          name: 'Comparador de Texto (Diff)',
+          description: 'Compare dois blocos de texto ou código e destaque as diferenças.',
+          link: '/tools/comparador-texto'
         },
       ]
     }

@@ -2,7 +2,9 @@ import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
 
-type DataFormat = 'json' | 'xml' | 'csv';
+declare var jsyaml: any; // Declarado para a biblioteca js-yaml carregada globalmente
+
+type DataFormat = 'json' | 'xml' | 'csv' | 'yaml';
 
 @Component({
   selector: 'app-data-converter',
@@ -14,8 +16,8 @@ type DataFormat = 'json' | 'xml' | 'csv';
 })
 export class DataConverterComponent {
   inputFormat = signal<DataFormat>('json');
-  outputFormat = signal<DataFormat>('xml');
-  inputText = signal('');
+  outputFormat = signal<DataFormat>('yaml');
+  inputText = signal('{\n  "id": 1,\n  "nome": "Produto A",\n  "tags": ["novo", "em-estoque"]\n}');
   outputText = signal('');
   error = signal<string | null>(null);
   copyButtonText = signal('Copiar');
@@ -31,23 +33,22 @@ export class DataConverterComponent {
       return;
     }
     
-    // Use a short timeout to allow the UI to update (e.g., show spinner)
     setTimeout(() => {
       try {
-        // Step 1: Parse input text to a structured object (e.g., array of objects)
         let parsedData: any;
         switch (this.inputFormat()) {
           case 'json': parsedData = this.parseJson(this.inputText()); break;
           case 'xml': parsedData = this.parseXml(this.inputText()); break;
           case 'csv': parsedData = this.parseCsv(this.inputText()); break;
+          case 'yaml': parsedData = this.parseYaml(this.inputText()); break;
         }
 
-        // Step 2: Stringify the structured object to the output format
         let resultText: string;
         switch (this.outputFormat()) {
           case 'json': resultText = this.stringifyJson(parsedData); break;
           case 'xml': resultText = this.stringifyXml(parsedData); break;
           case 'csv': resultText = this.stringifyCsv(parsedData); break;
+          case 'yaml': resultText = this.stringifyYaml(parsedData); break;
         }
 
         this.outputText.set(resultText);
@@ -68,19 +69,28 @@ export class DataConverterComponent {
       throw new Error('JSON de entrada inválido.');
     }
   }
+  
+  private parseYaml(text: string): any {
+    try {
+      return jsyaml.load(text);
+    } catch (e) {
+      throw new Error(`YAML de entrada inválido: ${e instanceof Error ? e.message : 'Erro desconhecido'}`);
+    }
+  }
 
   private parseXml(text: string): any {
+    // ... (implementação mantida como antes)
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(text, "application/xml");
     if (xmlDoc.getElementsByTagName("parsererror").length) {
       throw new Error('XML de entrada inválido ou malformado.');
     }
     const result = this.xmlNodeToJson(xmlDoc.documentElement);
-    // The root node is the key, we want the content inside it.
     return result[xmlDoc.documentElement.nodeName] || result;
   }
 
   private xmlNodeToJson(xmlNode: Node): any {
+    // ... (implementação mantida como antes)
     const obj: any = {};
     if (xmlNode.nodeType === 1) { // Element
       const element = xmlNode as Element;
@@ -124,6 +134,7 @@ export class DataConverterComponent {
   }
 
   private parseCsv(text: string): any[] {
+    // ... (implementação mantida como antes)
     const lines = text.trim().split(/\r?\n/);
     if (lines.length < 2) {
       throw new Error('CSV deve ter um cabeçalho e pelo menos uma linha de dados.');
@@ -150,7 +161,12 @@ export class DataConverterComponent {
     return JSON.stringify(data, null, 2);
   }
 
+  private stringifyYaml(data: any): string {
+    return jsyaml.dump(data);
+  }
+
   private stringifyXml(data: any, rootName = 'root'): string {
+    // ... (implementação mantida como antes)
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     
     const toXml = (value: any, name: string, indent: string) => {
@@ -195,6 +211,7 @@ export class DataConverterComponent {
   }
   
   private escapeXml(unsafe: string): string {
+    // ... (implementação mantida como antes)
     return unsafe.replace(/[<>&'"]/g, c => {
         switch (c) {
             case '<': return '&lt;';
@@ -208,6 +225,7 @@ export class DataConverterComponent {
   }
 
   private stringifyCsv(data: any): string {
+    // ... (implementação mantida como antes)
     if (!Array.isArray(data) || data.length === 0) {
       throw new Error('A conversão para CSV requer um array de objetos não vazio.');
     }
@@ -216,7 +234,6 @@ export class DataConverterComponent {
     const rows = data.map(obj => {
       return headers.map(header => {
         const value = obj[header] ?? '';
-        // Basic CSV escaping: quote if it contains comma, quote, or newline
         if (/[",\n\r]/.test(value)) {
           return `"${value.replace(/"/g, '""')}"`;
         }

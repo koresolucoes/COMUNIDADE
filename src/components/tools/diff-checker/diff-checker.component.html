@@ -1,0 +1,36 @@
+<div class="space-y-8 h-full flex flex-col">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Comparador de Texto (Diff Checker)</h1>
+    <p class="mt-2 text-gray-400">Cole dois blocos de texto, código ou JSON para ver as diferenças entre eles.</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-grow min-h-0">
+    <div class="flex flex-col">
+      <label for="text1-input" class="block text-sm font-medium text-gray-400 mb-2">Texto Original</label>
+      <textarea 
+        id="text1-input"
+        class="w-full h-full bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y"
+        [ngModel]="text1()"
+        (ngModelChange)="text1.set($event)"
+        spellcheck="false">
+      </textarea>
+    </div>
+    <div class="flex flex-col">
+      <label for="text2-input" class="block text-sm font-medium text-gray-400 mb-2">Texto Modificado</label>
+       <textarea 
+        id="text2-input"
+        class="w-full h-full bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y"
+        [ngModel]="text2()"
+        (ngModelChange)="text2.set($event)"
+        spellcheck="false">
+      </textarea>
+    </div>
+  </div>
+
+  <div class="flex flex-col flex-grow min-h-0">
+    <h2 class="text-lg font-semibold text-white mb-2">Diferenças</h2>
+    <div class="w-full h-full bg-gray-900 border border-gray-700 rounded-md p-4 overflow-y-auto min-h-[200px]">
+      <pre class="whitespace-pre-wrap text-sm" [innerHTML]="diffHtml() | safeHtml"></pre>
+    </div>
+  </div>
+</div>
