@@ -43,14 +43,16 @@
                 spellcheck="false">
               </textarea>
               <div class="mt-2">
-                <label for="mime-type-input" class="text-xs font-medium text-gray-400">MIME Type (se não for um data URI)</label>
-                <input 
-                  type="text"
-                  id="mime-type-input"
+                <label for="mime-type-select" class="text-xs font-medium text-gray-400">MIME Type (detectado automaticamente)</label>
+                <select 
+                  id="mime-type-select"
                   class="w-full mt-1 bg-gray-900 border-gray-600 text-white rounded-md p-2 text-sm focus:ring-blue-accent focus:border-blue-accent"
-                  placeholder="ex: image/png, application/pdf"
                   [ngModel]="fileMimeType()"
                   (ngModelChange)="fileMimeType.set($event)">
+                  @for(mime of displayMimeTypes(); track mime.value) {
+                    <option [value]="mime.value">{{ mime.name }}</option>
+                  }
+                </select>
               </div>
             </div>
 
@@ -199,36 +201,29 @@
           </svg>
         } @else {
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
           </svg>
         }
       }
       <span>{{ isEncryptionEnabled() ? 'Criptografar' : 'Codificar' }}</span>
     </button>
     <button (click)="handleDecode()" [disabled]="isProcessing() || !inputText()" class="px-4 py-2 bg-green-accent/80 text-white rounded-md font-semibold hover:bg-green-accent transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
-       @if(isProcessing()) {
-        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-      } @else {
-        @if(isEncryptionEnabled()){
+       @if(isEncryptionEnabled()){
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2V7a5 5 0 00-5-5zm0 2a3 3 0 013 3v2H7V7a3 3 0 013-3z" />
+            <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2V7a5 5 0 00-5-5zm0 3a3 3 0 013 3v2H7V7a3 3 0 013-3z" />
           </svg>
         } @else {
-           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
           </svg>
         }
-      }
        <span>{{ isEncryptionEnabled() ? 'Descriptografar' : 'Decodificar' }}</span>
     </button>
     <div class="flex-grow"></div>
      @if (error()) {
         <div class="text-sm text-red-400 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
             {{ error() }}
         </div>
@@ -252,104 +247,56 @@
       </a>
     </div>
   }
-
-  @if(isEncryptionEnabled()) {
-    <app-code-usage-tips>
-      <div tab="n8n">
-        <div class="text-gray-300 space-y-4 text-sm">
-          <p>A criptografia com senha é uma forma poderosa de proteger dados sensíveis que você precisa armazenar fora do n8n, como em um banco de dados ou numa planilha Google Sheets.</p>
-          
-          <div class="p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs">
-              <strong class="font-semibold block mb-1">Caso de Uso: Proteger uma Chave de API no Google Sheets</strong>
-              Imagine que você precisa usar uma chave de API, mas não quer deixá-la em texto puro numa planilha. Você pode usar esta ferramenta para criptografá-la e depois descriptografá-la com segurança dentro do seu workflow n8n.
-          </div>
-
-          <div>
-              <h4 class="font-semibold text-white mb-2">Passo a Passo:</h4>
-              <ol class="list-decimal list-inside space-y-2 pl-2">
-                  <li><strong class="text-white">Criptografe a Chave:</strong> Use esta ferramenta para criptografar sua chave de API. Insira a chave no campo "Entrada", digite uma senha forte e clique em "Criptografar". Copie o resultado da "Saída".</li>
-                  <li><strong class="text-white">Armazene com Segurança:</strong> Cole o resultado criptografado em sua planilha Google Sheets.</li>
-                  <li><strong class="text-white">Gerencie a Senha no n8n:</strong> NUNCA coloque a senha diretamente no seu código. Vá em "Credentials" no n8n, crie uma "Header Auth" e coloque sua senha no campo "Value". Dê um nome, por exemplo, `minha-senha-secreta`.</li>
-                  <li><strong class="text-white">Leia os Dados no Workflow:</strong> Use o nó "Google Sheets" para ler a chave de API criptografada da sua planilha.</li>
-                  <li><strong class="text-white">Descriptografe no n8n:</strong> Adicione um nó "Python". Copie o código da aba <strong class="text-white">Python</strong>.
-                      <ul class="list-disc list-inside mt-2 space-y-1 pl-4">
-                          <li><strong class="text-cyan-300">Dependências:</strong> Garanta que a variável de ambiente <code class="bg-gray-800 px-1 py-0.5 rounded">N8N_PYTHON_PACKAGES</code> na sua instância n8n inclua <code class="bg-gray-800 px-1 py-0.5 rounded">cryptography</code>.</li>
-                          <li><strong class="text-cyan-300">Entrada (Senha):</strong> Para usar a senha das credenciais, adicione uma expressão: Clique em "Add Expression" > "Current Node" > "Input Data" > "Credentials" > "Header Auth". Selecione a credencial que você criou. No código Python, substitua o valor de `password` por `items[0].json['credentials']['value']`.</li>
-                          <li><strong class="text-cyan-300">Entrada (Dados):</strong> Substitua `encrypted_data_b64` pelo valor vindo do nó do Google Sheets, por exemplo: `items[0].json['suaColuna']`.</li>
-                          <li><strong class="text-cyan-300">Saída:</strong> O script retornará um item com um campo JSON chamado <code class="bg-gray-800 px-1 py-0.5 rounded">decryptedResult</code>.</li>
-                      </ul>
-                  </li>
-                  <li><strong class="text-white">Use a Chave:</strong> No próximo nó (ex: "HTTP Request"), use a chave descriptografada com uma expressão como <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} $('Python').item.json.decryptedResult {{ '}}' }}</code>.</li>
-              </ol>
-          </div>
-          <div class="mt-2 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
-              <strong class="font-semibold">Aviso de Segurança:</strong> A abordagem com o nó "Execute Code" (JavaScript) também funciona, mas o nó Python é geralmente mais seguro e recomendado em ambientes n8n, pois evita problemas de desativação do módulo `crypto` do Node.js.
-          </div>
-        </div>
-      </div>
-      <div tab="python">
-        <div>
-          <p class="text-sm text-gray-400 mb-4">Este snippet requer a biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">cryptography</code>. Instale com: <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">pip install cryptography</code>.</p>
-          <div class="relative">
-            <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonEncryptionSnippet()"></code></pre>
-            <button (click)="copyCodeSnippet(pythonEncryptionSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
-          </div>
-        </div>
-      </div>
-      <div tab="javascript">
-        <div>
-           <p class="text-sm text-gray-400 mb-4">Este snippet usa o módulo <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">crypto</code> nativo do Node.js. A disponibilidade pode depender da configuração do seu ambiente n8n. Se o módulo for desabilitado, use a alternativa em Python.</p>
-          <div class="relative">
-            <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptEncryptionSnippet()"></code></pre>
-             <button (click)="copyCodeSnippet(javascriptEncryptionSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
-          </div>
-        </div>
-      </div>
-    </app-code-usage-tips>
-  } @else {
-    <app-code-usage-tips>
-      <div tab="n8n">
-        <div class="text-gray-300 space-y-4 text-sm">
-          <p>A codificação Base64 é essencial para transmitir dados binários (como arquivos) ou para autenticação.</p>
-          
-          <h4 class="font-semibold text-white mb-2">Codificando Arquivos Binários</h4>
-          <p>Quando um nó como <strong class="text-white">HTTP Request</strong> baixa um arquivo, os dados ficam disponíveis em <code class="bg-gray-800 px-1 py-0.5 rounded">$binary.data</code>. Para enviá-lo para uma API que espera Base64, use um nó <strong class="text-white">Move Binary Data</strong>:</p>
-          <ol class="list-decimal list-inside space-y-1 pl-2 text-xs text-gray-400">
-              <li>Defina <strong class="text-white">Mode</strong> como "To File".</li>
-              <li>Ative a opção <strong class="text-white">Destination is Base64</strong>.</li>
-              <li>No campo <strong class="text-white">Destination Property Name</strong>, digite o nome do campo que conterá a string Base64 (ex: `fileContent`).</li>
-          </ol>
-          <p class="mt-1">Alternativamente, no nó <strong class="text-white">Code</strong> (JS): <code class="bg-gray-800 px-1 py-0.5 rounded">item.json.fileContent = $binary.data.toBase64();</code></p>
-
-
-          <h4 class="font-semibold text-white mb-2 pt-2">Decodificando para Arquivo Binário</h4>
-          <p>Se você tem uma string Base64 e quer usá-la como um arquivo (ex: para fazer upload), use o nó <strong class="text-white">Move Binary Data</strong>:</p>
-           <ol class="list-decimal list-inside space-y-1 pl-2 text-xs text-gray-400">
-              <li>Defina <strong class="text-white">Mode</strong> como "From JSON".</li>
-              <li>Ative a opção <strong class="text-white">Data is Base64</strong>.</li>
-              <li>No campo <strong class="text-white">Source Property Name</strong>, referencie o campo com sua string Base64 (ex: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} $json.fileContent {{ '}}' }}</code>).</li>
-          </ol>
-          <p class="mt-1">O nó seguinte agora terá acesso aos dados binários em <code class="bg-gray-800 px-1 py-0.5 rounded">$binary.data</code>, pronto para ser usado.</p>
-        </div>
-      </div>
-      <div tab="python">
-        <div>
-          <p class="text-sm text-gray-400 mb-4">Este snippet usa o módulo <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">base64</code>, que é padrão no Python e não requer instalação.</p>
-          <div class="relative">
-            <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonBase64Snippet()"></code></pre>
-            <button (click)="copyCodeSnippet(pythonBase64Snippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
-          </div>
-        </div>
-      </div>
-      <div tab="javascript">
-        <div>
-          <p class="text-sm text-gray-400 mb-4">Este snippet usa o objeto <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">Buffer</code> nativo do Node.js, ideal para o nó "Execute Code" do n8n.</p>
-          <div class="relative">
-            <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptBase64Snippet()"></code></pre>
-            <button (click)="copyCodeSnippet(javascriptBase64Snippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
-          </div>
-        </div>
-      </div>
-    </app-code-usage-tips>
-  }
 </div>
+
+<app-code-usage-tips>
+    <div tab="n8n">
+      <div class="text-gray-300 space-y-4 text-sm">
+        <p>A manipulação de arquivos binários e Base64 é fundamental no n8n, especialmente ao lidar com APIs que enviam ou recebem arquivos.</p>
+        
+        <h4 class="font-semibold text-white pt-2">Arquivo para Base64</h4>
+        <p>Se um nó anterior (como "Read Binary File") fornece um dado binário, você pode convertê-lo para Base64 no nó "Code" para enviar em um corpo JSON:</p>
+        <pre class="bg-gray-800 p-3 mt-2 rounded-md text-xs text-white overflow-x-auto">items[0].binary.data.toString('base64');</pre>
+
+        <h4 class="font-semibold text-white pt-2">Base64 para Arquivo</h4>
+        <p>Se você recebe uma string Base64 (ex: de uma API), pode convertê-la em um arquivo binário para usar em outros nós (como "Write Binary File" ou "Send Email"):</p>
+        <pre class="bg-gray-800 p-3 mt-2 rounded-md text-xs text-white overflow-x-auto">const base64String = items[0].json.base64Data;
+const fileBuffer = Buffer.from(base64String, 'base64');
+const binaryData = await $binary.create(fileBuffer, 'meu_arquivo.pdf', 'application/pdf');
+return {{ '{' }} json: {{ '{' }}{{ '}' }}, binary: {{ '{' }} data: binaryData {{ '}' }} {{ '}' }};</pre>
+
+      </div>
+    </div>
+    <div tab="python">
+      <div>
+        <h4 class="font-semibold text-white mb-2">Codificação e Decodificação Base64</h4>
+        <p class="text-sm text-gray-400 mb-4">O módulo <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">base64</code> é nativo do Python.</p>
+        <div class="relative">
+          <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonBase64Snippet()"></code></pre>
+          <button (click)="copyCodeSnippet(pythonBase64Snippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+        </div>
+        <h4 class="font-semibold text-white mt-6 mb-2">Criptografia AES-GCM com Senha</h4>
+        <p class="text-sm text-gray-400 mb-4">A biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">cryptography</code> é a forma moderna e segura de fazer criptografia em Python.</p>
+        <div class="relative">
+          <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonEncryptionSnippet()"></code></pre>
+          <button (click)="copyCodeSnippet(pythonEncryptionSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+        </div>
+      </div>
+    </div>
+    <div tab="javascript">
+      <div>
+        <h4 class="font-semibold text-white mb-2">Codificação e Decodificação Base64</h4>
+         <p class="text-sm text-gray-400 mb-4">Em Node.js, o objeto <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">Buffer</code> é usado para conversões Base64. Em navegadores, as funções <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">btoa()</code> e <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">atob()</code> são usadas para strings.</p>
+        <div class="relative">
+          <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptBase64Snippet()"></code></pre>
+           <button (click)="copyCodeSnippet(javascriptBase64Snippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+        </div>
+        <h4 class="font-semibold text-white mt-6 mb-2">Criptografia AES-GCM com Senha</h4>
+        <p class="text-sm text-gray-400 mb-4">O módulo nativo <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">crypto</code> do Node.js fornece as ferramentas para criptografia forte.</p>
+        <div class="relative">
+          <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptEncryptionSnippet()"></code></pre>
+           <button (click)="copyCodeSnippet(javascriptEncryptionSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+        </div>
+      </div>
+    </div>
+</app-code-usage-tips>

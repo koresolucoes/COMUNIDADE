@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
 import { RouterLink } from '@angular/router';
@@ -61,6 +61,32 @@ export class Base64CodecComponent implements OnInit {
       ? `${(sizeInKB / 1024).toFixed(2)} MB` 
       : `${sizeInKB.toFixed(2)} KB`;
     return { name: file.name, type: file.type, size };
+  });
+
+  popularMimeTypes = [
+    { name: 'Arquivo Binário Genérico', value: 'application/octet-stream' },
+    { name: 'Imagem PNG', value: 'image/png' },
+    { name: 'Imagem JPEG', value: 'image/jpeg' },
+    { name: 'Imagem GIF', value: 'image/gif' },
+    { name: 'Imagem SVG', value: 'image/svg+xml' },
+    { name: 'Documento PDF', value: 'application/pdf' },
+    { name: 'Texto Simples', value: 'text/plain' },
+    { name: 'Áudio MP3', value: 'audio/mpeg' },
+    { name: 'Vídeo MP4', value: 'video/mp4' },
+    { name: 'Arquivo ZIP', value: 'application/zip' },
+    { name: 'JSON', value: 'application/json' },
+    { name: 'HTML', value: 'text/html' },
+    { name: 'CSS', value: 'text/css' },
+    { name: 'JavaScript', value: 'application/javascript' },
+  ];
+
+  displayMimeTypes = computed(() => {
+    const currentMime = this.fileMimeType();
+    const popular = this.popularMimeTypes;
+    if (currentMime && !popular.some(m => m.value === currentMime)) {
+      return [{ name: `Detectado: ${currentMime}`, value: currentMime }, ...popular];
+    }
+    return popular;
   });
 
   // --- Code Snippets ---
@@ -228,6 +254,18 @@ console.log(\`Texto decodificado: \${textoDecodificado}\`);
 // const binaryData = await $binary.create(fileBuffer, 'nome_do_arquivo.pdf', 'application/pdf');
 // return { json: {}, binary: { data: binaryData } };
 `);
+
+  constructor() {
+    effect(() => {
+      const input = this.inputText();
+      if (this.codecMode() === 'file') {
+        const match = input.trim().match(/^data:([a-zA-Z0-9/+-]+);base64,/s);
+        if (match && match[1]) {
+          this.fileMimeType.set(match[1]);
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
       const dataToLoad = this.toolDataStateService.consumeData();
@@ -460,6 +498,7 @@ console.log(\`Texto decodificado: \${textoDecodificado}\`);
       const buffer = this.base64ToArrayBuffer(data);
 
       const finalMimeType = mimeType || this.fileMimeType();
+      this.fileMimeType.set(finalMimeType);
       this.decodedFileBlob.set(new Blob([buffer], { type: finalMimeType }));
       this.suggestFilename(finalMimeType);
     } catch (e) {
@@ -562,7 +601,9 @@ console.log(\`Texto decodificado: \${textoDecodificado}\`);
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      this.selectedFile.set(input.files[0]);
+      const file = input.files[0];
+      this.selectedFile.set(file);
+      this.fileMimeType.set(file.type || 'application/octet-stream');
     }
   }
 
@@ -580,7 +621,9 @@ console.log(\`Texto decodificado: \${textoDecodificado}\`);
     event.preventDefault();
     this.isDraggingOver.set(false);
     if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
-      this.selectedFile.set(event.dataTransfer.files[0]);
+      const file = event.dataTransfer.files[0];
+      this.selectedFile.set(file);
+      this.fileMimeType.set(file.type || 'application/octet-stream');
     }
   }
 
