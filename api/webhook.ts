@@ -46,9 +46,8 @@ const readRequestBody = async (req: any): Promise<string> => {
 
 
 export default async (req: any, res: any) => {
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const action = url.searchParams.get('action');
-    const uuid = url.searchParams.get('uuid');
+    // Rely on Vercel's parsed query object for all query parameters.
+    const { action, uuid } = req.query || {};
 
     if (!uuid) {
         res.statusCode = 400;
@@ -57,7 +56,7 @@ export default async (req: any, res: any) => {
         return;
     }
 
-    const sanitizedUuid = uuid.replace(/[^a-zA-Z0-9-]/g, ''); // Basic sanitization
+    const sanitizedUuid = String(uuid).replace(/[^a-zA-Z0-9-]/g, ''); // Basic sanitization
     const filePath = path.join(STORAGE_DIR, `${sanitizedUuid}.json`);
 
     // --- ACTION: poll (client checks for new webhooks) ---
@@ -96,21 +95,22 @@ export default async (req: any, res: any) => {
     // --- ACTION: test / default (receives a webhook) ---
     if (!action || action === 'test') {
         const body = await readRequestBody(req);
+        
         const headers: Record<string, string> = {};
-        for (const [key, value] of Object.entries(req.headers)) {
+        for (const key in req.headers) {
+            const value = req.headers[key];
             if (value !== undefined) {
-                // FIX: Explicitly convert header value to string to handle potential non-string types.
                 headers[key] = Array.isArray(value) ? value.join(', ') : String(value);
             }
         }
 
         const query: Record<string, string> = {};
-        url.searchParams.forEach((value, key) => {
-            // Don't include our control parameters in the request's query log
-            if (key !== 'uuid' && key !== 'action') {
-                query[key] = value;
+        for (const key in req.query) {
+             if (key !== 'uuid' && key !== 'action') {
+                const value = req.query[key];
+                query[key] = Array.isArray(value) ? value.join(', ') : String(value);
             }
-        });
+        }
 
         const newRequest = {
             id: crypto.randomUUID(),
