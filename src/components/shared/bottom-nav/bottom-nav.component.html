@@ -1,0 +1,16 @@
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 z-50">
+  <div class="flex justify-around h-16">
+    @for(item of navItems; track item.path) {
+      <a 
+        [routerLink]="item.path" 
+        routerLinkActive="active" 
+        [routerLinkActiveOptions]="{exact: item.path === '/'}"
+        class="flex flex-col items-center justify-center text-gray-400 hover:text-white w-full transition-colors pt-2 pb-1">
+        <span class="material-icons-outlined text-2xl">
+          {{ item.icon }}
+        </span>
+        <span class="text-xs mt-1">{{ item.label }}</span>
+      </a>
+    }
+  </div>
+</nav>

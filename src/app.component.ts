@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/shared/header/header.component';
-import { SidebarComponent } from './components/shared/sidebar/sidebar.component';
+import { BottomNavComponent } from './components/shared/bottom-nav/bottom-nav.component';
 import { CommandPaletteComponent } from './components/shared/command-palette/command-palette.component';
 
 @Component({
@@ -9,14 +9,13 @@ import { CommandPaletteComponent } from './components/shared/command-palette/com
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, SidebarComponent, CommandPaletteComponent],
+  imports: [RouterOutlet, HeaderComponent, BottomNavComponent, CommandPaletteComponent],
   host: {
     '(keydown.meta.k)': 'toggleCommandPalette($event)',
     '(keydown.control.k)': 'toggleCommandPalette($event)',
   },
 })
 export class AppComponent {
-  isSidebarExpanded = signal(false);
   isCommandPaletteVisible = signal(false);
   isDarkMode = signal(true);
 

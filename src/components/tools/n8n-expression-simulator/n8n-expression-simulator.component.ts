@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, computed, effect, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, effect, inject, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ExpressionContextService } from '../../../services/n8n/expression-context.service';
 import { ExpressionExecutorService } from '../../../services/n8n/expression-executor.service';
@@ -18,6 +18,8 @@ import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class N8nExpressionSimulatorComponent {
+  isEmbedded = input<boolean>(false);
+  
   // --- Injected Services ---
   public contextService = inject(ExpressionContextService);
   private executorService = inject(ExpressionExecutorService);

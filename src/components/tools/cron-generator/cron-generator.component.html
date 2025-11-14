@@ -14,8 +14,8 @@
         <span class="mr-3 text-sm font-medium text-gray-400">Modo Avançado (Expressão)</span>
         <div class="relative">
             <input type="checkbox" id="advanced-mode-toggle" class="sr-only" [checked]="isAdvancedMode()" (change)="toggleMode()">
-            <div class="toggle-bg block bg-gray-700 w-14 h-8 rounded-full"></div>
-            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform"></div>
+            <div class="toggle-bg block bg-gray-700 w-14 h-8 rounded-full transition-colors"></div>
+            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-all"></div>
         </div>
     </label>
   </div>
@@ -267,38 +267,40 @@
   </div>
 </div>
 
-<app-code-usage-tips>
-  <div tab="n8n">
-    <div class="text-gray-300 space-y-4 text-sm">
-      <p>A expressão CRON gerada é perfeita para o nó <code class="bg-gray-800 px-1 py-0.5 rounded">Cron</code> do n8n, que inicia um workflow em um agendamento específico.</p>
-      <h4 class="font-semibold text-white mb-2">Como usar:</h4>
-      <ol class="list-decimal list-inside space-y-2 pl-2">
-          <li>Adicione um nó <strong class="text-white">Cron</strong> ao seu workflow.</li>
-          <li>No painel de parâmetros do nó, mude o <strong class="text-white">Mode</strong> para <strong class="text-white">Custom</strong>.</li>
-          <li>Copie a expressão CRON desta ferramenta.</li>
-          <li>Cole-a no campo <strong class="text-white">Cron Expression</strong>.</li>
-      </ol>
-      <div class="mt-2 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs">
-          <strong class="font-semibold">Dica:</strong> Use o gerador visual para criar agendamentos complexos, como "executar às 14:30 na última sexta-feira de cada mês", e depois apenas copie e cole no n8n.
+@if(!isEmbedded()) {
+  <app-code-usage-tips>
+    <div tab="n8n">
+      <div class="text-gray-300 space-y-4 text-sm">
+        <p>A expressão CRON gerada é perfeita para o nó <code class="bg-gray-800 px-1 py-0.5 rounded">Cron</code> do n8n, que inicia um workflow em um agendamento específico.</p>
+        <h4 class="font-semibold text-white mb-2">Como usar:</h4>
+        <ol class="list-decimal list-inside space-y-2 pl-2">
+            <li>Adicione um nó <strong class="text-white">Cron</strong> ao seu workflow.</li>
+            <li>No painel de parâmetros do nó, mude o <strong class="text-white">Mode</strong> para <strong class="text-white">Custom</strong>.</li>
+            <li>Copie a expressão CRON desta ferramenta.</li>
+            <li>Cole-a no campo <strong class="text-white">Cron Expression</strong>.</li>
+        </ol>
+        <div class="mt-2 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs">
+            <strong class="font-semibold">Dica:</strong> Use o gerador visual para criar agendamentos complexos, como "executar às 14:30 na última sexta-feira de cada mês", e depois apenas copie e cole no n8n.
+        </div>
       </div>
     </div>
-  </div>
-  <div tab="python">
-    <div>
-      <p class="text-sm text-gray-400 mb-4">Use a biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">croniter</code> para calcular as próximas execuções de uma expressão CRON, ou <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">apscheduler</code> para agendar tarefas.</p>
-      <div class="relative">
-        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonSnippet()"></code></pre>
-        <button (click)="copyCodeSnippet(pythonSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+    <div tab="python">
+      <div>
+        <p class="text-sm text-gray-400 mb-4">Use a biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">croniter</code> para calcular as próximas execuções de uma expressão CRON, ou <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">apscheduler</code> para agendar tarefas.</p>
+        <div class="relative">
+          <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonSnippet()"></code></pre>
+          <button (click)="copyCodeSnippet(pythonSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+        </div>
       </div>
     </div>
-  </div>
-  <div tab="javascript">
-    <div>
-      <p class="text-sm text-gray-400 mb-4">A biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">node-cron</code> é uma maneira popular de agendar tarefas em aplicações Node.js.</p>
-      <div class="relative">
-        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptSnippet()"></code></pre>
-         <button (click)="copyCodeSnippet(javascriptSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+    <div tab="javascript">
+      <div>
+        <p class="text-sm text-gray-400 mb-4">A biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">node-cron</code> é uma maneira popular de agendar tarefas em aplicações Node.js.</p>
+        <div class="relative">
+          <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptSnippet()"></code></pre>
+           <button (click)="copyCodeSnippet(javascriptSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+        </div>
       </div>
     </div>
-  </div>
-</app-code-usage-tips>
+  </app-code-usage-tips>
+}

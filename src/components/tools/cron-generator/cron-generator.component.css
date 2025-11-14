@@ -1,7 +1,7 @@
-#advanced-mode-toggle:checked ~ div > .dot {
+#advanced-mode-toggle:checked ~ .dot {
     transform: translateX(1.5rem);
     background-color: #58a6ff;
 }
-#advanced-mode-toggle:checked ~ div .toggle-bg {
+#advanced-mode-toggle:checked ~ .toggle-bg {
   background-color: #30363d;
 }

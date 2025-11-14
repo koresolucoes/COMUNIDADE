@@ -10,9 +10,28 @@
     <div class="lg:col-span-2 space-y-8">
       <!-- Featured Tool -->
       <section>
-        <h2 class="text-2xl font-semibold text-white mb-4">Ferramenta em Destaque</h2>
+        <h2 class="text-2xl font-semibold text-white mb-4">Ferramentas em Destaque</h2>
         <div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
-          <app-cron-generator [isEmbedded]="true"></app-cron-generator>
+           <div class="flex border-b border-gray-800">
+              @for(tool of featuredTools; track tool.id) {
+                <button 
+                  (click)="featuredTool.set(tool.id)"
+                  class="px-4 py-3 text-sm font-medium transition-colors"
+                  [class.text-white]="featuredTool() === tool.id"
+                  [class.bg-gray-800]="featuredTool() === tool.id"
+                  [class.text-gray-400]="featuredTool() !== tool.id"
+                  [class.hover:bg-gray-800/50]="featuredTool() !== tool.id">
+                  {{ tool.name }}
+                </button>
+              }
+            </div>
+            <div class="min-h-[500px] relative">
+               @switch(featuredTool()) {
+                @case('cron') { <app-cron-generator [isEmbedded]="true"></app-cron-generator> }
+                @case('json') { <app-json-formatter [isEmbedded]="true"></app-json-formatter> }
+                @case('n8n') { <app-n8n-expression-simulator [isEmbedded]="true"></app-n8n-expression-simulator> }
+              }
+            </div>
         </div>
       </section>
 

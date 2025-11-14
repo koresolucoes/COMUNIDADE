@@ -1,15 +1,32 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CronGeneratorComponent } from '../tools/cron-generator/cron-generator.component';
+import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { CronGeneratorComponent } from '../tools/cron-generator/cron-generator.component';
+import { JsonFormatterComponent } from '../tools/json-formatter/json-formatter.component';
+import { N8nExpressionSimulatorComponent } from '../tools/n8n-expression-simulator/n8n-expression-simulator.component';
+
+type FeaturedTool = 'cron' | 'json' | 'n8n';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CronGeneratorComponent, RouterLink],
+  imports: [
+    RouterLink,
+    CronGeneratorComponent,
+    JsonFormatterComponent,
+    N8nExpressionSimulatorComponent,
+  ],
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
+  featuredTool = signal<FeaturedTool>('cron');
+
+  featuredTools: { id: FeaturedTool, name: string }[] = [
+    { id: 'cron', name: 'Gerador CRON' },
+    { id: 'json', name: 'Formatador JSON' },
+    { id: 'n8n', name: 'Simulador n8n' },
+  ];
+
   popularTemplates = [
     { title: 'Sincronizar Pedidos iFood com Google Sheets', apps: ['ifood', 'sheets'] },
     { title: 'Notificar no Discord sobre novos PRs no GitHub', apps: ['discord', 'github'] },

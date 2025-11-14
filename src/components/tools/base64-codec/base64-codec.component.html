@@ -4,28 +4,96 @@
     <p class="mt-2 text-gray-400">Codifique/decodifique em Base64 ou criptografe/descriptografe com uma senha.</p>
   </div>
 
+  <!-- Mode Selector -->
+  <div class="flex items-center justify-center p-1 bg-gray-800 rounded-lg max-w-sm mx-auto">
+    <button (click)="codecMode.set('text')" class="w-full py-2 text-sm font-semibold rounded-md transition-colors" [class.bg-blue-accent]="codecMode() === 'text'" [class.text-white]="codecMode() === 'text'" [class.text-gray-400]="codecMode() !== 'text'">
+      Texto
+    </button>
+    <button (click)="codecMode.set('file')" class="w-full py-2 text-sm font-semibold rounded-md transition-colors" [class.bg-blue-accent]="codecMode() === 'file'" [class.text-white]="codecMode() === 'file'" [class.text-gray-400]="codecMode() !== 'file'">
+      Arquivo
+    </button>
+  </div>
+
   <div class="grid md:grid-cols-2 gap-6">
     <!-- Input Column -->
-    <div class="flex flex-col">
-      <label for="input-text" class="block text-sm font-medium text-gray-400 mb-2">Entrada</label>
-      <textarea 
-        id="input-text"
-        class="w-full flex-grow bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y min-h-[24rem]"
-        placeholder="Digite ou cole o texto aqui"
-        [ngModel]="inputText()"
-        (ngModelChange)="inputText.set($event)"
-        spellcheck="false">
-      </textarea>
+    <div class="flex flex-col space-y-4">
+      <label class="block text-sm font-medium text-gray-400 -mb-2">Entrada</label>
+      
+      @if(codecMode() === 'text') {
+        <textarea 
+          id="input-text"
+          class="w-full flex-grow bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y min-h-[24rem]"
+          placeholder="Digite ou cole o texto aqui"
+          [ngModel]="inputText()"
+          (ngModelChange)="inputText.set($event)"
+          spellcheck="false">
+        </textarea>
+      } @else {
+        <!-- File Mode: Show both Decode and Encode options -->
+        <div class="flex flex-col flex-grow bg-gray-800 border border-gray-700 rounded-lg p-4 space-y-4">
+            <!-- Decode from Base64 to File -->
+            <div>
+              <label for="input-b64-file" class="text-sm font-medium text-gray-300 mb-2 block">Cole o Base64 para Decodificar para Arquivo</label>
+              <textarea 
+                id="input-b64-file" 
+                class="w-full bg-gray-900 border-gray-600 font-mono text-gray-300 rounded-md p-3 focus:ring-blue-accent focus:border-blue-accent resize-y min-h-[8rem]" 
+                placeholder="Cole a string Base64 aqui..." 
+                [ngModel]="inputText()" 
+                (ngModelChange)="inputText.set($event)" 
+                spellcheck="false">
+              </textarea>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <hr class="flex-grow border-gray-600">
+              <span class="text-gray-500 text-xs font-semibold">OU</span>
+              <hr class="flex-grow border-gray-600">
+            </div>
+
+            <!-- Encode from File to Base64 -->
+            <div>
+              <label class="text-sm font-medium text-gray-300 mb-2 block">Selecione um Arquivo para Codificar</label>
+              <div 
+                class="w-full border-2 border-dashed border-gray-600 rounded-lg flex flex-col justify-center items-center text-center p-6 transition-colors min-h-[12rem]"
+                [class.border-blue-accent]="isDraggingOver()"
+                [class.bg-gray-700/50]="isDraggingOver()"
+                (dragover)="onDragOver($event)"
+                (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)">
+                
+                <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)">
+
+                @if(fileInfo(); as info) {
+                  <div class="space-y-3">
+                    <span class="material-icons-outlined text-5xl text-green-accent">description</span>
+                    <p class="font-semibold text-white">{{ info.name }}</p>
+                    <p class="text-xs text-gray-400">{{ info.type }} &middot; {{ info.size }}</p>
+                    <button (click)="selectedFile.set(null)" class="text-xs text-red-400 hover:underline">Remover arquivo</button>
+                  </div>
+                } @else {
+                  <div class="space-y-3">
+                    <span class="material-icons-outlined text-5xl text-gray-500">upload_file</span>
+                    <p class="text-gray-400">Arraste e solte um arquivo aqui</p>
+                    <p class="text-xs text-gray-500">ou</p>
+                    <button (click)="fileInput.click()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+                      Selecione um Arquivo
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+        </div>
+      }
     </div>
     <!-- Output Column -->
     <div class="flex flex-col">
-      <label for="output-text" class="block text-sm font-medium text-gray-400 mb-2">Saída</label>
+      <label class="block text-sm font-medium text-gray-400 mb-2">Saída</label>
       <div class="relative w-full flex-grow">
         <textarea 
           id="output-text"
           readonly
           class="w-full h-full bg-gray-900 border border-gray-700 font-mono text-gray-300 rounded-md p-4 resize-y min-h-[24rem]"
-          placeholder="O resultado aparecerá aqui"
+          [placeholder]="codecMode() === 'text' ? 'O texto decodificado ou a string Base64 aparecerá aqui' : 'A string Base64 do arquivo aparecerá aqui'"
           [value]="outputText()">
         </textarea>
         @if(outputText()) {
@@ -34,6 +102,22 @@
           </button>
         }
       </div>
+      @if(decodedFileBlob(); as blob) {
+        <div class="mt-4 p-4 bg-gray-800 border border-gray-700 rounded-lg space-y-3">
+            <h4 class="text-sm font-medium text-white">Arquivo Pronto para Download</h4>
+            <div class="flex items-center gap-2">
+              <input 
+                type="text"
+                class="flex-grow bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm focus:ring-blue-accent focus:border-blue-accent"
+                placeholder="nome_do_arquivo.ext"
+                [ngModel]="downloadFilename()"
+                (ngModelChange)="downloadFilename.set($event)">
+              <button (click)="downloadDecodedFile()" class="px-4 py-2 bg-green-accent/80 text-white rounded-md font-semibold hover:bg-green-accent transition-colors">
+                Baixar
+              </button>
+            </div>
+        </div>
+      }
     </div>
   </div>
 
@@ -44,8 +128,8 @@
           <label for="encryption-toggle" class="flex items-center cursor-pointer self-start md:self-center">
               <div class="relative">
                   <input type="checkbox" id="encryption-toggle" class="sr-only" [checked]="isEncryptionEnabled()" (change)="isEncryptionEnabled.set($any($event.target).checked)">
-                  <div class="block bg-gray-700 w-14 h-8 rounded-full"></div>
-                  <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                  <div class="block bg-gray-700 w-14 h-8 rounded-full transition-colors duration-200"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-200"></div>
               </div>
               <div class="ml-3 text-white font-medium">
                   Ativar Criptografia com Senha
@@ -53,11 +137,11 @@
           </label>
 
           <!-- Charset Dropdown -->
-          <div class="flex w-full md:w-auto items-center gap-3" [class.opacity-50]="isEncryptionEnabled()">
+          <div class="flex w-full md:w-auto items-center gap-3" [class.opacity-50]="isEncryptionEnabled() || codecMode() === 'file'">
               <label for="charset-select" class="text-sm font-medium text-gray-400 whitespace-nowrap">Character Set:</label>
               <select 
                   id="charset-select"
-                  [disabled]="isEncryptionEnabled()"
+                  [disabled]="isEncryptionEnabled() || codecMode() === 'file'"
                   [ngModel]="selectedCharset()"
                   (ngModelChange)="selectedCharset.set($event)"
                   class="flex-grow bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent disabled:cursor-not-allowed">
@@ -92,7 +176,7 @@
 
   <!-- Actions Section -->
   <div class="flex flex-wrap items-center gap-4 pt-4">
-    <button (click)="handleEncode()" [disabled]="isProcessing()" class="px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-wait">
+    <button (click)="handleEncode()" [disabled]="isProcessing() || (codecMode() === 'file' && !selectedFile())" class="px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
       @if(isProcessing()) {
         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -111,7 +195,7 @@
       }
       <span>{{ isEncryptionEnabled() ? 'Criptografar' : 'Codificar' }}</span>
     </button>
-    <button (click)="handleDecode()" [disabled]="isProcessing()" class="px-4 py-2 bg-green-accent/80 text-white rounded-md font-semibold hover:bg-green-accent transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-wait">
+    <button (click)="handleDecode()" [disabled]="isProcessing() || (codecMode() === 'text' && !inputText())" class="px-4 py-2 bg-green-accent/80 text-white rounded-md font-semibold hover:bg-green-accent transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
        @if(isProcessing()) {
         <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -204,36 +288,26 @@
     <app-code-usage-tips>
       <div tab="n8n">
         <div class="text-gray-300 space-y-4 text-sm">
-          <p>A codificação Base64 é essencial para transmitir dados que podem ser corrompidos por texto simples. Em n8n, é muito útil para lidar com arquivos e autenticação.</p>
+          <p>A codificação Base64 é essencial para transmitir dados binários (como arquivos) ou para autenticação.</p>
           
-          <div>
-              <h4 class="font-semibold text-white mb-2">Casos de Uso Comuns em n8n:</h4>
-              <ul class="list-disc list-inside mt-2 space-y-2 pl-2">
-                  <li>
-                      <strong class="text-cyan-300">Autenticação "Basic Auth":</strong> Muitas APIs usam "Basic Auth", que exige que o `usuário:senha` seja codificado em Base64 e enviado no header `Authorization`.
-                      <p class="text-xs pl-4 text-gray-400">Exemplo: Para `admin:p@ssword123`, o valor Base64 é `YWRtaW46cEBzc3dvcmQxMjM=`. O header seria `Authorization: Basic YWRtaW46cEBzc3dvcmQxMjM=`.</p>
-                  </li>
-                   <li>
-                      <strong class="text-cyan-300">Manipulação de Arquivos:</strong> Quando você recebe um arquivo via HTTP Request (ex: um PDF ou imagem), o n8n o disponibiliza como dados binários. Para enviar este arquivo para outra API (que espera o arquivo em Base64 num corpo JSON), você precisa codificá-lo.
-                  </li>
-              </ul>
-          </div>
+          <h4 class="font-semibold text-white mb-2">Codificando Arquivos Binários</h4>
+          <p>Quando um nó como <strong class="text-white">HTTP Request</strong> baixa um arquivo, os dados ficam disponíveis em <code class="bg-gray-800 px-1 py-0.5 rounded">$binary.data</code>. Para enviá-lo para uma API que espera Base64, use um nó <strong class="text-white">Move Binary Data</strong>:</p>
+          <ol class="list-decimal list-inside space-y-1 pl-2 text-xs text-gray-400">
+              <li>Defina <strong class="text-white">Mode</strong> como "To File".</li>
+              <li>Ative a opção <strong class="text-white">Destination is Base64</strong>.</li>
+              <li>No campo <strong class="text-white">Destination Property Name</strong>, digite o nome do campo que conterá a string Base64 (ex: `fileContent`).</li>
+          </ol>
+          <p class="mt-1">Alternativamente, no nó <strong class="text-white">Code</strong> (JS): <code class="bg-gray-800 px-1 py-0.5 rounded">item.json.fileContent = $binary.data.toBase64();</code></p>
 
-          <div>
-              <h4 class="font-semibold text-white mb-2">Como Fazer no n8n:</h4>
-              <p>Você pode usar tanto o nó "Execute Code" (JavaScript) quanto o "Python" para isso.</p>
-               <ul class="list-disc list-inside mt-2 space-y-1 pl-2">
-                  <li><strong class="text-white">Para Autenticação:</strong>
-                      <p class="text-xs pl-4 text-gray-400">É mais fácil usar o nó "Execute Code". Copie o snippet da aba <strong class="text-white">JavaScript</strong>. Substitua `textToEncode` por uma expressão como <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} $credentials.minhaApi.user {{ '}}' }}:{{ '{{' }} $credentials.minhaApi.password {{ '}}' }}</code> para construir a string e obter o resultado codificado.</p>
-                  </li>
-                  <li><strong class="text-white">Para Arquivos Binários:</strong>
-                      <p class="text-xs pl-4 text-gray-400">Quando um nó anterior (como "HTTP Request") retorna um arquivo, os dados binários estão disponíveis em <code class="bg-gray-800 px-1 py-0.5 rounded">$binary.data</code>. No nó "Execute Code", você pode acessar o buffer diretamente e convertê-lo para Base64 assim: <code class="bg-gray-800 px-1 py-0.5 rounded">return [&lbrace; json: &lbrace; base64Data: Buffer.from($binary.data.data).toString('base64') &rbrace; &rbrace;];</code></p>
-                  </li>
-                </ul>
-          </div>
-          <div class="mt-2 p-3 bg-gray-900/50 border border-gray-700/50 text-gray-400 rounded-lg text-xs">
-              <strong class="font-semibold block text-gray-300">Dica:</strong> Para operações simples de Base64, o nó "Execute Code" (JS) costuma ser mais rápido e direto no n8n, pois não precisa de um ambiente Python separado.
-          </div>
+
+          <h4 class="font-semibold text-white mb-2 pt-2">Decodificando para Arquivo Binário</h4>
+          <p>Se você tem uma string Base64 e quer usá-la como um arquivo (ex: para fazer upload), use o nó <strong class="text-white">Move Binary Data</strong>:</p>
+           <ol class="list-decimal list-inside space-y-1 pl-2 text-xs text-gray-400">
+              <li>Defina <strong class="text-white">Mode</strong> como "From JSON".</li>
+              <li>Ative a opção <strong class="text-white">Data is Base64</strong>.</li>
+              <li>No campo <strong class="text-white">Source Property Name</strong>, referencie o campo com sua string Base64 (ex: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} $json.fileContent {{ '}}' }}</code>).</li>
+          </ol>
+          <p class="mt-1">O nó seguinte agora terá acesso aos dados binários em <code class="bg-gray-800 px-1 py-0.5 rounded">$binary.data</code>, pronto para ser usado.</p>
         </div>
       </div>
       <div tab="python">

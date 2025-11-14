@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
 
@@ -16,6 +16,7 @@ interface JsonError {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JsonFormatterComponent {
+  isEmbedded = input<boolean>(false);
   jsonContent = signal('');
   error = signal<JsonError | null>(null);
   copyButtonText = signal('Copiar');

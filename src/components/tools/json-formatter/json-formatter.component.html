@@ -1,8 +1,12 @@
-<div class="space-y-8 h-full flex flex-col">
-  <div class="mb-2">
-    <h1 class="text-3xl md:text-4xl font-bold text-white">Formatador de JSON</h1>
-    <p class="mt-2 text-gray-400">Valide, formate, minifique e copie seu código JSON com facilidade.</p>
-  </div>
+<div class="h-full flex flex-col" [class.p-6]="isEmbedded()" [class.space-y-4]="isEmbedded()" [class.space-y-8]="!isEmbedded()">
+  @if(!isEmbedded()) {
+    <div class="mb-2">
+      <h1 class="text-3xl md:text-4xl font-bold text-white">Formatador de JSON</h1>
+      <p class="mt-2 text-gray-400">Valide, formate, minifique e copie seu código JSON com facilidade.</p>
+    </div>
+  } @else {
+    <h3 class="text-lg font-semibold text-white mb-2">Formatador de JSON</h3>
+  }
 
   <div class="flex-grow flex flex-col min-h-0">
     <div class="flex items-center justify-between mb-2 h-5">
@@ -82,44 +86,46 @@
   </div>
 </div>
 
-<app-code-usage-tips>
-  <div tab="n8n">
-    <div class="text-gray-300 space-y-4 text-sm">
-      <p>O n8n opera nativamente com JSON, e o nó <code class="bg-gray-800 px-1 py-0.5 rounded">Code</code> é seu melhor amigo para manipulações complexas.</p>
-      
-      <h4 class="font-semibold text-white mb-2">Principais Operações:</h4>
-      <ul class="list-disc list-inside space-y-2 pl-2">
-          <li>
-              <strong class="text-white">Analisar (Parse):</strong> Se você recebe uma string JSON de uma API (ex: no corpo de um webhook), pode convertê-la em um objeto n8n com a expressão: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.parse($json.body) {{ '}}' }}</code>.
-          </li>
-          <li>
-              <strong class="text-white">Formatar (Stringify):</strong> Para enviar um objeto n8n como uma string JSON formatada para outra API, use: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.stringify($json, null, 2) {{ '}}' }}</code>. O '2' indica a indentação, criando uma saída legível.
-          </li>
-          <li>
-              <strong class="text-white">Minificar (Stringify):</strong> Para uma versão compacta, sem espaços, ideal para economizar banda, omita os argumentos extras: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.stringify($json) {{ '}}' }}</code>.
-          </li>
-      </ul>
-       <div class="mt-2 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
-          <strong class="font-semibold">Atenção:</strong> Sempre envolva operações de `JSON.parse` em um bloco `try...catch` dentro do nó "Code" para tratar casos em que a string de entrada não é um JSON válido e evitar que seu workflow falhe.
+@if(!isEmbedded()) {
+  <app-code-usage-tips>
+    <div tab="n8n">
+      <div class="text-gray-300 space-y-4 text-sm">
+        <p>O n8n opera nativamente com JSON, e o nó <code class="bg-gray-800 px-1 py-0.5 rounded">Code</code> é seu melhor amigo para manipulações complexas.</p>
+        
+        <h4 class="font-semibold text-white mb-2">Principais Operações:</h4>
+        <ul class="list-disc list-inside space-y-2 pl-2">
+            <li>
+                <strong class="text-white">Analisar (Parse):</strong> Se você recebe uma string JSON de uma API (ex: no corpo de um webhook), pode convertê-la em um objeto n8n com a expressão: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.parse($json.body) {{ '}}' }}</code>.
+            </li>
+            <li>
+                <strong class="text-white">Formatar (Stringify):</strong> Para enviar um objeto n8n como uma string JSON formatada para outra API, use: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.stringify($json, null, 2) {{ '}}' }}</code>. O '2' indica a indentação, criando uma saída legível.
+            </li>
+            <li>
+                <strong class="text-white">Minificar (Stringify):</strong> Para uma versão compacta, sem espaços, ideal para economizar banda, omita os argumentos extras: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.stringify($json) {{ '}}' }}</code>.
+            </li>
+        </ul>
+         <div class="mt-2 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
+            <strong class="font-semibold">Atenção:</strong> Sempre envolva operações de `JSON.parse` em um bloco `try...catch` dentro do nó "Code" para tratar casos em que a string de entrada não é um JSON válido e evitar que seu workflow falhe.
+        </div>
       </div>
     </div>
-  </div>
-  <div tab="python">
-    <div>
-      <p class="text-sm text-gray-400 mb-4">O módulo <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">json</code> é nativo do Python e oferece todas as funções necessárias.</p>
-      <div class="relative">
-        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonSnippet()"></code></pre>
-        <button (click)="copyCodeSnippet(pythonSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+    <div tab="python">
+      <div>
+        <p class="text-sm text-gray-400 mb-4">O módulo <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">json</code> é nativo do Python e oferece todas as funções necessárias.</p>
+        <div class="relative">
+          <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonSnippet()"></code></pre>
+          <button (click)="copyCodeSnippet(pythonSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+        </div>
       </div>
     </div>
-  </div>
-  <div tab="javascript">
-    <div>
-       <p class="text-sm text-gray-400 mb-4">O objeto global <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">JSON</code> é a forma padrão de interagir com JSON em JavaScript e Node.js.</p>
-      <div class="relative">
-        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptSnippet()"></code></pre>
-         <button (click)="copyCodeSnippet(javascriptSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+    <div tab="javascript">
+      <div>
+         <p class="text-sm text-gray-400 mb-4">O objeto global <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">JSON</code> é a forma padrão de interagir com JSON em JavaScript e Node.js.</p>
+        <div class="relative">
+          <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptSnippet()"></code></pre>
+           <button (click)="copyCodeSnippet(javascriptSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+        </div>
       </div>
     </div>
-  </div>
-</app-code-usage-tips>
+  </app-code-usage-tips>
+}
