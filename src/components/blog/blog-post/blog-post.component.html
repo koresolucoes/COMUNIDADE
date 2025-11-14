@@ -13,7 +13,7 @@
         <p class="mt-4 text-lg text-gray-400">Por {{ p.author }}</p>
       </header>
 
-      <div [innerHTML]="p.content | safeHtml"></div>
+      <div class="prose-container" [innerHTML]="p.content | safeHtml"></div>
     </article>
   } @else {
     <div class="text-center py-16">
