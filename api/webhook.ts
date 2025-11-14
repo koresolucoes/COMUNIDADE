@@ -36,16 +36,12 @@ async function writeJsonFile(filePath: string, data: any[]): Promise<void> {
     await fs.writeFile(filePath, JSON.stringify(data), 'utf-8');
 }
 
-const readRequestBody = (req: any): Promise<string> => {
-    return new Promise((resolve) => {
-        let body = '';
-        req.on('data', (chunk: any) => {
-            body += chunk.toString();
-        });
-        req.on('end', () => {
-            resolve(body);
-        });
-    });
+const readRequestBody = async (req: any): Promise<string> => {
+    const chunks = [];
+    for await (const chunk of req) {
+        chunks.push(Buffer.from(chunk));
+    }
+    return Buffer.concat(chunks).toString('utf-8');
 };
 
 

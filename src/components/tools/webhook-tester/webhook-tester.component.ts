@@ -115,7 +115,8 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
   getFormattedBody(): string {
     if (!this.selectedRequest()) return '';
     const { body, headers } = this.selectedRequest()!;
-    const contentType = Object.entries(headers).find(([key]) => key.toLowerCase() === 'content-type')?.[1] || '';
+    const safeHeaders = headers || {};
+    const contentType = Object.entries(safeHeaders).find(([key]) => key.toLowerCase() === 'content-type')?.[1] || '';
 
     // FIX: Ensure contentType is treated as a string to prevent type errors from malformed API responses.
     if (String(contentType).includes('application/json')) {
