@@ -1,4 +1,3 @@
-/// <reference types="node" />
 
 // This is a Vercel serverless function for the Node.js runtime to manage blog posts.
 import { createClient } from '@supabase/supabase-js';
@@ -24,17 +23,28 @@ const slugify = (text: string) => {
     .replace(/-+$/, '') // Trim - from end of text
 }
 
-const readRequestBody = async (req: any): Promise<any> => {
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(Buffer.from(chunk));
-  }
-  const body = Buffer.concat(chunks).toString('utf-8');
-  try {
-    return JSON.parse(body);
-  } catch {
-    throw new Error('Corpo da requisição não é um JSON válido.');
-  }
+// Fix: Replaced body reading logic to avoid using Buffer, which was causing type errors.
+const readRequestBody = (req: any): Promise<any> => {
+  return new Promise((resolve, reject) => {
+    let body = '';
+    req.on('data', (chunk: any) => {
+      body += chunk.toString();
+    });
+    req.on('end', () => {
+      if (body) {
+        try {
+          resolve(JSON.parse(body));
+        } catch (e) {
+          reject(new Error('Corpo da requisição não é um JSON válido.'));
+        }
+      } else {
+        resolve({}); // Resolve with empty object if no body
+      }
+    });
+    req.on('error', (err: any) => {
+      reject(err);
+    });
+  });
 };
 
 const handleGet = async (req: any, res: any) => {
