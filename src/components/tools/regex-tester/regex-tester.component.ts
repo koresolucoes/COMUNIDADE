@@ -1,6 +1,10 @@
-import { Component, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, effect, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 interface RegexMatch {
   value: string;
@@ -24,12 +28,17 @@ export interface BuilderStep {
 @Component({
   selector: 'app-regex-tester',
   standalone: true,
-  imports: [FormsModule, SafeHtmlPipe],
+  imports: [FormsModule, SafeHtmlPipe, RouterLink],
   templateUrl: './regex-tester.component.html',
   styleUrls: ['./regex-tester.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RegexTesterComponent {
+export class RegexTesterComponent implements OnInit {
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+  
   // --- Main state ---
   regexPattern = signal('');
   regexFlags = signal('g');
@@ -79,6 +88,13 @@ export class RegexTesterComponent {
 
     // Initialize with a default pattern
     this.regexPattern.set(this.commonPatterns.get('email')?.regex ?? '');
+  }
+
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'regex-tester') {
+        this.loadState(dataToLoad.data);
+      }
   }
 
   // --- Computed properties ---
@@ -264,5 +280,42 @@ export class RegexTesterComponent {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
+  }
+  
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar este Teste de Regex:', `Regex - ${new Date().toLocaleDateString()}`);
+    if (title) {
+      const state = {
+        regexPattern: this.regexPattern(),
+        regexFlags: this.regexFlags(),
+        testString: this.testString(),
+        mode: this.mode(),
+        builderMode: this.builderMode(),
+        selectedCommonPattern: this.selectedCommonPattern(),
+        builderSteps: this.builderSteps(),
+      };
+      try {
+        await this.userDataService.saveData('regex-tester', title, state);
+        alert('Teste de Regex salvo com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar o teste.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.regexPattern.set(state.regexPattern ?? '');
+    this.regexFlags.set(state.regexFlags ?? 'g');
+    this.testString.set(state.testString ?? '');
+    this.mode.set(state.mode ?? 'builder');
+    this.builderMode.set(state.builderMode ?? 'common');
+    this.selectedCommonPattern.set(state.selectedCommonPattern ?? 'email');
+    this.builderSteps.set(state.builderSteps ?? []);
   }
 }

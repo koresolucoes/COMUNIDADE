@@ -1,15 +1,24 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 @Component({
   selector: 'app-timestamp-converter',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './timestamp-converter.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TimestampConverterComponent {
+export class TimestampConverterComponent implements OnInit {
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+
   // The source of truth is the timestamp in seconds.
   timestamp = signal<number>(Math.floor(Date.now() / 1000));
 
@@ -96,6 +105,12 @@ console.log(\`Timestamp atual (com Date.now()): \${Math.floor(Date.now() / 1000)
       return rtf.format(seconds, 'second');
   });
 
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'timestamp-converter') {
+        this.loadState(dataToLoad.data);
+      }
+  }
 
   onTimestampChange(value: string) {
     const newTimestamp = parseInt(value, 10);
@@ -132,5 +147,30 @@ console.log(\`Timestamp atual (com Date.now()): \${Math.floor(Date.now() / 1000)
 
   copyCodeSnippet(content: string) {
     navigator.clipboard.writeText(content);
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar este timestamp:', `Data - ${this.localString()}`);
+    if (title) {
+      const state = {
+        timestamp: this.timestamp(),
+      };
+      try {
+        await this.userDataService.saveData('timestamp-converter', title, state);
+        alert('Timestamp salvo com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar o timestamp.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.timestamp.set(state.timestamp ?? Math.floor(Date.now() / 1000));
   }
 }

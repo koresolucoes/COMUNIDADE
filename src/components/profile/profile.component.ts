@@ -26,11 +26,31 @@ export class ProfileComponent implements OnInit {
   toolIdToNameMap: Record<string, string> = {
     'json-formatter': 'Formatador JSON',
     'cron-generator': 'Gerador CRON',
+    'base64-codec': 'Codec Base64',
+    'jwt-decoder': 'Decoder JWT',
+    'timestamp-converter': 'Conversor Timestamp',
+    'url-codec': 'Codec de URL',
+    'hash-generator': 'Gerador de Hash',
+    'password-generator': 'Gerador de Senhas',
+    'regex-tester': 'Testador Regex',
+    'mock-data-generator': 'Gerador de Dados Falsos',
+    'diff-checker': 'Comparador de Texto',
+    'data-converter': 'Conversor de Dados',
   };
 
   toolIdToPathMap: Record<string, string> = {
     'json-formatter': '/tools/formatador-json',
     'cron-generator': '/tools/gerador-cron',
+    'base64-codec': '/tools/base64-codec',
+    'jwt-decoder': '/tools/jwt-decoder',
+    'timestamp-converter': '/tools/timestamp-converter',
+    'url-codec': '/tools/url-codec',
+    'hash-generator': '/tools/gerador-hash',
+    'password-generator': '/tools/gerador-senha',
+    'regex-tester': '/tools/testador-regex',
+    'mock-data-generator': '/tools/gerador-dados-falsos',
+    'diff-checker': '/tools/comparador-texto',
+    'data-converter': '/tools/data-converter',
   };
 
   groupedData = computed(() => {

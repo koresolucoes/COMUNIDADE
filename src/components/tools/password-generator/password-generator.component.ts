@@ -1,16 +1,25 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 @Component({
   selector: 'app-password-generator',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './password-generator.component.html',
   styleUrls: ['./password-generator.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PasswordGeneratorComponent {
+export class PasswordGeneratorComponent implements OnInit {
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+  
   // Options
   length = signal(24);
   includeUppercase = signal(true);
@@ -34,6 +43,13 @@ export class PasswordGeneratorComponent {
 
   constructor() {
     this.generatePassword();
+  }
+  
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'password-generator') {
+        this.loadState(dataToLoad.data);
+      }
   }
 
   generatePassword() {
@@ -93,5 +109,39 @@ export class PasswordGeneratorComponent {
       this.copyButtonText.set('Copiado!');
       setTimeout(() => this.copyButtonText.set('Copiar'), 2000);
     });
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar estas configurações de senha:', `Config de Senha - ${new Date().toLocaleDateString()}`);
+    if (title) {
+      const state = {
+        length: this.length(),
+        includeUppercase: this.includeUppercase(),
+        includeLowercase: this.includeLowercase(),
+        includeNumbers: this.includeNumbers(),
+        includeSymbols: this.includeSymbols(),
+      };
+      try {
+        await this.userDataService.saveData('password-generator', title, state);
+        alert('Configurações salvas com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar as configurações.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.length.set(state.length ?? 24);
+    this.includeUppercase.set(state.includeUppercase ?? true);
+    this.includeLowercase.set(state.includeLowercase ?? true);
+    this.includeNumbers.set(state.includeNumbers ?? true);
+    this.includeSymbols.set(state.includeSymbols ?? true);
+    this.generatePassword();
   }
 }

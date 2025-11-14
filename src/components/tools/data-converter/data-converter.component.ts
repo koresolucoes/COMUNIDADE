@@ -1,6 +1,10 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 declare var jsyaml: any; // Declarado para a biblioteca js-yaml carregada globalmente
 
@@ -9,12 +13,17 @@ type DataFormat = 'json' | 'xml' | 'csv' | 'yaml';
 @Component({
   selector: 'app-data-converter',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './data-converter.component.html',
   styleUrls: ['./data-converter.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DataConverterComponent {
+export class DataConverterComponent implements OnInit {
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+
   inputFormat = signal<DataFormat>('json');
   outputFormat = signal<DataFormat>('yaml');
   inputText = signal('{\n  "id": 1,\n  "nome": "Produto A",\n  "tags": ["novo", "em-estoque"]\n}');
@@ -22,6 +31,13 @@ export class DataConverterComponent {
   error = signal<string | null>(null);
   copyButtonText = signal('Copiar');
   isProcessing = signal(false);
+
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'data-converter') {
+        this.loadState(dataToLoad.data);
+      }
+  }
 
   convert() {
     this.error.set(null);
@@ -257,5 +273,39 @@ export class DataConverterComponent {
       this.copyButtonText.set('Copiado!');
       setTimeout(() => this.copyButtonText.set('Copiar'), 2000);
     });
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+     if (!this.inputText()) {
+      alert('O campo de entrada não pode estar vazio para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar esta conversão:', `Conversão ${this.inputFormat()} > ${this.outputFormat()}`);
+    if (title) {
+      const state = {
+        inputText: this.inputText(),
+        inputFormat: this.inputFormat(),
+        outputFormat: this.outputFormat(),
+      };
+      try {
+        await this.userDataService.saveData('data-converter', title, state);
+        alert('Dados salvos com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar os dados.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.inputText.set(state.inputText ?? '');
+    this.inputFormat.set(state.inputFormat ?? 'json');
+    this.outputFormat.set(state.outputFormat ?? 'yaml');
+    this.convert();
   }
 }

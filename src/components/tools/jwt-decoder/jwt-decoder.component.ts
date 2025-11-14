@@ -1,15 +1,25 @@
-import { Component, ChangeDetectionStrategy, signal, effect, computed } from '@angular/core';
+// Fix: Import `computed` from `@angular/core`.
+import { Component, ChangeDetectionStrategy, signal, effect, inject, OnInit, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 @Component({
   selector: 'app-jwt-decoder',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './jwt-decoder.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JwtDecoderComponent {
+export class JwtDecoderComponent implements OnInit {
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+
   encodedToken = signal('');
   header = signal('');
   payload = signal('');
@@ -81,6 +91,13 @@ try {
   constructor() {
     effect(() => this.decodeToken(this.encodedToken()));
   }
+  
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'jwt-decoder') {
+        this.loadState(dataToLoad.data);
+      }
+  }
 
   private decodeToken(token: string) {
     this.header.set('');
@@ -125,5 +142,34 @@ try {
 
   copyCodeSnippet(content: string) {
     navigator.clipboard.writeText(content);
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+     if (!this.encodedToken() || this.error()) {
+      alert('O token JWT precisa ser válido para ser salvo.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar este token JWT:', `Token ${new Date().toLocaleDateString()}`);
+    if (title) {
+      const state = {
+        encodedToken: this.encodedToken(),
+      };
+      try {
+        await this.userDataService.saveData('jwt-decoder', title, state);
+        alert('Token JWT salvo com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar o token.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.encodedToken.set(state.encodedToken ?? '');
   }
 }

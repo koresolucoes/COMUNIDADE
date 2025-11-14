@@ -1,13 +1,17 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 type CodecMode = 'text' | 'file';
 
 @Component({
   selector: 'app-base64-codec',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './base64-codec.component.html',
   styles: [`
     #encryption-toggle:checked ~ .dot {
@@ -20,7 +24,12 @@ type CodecMode = 'text' | 'file';
   `],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class Base64CodecComponent {
+export class Base64CodecComponent implements OnInit {
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+
   // --- Mode and Input State ---
   codecMode = signal<CodecMode>('text');
   inputText = signal('');
@@ -59,6 +68,13 @@ export class Base64CodecComponent {
   javascriptEncryptionSnippet = computed(() => `...`); // Snippet content unchanged, can be omitted for brevity
   pythonBase64Snippet = computed(() => `...`); // Snippet content unchanged, can be omitted for brevity
   javascriptBase64Snippet = computed(() => `...`); // Snippet content unchanged, can be omitted for brevity
+
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'base64-codec') {
+        this.loadState(dataToLoad.data);
+      }
+  }
   
   // --- Web Crypto API Helpers ---
 
@@ -313,5 +329,36 @@ export class Base64CodecComponent {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar esta configuração:', `Base64 - ${new Date().toLocaleDateString()}`);
+    if (title) {
+      const state = {
+        inputText: this.inputText(),
+        codecMode: this.codecMode(),
+        isEncryptionEnabled: this.isEncryptionEnabled(),
+        selectedCharset: this.selectedCharset(),
+      };
+      try {
+        await this.userDataService.saveData('base64-codec', title, state);
+        alert('Configuração salva com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar a configuração.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.inputText.set(state.inputText ?? '');
+    this.codecMode.set(state.codecMode ?? 'text');
+    this.isEncryptionEnabled.set(state.isEncryptionEnabled ?? false);
+    this.selectedCharset.set(state.selectedCharset ?? 'UTF-8');
   }
 }

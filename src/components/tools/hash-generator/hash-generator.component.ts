@@ -1,15 +1,24 @@
-import { Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, effect, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 @Component({
   selector: 'app-hash-generator',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './hash-generator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HashGeneratorComponent {
+export class HashGeneratorComponent implements OnInit {
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+
   inputText = signal('');
   isProcessing = signal(false);
 
@@ -21,6 +30,13 @@ export class HashGeneratorComponent {
     effect(() => {
       this.calculateHashes(this.inputText());
     }, { allowSignalWrites: true });
+  }
+
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'hash-generator') {
+        this.loadState(dataToLoad.data);
+      }
   }
 
   private async calculateHashes(text: string) {
@@ -275,5 +291,34 @@ export class HashGeneratorComponent {
       d = addUnsigned(d, DD);
     }
     return (wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d)).toLowerCase();
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    if (!this.inputText()) {
+      alert('O campo de entrada não pode estar vazio para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar este texto:', `Hash - ${new Date().toLocaleDateString()}`);
+    if (title) {
+      const state = {
+        inputText: this.inputText(),
+      };
+      try {
+        await this.userDataService.saveData('hash-generator', title, state);
+        alert('Texto salvo com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar o texto.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.inputText.set(state.inputText ?? '');
   }
 }

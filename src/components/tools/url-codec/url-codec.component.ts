@@ -1,15 +1,24 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 @Component({
   selector: 'app-url-codec',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './url-codec.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UrlCodecComponent {
+export class UrlCodecComponent implements OnInit {
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+
   inputText = signal('');
   outputText = signal('');
   error = signal<string | null>(null);
@@ -73,6 +82,13 @@ console.log(\`\\nURL Codificada: \${encodedUrl}\`);
 console.log(\`URL Decodificada: \${decodedUrl}\`);
 `);
 
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'url-codec') {
+        this.loadState(dataToLoad.data);
+      }
+  }
+
   encode() {
     this.error.set(null);
     try {
@@ -107,5 +123,34 @@ console.log(\`URL Decodificada: \${decodedUrl}\`);
   
   copyCodeSnippet(content: string) {
     navigator.clipboard.writeText(content);
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    if (!this.inputText()) {
+      alert('O campo de entrada não pode estar vazio para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar este texto:', `URL Codec - ${new Date().toLocaleDateString()}`);
+    if (title) {
+      const state = {
+        inputText: this.inputText(),
+      };
+      try {
+        await this.userDataService.saveData('url-codec', title, state);
+        alert('Texto salvo com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar o texto.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.inputText.set(state.inputText ?? '');
   }
 }

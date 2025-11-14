@@ -1,6 +1,10 @@
-import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, computed, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MockDataService, DataType } from '../../../services/mock-data.service';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
 interface SchemaField {
   id: number;
@@ -11,12 +15,16 @@ interface SchemaField {
 @Component({
   selector: 'app-mock-data-generator',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './mock-data-generator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MockDataGeneratorComponent {
+export class MockDataGeneratorComponent implements OnInit {
   private mockDataService = inject(MockDataService);
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
   
   schemaFields = signal<SchemaField[]>([
     { id: 1, key: 'id', type: 'id.uuid' },
@@ -41,6 +49,13 @@ export class MockDataGeneratorComponent {
   });
   
   private nextId = 4;
+
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'mock-data-generator') {
+        this.loadState(dataToLoad.data);
+      }
+  }
 
   addField() {
     this.schemaFields.update(fields => [
@@ -84,5 +99,38 @@ export class MockDataGeneratorComponent {
       this.copyButtonText.set('Copiado!');
       setTimeout(() => this.copyButtonText.set('Copiar'), 2000);
     });
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar este schema:', `Schema - ${new Date().toLocaleDateString()}`);
+    if (title) {
+      const state = {
+        schemaFields: this.schemaFields(),
+        recordCount: this.recordCount(),
+      };
+      try {
+        await this.userDataService.saveData('mock-data-generator', title, state);
+        alert('Schema salvo com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar o schema.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.schemaFields.set(state.schemaFields ?? [
+      { id: 1, key: 'id', type: 'id.uuid' },
+      { id: 2, key: 'name', type: 'person.fullName' },
+      { id: 3, key: 'email', type: 'internet.email' },
+    ]);
+    this.recordCount.set(state.recordCount ?? 10);
+    this.nextId = (this.schemaFields()?.length > 0 ? Math.max(...this.schemaFields().map(f => f.id)) : 0) + 1;
+    this.generateData();
   }
 }
