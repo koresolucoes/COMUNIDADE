@@ -58,6 +58,7 @@ export class CommandPaletteComponent {
       { name: 'Testador de Regex', section: 'Ferramentas', action: () => this.navigate('/tools/testador-regex'), icon: 'spellcheck' },
       { name: 'Gerador de Dados Falsos', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-dados-falsos'), icon: 'fact_check' },
       { name: 'Construtor Docker-Compose', section: 'Ferramentas', action: () => this.navigate('/tools/docker-compose-generator'), icon: 'build_circle' },
+      { name: 'Publicador de Blog', section: 'Ferramentas', action: () => this.navigate('/tools/publicador-blog'), icon: 'post_add' },
       { name: 'Codec de URL', section: 'Ferramentas', action: () => this.navigate('/tools/url-codec'), icon: 'link' },
       { name: 'Codec Base64', section: 'Ferramentas', action: () => this.navigate('/tools/base64-codec'), icon: 'password' },
       { name: 'Decoder de JWT', section: 'Ferramentas', action: () => this.navigate('/tools/jwt-decoder'), icon: 'vpn_key' },

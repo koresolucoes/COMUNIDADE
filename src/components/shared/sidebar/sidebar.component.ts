@@ -62,6 +62,7 @@ export class SidebarComponent {
         { path: '/tools/testador-regex', label: 'Testador Regex' },
         { path: '/tools/gerador-dados-falsos', label: 'Gerador de Dados' },
         { path: '/tools/docker-compose-generator', label: 'Construtor Docker-Compose' },
+        { path: '/tools/publicador-blog', label: 'Publicador de Blog' },
         { isCategory: true, label: 'Dados & Formatação' },
         { path: '/tools/formatador-json', label: 'Formatador JSON' },
         { path: '/tools/timestamp-converter', label: 'Conversor Timestamp' },

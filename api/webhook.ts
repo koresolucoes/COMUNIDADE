@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 // This is a Vercel serverless function to handle webhook testing for the Node.js runtime.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';

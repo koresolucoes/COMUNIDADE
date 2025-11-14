@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 // This is a Vercel serverless function for the Node.js runtime to manage blog posts.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
