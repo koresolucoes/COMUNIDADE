@@ -4,7 +4,7 @@ export const portainerService: ServiceDefinition = {
   id: 'portainer',
   name: 'Portainer',
   description: 'UI para gerenciamento de Docker.',
-  logo: 'portainer.svg',
+  logo: 'https://i.imgur.com/B6PBEZu.png',
   expose: true,
   
   defaultConfig: {

@@ -4,7 +4,9 @@ export const nginxService: ServiceDefinition = {
   id: 'nginx',
   name: 'Nginx',
   description: 'Servidor web e reverse proxy.',
-  logo: 'nginx.svg',
+  logo: 'https://i.imgur.com/ctIGOQu.png',
+  logoWidth: 40,
+  logoHeight: 11,
   expose: true,
   
   defaultConfig: {

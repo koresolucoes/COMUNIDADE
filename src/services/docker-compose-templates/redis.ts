@@ -4,7 +4,9 @@ export const redisService: ServiceDefinition = {
   id: 'redis',
   name: 'Redis',
   description: 'Banco de dados em memória.',
-  logo: 'redis.svg',
+  logo: 'https://i.imgur.com/WxO5tN0.png',
+  logoWidth: 40,
+  logoHeight: 34,
   expose: false,
   
   defaultConfig: {

@@ -12,8 +12,12 @@
         @for(service of availableServices; track service.id) {
           <label class="flex flex-col items-center justify-center p-3 bg-gray-900 border-2 rounded-lg cursor-pointer hover:bg-gray-800 transition-colors" [class.border-blue-accent]="stateService.selectedServices()[service.id]" [class.border-gray-700]="!stateService.selectedServices()[service.id]">
             <input type="checkbox" class="sr-only" [checked]="stateService.selectedServices()[service.id]" (change)="toggleService(service.id, $event)">
-            <!-- Simple placeholder for logo -->
-            <div class="w-10 h-10 bg-gray-700 rounded-full mb-2 flex items-center justify-center text-white font-bold">{{ service.name.substring(0,1) }}</div>
+            <img 
+              [ngSrc]="service.logo" 
+              [alt]="service.name + ' logo'" 
+              [width]="service.logoWidth || 40" 
+              [height]="service.logoHeight || 40" 
+              class="w-10 h-10 object-contain mb-2">
             <span class="text-sm text-center font-medium text-gray-300">{{ service.name }}</span>
           </label>
         }
@@ -72,7 +76,7 @@
                       } @else if (isStringArray(config[key])) {
                         <!-- Volumes, Commands, Networks etc. -->
                         <div class="space-y-2">
-                          @for(item of config[key]; track i; let i = $index) {
+                          @for(item of config[key]; track $index; let i = $index) {
                             <div class="flex items-center gap-2">
                               <input type="text" class="flex-1 w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="item" (change)="stateService.updateConfigValue(serviceId, [key, i], $any($event.target).value)">
                               <button (click)="stateService.removeArrayItem(serviceId, key, i)" class="p-1 text-gray-500 hover:text-red-400 rounded-full hover:bg-gray-600">
@@ -84,7 +88,7 @@
                         </div>
                       } @else if (isArrayOfObjects(config[key])) {
                         <!-- Ports -->
-                         @for(port of config[key]; track port; let i = $index) {
+                         @for(port of config[key]; track $index; let i = $index) {
                             <div class="grid grid-cols-3 gap-2 items-center mb-2">
                                <input type="number" placeholder="Target" class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="port.target" (change)="stateService.updateConfigValue(serviceId, [key, i, 'target'], +$any($event.target).value)">
                                <input type="number" placeholder="Published" class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-1.5 text-sm font-mono" [value]="port.published" (change)="stateService.updateConfigValue(serviceId, [key, i, 'published'], +$any($event.target).value)">

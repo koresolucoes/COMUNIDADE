@@ -2,13 +2,14 @@ import { Component, ChangeDetectionStrategy, signal, computed, inject } from '@a
 import { FormsModule } from '@angular/forms';
 import { DockerComposeService, AvailableService } from '../../../services/docker-compose.service';
 import { DockerComposeGeneratorStateService } from '../../../services/docker-compose-generator-state.service';
+import { NgOptimizedImage } from '@angular/common';
 
 declare var jsyaml: any;
 
 @Component({
   selector: 'app-docker-compose-generator',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, NgOptimizedImage],
   templateUrl: './docker-compose-generator.component.html',
   styleUrl: './docker-compose-generator.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

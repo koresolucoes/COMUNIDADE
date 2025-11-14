@@ -4,7 +4,9 @@ export const traefikService: ServiceDefinition = {
   id: 'traefik',
   name: 'Traefik',
   description: 'Reverse proxy e load balancer.',
-  logo: 'traefik.svg',
+  logo: 'https://i.imgur.com/EHY5bnn.png',
+  logoWidth: 34,
+  logoHeight: 40,
   expose: false,
   
   defaultConfig: {

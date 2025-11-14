@@ -62,7 +62,7 @@
             </tr>
           </thead>
           <tbody class="text-gray-300">
-            @for(record of res; track record) {
+            @for(record of res; track $index) {
               <tr class="border-t border-gray-800">
                 <td class="p-3 font-mono">{{ record.name }}</td>
                 <td class="p-3 font-mono">{{ record.TTL }}</td>

@@ -4,7 +4,9 @@ export const chatwootService: ServiceDefinition = {
   id: 'chatwoot',
   name: 'Chatwoot',
   description: 'Plataforma de atendimento ao cliente.',
-  logo: 'chatwoot.svg',
+  logo: 'https://i.imgur.com/z6xl8ay.png',
+  logoWidth: 40,
+  logoHeight: 22,
   expose: true,
 
   defaultConfig: {

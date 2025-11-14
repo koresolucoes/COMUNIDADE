@@ -33,6 +33,10 @@ export interface ServiceDefinition {
   description: string;
   // Filename of the logo (e.g., 'n8n.svg').
   logo: string;
+  // Optional width of the logo to maintain aspect ratio.
+  logoWidth?: number;
+  // Optional height of the logo to maintain aspect ratio.
+  logoHeight?: number;
   // Whether this service is designed to be exposed via a reverse proxy like Traefik.
   expose: boolean;
   

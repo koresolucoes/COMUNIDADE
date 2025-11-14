@@ -4,7 +4,9 @@ export const postgresService: ServiceDefinition = {
   id: 'postgres',
   name: 'PostgreSQL',
   description: 'Banco de dados relacional open-source.',
-  logo: 'postgres.svg',
+  logo: 'https://i.imgur.com/VvZrojK.png',
+  logoWidth: 37,
+  logoHeight: 40,
   expose: false,
   
   defaultConfig: {

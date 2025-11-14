@@ -4,7 +4,7 @@ export const n8nService: ServiceDefinition = {
   id: 'n8n',
   name: 'n8n',
   description: 'Plataforma de automação de workflows.',
-  logo: 'n8n.svg',
+  logo: 'https://i.imgur.com/1irkLDl.png',
   expose: true,
   
   defaultConfig: {

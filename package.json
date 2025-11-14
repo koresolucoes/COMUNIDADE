@@ -20,9 +20,9 @@
     "recast": "^0.23.11",
     "ast-types": "^0.14.2",
     "esprima-next": "^6.0.3",
+    "@angular/common": "^20.3.0",
     "@angular/build": "^20.3.0",
     "@angular/cli": "^20.3.0",
-    "@angular/common": "^20.3.0",
     "@angular/compiler-cli": "^20.3.0",
     "tailwindcss": "latest"
   },

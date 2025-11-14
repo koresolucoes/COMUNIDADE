@@ -4,7 +4,7 @@ export const evolutionService: ServiceDefinition = {
   id: 'evolution',
   name: 'Evolution API',
   description: 'API para WhatsApp.',
-  logo: 'evolution.svg',
+  logo: 'https://i.imgur.com/c5whdak.png',
   expose: true,
   
   defaultConfig: {

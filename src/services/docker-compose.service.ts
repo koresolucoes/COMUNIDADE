@@ -7,6 +7,8 @@ export interface AvailableService {
   name: string;
   description: string;
   logo: string;
+  logoWidth?: number;
+  logoHeight?: number;
   expose: boolean;
 }
 
@@ -20,8 +22,8 @@ export class DockerComposeService {
   );
   
   getAvailableServices(): AvailableService[] {
-    return ALL_SERVICES.map(({ id, name, description, logo, expose }) => ({
-      id, name, description, logo, expose
+    return ALL_SERVICES.map(({ id, name, description, logo, expose, logoWidth, logoHeight }) => ({
+      id, name, description, logo, expose, logoWidth, logoHeight
     }));
   }
   
