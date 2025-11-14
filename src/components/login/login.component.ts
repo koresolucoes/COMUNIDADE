@@ -11,7 +11,6 @@ import { AuthService } from '../../services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LoginComponent implements OnInit {
-  private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
@@ -19,7 +18,8 @@ export class LoginComponent implements OnInit {
   errorMessage = signal<string | null>(null);
   currentUser = this.authService.currentUser;
 
-  loginForm = this.fb.group({
+  // FIX: Use inject(FormBuilder) directly to initialize the form group, avoiding potential issues with `this` context during property initialization.
+  loginForm = inject(FormBuilder).group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });

@@ -1,12 +1,66 @@
 import { Injectable, signal } from '@angular/core';
 
+export type ContentSection =
+  | IntroductionSection
+  | TextBlockSection
+  | ImageSection
+  | CodeBlockSection
+  | TipCardSection
+  | AdSection
+  | TopicsSection;
+
+export interface SectionBase {
+  type: string;
+}
+
+export interface IntroductionSection extends SectionBase {
+  type: 'introduction';
+  text: string;
+}
+
+export interface TextBlockSection extends SectionBase {
+  type: 'textBlock';
+  title?: string;
+  text: string;
+}
+
+export interface ImageSection extends SectionBase {
+  type: 'image';
+  src: string;
+  caption?: string;
+}
+
+export interface CodeBlockSection extends SectionBase {
+  type: 'codeBlock';
+  language: string;
+  code: string;
+}
+
+export interface TipCardSection extends SectionBase {
+  type: 'tipCard';
+  title: string;
+  text: string;
+  variant: 'tip' | 'note' | 'curiosity';
+}
+
+export interface AdSection extends SectionBase {
+  type: 'ad';
+  slotId: string;
+}
+
+export interface TopicsSection extends SectionBase {
+  type: 'topics';
+  title: string;
+  items: string[];
+}
+
 export interface BlogPost {
   slug: string;
   title: string;
   author: string;
   date: string;
   summary: string;
-  content: string; // HTML content
+  content: ContentSection[]; // HTML content
 }
 
 @Injectable({

@@ -1,4 +1,3 @@
-
 // This is a Vercel serverless function for the Node.js runtime to manage blog posts.
 import { createClient } from '@supabase/supabase-js';
 
@@ -120,6 +119,11 @@ const handlePost = async (req: any, res: any) => {
         if (!title || !author || !summary || !content) {
             res.statusCode = 400;
             return res.end(JSON.stringify({ error: 'Campos title, author, summary e content são obrigatórios.' }));
+        }
+
+        if (!Array.isArray(content)) {
+            res.statusCode = 400;
+            return res.end(JSON.stringify({ error: 'O campo "content" deve ser um array de seções.' }));
         }
 
         const slug = slugify(title) + '-' + Date.now().toString(36);

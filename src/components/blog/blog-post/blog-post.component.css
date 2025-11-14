@@ -47,23 +47,27 @@
   @apply border-l-4 border-gray-700 pl-4 italic text-gray-400 my-8;
 }
 
-:host ::ng-deep .prose-container pre {
-  @apply bg-gray-900 border border-gray-800 rounded-lg p-4 my-8 overflow-x-auto text-sm;
-}
-
-:host ::ng-deep .prose-container pre code {
-  @apply bg-transparent text-gray-300 p-0 font-normal;
-}
-
 :host ::ng-deep .prose-container p > code,
 :host ::ng-deep .prose-container li > code {
   @apply font-mono bg-gray-800 text-cyan-300 text-sm px-1.5 py-1 rounded;
 }
 
-:host ::ng-deep .prose-container img {
-  @apply rounded-lg my-8 mx-auto block max-w-full h-auto;
-}
-
 :host ::ng-deep .prose-container hr {
   @apply border-gray-800 my-12;
+}
+
+/* Card Animations */
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+:host .card-animate {
+  animation: slide-in-up 0.5s ease-out forwards;
 }
