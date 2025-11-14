@@ -124,11 +124,6 @@ export class ToolsIndexComponent {
           name: 'Construtor Docker-Compose',
           description: 'Crie arquivos docker-compose.yml visualmente com templates para serviços populares.',
           link: '/tools/docker-compose-generator'
-        },
-        {
-          name: 'Publicador de Blog via API',
-          description: 'Crie e publique novos posts no blog através de uma interface simples.',
-          link: '/tools/publicador-blog'
         }
       ]
     },
