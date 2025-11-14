@@ -1,0 +1,9 @@
+.highlight {
+  @apply bg-blue-accent/30 rounded;
+}
+
+/* Make material icons align better with text */
+.material-icons-outlined.align-middle {
+    vertical-align: middle;
+    line-height: 1;
+}

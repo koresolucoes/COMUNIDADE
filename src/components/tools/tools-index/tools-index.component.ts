@@ -65,6 +65,32 @@ export class ToolsIndexComponent {
         }
       ]
     },
+     {
+      name: 'Rede & DevOps-Lite',
+      icon: 'public',
+      tools: [
+        { 
+          name: 'Qual é o meu IP?', 
+          description: 'Mostra seu IP público e as informações do seu navegador (User-Agent).',
+          link: '/tools/meu-ip' 
+        },
+        {
+          name: 'Cliente REST (Mini-Postman)',
+          description: 'Faça requisições HTTP (GET, POST, etc) para uma URL e inspecione a resposta.',
+          link: '/tools/cliente-rest'
+        },
+        {
+          name: 'Verificador de DNS',
+          description: 'Veja os registros DNS (A, CNAME, MX, TXT) de qualquer domínio.',
+          link: '/tools/verificador-dns'
+        },
+        { 
+          name: 'Testador de Webhook', 
+          description: 'Receba e inspecione payloads de webhooks em tempo real.',
+          link: '/tools/webhook-tester'
+        },
+      ]
+    },
     {
       name: 'Automação & DevOps',
       icon: 'lan',
@@ -79,11 +105,16 @@ export class ToolsIndexComponent {
           description: 'Teste expressões n8n em um ambiente com dados mockados.',
           link: '/tools/n8n-expression-simulator'
         },
-        { 
-          name: 'Testador de Webhook', 
-          description: 'Receba e inspecione payloads de webhooks em tempo real.',
-          link: '/tools/webhook-tester'
+        {
+          name: 'Testador de Regex',
+          description: 'Valide expressões regulares e visualize matches e grupos em tempo real.',
+          link: '/tools/testador-regex'
         },
+        {
+          name: 'Gerador de Dados Falsos',
+          description: 'Gere dados mock (JSON) para testar seus workflows e APIs.',
+          link: '/tools/gerador-dados-falsos'
+        }
       ]
     },
     {

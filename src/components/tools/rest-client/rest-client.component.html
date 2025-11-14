@@ -1,0 +1,119 @@
+<div class="space-y-6 h-full flex flex-col">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Cliente REST (Mini-Postman)</h1>
+    <p class="mt-2 text-gray-400">Faça requisições HTTP para uma URL, adicione headers e veja a resposta completa.</p>
+  </div>
+
+  <!-- Request Panel -->
+  <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+    <div class="flex items-center gap-2">
+      <select [ngModel]="method()" (ngModelChange)="method.set($event)" class="bg-gray-800 border-gray-700 text-white rounded-md p-2.5 focus:ring-blue-accent focus:border-blue-accent font-semibold">
+        <option>GET</option>
+        <option>POST</option>
+        <option>PUT</option>
+        <option>PATCH</option>
+        <option>DELETE</option>
+        <option>HEAD</option>
+        <option>OPTIONS</option>
+      </select>
+      <input 
+        type="text" 
+        [ngModel]="url()"
+        (ngModelChange)="url.set($event)"
+        class="flex-1 bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent font-mono" 
+        placeholder="https://api.example.com/data">
+      <button (click)="sendRequest()" [disabled]="loading() || !url()" class="px-6 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        @if(loading()) {
+          <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Enviando</span>
+        } @else {
+          <span class="material-icons-outlined text-base">send</span>
+          <span>Enviar</span>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Request Body/Headers Panel -->
+  <div class="flex flex-col flex-grow min-h-0">
+    <div class="flex border-b border-gray-700">
+      <button (click)="activeTab.set('headers')" [class.bg-gray-800]="activeTab() === 'headers'" class="px-4 py-2 text-sm font-medium" [class.text-white]="activeTab() === 'headers'" [class.text-gray-400]="activeTab() !== 'headers'">Headers</button>
+      <button (click)="activeTab.set('body')" [class.bg-gray-800]="activeTab() === 'body'" class="px-4 py-2 text-sm font-medium" [class.text-white]="activeTab() === 'body'" [class.text-gray-400]="activeTab() !== 'body'">Body</button>
+    </div>
+    <div class="bg-gray-800 rounded-b-md p-4 flex-grow min-h-[200px]">
+      @switch (activeTab()) {
+        @case ('headers') {
+          <div class="space-y-2">
+            @for(header of headers(); track header.id) {
+              <div class="flex items-center gap-2">
+                <input type="checkbox" class="h-4 w-4 rounded bg-gray-700 border-gray-600 text-blue-accent focus:ring-blue-accent" [checked]="header.enabled" (change)="updateHeader(header.id, 'enabled', $any($event.target).checked)">
+                <input type="text" [ngModel]="header.key" (ngModelChange)="updateHeader(header.id, 'key', $event)" class="flex-1 bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm" placeholder="Key">
+                <input type="text" [ngModel]="header.value" (ngModelChange)="updateHeader(header.id, 'value', $event)" class="flex-1 bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm" placeholder="Value">
+                <button (click)="removeHeader(header.id)" class="p-2 text-gray-500 hover:text-red-400 rounded-full hover:bg-gray-700">
+                  <span class="material-icons-outlined text-base">delete</span>
+                </button>
+              </div>
+            }
+            <button (click)="addHeader()" class="text-sm text-blue-accent hover:underline mt-2">+ Adicionar Header</button>
+          </div>
+        }
+        @case ('body') {
+          <textarea [disabled]="method() === 'GET' || method() === 'HEAD'" class="w-full h-full min-h-[160px] bg-gray-900 border-gray-700 font-mono text-gray-300 rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent resize-y disabled:opacity-50" [ngModel]="body()" (ngModelChange)="body.set($event)"></textarea>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Response Panel -->
+  <div class="flex flex-col flex-grow min-h-0">
+    <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-semibold text-white">Resposta</h2>
+        @if(response(); as res) {
+          <div class="flex items-center gap-4 text-sm">
+            <span>Status: <strong [class.text-green-accent]="res.status && res.status >= 200 && res.status < 300" [class.text-red-400]="res.status && res.status >= 400">{{res.status}} {{res.statusText}}</strong></span>
+            <span>Tempo: <strong class="text-blue-accent">{{res.time}} ms</strong></span>
+          </div>
+        }
+    </div>
+    @if(error()) {
+        <div class="p-4 bg-red-900/50 border border-red-500/50 text-red-300 rounded-lg flex-grow flex items-center justify-center">
+            {{ error() }}
+        </div>
+    } @else if (!response() && !loading()) {
+        <div class="bg-gray-800 rounded-md p-4 flex-grow flex items-center justify-center text-gray-500">
+            Clique em "Enviar" para fazer uma requisição
+        </div>
+    } @else if (loading()) {
+        <div class="bg-gray-800 rounded-md p-4 flex-grow flex items-center justify-center text-gray-400">
+            Carregando...
+        </div>
+    } @else if (response(); as res) {
+        <div class="flex flex-col flex-grow min-h-0">
+            <div class="flex border-b border-gray-700">
+                <button (click)="responseTab.set('body')" [class.bg-gray-900]="responseTab() === 'body'" class="px-4 py-2 text-sm font-medium" [class.text-white]="responseTab() === 'body'" [class.text-gray-400]="responseTab() !== 'body'">Body</button>
+                <button (click)="responseTab.set('headers')" [class.bg-gray-900]="responseTab() === 'headers'" class="px-4 py-2 text-sm font-medium" [class.text-white]="responseTab() === 'headers'" [class.text-gray-400]="responseTab() !== 'headers'">Headers</button>
+            </div>
+            <div class="bg-gray-900 rounded-b-md p-4 flex-grow overflow-auto min-h-[200px]">
+                @if (responseTab() === 'body') {
+                    <pre><code class="text-sm">{{ res.body }}</code></pre>
+                } @else {
+                    <table class="w-full text-sm">
+                        <tbody>
+                            @for(header of res.headers; track header[0]) {
+                                <tr class="border-b border-gray-800">
+                                    <td class="p-2 font-semibold text-gray-300">{{ header[0] }}</td>
+                                    <td class="p-2 text-gray-400">{{ header[1] }}</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    }
+  </div>
+
+</div>

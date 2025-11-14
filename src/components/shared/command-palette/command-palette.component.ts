@@ -54,6 +54,8 @@ export class CommandPaletteComponent {
       { name: 'Gerador de CRON', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-cron'), icon: 'schedule' },
       { name: 'Formatador de JSON', section: 'Ferramentas', action: () => this.navigate('/tools/formatador-json'), icon: 'data_object' },
       { name: 'Simulador de Expressão n8n', section: 'Ferramentas', action: () => this.navigate('/tools/n8n-expression-simulator'), icon: 'play_circle' },
+      { name: 'Testador de Regex', section: 'Ferramentas', action: () => this.navigate('/tools/testador-regex'), icon: 'spellcheck' },
+      { name: 'Gerador de Dados Falsos', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-dados-falsos'), icon: 'fact_check' },
       { name: 'Codec de URL', section: 'Ferramentas', action: () => this.navigate('/tools/url-codec'), icon: 'link' },
       { name: 'Codec Base64', section: 'Ferramentas', action: () => this.navigate('/tools/base64-codec'), icon: 'password' },
       { name: 'Decoder de JWT', section: 'Ferramentas', action: () => this.navigate('/tools/jwt-decoder'), icon: 'vpn_key' },
@@ -62,6 +64,10 @@ export class CommandPaletteComponent {
       { name: 'Gerador de Hash', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-hash'), icon: 'fingerprint' },
       { name: 'Gerador de Senhas', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-senha'), icon: 'key' },
       { name: 'Gerador de UUID', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-uuid'), icon: 'tag' },
+      { name: 'Qual é o meu IP?', section: 'Ferramentas', action: () => this.navigate('/tools/meu-ip'), icon: 'location_on' },
+      { name: 'Cliente REST', section: 'Ferramentas', action: () => this.navigate('/tools/cliente-rest'), icon: 'http' },
+      { name: 'Verificador de DNS', section: 'Ferramentas', action: () => this.navigate('/tools/verificador-dns'), icon: 'dns' },
+      { name: 'Testador de Webhook', section: 'Ferramentas', action: () => this.navigate('/tools/webhook-tester'), icon: 'webhook' },
     ]);
 
     effect(() => {

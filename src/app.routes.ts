@@ -13,6 +13,12 @@ import { DataConverterComponent } from './components/tools/data-converter/data-c
 import { HashGeneratorComponent } from './components/tools/hash-generator/hash-generator.component';
 import { PasswordGeneratorComponent } from './components/tools/password-generator/password-generator.component';
 import { UuidGeneratorComponent } from './components/tools/uuid-generator/uuid-generator.component';
+import { RegexTesterComponent } from './components/tools/regex-tester/regex-tester.component';
+import { MockDataGeneratorComponent } from './components/tools/mock-data-generator/mock-data-generator.component';
+import { WebhookTesterComponent } from './components/tools/webhook-tester/webhook-tester.component';
+import { MyIpComponent } from './components/tools/my-ip/my-ip.component';
+import { RestClientComponent } from './components/tools/rest-client/rest-client.component';
+import { DnsCheckerComponent } from './components/tools/dns-checker/dns-checker.component';
 
 export const APP_ROUTES: Routes = [
   { path: '', component: HomeComponent },
@@ -38,10 +44,11 @@ export const APP_ROUTES: Routes = [
   { path: 'tools/gerador-hash', component: HashGeneratorComponent },
   { path: 'tools/gerador-senha', component: PasswordGeneratorComponent },
   { path: 'tools/gerador-uuid', component: UuidGeneratorComponent },
-  { 
-    path: 'tools/webhook-tester',
-    component: PlaceholderComponent, 
-    data: { title: 'Testador de Webhook', message: 'Esta ferramenta está em desenvolvimento e estará disponível em breve.' } 
-  },
+  { path: 'tools/testador-regex', component: RegexTesterComponent },
+  { path: 'tools/gerador-dados-falsos', component: MockDataGeneratorComponent },
+  { path: 'tools/webhook-tester', component: WebhookTesterComponent },
+  { path: 'tools/meu-ip', component: MyIpComponent },
+  { path: 'tools/cliente-rest', component: RestClientComponent },
+  { path: 'tools/verificador-dns', component: DnsCheckerComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

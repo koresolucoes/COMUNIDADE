@@ -1,0 +1,53 @@
+<div class="space-y-8 max-w-3xl mx-auto">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white text-center">Qual é o meu IP?</h1>
+    <p class="mt-2 text-gray-400 text-center">Veja seu endereço de IP público e as informações do seu navegador (User-Agent).</p>
+  </div>
+  
+  @if(error()) {
+     <div class="p-4 bg-red-900/50 border border-red-500/50 text-red-300 rounded-lg text-center">
+        {{ error() }}
+      </div>
+  }
+
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg space-y-6">
+    <!-- IP Address -->
+    <div>
+      <label class="block text-sm font-medium text-gray-400 mb-2">Seu Endereço de IP Público</label>
+      <div class="relative">
+        <input 
+          type="text" 
+          readonly 
+          [value]="ipAddress()"
+          class="w-full bg-gray-800 border-gray-700 text-green-accent font-mono rounded-md p-4 pr-24 text-lg"
+          placeholder="Carregando...">
+        <button (click)="copyToClipboard(ipAddress(), 'ip')" class="absolute inset-y-0 right-0 flex items-center px-4 text-sm bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-r-md">
+          {{ ipCopyText() }}
+        </button>
+      </div>
+    </div>
+    
+    <!-- User Agent -->
+    <div>
+      <label class="block text-sm font-medium text-gray-400 mb-2">Seu User-Agent</label>
+      <div class="relative">
+        <textarea
+          readonly 
+          [value]="userAgent()"
+          class="w-full bg-gray-800 border-gray-700 text-cyan-300 font-mono rounded-md p-4 pr-24 text-sm resize-none h-24"
+          placeholder="Carregando...">
+        </textarea>
+        <button (click)="copyToClipboard(userAgent(), 'ua')" class="absolute top-2 right-2 flex items-center px-4 py-1.5 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-md">
+          {{ uaCopyText() }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button (click)="fetchIpInfo()" class="w-full px-4 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M4 20h5v-5M20 4h-5v5" />
+    </svg>
+    Atualizar
+  </button>
+</div>

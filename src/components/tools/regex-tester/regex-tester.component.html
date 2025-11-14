@@ -1,0 +1,178 @@
+<div class="space-y-6 h-full flex flex-col">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Testador de Regex</h1>
+    <p class="mt-2 text-gray-400">Construa, valide e veja os 'matches' e 'grupos' de suas expressões regulares em tempo real.</p>
+  </div>
+
+  <!-- Mode Toggle -->
+  <div class="flex items-center justify-center p-1 bg-gray-800 rounded-lg max-w-sm mx-auto">
+    <button (click)="mode.set('builder')" class="w-full py-2 text-sm font-semibold rounded-md transition-colors" [class.bg-blue-accent]="mode() === 'builder'" [class.text-white]="mode() === 'builder'" [class.text-gray-400]="mode() !== 'builder'">
+      <span class="material-icons-outlined align-middle text-base mr-1">auto_fix_high</span>
+      Construtor Mágico
+    </button>
+    <button (click)="mode.set('tester')" class="w-full py-2 text-sm font-semibold rounded-md transition-colors" [class.bg-blue-accent]="mode() === 'tester'" [class.text-white]="mode() === 'tester'" [class.text-gray-400]="mode() !== 'tester'">
+      <span class="material-icons-outlined align-middle text-base mr-1">edit</span>
+      Testador Manual
+    </button>
+  </div>
+
+  @if(mode() === 'builder') {
+    <div class="p-4 bg-gray-900 border border-gray-800 rounded-lg space-y-4">
+      <div class="flex items-center gap-2 p-1 bg-gray-800 rounded-md max-w-md">
+        <button (click)="builderMode.set('common')" [class.bg-blue-accent/80]="builderMode() === 'common'" class="flex-1 py-1.5 text-xs rounded-sm transition-colors text-white font-semibold">Padrão Comum</button>
+        <button (click)="builderMode.set('custom')" [class.bg-blue-accent/80]="builderMode() === 'custom'" class="flex-1 py-1.5 text-xs rounded-sm transition-colors text-white font-semibold">Padrão Customizado</button>
+      </div>
+
+      @if(builderMode() === 'common') {
+        <div class="flex items-center gap-4">
+          <label class="text-sm font-medium text-gray-300">Padrão:</label>
+          <select [ngModel]="selectedCommonPattern()" (ngModelChange)="selectedCommonPattern.set($event)" class="w-full max-w-sm bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
+            @for(pattern of commonPatterns.entries(); track pattern[0]) {
+              <option [value]="pattern[0]">{{ pattern[1].explanation }}</option>
+            }
+          </select>
+        </div>
+      } @else {
+        <div class="space-y-3">
+          @for(step of builderSteps(); track step.id) {
+            <div class="flex items-center gap-2 bg-gray-800 p-2 rounded-md border border-gray-700/50">
+              <!-- Type -->
+              <select [ngModel]="step.type" (ngModelChange)="updateStep(step.id, { type: $event })" class="bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm w-48">
+                <option value="text">O texto exato</option>
+                <option value="charClass">Um caractere que é</option>
+                <option value="anchor">Uma âncora</option>
+              </select>
+
+              <!-- Params -->
+              <div class="flex-1">
+                @switch(step.type) {
+                  @case('text') {
+                    <input type="text" [ngModel]="step.params.textValue" (ngModelChange)="updateStep(step.id, { textValue: $event })" class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm" placeholder="Digite o texto">
+                  }
+                  @case('charClass') {
+                    <select [ngModel]="step.params.charClass" (ngModelChange)="updateStep(step.id, { charClass: $event })" class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm">
+                      @for(cc of charClasses; track cc.id) { <option [value]="cc.id">{{ cc.name }}</option> }
+                    </select>
+                  }
+                  @case('anchor') {
+                     <select [ngModel]="step.params.anchorType" (ngModelChange)="updateStep(step.id, { anchorType: $event })" class="w-full bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm">
+                       <option value="start">Início da linha (^)</option>
+                       <option value="end">Fim da linha ($)</option>
+                    </select>
+                  }
+                }
+              </div>
+
+              <!-- Quantifier -->
+              @if(step.type !== 'anchor') {
+                <select [ngModel]="step.quantifier" (ngModelChange)="updateStep(step.id, { quantifier: $event })" class="bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm w-48">
+                  @for(q of quantifiers; track q.id) { <option [value]="q.id">{{ q.name }}</option> }
+                </select>
+
+                @if(step.quantifier === 'exact' || step.quantifier === 'range') {
+                  <input type="number" min="0" [ngModel]="step.params.quantifierValue1" (ngModelChange)="updateStep(step.id, { quantifierValue1: +$event })" class="w-16 bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm">
+                }
+                @if(step.quantifier === 'range') {
+                  <input type="number" min="0" [ngModel]="step.params.quantifierValue2" (ngModelChange)="updateStep(step.id, { quantifierValue2: +$event })" class="w-16 bg-gray-700 border-gray-600 text-white rounded-md p-2 text-sm">
+                }
+              }
+
+              <!-- Remove -->
+              <button (click)="removeStep(step.id)" class="p-2 text-gray-500 hover:text-red-400 rounded-full hover:bg-gray-700">
+                <span class="material-icons-outlined">delete</span>
+              </button>
+            </div>
+          }
+           <div class="flex gap-2 pt-2">
+            <button (click)="addStep('text')" class="flex-1 text-sm bg-gray-700/80 hover:bg-gray-700 text-gray-300 font-semibold px-3 py-2 rounded-md">+ Texto</button>
+            <button (click)="addStep('charClass')" class="flex-1 text-sm bg-gray-700/80 hover:bg-gray-700 text-gray-300 font-semibold px-3 py-2 rounded-md">+ Caractere</button>
+            <button (click)="addStep('anchor')" class="flex-1 text-sm bg-gray-700/80 hover:bg-gray-700 text-gray-300 font-semibold px-3 py-2 rounded-md">+ Âncora</button>
+          </div>
+        </div>
+      }
+      
+      <div class="pt-2">
+        <label class="block text-xs text-gray-400 mb-1">Explicação Gerada</label>
+        <div class="w-full bg-gray-800 border-gray-700 text-gray-300 rounded-md p-2 min-h-[40px] text-sm flex items-center">
+          {{ generatedFromBuilder().explanation }}
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Regex Input -->
+  <div class="flex flex-col space-y-4">
+    <label class="block text-sm font-medium text-gray-400">Expressão Regular</label>
+    <div class="flex items-center bg-gray-800 border border-gray-700 rounded-md focus-within:ring-2 focus-within:ring-blue-accent">
+      <span class="px-3 text-gray-500 text-lg">/</span>
+      <input 
+        type="text"
+        class="flex-grow bg-transparent font-mono text-gray-300 focus:outline-none"
+        placeholder="sua-expressao-aqui"
+        [ngModel]="regexPattern()"
+        (ngModelChange)="regexPattern.set($event)"
+        [readOnly]="mode() === 'builder'">
+      <span class="px-3 text-gray-500 text-lg">/</span>
+      <input 
+        type="text"
+        class="w-20 bg-gray-700/50 p-2 font-mono text-gray-300 focus:outline-none rounded-r-md"
+        placeholder="flags"
+        [ngModel]="regexFlags()"
+        (ngModelChange)="regexFlags.set($event)">
+    </div>
+    @if (result().error) {
+      <p class="text-sm text-red-400">{{ result().error }}</p>
+    }
+  </div>
+
+  <!-- Results -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-0">
+    <!-- Left Column: Test String -->
+    <div class="flex flex-col min-h-0">
+      <label class="block text-sm font-medium text-gray-400 mb-2">Texto de Amostra</label>
+      <div class="relative w-full h-full bg-gray-800 border border-gray-700 rounded-md p-4 font-mono text-gray-300 resize-y overflow-auto min-h-[200px]">
+        <textarea 
+          class="absolute inset-0 w-full h-full bg-transparent text-transparent caret-white resize-none p-4 font-mono focus:outline-none"
+          [ngModel]="testString()"
+          (ngModelChange)="testString.set($event)"
+          spellcheck="false">
+        </textarea>
+        <pre class="whitespace-pre-wrap" [innerHTML]="highlightedText() | safeHtml"></pre>
+      </div>
+    </div>
+    <!-- Right Column: Match Results -->
+    <div class="flex flex-col min-h-0">
+      <label class="block text-sm font-medium text-gray-400 mb-2">Resultados ({{ result().matches.length }} correspondências)</label>
+      <div class="w-full h-full bg-gray-900 border border-gray-700 rounded-md p-4 overflow-y-auto min-h-[200px]">
+        @if (result().matches.length > 0) {
+          <ul class="space-y-4">
+            @for (match of result().matches; track match.index) {
+              <li class="border-b border-gray-800 pb-3 last:border-b-0">
+                <div class="flex justify-between items-baseline">
+                  <span class="text-sm font-semibold bg-blue-accent/20 text-blue-300 px-2 py-1 rounded">Correspondência #{{ $index + 1 }}</span>
+                  <span class="text-xs text-gray-500">índice: {{ match.index }}</span>
+                </div>
+                <pre class="bg-gray-800 p-2 rounded mt-2 text-green-accent text-sm overflow-x-auto"><code>{{ match.value }}</code></pre>
+                @if (match.groups.length > 0) {
+                  <div class="mt-2">
+                    <h4 class="text-xs font-semibold text-gray-400 mb-1">Grupos de Captura:</h4>
+                    <ul class="space-y-1">
+                      @for (group of match.groups; track $index) {
+                        <li class="flex items-baseline gap-2">
+                          <span class="text-xs bg-gray-700 text-gray-400 rounded px-1.5 py-0.5">{{ $index + 1 }}</span>
+                          <pre class="text-cyan-300 text-sm"><code>{{ group }}</code></pre>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
+        } @else {
+          <p class="text-gray-500 text-center pt-8">Nenhuma correspondência encontrada.</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>
