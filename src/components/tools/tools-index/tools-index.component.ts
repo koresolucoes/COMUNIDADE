@@ -96,6 +96,11 @@ export class ToolsIndexComponent {
       icon: 'lan',
       tools: [
         { 
+          name: 'Gerenciador n8n',
+          description: 'Conecte-se à sua instância n8n para gerenciar workflows e execuções.',
+          link: '/tools/gerenciador-n8n'
+        },
+        { 
           name: 'Gerador de CRON', 
           description: 'Crie expressões CRON de forma visual e intuitiva.',
           link: '/tools/gerador-cron' 

@@ -1,0 +1,6 @@
+input:checked ~ .dot {
+    transform: translateX(1.5rem); /* 24px */
+}
+input:checked ~ .toggle-bg {
+  @apply bg-green-accent;
+}

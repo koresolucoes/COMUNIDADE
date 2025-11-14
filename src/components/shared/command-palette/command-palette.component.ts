@@ -54,6 +54,7 @@ export class CommandPaletteComponent {
       { name: 'Gerador de CRON', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-cron'), icon: 'schedule' },
       { name: 'Formatador de JSON', section: 'Ferramentas', action: () => this.navigate('/tools/formatador-json'), icon: 'data_object' },
       { name: 'Simulador de Expressão n8n', section: 'Ferramentas', action: () => this.navigate('/tools/n8n-expression-simulator'), icon: 'play_circle' },
+      { name: 'Gerenciador n8n', section: 'Ferramentas', action: () => this.navigate('/tools/gerenciador-n8n'), icon: 'hub' },
       { name: 'Testador de Regex', section: 'Ferramentas', action: () => this.navigate('/tools/testador-regex'), icon: 'spellcheck' },
       { name: 'Gerador de Dados Falsos', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-dados-falsos'), icon: 'fact_check' },
       { name: 'Construtor Docker-Compose', section: 'Ferramentas', action: () => this.navigate('/tools/docker-compose-generator'), icon: 'build_circle' },

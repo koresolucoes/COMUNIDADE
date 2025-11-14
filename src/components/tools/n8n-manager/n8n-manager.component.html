@@ -1,0 +1,95 @@
+<div class="space-y-6">
+  @if(isConnected()) {
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-bold text-white">Gerenciador n8n</h1>
+          <p class="mt-2 text-gray-400">
+            Conectado a: <span class="font-semibold text-gray-300">{{ n8nApiService.getCredentials()?.url }}</span>
+          </p>
+        </div>
+        <button (click)="disconnect()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-md font-semibold hover:bg-red-600/30 transition-colors">
+          Desconectar
+        </button>
+      </div>
+      
+      @if (loading()) {
+        <p class="text-gray-400">Carregando workflows...</p>
+      } @else if(errorMessage(); as error) {
+        <div class="bg-red-900/50 border border-red-500/50 text-red-300 p-4 rounded-lg">
+          {{ error }}
+        </div>
+      } @else {
+        <div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+          <table class="min-w-full divide-y divide-gray-800">
+            <thead class="bg-gray-800/50">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Nome do Workflow</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Atualizado em</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800">
+              @for(workflow of workflows(); track workflow.id) {
+                <tr class="hover:bg-gray-800/50">
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <label class="flex items-center cursor-pointer">
+                      <div class="relative">
+                        <input type="checkbox" class="sr-only" [checked]="workflow.active" (change)="toggleWorkflowActive(workflow)">
+                        <div class="toggle-bg block bg-gray-700 w-12 h-6 rounded-full transition-colors"></div>
+                        <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform"></div>
+                      </div>
+                    </label>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{{ workflow.name }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ workflow.updatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="max-w-xl mx-auto text-center">
+      <h1 class="text-3xl md:text-4xl font-bold text-white">Conectar ao n8n</h1>
+      <p class="mt-2 text-gray-400">Gerencie seus workflows diretamente do Hub da Kore.</p>
+    </div>
+    <div class="max-w-xl mx-auto bg-gray-900 p-8 border border-gray-800 rounded-lg space-y-6">
+      <div>
+        <label for="instance-url" class="block text-sm font-medium text-gray-300 mb-2">URL da Instância</label>
+        <input id="instance-url" type="url" [(ngModel)]="instanceUrl" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent" placeholder="https://n8n.seusite.com.br">
+      </div>
+      <div>
+        <label for="api-key" class="block text-sm font-medium text-gray-300 mb-2">Chave de API (All Scopes)</label>
+        <input id="api-key" type="password" [(ngModel)]="apiKey" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent font-mono" placeholder="******************">
+        <a href="https://docs.n8n.io/integrations/credentials/api-key/" target="_blank" class="text-xs text-gray-500 hover:text-blue-accent hover:underline mt-1 inline-block">Como obter uma chave de API?</a>
+      </div>
+
+      <div class="p-3 bg-gray-800 border border-gray-700 text-gray-400 rounded-md text-sm flex items-start gap-3">
+        <span class="material-icons-outlined text-gray-500 mt-0.5">lock</span>
+        <div>
+          <span class="font-semibold text-gray-300">Suas credenciais são seguras.</span> Elas são salvas apenas no seu navegador (<code class="text-xs">localStorage</code>) e nunca são enviadas para os servidores da Kore.
+        </div>
+      </div>
+      
+       @if(errorMessage(); as error) {
+        <div class="bg-red-900/50 border border-red-500/50 text-red-300 p-3 rounded-md text-sm">
+          {{ error }}
+        </div>
+      }
+
+      <button (click)="connect()" [disabled]="loading()" class="w-full px-4 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        @if(loading()) {
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Conectando...
+        } @else {
+            Conectar e Gerenciar
+        }
+      </button>
+    </div>
+  }
+</div>

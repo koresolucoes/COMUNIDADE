@@ -25,6 +25,7 @@ import { BlogListComponent } from './components/blog/blog-list/blog-list.compone
 import { BlogPostComponent } from './components/blog/blog-post/blog-post.component';
 import { LoginComponent } from './components/login/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import { N8nManagerComponent } from './components/tools/n8n-manager/n8n-manager.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -57,5 +58,6 @@ export const APP_ROUTES: Routes = [
   { path: 'tools/verificador-dns', component: DnsCheckerComponent },
   { path: 'tools/comparador-texto', component: DiffCheckerComponent },
   { path: 'tools/docker-compose-generator', component: DockerComposeGeneratorComponent },
+  { path: 'tools/gerenciador-n8n', component: N8nManagerComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
