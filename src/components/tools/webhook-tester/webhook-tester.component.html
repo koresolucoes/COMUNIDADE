@@ -70,9 +70,9 @@
               <!-- Query Parameters -->
               <div>
                 <h3 class="font-semibold text-gray-300 mb-2">Query Parameters</h3>
-                @if(req.query && Object.keys(req.query).length > 0) {
+                @if(queryEntries().length > 0) {
                   <div class="bg-gray-800 p-2 rounded-md font-mono text-sm space-y-1">
-                    @for(param of Object.entries(req.query); track param[0]) {
+                    @for(param of queryEntries(); track param[0]) {
                       <div>
                         <span class="text-cyan-300">{{ param[0] }}</span>: <span class="text-green-accent">"{{ param[1] }}"</span>
                       </div>
@@ -86,13 +86,17 @@
               <!-- Headers -->
               <div>
                 <h3 class="font-semibold text-gray-300 mb-2">Headers</h3>
-                <div class="bg-gray-800 p-2 rounded-md font-mono text-sm space-y-1">
-                  @for(header of Object.entries(req.headers || {}); track header[0]) {
-                    <div>
-                      <span class="text-cyan-300">{{ header[0] }}</span>: <span class="text-green-accent">"{{ header[1] }}"</span>
-                    </div>
-                  }
-                </div>
+                @if (headerEntries().length > 0) {
+                  <div class="bg-gray-800 p-2 rounded-md font-mono text-sm space-y-1">
+                    @for(header of headerEntries(); track header[0]) {
+                      <div>
+                        <span class="text-cyan-300">{{ header[0] }}</span>: <span class="text-green-accent">"{{ header[1] }}"</span>
+                      </div>
+                    }
+                  </div>
+                } @else {
+                  <p class="text-xs text-gray-500">Nenhum header na requisição.</p>
+                }
               </div>
               
               <!-- Body -->

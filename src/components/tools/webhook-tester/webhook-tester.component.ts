@@ -46,6 +46,22 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
     }
   });
 
+  queryEntries = computed(() => {
+    const req = this.selectedRequest();
+    if (!req || !req.query) {
+      return [];
+    }
+    return Object.entries(req.query);
+  });
+
+  headerEntries = computed(() => {
+    const req = this.selectedRequest();
+    if (!req || !req.headers) {
+      return [];
+    }
+    return Object.entries(req.headers);
+  });
+
   ngOnInit() {
     this.startPolling();
   }
