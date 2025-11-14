@@ -92,14 +92,15 @@ export class N8nApiService {
   }
 
   async getWorkflows(): Promise<Workflow[]> {
-    return this._request('/workflows', 'GET');
+    const response = await this._request('/workflows', 'GET');
+    return response.data;
   }
 
-  async activateWorkflow(id: string): Promise<{ success: boolean }> {
+  async activateWorkflow(id: string): Promise<Workflow> {
     return this._request(`/workflows/${id}/activate`, 'POST');
   }
 
-  async deactivateWorkflow(id: string): Promise<{ success: boolean }> {
+  async deactivateWorkflow(id: string): Promise<Workflow> {
     return this._request(`/workflows/${id}/deactivate`, 'POST');
   }
 }
