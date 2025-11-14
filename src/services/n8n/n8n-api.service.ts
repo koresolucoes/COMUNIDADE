@@ -104,6 +104,10 @@ export class N8nApiService {
     return responseData;
   }
 
+  async getWorkflow(id: string): Promise<Workflow> {
+    return this._request(`/workflows/${id}`, 'GET');
+  }
+
   async getWorkflows(): Promise<Workflow[]> {
     const response = await this._request('/workflows', 'GET');
     return response.data;

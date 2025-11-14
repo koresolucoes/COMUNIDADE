@@ -59,7 +59,10 @@
                 <div>
                   <h2 class="text-2xl font-bold text-white">{{ workflow.name }}</h2>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                  <button (click)="viewWorkflowJson(workflow)" title="Ver JSON do Workflow" class="p-2 text-gray-400 hover:text-white rounded-full hover:bg-gray-800 transition-colors">
+                    <span class="material-icons-outlined">data_object</span>
+                  </button>
                   <label class="flex items-center cursor-pointer">
                     <span class="mr-2 text-sm font-medium text-gray-400">{{ workflow.active ? 'Ativo' : 'Inativo' }}</span>
                     <div class="relative">
@@ -183,6 +186,29 @@
         <button (click)="createWorkflow()" [disabled]="!newWorkflowName().trim() || loading()" class="px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors text-sm disabled:opacity-50">
           Criar
         </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- View JSON Modal -->
+@if(isJsonModalVisible() && workflowJsonContent()) {
+  <div class="fixed inset-0 z-50 bg-gray-950/80 backdrop-blur-sm flex justify-center items-center p-4" (click)="closeJsonModal()">
+    <div (click)="$event.stopPropagation()" class="w-full max-w-4xl h-[90vh] bg-gray-900 border border-gray-700 rounded-lg shadow-2xl flex flex-col">
+      <div class="p-4 border-b border-gray-700 flex justify-between items-center flex-shrink-0">
+        <h3 class="text-xl font-semibold text-white">JSON do Workflow</h3>
+        <button (click)="closeJsonModal()" class="p-1 text-gray-500 hover:text-white rounded-full">
+          <span class="material-icons-outlined">close</span>
+        </button>
+      </div>
+      <div class="flex-grow p-4 overflow-auto">
+          <pre><code class="text-sm text-gray-300 whitespace-pre-wrap">{{ workflowJsonContent() }}</code></pre>
+      </div>
+      <div class="bg-gray-800/50 px-6 py-3 flex justify-end gap-4 flex-shrink-0">
+        <button (click)="copyWorkflowJson()" class="px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors text-sm">
+          {{ copyJsonButtonText() }}
+        </button>
+        <button (click)="closeJsonModal()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">Fechar</button>
       </div>
     </div>
   </div>

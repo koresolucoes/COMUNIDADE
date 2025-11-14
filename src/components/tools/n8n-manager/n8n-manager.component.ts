@@ -28,8 +28,15 @@ export class N8nManagerComponent implements OnInit {
   selectedWorkflow = signal<Workflow | null>(null);
   executions = signal<Execution[]>([]);
   executionsLoading = signal(false);
+
+  // Create Modal State
   isCreateModalVisible = signal(false);
   newWorkflowName = signal('');
+  
+  // View JSON Modal State
+  workflowJsonContent = signal<string | null>(null);
+  isJsonModalVisible = signal(false);
+  copyJsonButtonText = signal('Copiar');
 
 
   ngOnInit() {
@@ -144,6 +151,20 @@ export class N8nManagerComponent implements OnInit {
       this.loading.set(false);
     }
   }
+
+  async viewWorkflowJson(workflow: Workflow) {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    try {
+      const fullWorkflow = await this.n8nApiService.getWorkflow(workflow.id);
+      this.workflowJsonContent.set(JSON.stringify(fullWorkflow, null, 2));
+      this.isJsonModalVisible.set(true);
+    } catch (e) {
+      this.errorMessage.set(e instanceof Error ? e.message : 'Falha ao buscar o JSON do workflow.');
+    } finally {
+      this.loading.set(false);
+    }
+  }
   
   openCreateModal() {
     this.newWorkflowName.set('');
@@ -152,6 +173,20 @@ export class N8nManagerComponent implements OnInit {
 
   closeCreateModal() {
     this.isCreateModalVisible.set(false);
+  }
+  
+  closeJsonModal() {
+    this.isJsonModalVisible.set(false);
+    this.workflowJsonContent.set(null);
+    this.copyJsonButtonText.set('Copiar');
+  }
+
+  copyWorkflowJson() {
+    if (!this.workflowJsonContent()) return;
+    navigator.clipboard.writeText(this.workflowJsonContent()!).then(() => {
+      this.copyJsonButtonText.set('Copiado!');
+      setTimeout(() => this.copyJsonButtonText.set('Copiar'), 2000);
+    });
   }
 
   getExecutionDuration(execution: Execution): string {
