@@ -86,12 +86,22 @@ const handlePost = async (req: any, res: any) => {
         return res.end(JSON.stringify({ error: 'Token de autenticação não fornecido.' }));
     }
 
-    // Validate the user's JWT token using the Supabase admin client
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    let userId: string | null = null;
+    const masterKey = process.env.MASTER_BLOG_KEY;
 
-    if (authError || !user) {
-        res.statusCode = 401;
-        return res.end(JSON.stringify({ error: 'Token inválido ou expirado.' }));
+    // Check for master key authentication
+    if (masterKey && token === masterKey) {
+        // Master key provided, proceed without a specific user ID
+        userId = null; 
+    } else {
+        // Fallback to JWT authentication for a logged-in user
+        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+
+        if (authError || !user) {
+            res.statusCode = 401;
+            return res.end(JSON.stringify({ error: 'Token inválido ou expirado.' }));
+        }
+        userId = user.id;
     }
 
     try {
@@ -110,7 +120,7 @@ const handlePost = async (req: any, res: any) => {
             summary,
             content,
             date: new Date().toISOString().split('T')[0], // Formato YYYY-MM-DD
-            user_id: user.id
+            user_id: userId // Can be null if using master key
         };
 
         const { data: insertedPost, error: insertError } = await supabase
@@ -151,6 +161,6 @@ export default async (req: any, res: any) => {
   } else {
     res.statusCode = 405;
     res.setHeader('Allow', 'GET, POST');
-    res.end(JSON.stringify({ error: `Método ${req.method} não permitido.` }));
+    res.end(JSON.stringify({ error: `Método ${req.method} не permitido.` }));
   }
 };

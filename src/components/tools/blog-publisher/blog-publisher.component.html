@@ -16,8 +16,11 @@
             <input id="author" type="text" formControlName="author" required class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent" placeholder="Seu Nome">
         </div>
         <div>
-            <label for="apiKey" class="block text-sm font-medium text-gray-300 mb-2">Chave da API Secreta</label>
+            <label for="apiKey" class="block text-sm font-medium text-gray-300 mb-2">Chave de Autenticação</label>
             <input id="apiKey" type="password" formControlName="apiKey" required class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent font-mono" placeholder="******************">
+            <p class="mt-2 text-xs text-gray-500">
+              Use a chave de API mestre (definida em <code class="bg-gray-700 px-1 rounded">MASTER_BLOG_KEY</code>) ou o seu token de acesso JWT do Supabase.
+            </p>
         </div>
     </div>
 
