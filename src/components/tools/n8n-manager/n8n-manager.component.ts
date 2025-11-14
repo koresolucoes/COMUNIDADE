@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { N8nApiService, Workflow } from '../../../services/n8n/n8n-api.service';
+import { N8nApiService, Workflow, Execution } from '../../../services/n8n/n8n-api.service';
 import { DatePipe } from '@angular/common';
 
 @Component({
@@ -25,6 +25,12 @@ export class N8nManagerComponent implements OnInit {
   
   // Data State
   workflows = signal<Workflow[]>([]);
+  selectedWorkflow = signal<Workflow | null>(null);
+  executions = signal<Execution[]>([]);
+  executionsLoading = signal(false);
+  isCreateModalVisible = signal(false);
+  newWorkflowName = signal('');
+
 
   ngOnInit() {
     if (this.isConnected()) {
@@ -50,6 +56,8 @@ export class N8nManagerComponent implements OnInit {
   disconnect() {
     this.n8nApiService.clearCredentials();
     this.workflows.set([]);
+    this.selectedWorkflow.set(null);
+    this.executions.set([]);
   }
 
   async fetchWorkflows() {
@@ -57,7 +65,7 @@ export class N8nManagerComponent implements OnInit {
     this.errorMessage.set(null);
     try {
       const fetchedWorkflows = await this.n8nApiService.getWorkflows();
-      this.workflows.set(fetchedWorkflows);
+      this.workflows.set(fetchedWorkflows.sort((a,b) => a.name.localeCompare(b.name)));
     } catch (e) {
       this.errorMessage.set(e instanceof Error ? e.message : 'Falha ao conectar. Verifique a URL e a Chave de API.');
       this.n8nApiService.clearCredentials();
@@ -70,6 +78,7 @@ export class N8nManagerComponent implements OnInit {
     // Optimistic update
     const originalStatus = workflow.active;
     this.workflows.update(ws => ws.map(w => w.id === workflow.id ? { ...w, active: !w.active } : w));
+    this.selectedWorkflow.update(w => w ? { ...w, active: !w.active } : null);
 
     try {
       if (originalStatus) {
@@ -80,7 +89,81 @@ export class N8nManagerComponent implements OnInit {
     } catch (e) {
       // Revert on error
       this.workflows.update(ws => ws.map(w => w.id === workflow.id ? { ...w, active: originalStatus } : w));
+      this.selectedWorkflow.update(w => w ? { ...w, active: originalStatus } : null);
       this.errorMessage.set(e instanceof Error ? e.message : 'Falha ao atualizar o workflow.');
     }
+  }
+  
+  async selectWorkflow(workflow: Workflow) {
+    this.selectedWorkflow.set(workflow);
+    this.executions.set([]);
+    await this.fetchExecutions(workflow.id);
+  }
+
+  async fetchExecutions(workflowId: string) {
+    this.executionsLoading.set(true);
+    try {
+      const execs = await this.n8nApiService.getExecutions(workflowId);
+      this.executions.set(execs);
+    } catch (e) {
+      this.errorMessage.set(e instanceof Error ? e.message : 'Falha ao buscar execuções.');
+    } finally {
+      this.executionsLoading.set(false);
+    }
+  }
+  
+  async createWorkflow() {
+    if (!this.newWorkflowName().trim()) {
+      return;
+    }
+    this.loading.set(true);
+    try {
+      await this.n8nApiService.createWorkflow(this.newWorkflowName());
+      this.closeCreateModal();
+      await this.fetchWorkflows();
+    } catch (e) {
+      this.errorMessage.set(e instanceof Error ? e.message : 'Falha ao criar workflow.');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async deleteWorkflow(workflow: Workflow) {
+    if (!confirm(`Tem certeza que deseja excluir o workflow "${workflow.name}"? Esta ação não pode ser desfeita.`)) {
+      return;
+    }
+    this.loading.set(true);
+    try {
+      await this.n8nApiService.deleteWorkflow(workflow.id);
+      this.selectedWorkflow.set(null);
+      this.executions.set([]);
+      await this.fetchWorkflows();
+    } catch (e) {
+      this.errorMessage.set(e instanceof Error ? e.message : 'Falha ao excluir o workflow.');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+  
+  openCreateModal() {
+    this.newWorkflowName.set('');
+    this.isCreateModalVisible.set(true);
+  }
+
+  closeCreateModal() {
+    this.isCreateModalVisible.set(false);
+  }
+
+  getExecutionDuration(execution: Execution): string {
+    if (!execution.startedAt || !execution.finishedAt) {
+      return '-';
+    }
+    const start = new Date(execution.startedAt).getTime();
+    const end = new Date(execution.finishedAt).getTime();
+    const duration = end - start;
+    if (duration < 1000) {
+      return `${duration}ms`;
+    }
+    return `${(duration / 1000).toFixed(2)}s`;
   }
 }

@@ -19,6 +19,19 @@ export interface Workflow {
   tags: string[];
 }
 
+export interface Execution {
+  id: string;
+  status: 'started' | 'waiting' | 'succeeded' | 'failed';
+  workflowId: string;
+  startedAt: string;
+  finishedAt: string;
+  error?: {
+    message: string;
+    stack: string;
+  };
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -64,7 +77,7 @@ export class N8nApiService {
     }
   }
 
-  private async _request(endpoint: string, method: 'GET' | 'POST', body?: any): Promise<any> {
+  private async _request(endpoint: string, method: 'GET' | 'POST' | 'DELETE', body?: any): Promise<any> {
     const creds = this.credentials();
     if (!creds) {
       throw new Error('Não conectado à instância n8n.');
@@ -96,11 +109,32 @@ export class N8nApiService {
     return response.data;
   }
 
-  async activateWorkflow(id: string): Promise<Workflow> {
+  async createWorkflow(name: string): Promise<Workflow> {
+    const body = {
+      name,
+      nodes: [],
+      connections: {},
+      active: false,
+      settings: {},
+      tags: [],
+    };
+    return this._request('/workflows', 'POST', body);
+  }
+
+  async deleteWorkflow(id: string): Promise<{ message: string }> {
+    return this._request(`/workflows/${id}`, 'DELETE');
+  }
+
+  async getExecutions(workflowId: string, limit = 20): Promise<Execution[]> {
+    const response = await this._request(`/executions?workflowId=${workflowId}&limit=${limit}&includeData=false`, 'GET');
+    return response.data;
+  }
+
+  async activateWorkflow(id: string): Promise<{ message: string }> {
     return this._request(`/workflows/${id}/activate`, 'POST');
   }
 
-  async deactivateWorkflow(id: string): Promise<Workflow> {
+  async deactivateWorkflow(id: string): Promise<{ message: string }> {
     return this._request(`/workflows/${id}/deactivate`, 'POST');
   }
 }
