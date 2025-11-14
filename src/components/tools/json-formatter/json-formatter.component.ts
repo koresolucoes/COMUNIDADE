@@ -1,6 +1,10 @@
-import { Component, ChangeDetectionStrategy, signal, computed, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, input, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
+import { RouterLink } from '@angular/router';
 
 interface JsonError {
   message: string;
@@ -10,13 +14,19 @@ interface JsonError {
 @Component({
   selector: 'app-json-formatter',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './json-formatter.component.html',
   styleUrls: ['./json-formatter.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JsonFormatterComponent {
+export class JsonFormatterComponent implements OnInit {
   isEmbedded = input<boolean>(false);
+  
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
+
   jsonContent = signal('');
   error = signal<JsonError | null>(null);
   copyButtonText = signal('Copiar');
@@ -95,6 +105,14 @@ console.log(\`Nome do usuário: \${parsedData.user.name}\`);
     const top = (err.line - 1) * lineHeight;
     return `${top}px`;
   });
+
+  ngOnInit() {
+    const dataToLoad = this.toolDataStateService.consumeData();
+    if (dataToLoad && dataToLoad.toolId === 'json-formatter') {
+      this.jsonContent.set(dataToLoad.data.content);
+      this.validateJson();
+    }
+  }
 
   onContentChange(newContent: string) {
     this.jsonContent.set(newContent);
@@ -187,5 +205,26 @@ console.log(\`Nome do usuário: \${parsedData.user.name}\`);
 
   copyCodeSnippet(content: string) {
     navigator.clipboard.writeText(content);
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    if(this.validationStatus() === 'invalid' || !this.jsonContent()){
+      alert('O JSON precisa ser válido e não pode estar vazio para ser salvo.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar este JSON:', 'Meu JSON');
+    if (title) {
+      try {
+        await this.userDataService.saveData('json-formatter', title, { content: this.jsonContent() });
+        alert('JSON salvo com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar o JSON.');
+      }
+    }
   }
 }

@@ -34,6 +34,7 @@ export class SidebarComponent {
 
   navItems: NavItem[] = [
     { path: '/', label: 'Início', icon: 'home' },
+    { path: '/profile', label: 'Meu Perfil', icon: 'person' },
     { path: '/blog', label: 'Blog', icon: 'article' },
     { path: '/templates', label: 'Templates n8n', icon: 'folder_copy' },
     { 

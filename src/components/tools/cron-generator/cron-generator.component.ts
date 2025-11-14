@@ -1,19 +1,28 @@
-import { Component, ChangeDetectionStrategy, signal, computed, input, effect, WritableSignal, Signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, input, effect, WritableSignal, Signal, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-tips.component';
+import { AuthService } from '../../../services/auth.service';
+import { UserDataService } from '../../../services/user-data.service';
+import { ToolDataStateService } from '../../../services/tool-data-state.service';
+import { RouterLink } from '@angular/router';
 
 type SelectionType = 'every' | 'each' | 'range' | 'list';
 
 @Component({
   selector: 'app-cron-generator',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
   templateUrl: './cron-generator.component.html',
   styleUrls: ['./cron-generator.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CronGeneratorComponent {
+export class CronGeneratorComponent implements OnInit {
   isEmbedded = input<boolean>(false);
+  
+  private authService = inject(AuthService);
+  private userDataService = inject(UserDataService);
+  private toolDataStateService = inject(ToolDataStateService);
+  currentUser = this.authService.currentUser;
 
   // --- Main State ---
   isAdvancedMode = signal(false);
@@ -92,6 +101,13 @@ export class CronGeneratorComponent {
     effect(() => this.dayOfMonthListError.set(this.validateCronListValue(this.dayOfMonthListValue(), 1, 31, 'Dia do Mês')));
     effect(() => this.monthListError.set(this.validateCronListValue(this.monthListValue(), 1, 12, 'Mês')));
     effect(() => this.dayOfWeekListError.set(this.validateCronListValue(this.dayOfWeekListValue(), 0, 6, 'Dia da Semana')));
+  }
+  
+  ngOnInit(): void {
+      const dataToLoad = this.toolDataStateService.consumeData();
+      if (dataToLoad && dataToLoad.toolId === 'cron-generator') {
+        this.loadState(dataToLoad.data);
+      }
   }
 
   private updateCronPartFromUiState(type: SelectionType, signal: WritableSignal<string>, eachValue: number, rangeValue: {start: number, end: number}, listValue: string, errorSignal?: Signal<string|null>) {
@@ -248,6 +264,83 @@ if (cron.validate(cronExpression)) {
 
   copyCodeSnippet(content: string) {
     navigator.clipboard.writeText(content);
+  }
+
+  async saveData() {
+    if (!this.currentUser()) {
+      alert('Você precisa estar logado para salvar.');
+      return;
+    }
+    const title = prompt('Digite um nome para salvar esta configuração CRON:', `Config ${new Date().toLocaleDateString()}`);
+    if (title) {
+      const state = {
+        isAdvancedMode: this.isAdvancedMode(),
+        cronExpressionInput: this.cronExpressionInput(),
+        minuteSelectionType: this.minuteSelectionType(),
+        minuteEachValue: this.minuteEachValue(),
+        minuteRangeStart: this.minuteRangeStart(),
+        minuteRangeEnd: this.minuteRangeEnd(),
+        minuteListValue: this.minuteListValue(),
+        hourSelectionType: this.hourSelectionType(),
+        hourEachValue: this.hourEachValue(),
+        hourRangeStart: this.hourRangeStart(),
+        hourRangeEnd: this.hourRangeEnd(),
+        hourListValue: this.hourListValue(),
+        dayOfMonthSelectionType: this.dayOfMonthSelectionType(),
+        dayOfMonthEachValue: this.dayOfMonthEachValue(),
+        dayOfMonthRangeStart: this.dayOfMonthRangeStart(),
+        dayOfMonthRangeEnd: this.dayOfMonthRangeEnd(),
+        dayOfMonthListValue: this.dayOfMonthListValue(),
+        monthSelectionType: this.monthSelectionType(),
+        monthEachValue: this.monthEachValue(),
+        monthRangeStart: this.monthRangeStart(),
+        monthRangeEnd: this.monthRangeEnd(),
+        monthListValue: this.monthListValue(),
+        dayOfWeekSelectionType: this.dayOfWeekSelectionType(),
+        dayOfWeekEachValue: this.dayOfWeekEachValue(),
+        dayOfWeekRangeStart: this.dayOfWeekRangeStart(),
+        dayOfWeekRangeEnd: this.dayOfWeekRangeEnd(),
+        dayOfWeekListValue: this.dayOfWeekListValue(),
+      };
+      try {
+        await this.userDataService.saveData('cron-generator', title, state);
+        alert('Configuração CRON salva com sucesso!');
+      } catch (e) {
+        console.error(e);
+        alert('Falha ao salvar a configuração.');
+      }
+    }
+  }
+
+  private loadState(state: any) {
+    if (!state) return;
+    this.isAdvancedMode.set(state.isAdvancedMode ?? false);
+    this.cronExpressionInput.set(state.cronExpressionInput ?? '* * * * *');
+    this.minuteSelectionType.set(state.minuteSelectionType ?? 'every');
+    this.minuteEachValue.set(state.minuteEachValue ?? 15);
+    this.minuteRangeStart.set(state.minuteRangeStart ?? 0);
+    this.minuteRangeEnd.set(state.minuteRangeEnd ?? 30);
+    this.minuteListValue.set(state.minuteListValue ?? '0');
+    this.hourSelectionType.set(state.hourSelectionType ?? 'every');
+    this.hourEachValue.set(state.hourEachValue ?? 2);
+    this.hourRangeStart.set(state.hourRangeStart ?? 9);
+    this.hourRangeEnd.set(state.hourRangeEnd ?? 17);
+    this.hourListValue.set(state.hourListValue ?? '0');
+    this.dayOfMonthSelectionType.set(state.dayOfMonthSelectionType ?? 'every');
+    this.dayOfMonthEachValue.set(state.dayOfMonthEachValue ?? 1);
+    this.dayOfMonthRangeStart.set(state.dayOfMonthRangeStart ?? 1);
+    this.dayOfMonthRangeEnd.set(state.dayOfMonthRangeEnd ?? 15);
+    this.dayOfMonthListValue.set(state.dayOfMonthListValue ?? '1,15');
+    this.monthSelectionType.set(state.monthSelectionType ?? 'every');
+    this.monthEachValue.set(state.monthEachValue ?? 1);
+    this.monthRangeStart.set(state.monthRangeStart ?? 1);
+    this.monthRangeEnd.set(state.monthRangeEnd ?? 6);
+    this.monthListValue.set(state.monthListValue ?? '1,7');
+    this.dayOfWeekSelectionType.set(state.dayOfWeekSelectionType ?? 'every');
+    this.dayOfWeekEachValue.set(state.dayOfWeekEachValue ?? 1);
+    this.dayOfWeekRangeStart.set(state.dayOfWeekRangeStart ?? 1);
+    this.dayOfWeekRangeEnd.set(state.dayOfWeekRangeEnd ?? 5);
+    this.dayOfWeekListValue.set(state.dayOfWeekListValue ?? '1-5');
   }
 
   // --- Private Helpers for Explanation & Validation ---

@@ -25,8 +25,24 @@
         </svg>
       }
     </button>
-    <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-sm font-bold text-white">
-      U
-    </div>
+    
+    @if (user(); as u) {
+      <div class="relative">
+        <button (click)="isProfileMenuVisible.set(!isProfileMenuVisible())" class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-sm font-bold text-white uppercase">
+          {{ u.email?.[0] }}
+        </button>
+        @if(isProfileMenuVisible()) {
+          <div class="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg py-1 z-50">
+            <div class="px-4 py-2 text-xs text-gray-400 border-b border-gray-700 truncate">{{ u.email }}</div>
+            <a routerLink="/profile" (click)="isProfileMenuVisible.set(false)" class="cursor-pointer block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 w-full text-left">Meu Perfil</a>
+            <a (click)="logout.emit(); isProfileMenuVisible.set(false)" class="cursor-pointer block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 w-full text-left">Sair</a>
+          </div>
+        }
+      </div>
+    } @else {
+      <a routerLink="/login" class="px-3 py-1.5 text-sm font-medium text-white bg-gray-700 rounded-md hover:bg-gray-600 transition-colors">
+        Login
+      </a>
+    }
   </div>
 </header>

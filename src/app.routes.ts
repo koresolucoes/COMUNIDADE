@@ -21,14 +21,17 @@ import { RestClientComponent } from './components/tools/rest-client/rest-client.
 import { DnsCheckerComponent } from './components/tools/dns-checker/dns-checker.component';
 import { DiffCheckerComponent } from './components/tools/diff-checker/diff-checker.component';
 import { DockerComposeGeneratorComponent } from './components/tools/docker-compose-generator/docker-compose-generator.component';
+import { BlogListComponent } from './components/blog/blog-list/blog-list.component';
+import { BlogPostComponent } from './components/blog/blog-post/blog-post.component';
+import { LoginComponent } from './components/login/login.component';
+import { ProfileComponent } from './components/profile/profile.component';
 
 export const APP_ROUTES: Routes = [
+  { path: 'login', component: LoginComponent },
+  { path: 'profile', component: ProfileComponent },
   { path: '', component: HomeComponent },
-  { 
-    path: 'blog', 
-    component: PlaceholderComponent, 
-    data: { title: 'Blog', message: 'Nossos artigos e tutoriais estarão aqui em breve.' } 
-  },
+  { path: 'blog', component: BlogListComponent },
+  { path: 'blog/:slug', component: BlogPostComponent },
   { 
     path: 'templates', 
     component: PlaceholderComponent, 

@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, output, input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, input, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { User } from '@supabase/supabase-js';
 
 @Component({
   selector: 'app-header',
@@ -11,5 +12,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 export class HeaderComponent {
   openCommandPalette = output<void>();
   toggleTheme = output<void>();
+  logout = output<void>();
   isDarkMode = input.required<boolean>();
+  user = input<User | null>();
+  
+  isProfileMenuVisible = signal(false);
 }

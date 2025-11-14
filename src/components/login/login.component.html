@@ -1,0 +1,41 @@
+<div class="flex items-center justify-center min-h-full px-4 py-12">
+  <div class="w-full max-w-md space-y-8">
+    <div>
+      <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-white">
+        Faça login em sua conta
+      </h2>
+    </div>
+    <form class="mt-8 space-y-6 bg-gray-900 p-8 border border-gray-800 rounded-lg" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="rounded-md shadow-sm">
+        <div class="mb-4">
+          <label for="email-address" class="sr-only">Email</label>
+          <input id="email-address" name="email" type="email" formControlName="email" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Endereço de email">
+        </div>
+        <div>
+          <label for="password" class="sr-only">Senha</label>
+          <input id="password" name="password" type="password" formControlName="password" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Senha">
+        </div>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="bg-red-900/50 border border-red-500/50 text-red-300 p-3 rounded-md text-sm">
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <div>
+        <button type="submit" [disabled]="loading() || loginForm.invalid" class="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-accent py-2 px-4 text-sm font-medium text-white hover:bg-blue-accent/90 focus:outline-none focus:ring-2 focus:ring-blue-accent focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (loading()) {
+            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Entrando...
+          } @else {
+            Entrar
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

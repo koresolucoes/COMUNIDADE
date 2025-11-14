@@ -1,9 +1,10 @@
-import { Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, ChangeDetectionStrategy, signal, effect, inject } from '@angular/core';
+import { RouterOutlet, Router } from '@angular/router';
 import { HeaderComponent } from './components/shared/header/header.component';
 import { BottomNavComponent } from './components/shared/bottom-nav/bottom-nav.component';
 import { CommandPaletteComponent } from './components/shared/command-palette/command-palette.component';
 import { SidebarComponent } from './components/shared/sidebar/sidebar.component';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,10 @@ import { SidebarComponent } from './components/shared/sidebar/sidebar.component'
   },
 })
 export class AppComponent {
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  
+  currentUser = this.authService.currentUser;
   isCommandPaletteVisible = signal(false);
   isDarkMode = signal(true);
   isSidebarExpanded = signal(true);
@@ -42,5 +47,10 @@ export class AppComponent {
 
   toggleSidebar() {
     this.isSidebarExpanded.update(v => !v);
+  }
+
+  async onLogout() {
+    await this.authService.signOut();
+    this.router.navigate(['/']);
   }
 }

@@ -5,7 +5,9 @@
     <app-header 
       (openCommandPalette)="toggleCommandPalette()"
       (toggleTheme)="toggleTheme()"
-      [isDarkMode]="isDarkMode()">
+      (logout)="onLogout()"
+      [isDarkMode]="isDarkMode()"
+      [user]="currentUser()">
     </app-header>
 
     <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 pb-20 md:pb-8">

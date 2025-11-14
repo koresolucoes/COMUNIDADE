@@ -35,9 +35,9 @@ export class HomeComponent {
   ];
 
   recentPosts = [
-    { title: 'Como debuguei um webhook que não retornava 200', type: 'Artigo', link: '/blog' },
+    { title: 'Como debuguei um webhook que não retornava 200', type: 'Artigo', link: '/blog/debugando-webhook-que-nao-retorna-200' },
     { title: 'Template: Sincronizar Calendários Google e Outlook', type: 'Template', link: '/templates' },
-    { title: 'Automatizando Relatórios Financeiros com n8n', type: 'Artigo', link: '/blog' },
-    { title: 'Top 5 Nós do n8n que Você Precisa Conhecer', type: 'Artigo', link: '/blog' },
+    { title: 'Automatizando Relatórios Financeiros com n8n', type: 'Artigo', link: '/blog/automatizando-relatorios-financeiros-com-n8n' },
+    { title: 'Top 5 Nós do n8n que Você Precisa Conhecer', type: 'Artigo', link: '/blog/top-5-nos-n8n-que-voce-precisa-conhecer' },
   ];
 }
