@@ -32,7 +32,8 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
   webhookUrl = computed(() => {
     const currentHost = window.location.host;
     const protocol = window.location.protocol;
-    return `${protocol}//${currentHost}/api/webhook/test/${this.uuid()}`;
+    // Public URL for receiving webhooks. The action is determined by the HTTP method on the backend.
+    return `${protocol}//${currentHost}/api/webhook?uuid=${this.uuid()}`;
   });
 
   ngOnInit() {
@@ -42,7 +43,7 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.stopPolling();
     // Inform the backend to clean up any lingering data for this session
-    navigator.sendBeacon(`/api/webhook/clear/${this.uuid()}`);
+    fetch(`/api/webhook?action=clear&uuid=${this.uuid()}`, { method: 'POST', keepalive: true }).catch(console.error);
   }
 
   private getOrCreateSessionId(): string {
@@ -60,6 +61,7 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
   }
 
   private startPolling() {
+    this.pollForRequests(); // Poll immediately on start
     this.pollingInterval = setInterval(() => {
       this.pollForRequests();
     }, 3000);
@@ -73,7 +75,7 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
 
   private async pollForRequests() {
     try {
-      const response = await fetch(`/api/webhook/poll/${this.uuid()}`);
+      const response = await fetch(`/api/webhook?action=poll&uuid=${this.uuid()}`);
       if (response.ok) {
         // FIX: Explicitly type the result of response.json() to ensure type safety.
         const newRequests: WebhookRequest[] = await response.json();
@@ -96,7 +98,7 @@ export class WebhookTesterComponent implements OnInit, OnDestroy {
   clearRequests() {
     this.requests.set([]);
     this.selectedRequest.set(null);
-    navigator.sendBeacon(`/api/webhook/clear/${this.uuid()}`);
+    fetch(`/api/webhook?action=clear&uuid=${this.uuid()}`, { method: 'POST', keepalive: true }).catch(console.error);
   }
 
   copyToClipboard() {

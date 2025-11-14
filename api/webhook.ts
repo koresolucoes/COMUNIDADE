@@ -51,21 +51,54 @@ const readRequestBody = (req: any): Promise<string> => {
 
 export default async (req: any, res: any) => {
     const url = new URL(req.url, `http://${req.headers.host}`);
-    // Path format: /api/webhook/{action}/{uuid}
-    const pathParts = url.pathname.split('/').filter(p => p);
-    
-    if (pathParts.length < 4 || pathParts[0] !== 'api' || pathParts[1] !== 'webhook') {
+    const action = url.searchParams.get('action');
+    const uuid = url.searchParams.get('uuid');
+
+    if (!uuid) {
         res.statusCode = 400;
-        res.end('Invalid path structure.');
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify({ error: 'Parâmetro "uuid" é obrigatório.' }));
         return;
     }
 
-    const [, , action, uuid] = pathParts;
     const sanitizedUuid = uuid.replace(/[^a-zA-Z0-9-]/g, ''); // Basic sanitization
     const filePath = path.join(STORAGE_DIR, `${sanitizedUuid}.json`);
 
-    // --- ACTION: test (receives a webhook) ---
-    if (action === 'test') {
+    // --- ACTION: poll (client checks for new webhooks) ---
+    if (action === 'poll' && req.method === 'GET') {
+        let requests: any[] = [];
+        await acquireLock(filePath);
+        try {
+            requests = await readJsonFile(filePath);
+            if (requests.length > 0) {
+                // Atomically read and clear
+                await writeJsonFile(filePath, []);
+            }
+        } finally {
+            releaseLock(filePath);
+        }
+        
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(requests));
+        return;
+    }
+
+    // --- ACTION: clear (client is closing/clearing) ---
+    if (action === 'clear' && req.method === 'POST') {
+         await acquireLock(filePath);
+         try {
+            await fs.unlink(filePath).catch(() => {}); // Ignore error if file doesn't exist
+         } finally {
+            releaseLock(filePath);
+         }
+         res.statusCode = 200;
+         res.end('Session cleared');
+         return;
+    }
+
+    // --- ACTION: test / default (receives a webhook) ---
+    if (!action || action === 'test') {
         const body = await readRequestBody(req);
         const headers: Record<string, string> = {};
         for (const [key, value] of Object.entries(req.headers)) {
@@ -77,7 +110,10 @@ export default async (req: any, res: any) => {
 
         const query: Record<string, string> = {};
         url.searchParams.forEach((value, key) => {
-            query[key] = value;
+            // Don't include our control parameters in the request's query log
+            if (key !== 'uuid' && key !== 'action') {
+                query[key] = value;
+            }
         });
 
         const newRequest = {
@@ -106,38 +142,7 @@ export default async (req: any, res: any) => {
         return;
     }
 
-    // --- ACTION: poll (client checks for new webhooks) ---
-    if (action === 'poll' && req.method === 'GET') {
-        let requests: any[] = [];
-        await acquireLock(filePath);
-        try {
-            requests = await readJsonFile(filePath);
-            if (requests.length > 0) {
-                await writeJsonFile(filePath, []);
-            }
-        } finally {
-            releaseLock(filePath);
-        }
-
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.end(JSON.stringify(requests));
-        return;
-    }
-
-    // --- ACTION: clear (client is closing/clearing) ---
-    if (action === 'clear') {
-         await acquireLock(filePath);
-         try {
-            await fs.unlink(filePath).catch(() => {}); // Ignore error if file doesn't exist
-         } finally {
-            releaseLock(filePath);
-         }
-         res.statusCode = 200;
-         res.end('Session cleared');
-         return;
-    }
-
     res.statusCode = 404;
-    res.end('Not Found');
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: 'Ação desconhecida ou método HTTP inválido para a ação.' }));
 };
