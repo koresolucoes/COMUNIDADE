@@ -1,0 +1,19 @@
+<div class="flex h-screen w-full bg-gray-950">
+  <app-sidebar [isExpanded]="isSidebarExpanded()" (toggle)="isSidebarExpanded.set(!isSidebarExpanded())"></app-sidebar>
+
+  <div class="flex flex-1 flex-col overflow-hidden">
+    <app-header 
+      (openCommandPalette)="toggleCommandPalette()"
+      (toggleTheme)="toggleTheme()"
+      [isDarkMode]="isDarkMode()">
+    </app-header>
+
+    <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+@if(isCommandPaletteVisible()) {
+  <app-command-palette (close)="isCommandPaletteVisible.set(false)"></app-command-palette>
+}

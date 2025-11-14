@@ -1,0 +1,209 @@
+@if(isSuggestionVisible()) {
+  <app-method-suggestion 
+    [methods]="suggestionMethods()"
+    (close)="isSuggestionVisible.set(false)"
+    (methodSelect)="onMethodSelected($event)">
+  </app-method-suggestion>
+}
+
+<div class="space-y-6 h-full flex flex-col">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Construtor de Expressão n8n</h1>
+    <p class="mt-2 text-gray-400">Construa visualmente expressões complexas ou edite o código diretamente.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-0">
+    <!-- Left Column: Data Context -->
+    <div class="flex flex-col min-h-0">
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-lg font-semibold text-white">Contexto de Dados (Input)</h2>
+        <button (click)="formatInput(contextTab())" class="text-xs text-blue-accent hover:underline">Formatar JSON</button>
+      </div>
+      
+      <div class="flex border-b border-gray-700">
+        @for (tab of ['json', 'node', 'env']; track tab) {
+          <button 
+            (click)="contextTab.set($any(tab))" 
+            [class.bg-gray-800]="contextTab() === tab" 
+            [class.text-white]="contextTab() === tab" 
+            class="px-4 py-2 text-sm font-medium text-gray-400 border-b-2 border-transparent hover:border-gray-500 hover:text-gray-200 transition-colors">
+            ${{ tab }}
+          </button>
+        }
+      </div>
+
+      <div class="flex-grow min-h-0 bg-gray-800 rounded-b-md">
+        @switch(contextTab()) {
+          @case('json') { <textarea class="w-full h-full bg-transparent font-mono text-gray-300 p-4 focus:outline-none resize-none" [ngModel]="contextService.jsonInput()" (ngModelChange)="contextService.jsonInput.set($event)" spellcheck="false"></textarea> }
+          @case('node') { <textarea class="w-full h-full bg-transparent font-mono text-gray-300 p-4 focus:outline-none resize-none" [ngModel]="contextService.nodeInput()" (ngModelChange)="contextService.nodeInput.set($event)" spellcheck="false"></textarea> }
+          @case('env') { <textarea class="w-full h-full bg-transparent font-mono text-gray-300 p-4 focus:outline-none resize-none" [ngModel]="contextService.envInput()" (ngModelChange)="contextService.envInput.set($event)" spellcheck="false"></textarea> }
+        }
+      </div>
+    </div>
+
+    <!-- Right Column: Builder & Output -->
+    <div class="flex flex-col gap-6 min-h-0">
+      <!-- Panel 2: Builder / Code Editor -->
+      <div class="flex flex-col flex-1 min-h-0">
+        <div class="flex justify-between items-center mb-2">
+            <h2 class="text-lg font-semibold text-white">Construtor Mágico</h2>
+            <div class="flex items-center gap-2 p-1 bg-gray-800 rounded-md">
+                <button (click)="mode.set('builder')" [class.bg-blue-accent]="mode() === 'builder'" [class.text-white]="mode() === 'builder'" class="px-3 py-1 text-xs rounded-sm transition-colors text-gray-300">Construtor</button>
+                <button (click)="mode.set('code')" [class.bg-blue-accent]="mode() === 'code'" [class.text-white]="mode() === 'code'" class="px-3 py-1 text-xs rounded-sm transition-colors text-gray-300">Código</button>
+            </div>
+        </div>
+
+        @if(mode() === 'builder') {
+          <div class="w-full h-full bg-gray-800 border border-gray-700 rounded-md p-4 overflow-y-auto space-y-3 flex flex-col">
+              <!-- Ponto de Partida -->
+              <div class="bg-gray-900/50 p-3 rounded-md border border-gray-700/50">
+                <label class="block text-xs font-semibold text-gray-400 uppercase mb-2">Ponto de Partida</label>
+                <select [ngModel]="$any(startPoint())" (ngModelChange)="setStartPoint($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
+                  <option value="$json">$json (Dados do item atual)</option>
+                  <option value="$node">$node (Dados de nós anteriores)</option>
+                  <option value="$env">$env (Variáveis de ambiente)</option>
+                </select>
+              </div>
+
+              @if(steps().length === 0) {
+                <div class="text-center text-gray-500 py-8 flex-grow flex flex-col justify-center items-center">
+                   <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-gray-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                  </svg>
+                  <p>Comece adicionando um passo para transformar seus dados.</p>
+                </div>
+              }
+              @for(step of steps(); track step.id; let i = $index) {
+                @let params = $any(step.params);
+                <div class="bg-gray-900/50 p-3 rounded-md border border-gray-700/50">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-semibold text-gray-400 uppercase">Passo {{i + 1}}: {{ stepTypeNames[step.type] }}</span>
+                    <button (click)="removeStep(step.id)" class="text-gray-500 hover:text-red-400 text-lg font-bold leading-none">×</button>
+                  </div>
+                  @switch(step.type) {
+                    @case('getProperty') {
+                      <select [ngModel]="params.property" (ngModelChange)="updateStepParam(step.id, 'property', $event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
+                        <option value="">Selecione a Propriedade</option>
+                        @for(prop of getStepProperties(i); track prop) { <option [value]="prop">{{ prop }}</option> }
+                      </select>
+                    }
+                    @case('filter') {
+                      <div class="grid grid-cols-3 gap-2">
+                        <select [ngModel]="params.property" (ngModelChange)="updateStepParam(step.id, 'property', $event)" class="bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm">
+                          <option value="">Propriedade</option>
+                          @for(prop of getStepProperties(i); track prop) { <option [value]="prop">{{ prop }}</option> }
+                        </select>
+                        <select [ngModel]="params.operator" (ngModelChange)="updateStepParam(step.id, 'operator', $event)" class="bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm">
+                          <option value="===">igual a</option>
+                          <option value="!==">diferente de</option>
+                          <option value=">">maior que</option>
+                          <option value="<">menor que</option>
+                          <option value=">=">maior ou igual a</option>
+                          <option value="<=">menor ou igual a</option>
+                        </select>
+                        <input type="text" [ngModel]="params.value" (ngModelChange)="updateStepParam(step.id, 'value', $event)" placeholder="Valor" class="bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm">
+                      </div>
+                    }
+                    @case('map') {
+                       <select [ngModel]="params.property" (ngModelChange)="updateStepParam(step.id, 'property', $event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
+                        <option value="">Selecione a Propriedade para Mapear</option>
+                        @for(prop of getStepProperties(i); track prop) { <option [value]="prop">{{ prop }}</option> }
+                      </select>
+                    }
+                    @case('callMethod') {
+                      <p class="text-sm font-mono text-cyan-300 bg-gray-800 px-3 py-2 rounded-md">.{{ params.methodName }}</p>
+                    }
+                    @case('reduceSum') {
+                      <p class="text-sm text-gray-400">Soma todos os valores numéricos no array.</p>
+                    }
+                  }
+                </div>
+              }
+              <div class="pt-2 flex flex-wrap gap-2">
+                <button (click)="addStep('getProperty')" [disabled]="!isGetPropertyEnabled()" class="flex-1 text-sm bg-blue-accent hover:bg-blue-accent/90 text-white font-semibold px-3 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">Pegar Propriedade</button>
+                <button (click)="addStep('filter')" [disabled]="!isArrayOperationsEnabled()" class="flex-1 text-sm bg-blue-accent hover:bg-blue-accent/90 text-white font-semibold px-3 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">Filtrar</button>
+                <button (click)="addStep('map')" [disabled]="!isArrayOperationsEnabled()" class="flex-1 text-sm bg-blue-accent hover:bg-blue-accent/90 text-white font-semibold px-3 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">Mapear</button>
+                <button (click)="addStep('reduceSum')" [disabled]="!isArrayOperationsEnabled()" class="flex-1 text-sm bg-blue-accent hover:bg-blue-accent/90 text-white font-semibold px-3 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed">Somar</button>
+                <button (click)="openSuggestionModal()" class="w-full mt-2 text-sm bg-gray-700 hover:bg-gray-600 text-white font-semibold px-3 py-2 rounded-md">Outros Métodos...</button>
+              </div>
+          </div>
+        } @else {
+          <textarea 
+            class="w-full h-full bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-none"
+            [ngModel]="expressionInput()"
+            (ngModelChange)="expressionInput.set($event)"
+            spellcheck="false">
+          </textarea>
+        }
+      </div>
+      
+      <!-- Panel 3: Output -->
+      <div class="flex flex-col flex-1 min-h-0">
+        <div class="flex border-b border-gray-700">
+            <button (click)="outputTab.set('result')" [class.bg-gray-900]="outputTab() === 'result'" [class.text-white]="outputTab() === 'result'" class="px-4 py-2 text-sm font-medium text-gray-400">Resultado Final</button>
+            <button (click)="outputTab.set('expression')" [class.bg-gray-900]="outputTab() === 'expression'" [class.text-white]="outputTab() === 'expression'" class="px-4 py-2 text-sm font-medium text-gray-400">Expressão Gerada</button>
+        </div>
+        <div class="w-full h-full bg-gray-900 border border-gray-700 border-t-0 rounded-b-md p-4 overflow-auto">
+          @switch(outputTab()) {
+            @case('result') {
+                @if(finalResult(); as out) {
+                    <pre><code [class.text-red-400]="out.isError" [class.text-green-accent]="!out.isError">{{ out.value }}</code></pre>
+                } @else {
+                    <p class="text-gray-500">O resultado aparecerá aqui...</p>
+                }
+            }
+            @case('expression') {
+                <pre><code class="text-cyan-300">{{ expressionInput() }}</code></pre>
+            }
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-code-usage-tips>
+  <div tab="n8n">
+    <div class="text-gray-300 space-y-4 text-sm">
+      <h3 class="text-xl font-semibold text-white">Guia Rápido de Expressões n8n</h3>
+      <p>As expressões são um recurso poderoso que permite definir parâmetros dinamicamente com base nos dados de nós anteriores, do workflow ou do seu ambiente.</p>
+      
+      <h4 class="font-semibold text-white pt-2">Estrutura Básica</h4>
+      <p>Todas as expressões são envolvidas por chaves duplas: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} sua expressão aqui {{ '}}' }}</code>.</p>
+
+      <h4 class="font-semibold text-white pt-2">Fontes de Dados Principais</h4>
+      <ul class="list-disc list-inside space-y-1 pl-2">
+        <li><code class="bg-gray-800 px-1 py-0.5 rounded">$json</code>: Acessa os dados do item de entrada atual. É o que você mais usará.</li>
+        <li><code class="bg-gray-800 px-1 py-0.5 rounded">$node</code>: Acessa dados de qualquer nó anterior na execução. Ex: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} $node["Webhook"].json.body.id {{ '}}' }}</code>.</li>
+        <li><code class="bg-gray-800 px-1 py-0.5 rounded">$env</code>: Acessa variáveis de ambiente configuradas na sua instância n8n.</li>
+      </ul>
+
+      <h4 class="font-semibold text-white pt-2">Exemplo: Obter dados do corpo do webhook</h4>
+      <p>Se um webhook envia <code class="bg-gray-800 px-1 py-0.5 rounded">{ "body": { "city": "New York" } }</code>, você pode obter a cidade com:</p>
+      <pre class="bg-gray-800 p-3 mt-2 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="n8nQuickGuideExpression"></code></pre>
+      
+      <h4 class="font-semibold text-white pt-2">JavaScript Multilinha (IIFE)</h4>
+      <p>Para lógica mais complexa, use uma "Immediately Invoked Function Expression" (IIFE):</p>
+      <pre class="bg-gray-800 p-3 mt-2 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="n8nQuickGuideIIFE"></code></pre>
+
+      <div class="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs">
+        <strong class="font-semibold">Dica:</strong> O n8n injeta a biblioteca <strong class="text-white">Luxon.js</strong> para manipulação de datas. Use <code class="bg-gray-800 px-1 py-0.5 rounded">$now</code> para a data atual ou <code class="bg-gray-800 px-1 py-0.5 rounded">luxon.DateTime</code> para funções mais avançadas.
+      </div>
+    </div>
+  </div>
+  <div tab="python">
+     <div class="text-gray-300 space-y-4 text-sm">
+      <p>A simulação de expressões n8n ocorre no ambiente JavaScript do n8n. Para manipulação de dados em Python, que pode ser feita no nó "Python", você usaria as bibliotecas padrão.</p>
+      <h4 class="font-semibold text-white mb-2">Exemplo em nó Python:</h4>
+      <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonSnippet"></code></pre>
+    </div>
+  </div>
+  <div tab="javascript">
+     <div class="text-gray-300 space-y-4 text-sm">
+      <p>Este simulador executa o código da expressão em um ambiente JavaScript seguro, similar ao do nó "Code" do n8n.</p>
+      <p>Você pode usar a sintaxe padrão do JavaScript para manipular seus dados, como visto nos exemplos da aba "Dicas para n8n".</p>
+       <h4 class="font-semibold text-white mb-2">Exemplo em nó Code:</h4>
+      <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-javascript" [textContent]="javascriptSnippet"></code></pre>
+    </div>
+  </div>
+</app-code-usage-tips>

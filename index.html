@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="utf-8" />
+  <title>Kore: Hub de Automação</title>
+  <base href="/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'gray-950': '#0d1117',
+            'gray-900': '#161b22',
+            'gray-800': '#21262d',
+            'gray-700': '#30363d',
+            'gray-600': '#484f58',
+            'blue-accent': '#58a6ff',
+            'green-accent': '#3fb950'
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/text-encoding@0.7.0/lib/encoding.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "rxjs": "https://aistudiocdn.com/rxjs@^7.8.2?conditions=es2015",
+    "rxjs/operators": "https://aistudiocdn.com/rxjs@^7.8.2/operators?conditions=es2015",
+    "rxjs/ajax": "https://aistudiocdn.com/rxjs@^7.8.2/ajax?conditions=es2015",
+    "rxjs/webSocket": "https://aistudiocdn.com/rxjs@^7.8.2/webSocket?conditions=es2015",
+    "rxjs/testing": "https://aistudiocdn.com/rxjs@^7.8.2/testing?conditions=es2015",
+    "rxjs/fetch": "https://aistudiocdn.com/rxjs@^7.8.2/fetch?conditions=es2015",
+    "@angular/compiler": "https://next.esm.sh/@angular/compiler@^20.3.11?external=rxjs",
+    "@angular/platform-browser": "https://next.esm.sh/@angular/platform-browser@^20.3.11?external=rxjs",
+    "@angular/core": "https://next.esm.sh/@angular/core@^20.3.11?external=rxjs",
+    "@angular/router": "https://next.esm.sh/@angular/router@^20.3.11?external=rxjs",
+    "@angular/forms": "https://next.esm.sh/@angular/forms@^20.3.11?external=rxjs",
+    "react/jsx-runtime": "https://next.esm.sh/react@^19.2.0/jsx-runtime?external=rxjs",
+    "react": "https://next.esm.sh/react@^19.2.0?external=rxjs",
+    "react-native/Libraries/NewAppScreen": "https://next.esm.sh/react-native@^0.82.1/Libraries/NewAppScreen?external=rxjs",
+    "react-native": "https://next.esm.sh/react-native@^0.82.1?external=rxjs",
+    "recast/lib/util": "https://next.esm.sh/recast@^0.23.11/lib/util?external=rxjs",
+    "recast": "https://next.esm.sh/recast@^0.23.11?external=rxjs",
+    "ast-types/lib/node-path": "https://next.esm.sh/ast-types@^0.14.2/lib/node-path?external=rxjs",
+    "ast-types/lib/gen/kinds": "https://next.esm.sh/ast-types@^0.14.2/lib/gen/kinds?external=rxjs",
+    "ast-types": "https://next.esm.sh/ast-types@^0.14.2?external=rxjs",
+    "esprima-next": "https://next.esm.sh/esprima-next@^6.0.3?external=rxjs"
+  }
+}
+</script>
+</head>
+<body class="bg-gray-950 text-gray-300 font-sans antialiased">
+  <app-root></app-root>
+</body>
+</html>

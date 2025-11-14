@@ -1,0 +1,60 @@
+<nav 
+  class="flex flex-col border-r border-gray-800 bg-gray-900 transition-all duration-300 ease-in-out"
+  [class.w-20]="!isExpanded()"
+  [class.w-64]="isExpanded()">
+  
+  <div class="flex h-16 items-center border-b border-gray-800" [class.justify-center]="!isExpanded()" [class.px-6]="isExpanded()">
+    <button (click)="toggle.emit()" class="p-2 rounded-lg hover:bg-gray-800">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto overflow-x-hidden">
+    <ul class="flex flex-col gap-2 py-4">
+      @for(item of navItems; track item.path) {
+        <li>
+          <a 
+            [class.cursor-pointer]="item.children"
+            [class.active-parent]="isLinkActive(item.path)"
+            [routerLink]="!item.children ? item.path : null"
+            (click)="handleNavigation(item)"
+            routerLinkActive="active" 
+            [routerLinkActiveOptions]="{exact: item.path === '/'}"
+            class="flex items-center justify-between h-12 text-gray-400 hover:text-white hover:bg-gray-800 mx-3 rounded-lg transition-colors">
+            
+            <div class="flex items-center" [class.justify-center]="!isExpanded()">
+              <span class="w-12 h-12 flex items-center justify-center">
+                <span class="material-icons-outlined">
+                  {{ item.icon }}
+                </span>
+              </span>
+              <span class="ml-1 text-sm font-medium transition-all duration-200" [class.opacity-0]="!isExpanded()" [class.w-0]="!isExpanded()" [class.w-auto]="isExpanded()">{{ item.label }}</span>
+            </div>
+
+            @if(item.children && isExpanded()) {
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-4 transition-transform duration-200" [class.rotate-90]="currentlyOpen() === item.label">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            }
+          </a>
+          
+          @if(item.children && currentlyOpen() === item.label && isExpanded()) {
+            <ul class="mt-1 ml-8 space-y-1">
+              @for(child of item.children; track child.path) {
+                <li>
+                  <a [routerLink]="child.path"
+                     routerLinkActive="active-child"
+                     class="flex items-center h-10 px-3 text-sm text-gray-400 hover:text-white rounded-md hover:bg-gray-800/50">
+                    {{ child.label }}
+                  </a>
+                </li>
+              }
+            </ul>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</nav>

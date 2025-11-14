@@ -1,0 +1,14 @@
+textarea {
+    line-height: 1.5rem; /* 24px */
+    caret-color: white;
+    min-height: 300px; /* Ensure a minimum height */
+
+    /* Indentation guides */
+    background-image: linear-gradient(to right, #30363d 1px, transparent 1px);
+    background-size: 2ch 1.5rem;
+}
+
+.error-indicator {
+    @apply absolute left-0 right-0 h-px bg-red-500 pointer-events-none;
+    /* This will be positioned by the [style.top] binding */
+}

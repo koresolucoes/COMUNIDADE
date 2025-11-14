@@ -1,0 +1,15 @@
+<div class="space-y-8">
+  <section>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Ferramentas</h1>
+    <p class="mt-2 text-gray-400">Utilitários para acelerar seu fluxo de trabalho de automação.</p>
+  </section>
+
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for(tool of tools; track tool.name) {
+      <a [routerLink]="tool.link" class="block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1">
+        <h2 class="text-xl font-semibold text-white">{{ tool.name }}</h2>
+        <p class="mt-2 text-gray-400">{{ tool.description }}</p>
+      </a>
+    }
+  </section>
+</div>

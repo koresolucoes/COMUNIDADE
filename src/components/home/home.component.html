@@ -1,0 +1,55 @@
+<div class="space-y-12">
+  <!-- Hero Section -->
+  <section class="text-center">
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Hub de Automação da Kore</h1>
+    <p class="mt-4 max-w-2xl mx-auto text-lg text-gray-400">Notícias, templates e ferramentas para engenheiros de automação.</p>
+  </section>
+
+  <!-- Main Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Featured Tool -->
+      <section>
+        <h2 class="text-2xl font-semibold text-white mb-4">Ferramenta em Destaque</h2>
+        <div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+          <app-cron-generator [isEmbedded]="true"></app-cron-generator>
+        </div>
+      </section>
+
+       <!-- Recently Published -->
+      <section>
+        <h2 class="text-2xl font-semibold text-white mb-4">Recém-Publicado</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          @for(post of recentPosts; track post.title) {
+            <a [routerLink]="post.link" class="bg-gray-900 p-4 border border-gray-800 rounded-lg hover:border-blue-accent transition-colors block">
+              <span class="text-xs font-semibold uppercase tracking-wider" [class.text-green-accent]="post.type === 'Template'" [class.text-blue-accent]="post.type === 'Artigo'">{{post.type}}</span>
+              <h3 class="mt-2 font-medium text-white">{{post.title}}</h3>
+            </a>
+          }
+        </div>
+      </section>
+    </div>
+
+    <div class="lg:col-span-1">
+       <!-- Popular Templates -->
+      <section>
+        <h2 class="text-2xl font-semibold text-white mb-4">Templates Populares</h2>
+        <div class="space-y-4">
+          @for(template of popularTemplates; track template.title) {
+            <a routerLink="/templates" class="block bg-gray-900 p-4 border border-gray-800 rounded-lg hover:border-blue-accent transition-colors">
+              <h3 class="font-medium text-white">{{template.title}}</h3>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="text-xs text-gray-400">Apps:</span>
+                <!-- In a real app, these would be dynamic icons -->
+                <div class="flex gap-2">
+                    <div class="w-5 h-5 bg-gray-700 rounded-full"></div>
+                    <div class="w-5 h-5 bg-gray-700 rounded-full"></div>
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

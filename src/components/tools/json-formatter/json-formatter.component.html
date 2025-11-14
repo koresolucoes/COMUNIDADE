@@ -1,0 +1,125 @@
+<div class="space-y-8 h-full flex flex-col">
+  <div class="mb-2">
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Formatador de JSON</h1>
+    <p class="mt-2 text-gray-400">Valide, formate, minifique e copie seu código JSON com facilidade.</p>
+  </div>
+
+  <div class="flex-grow flex flex-col min-h-0">
+    <div class="flex items-center justify-between mb-2 h-5">
+       <label for="json-input" class="block text-sm font-medium text-gray-400">Seu JSON</label>
+       
+       @if (validationStatus() === 'invalid' && error()) {
+         <div class="text-sm text-red-400 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            {{ error()?.message }}
+            @if(error()?.line) {
+              <span class="ml-1">(Linha: {{ error()?.line }})</span>
+            }
+         </div>
+       }
+       @if (validationStatus() === 'valid') {
+          <div class="text-sm text-green-accent flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+            JSON é válido!
+          </div>
+       }
+    </div>
+    
+    <div class="relative mt-2 flex-grow">
+        @if(errorLinePosition(); as topPosition) {
+            <div class="error-indicator" [style.top]="topPosition"></div>
+        }
+        <textarea 
+            id="json-input"
+            class="w-full h-full bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y"
+            [class.border-red-500]="validationStatus() === 'invalid'"
+            [class.focus:border-red-500]="validationStatus() === 'invalid'"
+            [class.focus:ring-red-500]="validationStatus() === 'invalid'"
+            placeholder='{ "cole": "seu JSON aqui" }'
+            [ngModel]="jsonContent()"
+            (ngModelChange)="onContentChange($event)"
+            spellcheck="false">
+        </textarea>
+    </div>
+  </div>
+  
+  <div class="flex flex-wrap items-center gap-4 pt-4">
+    <button (click)="validateJson()" class="px-4 py-2 bg-green-accent/80 text-white rounded-md font-semibold hover:bg-green-accent transition-colors flex items-center gap-2">
+       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      Validar
+    </button>
+    <button (click)="formatJson()" class="px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7" />
+      </svg>
+      Formatar
+    </button>
+     <button (click)="minifyJson()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center gap-2">
+       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1v4m0 0h-4m4 0l-5-5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5 5" />
+      </svg>
+       Minificar
+    </button>
+    <div class="flex-grow"></div>
+    <button (click)="copyToClipboard()" [disabled]="!jsonContent() || validationStatus() === 'invalid'" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+      </svg>
+      {{ copyButtonText() }}
+    </button>
+    <button (click)="clearContent()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-md font-semibold hover:bg-red-600/30 transition-colors flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+      Limpar
+    </button>
+  </div>
+</div>
+
+<app-code-usage-tips>
+  <div tab="n8n">
+    <div class="text-gray-300 space-y-4 text-sm">
+      <p>O n8n opera nativamente com JSON, e o nó <code class="bg-gray-800 px-1 py-0.5 rounded">Code</code> é seu melhor amigo para manipulações complexas.</p>
+      
+      <h4 class="font-semibold text-white mb-2">Principais Operações:</h4>
+      <ul class="list-disc list-inside space-y-2 pl-2">
+          <li>
+              <strong class="text-white">Analisar (Parse):</strong> Se você recebe uma string JSON de uma API (ex: no corpo de um webhook), pode convertê-la em um objeto n8n com a expressão: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.parse($json.body) {{ '}}' }}</code>.
+          </li>
+          <li>
+              <strong class="text-white">Formatar (Stringify):</strong> Para enviar um objeto n8n como uma string JSON formatada para outra API, use: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.stringify($json, null, 2) {{ '}}' }}</code>. O '2' indica a indentação, criando uma saída legível.
+          </li>
+          <li>
+              <strong class="text-white">Minificar (Stringify):</strong> Para uma versão compacta, sem espaços, ideal para economizar banda, omita os argumentos extras: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} JSON.stringify($json) {{ '}}' }}</code>.
+          </li>
+      </ul>
+       <div class="mt-2 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
+          <strong class="font-semibold">Atenção:</strong> Sempre envolva operações de `JSON.parse` em um bloco `try...catch` dentro do nó "Code" para tratar casos em que a string de entrada não é um JSON válido e evitar que seu workflow falhe.
+      </div>
+    </div>
+  </div>
+  <div tab="python">
+    <div>
+      <p class="text-sm text-gray-400 mb-4">O módulo <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">json</code> é nativo do Python e oferece todas as funções necessárias.</p>
+      <div class="relative">
+        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonSnippet()"></code></pre>
+        <button (click)="copyCodeSnippet(pythonSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+      </div>
+    </div>
+  </div>
+  <div tab="javascript">
+    <div>
+       <p class="text-sm text-gray-400 mb-4">O objeto global <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">JSON</code> é a forma padrão de interagir com JSON em JavaScript e Node.js.</p>
+      <div class="relative">
+        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptSnippet()"></code></pre>
+         <button (click)="copyCodeSnippet(javascriptSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+      </div>
+    </div>
+  </div>
+</app-code-usage-tips>

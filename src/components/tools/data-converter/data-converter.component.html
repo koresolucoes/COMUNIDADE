@@ -1,0 +1,140 @@
+<div class="space-y-8 h-full flex flex-col">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Conversor de Dados</h1>
+    <p class="mt-2 text-gray-400">Converta dados entre formatos populares como JSON, XML e CSV.</p>
+  </div>
+  
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-0">
+    <!-- Input Column -->
+    <div class="flex flex-col min-h-0">
+      <div class="flex items-center justify-between mb-2">
+        <label for="input-format" class="text-sm font-medium text-gray-400">Formato de Entrada</label>
+        <select id="input-format" [ngModel]="inputFormat()" (ngModelChange)="inputFormat.set($event)" class="bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
+          <option value="json">JSON</option>
+          <option value="xml">XML</option>
+          <option value="csv">CSV</option>
+          <option value="yaml" disabled>YAML (em breve)</option>
+        </select>
+      </div>
+      <textarea 
+        class="w-full h-full bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y"
+        placeholder="Cole seus dados aqui"
+        [ngModel]="inputText()"
+        (ngModelChange)="inputText.set($event)"
+        spellcheck="false">
+      </textarea>
+    </div>
+
+    <!-- Output Column -->
+    <div class="flex flex-col min-h-0">
+      <div class="flex items-center justify-between mb-2">
+        <label for="output-format" class="text-sm font-medium text-gray-400">Formato de Saída</label>
+        <select id="output-format" [ngModel]="outputFormat()" (ngModelChange)="outputFormat.set($event)" class="bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
+          <option value="json">JSON</option>
+          <option value="xml">XML</option>
+          <option value="csv">CSV</option>
+          <option value="yaml" disabled>YAML (em breve)</option>
+        </select>
+      </div>
+      <div class="relative w-full h-full">
+        <textarea 
+          readonly
+          class="w-full h-full bg-gray-900 border border-gray-700 font-mono text-gray-300 rounded-md p-4 resize-y"
+          placeholder="O resultado aparecerá aqui"
+          [value]="outputText()">
+        </textarea>
+        @if(outputText()) {
+          <button (click)="copyToClipboard()" class="absolute top-3 right-3 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs">
+            {{ copyButtonText() }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-4 pt-4">
+    <button (click)="convert()" [disabled]="isProcessing() || !inputText()" class="px-6 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+      @if(isProcessing()) {
+        <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Processando...</span>
+      } @else {
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+        </svg>
+        <span>Converter</span>
+      }
+    </button>
+
+    <div class="flex-grow"></div>
+
+     @if (error()) {
+        <div class="text-sm text-red-400 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            {{ error() }}
+        </div>
+      }
+    <button (click)="clear()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-md font-semibold hover:bg-red-600/30 transition-colors flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+      </svg>
+      Limpar
+    </button>
+  </div>
+</div>
+
+<app-code-usage-tips>
+  <div tab="n8n">
+    <div class="text-gray-300 space-y-4 text-sm">
+        <p>O n8n se destaca na manipulação de JSON, mas muitas vezes você precisa interagir com sistemas que usam XML ou CSV. Os nós <code class="bg-gray-800 px-1 py-0.5 rounded">XML</code>, <code class="bg-gray-800 px-1 py-0.5 rounded">Spreadsheet File</code> e <code class="bg-gray-800 px-1 py-0.5 rounded">Code</code> são seus aliados.</p>
+        
+        <h4 class="font-semibold text-white pt-2">JSON &#8594; XML</h4>
+        <p>Use o nó <strong class="text-white">XML</strong>. Conecte sua fonte de dados JSON, defina o "Operation Mode" como "JSON to XML" e ele converterá os itens de entrada em uma estrutura XML.</p>
+
+        <h4 class="font-semibold text-white pt-2">XML &#8594; JSON</h4>
+        <p>Use o nó <strong class="text-white">XML</strong>. Conecte sua fonte de dados XML (por exemplo, de um nó HTTP Request) e defina o "Operation Mode" como "XML to JSON". O n8n irá analisar o XML e transformá-lo em um objeto JSON estruturado.</p>
+        
+        <h4 class="font-semibold text-white pt-2">JSON &#8594; CSV</h4>
+        <p>Use o nó <strong class="text-white">Spreadsheet File</strong>. Ele pode pegar itens JSON de entrada e convertê-los em um arquivo CSV, que você pode então salvar ou enviar para outro serviço.</p>
+
+        <h4 class="font-semibold text-white pt-2">CSV &#8594; JSON</h4>
+        <p>Use o nó <strong class="text-white">Spreadsheet File</strong> com a operação "Read from file". Ele lê um arquivo CSV e o converte em itens JSON, onde cada linha do CSV se torna um item.</p>
+    </div>
+  </div>
+  <div tab="python">
+     <div class="text-gray-300 space-y-4 text-sm">
+      <p>Python possui bibliotecas robustas para cada tipo de conversão de dados.</p>
+      <ul class="list-disc list-inside space-y-2 pl-2">
+          <li>
+              <strong class="text-white">JSON:</strong> O módulo nativo <code class="bg-gray-800 px-1 py-0.5 rounded">json</code> com <code class="bg-gray-800 px-1 py-0.5 rounded">json.loads()</code> e <code class="bg-gray-800 px-1 py-0.5 rounded">json.dumps()</code>.
+          </li>
+          <li>
+              <strong class="text-white">XML:</strong> O módulo nativo <code class="bg-gray-800 px-1 py-0.5 rounded">xml.etree.ElementTree</code> para análise e criação de XML.
+          </li>
+           <li>
+              <strong class="text-white">CSV:</strong> O módulo nativo <code class="bg-gray-800 px-1 py-0.5 rounded">csv</code> para ler e escrever arquivos CSV de forma eficiente.
+          </li>
+      </ul>
+    </div>
+  </div>
+  <div tab="javascript">
+     <div class="text-gray-300 space-y-4 text-sm">
+      <p>Em Node.js, você geralmente usará bibliotecas externas para conversões complexas, especialmente para XML e CSV.</p>
+      <ul class="list-disc list-inside space-y-2 pl-2">
+          <li>
+              <strong class="text-white">JSON:</strong> O objeto nativo <code class="bg-gray-800 px-1 py-0.5 rounded">JSON</code> com <code class="bg-gray-800 px-1 py-0.5 rounded">JSON.parse()</code> e <code class="bg-gray-800 px-1 py-0.5 rounded">JSON.stringify()</code>.
+          </li>
+          <li>
+              <strong class="text-white">XML:</strong> Bibliotecas populares como <code class="bg-gray-800 px-1 py-0.5 rounded">fast-xml-parser</code> ou <code class="bg-gray-800 px-1 py-0.5 rounded">xml2js</code>.
+          </li>
+           <li>
+              <strong class="text-white">CSV:</strong> Bibliotecas como <code class="bg-gray-800 px-1 py-0.5 rounded">csv-parse</code> e <code class="bg-gray-800 px-1 py-0.5 rounded">csv-stringify</code> são comumente usadas.
+          </li>
+      </ul>
+    </div>
+  </div>
+</app-code-usage-tips>

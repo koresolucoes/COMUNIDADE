@@ -1,0 +1,11 @@
+a.active, a.active-parent {
+  @apply bg-gray-800 text-white;
+}
+
+a.active .material-icons-outlined, a.active-parent .material-icons-outlined {
+  @apply text-blue-accent;
+}
+
+a.active-child {
+    @apply text-blue-accent font-semibold;
+}

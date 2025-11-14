@@ -1,0 +1,113 @@
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Conversor de Timestamp</h1>
+    <p class="mt-2 text-gray-400">Converta datas entre formato legível (humano) e Unix Timestamp.</p>
+  </div>
+  
+  <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Input section -->
+      <div class="space-y-6">
+        <div>
+          <label for="timestamp-input" class="block text-sm font-medium text-gray-400 mb-2">Timestamp Unix (segundos)</label>
+          <input 
+            type="number" 
+            id="timestamp-input"
+            class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent font-mono"
+            [value]="timestamp()"
+            (input)="onTimestampChange($any($event.target).value)">
+        </div>
+        <div>
+          <label for="date-input" class="block text-sm font-medium text-gray-400 mb-2">Data e Hora Local</label>
+           <input 
+            type="datetime-local" 
+            id="date-input"
+            class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent"
+            [value]="getDateTimeLocalValue()"
+            (input)="onDateChange($any($event.target).value)">
+        </div>
+        <button (click)="setCurrentTime()" class="w-full px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors">
+          Usar Hora Atual
+        </button>
+      </div>
+
+      <!-- Output section -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold text-white">Resultados</h3>
+        <div class="p-3 bg-gray-800 rounded-md">
+          <label class="block text-xs text-gray-400">Tempo Relativo</label>
+          <p class="text-white font-medium">{{ relativeTimeString() }}</p>
+        </div>
+        <div class="p-3 bg-gray-800 rounded-md">
+          <label class="block text-xs text-gray-400">Data em UTC</label>
+          <div class="flex justify-between items-center">
+            <p class="text-white font-mono text-sm">{{ utcString() }}</p>
+            <button (click)="copyToClipboard(utcString())" title="Copiar" class="text-gray-500 hover:text-white">
+              <span class="material-icons-outlined text-base">content_copy</span>
+            </button>
+          </div>
+        </div>
+        <div class="p-3 bg-gray-800 rounded-md">
+          <label class="block text-xs text-gray-400">Data no seu Fuso Horário</label>
+           <div class="flex justify-between items-center">
+            <p class="text-white font-mono text-sm">{{ localString() }}</p>
+             <button (click)="copyToClipboard(localString())" title="Copiar" class="text-gray-500 hover:text-white">
+              <span class="material-icons-outlined text-base">content_copy</span>
+            </button>
+          </div>
+        </div>
+         <div class="p-3 bg-gray-800 rounded-md">
+          <label class="block text-xs text-gray-400">ISO 8601</label>
+           <div class="flex justify-between items-center">
+            <p class="text-white font-mono text-sm">{{ isoString() }}</p>
+             <button (click)="copyToClipboard(isoString())" title="Copiar" class="text-gray-500 hover:text-white">
+              <span class="material-icons-outlined text-base">content_copy</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-code-usage-tips>
+  <div tab="n8n">
+    <div class="text-gray-300 space-y-4 text-sm">
+      <p>O n8n inclui a poderosa biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded">Luxon.js</code>, acessível em qualquer expressão para manipulação avançada de datas.</p>
+      
+      <h4 class="font-semibold text-white mb-2">Exemplos de Expressões:</h4>
+      <ul class="list-disc list-inside space-y-2 pl-2">
+          <li>
+              <strong class="text-white">Obter Timestamp Atual:</strong>
+              <p class="text-xs pl-4 text-gray-400">Para obter o timestamp Unix em segundos: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} $now.toSeconds() {{ '}}' }}</code> ou <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} Math.floor($now.ts / 1000) {{ '}}' }}</code>.</p>
+          </li>
+           <li>
+              <strong class="text-white">Converter Timestamp para Data Legível:</strong>
+              <p class="text-xs pl-4 text-gray-400">Para converter um timestamp (ex: 1672531200) para o formato ISO 8601 em um fuso horário específico: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} luxon.DateTime.fromSeconds(1672531200).setZone('America/Sao_Paulo').toISO() {{ '}}' }}</code>.</p>
+          </li>
+           <li>
+              <strong class="text-white">Formatar Data Atual:</strong>
+              <p class="text-xs pl-4 text-gray-400">Para formatar a data atual no padrão brasileiro: <code class="bg-gray-800 px-1 py-0.5 rounded">{{ '{{' }} $now.setZone('America/Sao_Paulo').toFormat('dd/MM/yyyy HH:mm:ss') {{ '}}' }}</code>.</p>
+          </li>
+      </ul>
+    </div>
+  </div>
+  <div tab="python">
+    <div>
+      <p class="text-sm text-gray-400 mb-4">O módulo <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">datetime</code> é a ferramenta padrão para trabalhar com datas e horas em Python.</p>
+      <div class="relative">
+        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonSnippet()"></code></pre>
+        <button (click)="copyCodeSnippet(pythonSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+      </div>
+    </div>
+  </div>
+  <div tab="javascript">
+    <div>
+       <p class="text-sm text-gray-400 mb-4">O objeto <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">Date</code> é nativo do JavaScript e serve como base para todas as operações de data e hora.</p>
+      <div class="relative">
+        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptSnippet()"></code></pre>
+         <button (click)="copyCodeSnippet(javascriptSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+      </div>
+    </div>
+  </div>
+</app-code-usage-tips>

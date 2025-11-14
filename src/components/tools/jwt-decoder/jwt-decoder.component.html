@@ -1,0 +1,83 @@
+<div class="space-y-8 h-full flex flex-col">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Decodificador de JWT</h1>
+    <p class="mt-2 text-gray-400">Cole um JSON Web Token para inspecionar seu Header e Payload.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-0">
+    <!-- Left side: Input -->
+    <div class="flex flex-col">
+      <label for="jwt-input" class="block text-sm font-medium text-gray-400 mb-2">Token JWT Codificado</label>
+      <textarea 
+        id="jwt-input"
+        class="w-full h-full bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y"
+        placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        [ngModel]="encodedToken()"
+        (ngModelChange)="encodedToken.set($event)"
+        spellcheck="false">
+      </textarea>
+    </div>
+
+    <!-- Right side: Output -->
+    <div class="flex flex-col space-y-4 min-h-0">
+      @if(error()) {
+        <div class="bg-red-900/50 border border-red-500/50 text-red-300 p-4 rounded-lg h-full flex items-center justify-center">
+            {{ error() }}
+        </div>
+      } @else {
+        <!-- Header -->
+        <div class="flex flex-col flex-1 min-h-0">
+          <label class="block text-sm font-medium text-gray-400 mb-2">Header (Cabeçalho)</label>
+          <pre class="w-full flex-1 bg-gray-900 border border-gray-700 text-pink-400 rounded-md p-4 overflow-auto text-sm"><code>{{ header() || '...' }}</code></pre>
+        </div>
+        <!-- Payload -->
+        <div class="flex flex-col flex-1 min-h-0">
+          <label class="block text-sm font-medium text-gray-400 mb-2">Payload (Dados)</label>
+          <pre class="w-full flex-1 bg-gray-900 border border-gray-700 text-cyan-300 rounded-md p-4 overflow-auto text-sm"><code>{{ payload() || '...' }}</code></pre>
+        </div>
+        <!-- Signature -->
+        <div class="flex flex-col">
+           <label class="block text-sm font-medium text-gray-400 mb-2">Signature (Assinatura)</label>
+           <div class="w-full bg-gray-900 border border-gray-700 text-gray-500 rounded-md p-3 overflow-x-auto text-sm truncate">
+             {{ signature() || '...' }}
+           </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<app-code-usage-tips>
+  <div tab="n8n">
+    <div class="text-gray-300 space-y-4 text-sm">
+      <p>Às vezes, um webhook ou API retorna um JWT que contém informações úteis no payload. Você pode decodificá-lo facilmente no nó <code class="bg-gray-800 px-1 py-0.5 rounded">Code</code> para extrair esses dados.</p>
+      
+      <h4 class="font-semibold text-white mb-2">Exemplo no nó "Code":</h4>
+      <p>O snippet abaixo pega um token, extrai a segunda parte (payload), decodifica de Base64 para texto, e o converte para um objeto JSON que pode ser usado nos nós seguintes.</p>
+      <pre class="bg-gray-800 p-3 mt-2 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="n8nSnippet()"></code></pre>
+
+       <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
+          <strong class="font-semibold block">Importante sobre Segurança</strong>
+          Este método <strong class="text-white">APENAS DECODIFICA</strong> os dados, mas <strong class="text-white">NÃO VERIFICA A ASSINATURA</strong>. Isso significa que você não pode confiar na autenticidade dos dados. Use isso apenas para inspecionar ou extrair informações de fontes confiáveis. A verificação de assinatura requer uma chave secreta e bibliotecas criptográficas.
+      </div>
+    </div>
+  </div>
+  <div tab="python">
+    <div>
+      <p class="text-sm text-gray-400 mb-4">A biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">PyJWT</code> é o padrão para lidar com JWT em Python. Instale com <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">pip install pyjwt</code>.</p>
+      <div class="relative">
+        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-python" [textContent]="pythonSnippet()"></code></pre>
+        <button (click)="copyCodeSnippet(pythonSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+      </div>
+    </div>
+  </div>
+  <div tab="javascript">
+    <div>
+       <p class="text-sm text-gray-400 mb-4">Use a biblioteca <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">jsonwebtoken</code> para uma abordagem robusta em Node.js. Instale com <code class="bg-gray-800 px-1 py-0.5 rounded text-gray-300">npm install jsonwebtoken</code>.</p>
+      <div class="relative">
+        <pre class="bg-gray-800 p-4 rounded-md text-xs text-white overflow-x-auto"><code class="language-js" [textContent]="javascriptSnippet()"></code></pre>
+         <button (click)="copyCodeSnippet(javascriptSnippet())" class="absolute top-2 right-2 text-xs bg-gray-700 hover:bg-gray-600 text-white font-semibold px-2 py-1 rounded">Copiar</button>
+      </div>
+    </div>
+  </div>
+</app-code-usage-tips>
