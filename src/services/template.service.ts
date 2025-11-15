@@ -36,6 +36,33 @@ export class TemplateService {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
 
+  private async getUserProfiles(userIds: string[]): Promise<Record<string, Profile>> {
+    if (userIds.length === 0) return {};
+    
+    const { data, error } = await this.supabase
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .in('id', userIds);
+
+    if (error) {
+      console.error('Error fetching profiles:', error);
+      throw error;
+    }
+
+    const profiles: Record<string, Profile> = {};
+    if (data) {
+      for (const profile of data) {
+        if (profile.avatar_url) {
+          const { data: { publicUrl } } = this.supabase.storage.from('avatars').getPublicUrl(profile.avatar_url);
+          // Adiciona um parâmetro para evitar cache e garantir que o avatar mais recente seja exibido
+          profile.avatar_url = publicUrl ? `${publicUrl}?t=${new Date().getTime()}` : null;
+        }
+        profiles[profile.id] = profile;
+      }
+    }
+    return profiles;
+  }
+
   async getTemplates(): Promise<Omit<Template, 'workflow_json'>[]> {
     const { data, error } = await this.supabase
       .from('templates')
@@ -51,8 +78,6 @@ export class TemplateService {
       return [];
     }
 
-    // The Supabase query may return `author` as an array `Profile[]`, but the `Template` type expects `Profile`.
-    // We map over the data to fix this structure before returning it.
     return data.map((template: any) => ({
       ...template,
       author: Array.isArray(template.author) ? template.author[0] : template.author,
@@ -71,7 +96,6 @@ export class TemplateService {
       throw error;
     }
     
-    // Also apply the fix here to be safe, as it uses the same select pattern.
     if (data && Array.isArray((data as any).author)) {
       (data as any).author = (data as any).author[0];
     }
@@ -80,9 +104,9 @@ export class TemplateService {
   }
 
   async getComments(templateId: number): Promise<TemplateComment[]> {
-    const { data, error } = await this.supabase
+    const { data: commentsData, error } = await this.supabase
       .from('template_comments')
-      .select('*, author:profiles(id, username, full_name, avatar_url)')
+      .select('*')
       .eq('template_id', templateId)
       .order('created_at', { ascending: true });
 
@@ -91,9 +115,17 @@ export class TemplateService {
       throw error;
     }
     
-    return data.map((comment: any) => ({
+    if (!commentsData || commentsData.length === 0) {
+      return [];
+    }
+    
+    // Fix: Ensure userIds is an array of strings by filtering out any non-string values.
+    const userIds = [...new Set(commentsData.map(c => c.user_id))].filter((id): id is string => !!id);
+    const profiles = await this.getUserProfiles(userIds);
+
+    return commentsData.map((comment: any) => ({
       ...comment,
-      author: Array.isArray(comment.author) ? comment.author[0] : comment.author,
+      author: profiles[comment.user_id],
     }));
   }
 
@@ -103,14 +135,14 @@ export class TemplateService {
       throw new Error('Usuário não autenticado.');
     }
 
-    const { data, error } = await this.supabase
+    const { data: insertedComment, error } = await this.supabase
       .from('template_comments')
       .insert({
         template_id: templateId,
         content: content,
         user_id: user.id,
       })
-      .select('*, author:profiles(id, username, full_name, avatar_url)')
+      .select()
       .single();
 
     if (error) {
@@ -118,11 +150,11 @@ export class TemplateService {
       throw error;
     }
 
-    const commentData = data as any;
-    if (commentData && Array.isArray(commentData.author)) {
-      commentData.author = commentData.author[0];
-    }
+    const profiles = await this.getUserProfiles([insertedComment.user_id]);
     
-    return commentData;
+    return {
+      ...insertedComment,
+      author: profiles[insertedComment.user_id],
+    };
   }
 }
