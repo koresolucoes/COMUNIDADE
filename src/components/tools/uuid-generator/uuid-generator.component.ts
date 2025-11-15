@@ -5,7 +5,7 @@ import { CodeUsageTipsComponent } from '../../shared/code-usage-tips/code-usage-
 @Component({
   selector: 'app-uuid-generator',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent],
+  imports: [FormsModule],
   templateUrl: './uuid-generator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

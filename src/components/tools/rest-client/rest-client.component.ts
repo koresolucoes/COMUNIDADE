@@ -24,7 +24,7 @@ interface ResponseState {
 @Component({
   selector: 'app-rest-client',
   standalone: true,
-  imports: [FormsModule, SafeHtmlPipe],
+  imports: [FormsModule],
   templateUrl: './rest-client.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

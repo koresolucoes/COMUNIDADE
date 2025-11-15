@@ -9,7 +9,7 @@ import { ToolDataStateService } from '../../../services/tool-data-state.service'
 @Component({
   selector: 'app-hash-generator',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
+  imports: [FormsModule],
   templateUrl: './hash-generator.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -9,7 +9,7 @@ import { ToolDataStateService } from '../../../services/tool-data-state.service'
 @Component({
   selector: 'app-password-generator',
   standalone: true,
-  imports: [FormsModule, CodeUsageTipsComponent, RouterLink],
+  imports: [FormsModule],
   templateUrl: './password-generator.component.html',
   styleUrls: ['./password-generator.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
