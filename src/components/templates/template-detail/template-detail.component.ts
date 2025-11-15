@@ -258,18 +258,15 @@ export class TemplateDetailComponent {
     this.sendToN8nMessage.set('');
 
     try {
-      const newWorkflow = await this.n8nApiService.createWorkflow(t.title);
-      
-      const fullWorkflowData = {
-          ...workflowJson,
-          name: t.title,
+      const workflowCreatePayload = {
+        name: t.title,
+        nodes: workflowJson.nodes || [],
+        connections: workflowJson.connections || {},
+        settings: workflowJson.settings || {},
+        staticData: workflowJson.staticData || null,
       };
 
-      // Remove read-only properties before updating
-      delete (fullWorkflowData as any).tags;
-      delete (fullWorkflowData as any).active;
-      
-      await this.n8nApiService.updateWorkflow(newWorkflow.id, fullWorkflowData);
+      await this.n8nApiService.createWorkflow(workflowCreatePayload);
 
       this.sendToN8nStatus.set('success');
       this.sendToN8nMessage.set(`Workflow "${t.title}" criado com sucesso!`);

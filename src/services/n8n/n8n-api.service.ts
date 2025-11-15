@@ -113,14 +113,14 @@ export class N8nApiService {
     return response.data;
   }
 
-  async createWorkflow(name: string): Promise<Workflow> {
-    const body = {
-      name,
-      nodes: [],
-      connections: {},
-      settings: {},
-    };
-    return this._request('/workflows', 'POST', body);
+  async createWorkflow(workflowData: {
+    name: string;
+    nodes: any[];
+    connections: any;
+    settings: any;
+    staticData?: any;
+  }): Promise<Workflow> {
+    return this._request('/workflows', 'POST', workflowData);
   }
 
   async updateWorkflow(id: string, workflowData: Partial<Workflow>): Promise<Workflow> {

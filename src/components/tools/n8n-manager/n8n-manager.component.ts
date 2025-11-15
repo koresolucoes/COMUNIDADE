@@ -125,7 +125,12 @@ export class N8nManagerComponent implements OnInit {
     }
     this.loading.set(true);
     try {
-      await this.n8nApiService.createWorkflow(this.newWorkflowName());
+      await this.n8nApiService.createWorkflow({
+        name: this.newWorkflowName(),
+        nodes: [],
+        connections: {},
+        settings: {},
+      });
       this.closeCreateModal();
       await this.fetchWorkflows();
     } catch (e) {
