@@ -149,22 +149,26 @@ export class TemplateDetailComponent {
 
       const outputs = workflow.connections[sourceNodeName];
       for (const outputName in outputs) {
-        const connections = outputs[outputName]?.[0]; // n8n wraps connections in an array
-        if (connections && Array.isArray(connections)) {
-          for (const connection of connections) {
-            const targetNodeName = connection.node;
-            const targetNodeId = n8nNodeNameToNodeId.get(targetNodeName);
-            if (targetNodeId) {
-              const drawflowTargetId = n8nNodeIdToDrawflowId.get(targetNodeId);
-              if (drawflowTargetId) {
-                // Map n8n's 'true'/'false' outputs to Drawflow's output_1/output_2 for 'if' nodes
-                let sourceOutput = 'output_1';
-                if (outputName.toLowerCase() === 'false') {
-                  sourceOutput = 'output_2';
+        const connectionGroups = outputs[outputName];
+        if (connectionGroups && Array.isArray(connectionGroups)) {
+          for (const connections of connectionGroups) {
+            if (connections && Array.isArray(connections)) {
+              for (const connection of connections) {
+                const targetNodeName = connection.node;
+                const targetNodeId = n8nNodeNameToNodeId.get(targetNodeName);
+                if (targetNodeId) {
+                  const drawflowTargetId = n8nNodeIdToDrawflowId.get(targetNodeId);
+                  if (drawflowTargetId) {
+                    // Map n8n's 'true'/'false' outputs to Drawflow's output_1/output_2 for 'if' nodes
+                    let sourceOutput = 'output_1';
+                    if (outputName.toLowerCase() === 'false') {
+                      sourceOutput = 'output_2';
+                    }
+                    
+                    // Assuming all target nodes have a single input named 'input_1'
+                    this.editor.addConnection(drawflowSourceId, drawflowTargetId, sourceOutput, 'input_1');
+                  }
                 }
-                
-                // Assuming all target nodes have a single input named 'input_1'
-                this.editor.addConnection(drawflowSourceId, drawflowTargetId, sourceOutput, 'input_1');
               }
             }
           }
