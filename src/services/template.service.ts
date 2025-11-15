@@ -10,6 +10,7 @@ export interface Template {
   description: string;
   workflow_json: any;
   tags: string[];
+  category: string;
   published_at: string;
   created_at: string;
   updated_at: string;
@@ -66,7 +67,7 @@ export class TemplateService {
   async getTemplates(): Promise<Omit<Template, 'workflow_json'>[]> {
     const { data, error } = await this.supabase
       .from('templates')
-      .select('id, user_id, title, description, tags, published_at, created_at, updated_at, author:profiles(id, username, full_name, avatar_url)')
+      .select('id, user_id, title, description, tags, category, published_at, created_at, updated_at, author:profiles(id, username, full_name, avatar_url)')
       .order('published_at', { ascending: false });
 
     if (error) {
