@@ -89,26 +89,54 @@ export class TemplateDetailComponent {
   private initializeDrawflow(container: HTMLElement, workflowData: any) {
     this.editor = new Drawflow(container);
     this.editor.start();
-    this.editor.editor_mode = 'view';
-    this.editor.zoom_max = 1.2;
-    this.editor.zoom_min = 0.4;
+    this.editor.editor_mode = 'fixed';
+    this.editor.zoom_max = 1.6;
+    this.editor.zoom_min = 0.2;
 
     this.n8nToDrawflow(workflowData);
+    this.centerWorkflow(workflowData.nodes, container);
+  }
+  
+  private centerWorkflow(nodes: any[], container: HTMLElement) {
+    if (!this.editor || !nodes || nodes.length === 0) return;
+
+    const NODE_WIDTH = 200;
+    const NODE_HEIGHT = 50;
+
+    const xCoords = nodes.map(n => n.position[0]);
+    const yCoords = nodes.map(n => n.position[1]);
+
+    const minX = Math.min(...xCoords);
+    const maxX = Math.max(...xCoords) + NODE_WIDTH;
+    const minY = Math.min(...yCoords);
+    const maxY = Math.max(...yCoords) + NODE_HEIGHT;
+
+    const contentWidth = maxX - minX;
+    const contentHeight = maxY - minY;
+
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    
+    const zoom = this.editor.zoom;
+
+    // Pan canvas to center the content
+    this.editor.canvas_x = (containerWidth / 2) / zoom - (minX + contentWidth / 2);
+    this.editor.canvas_y = (containerHeight / 2) / zoom - (minY + contentHeight / 2);
+    
+    this.editor.update();
   }
 
-  private async n8nToDrawflow(workflow: any) {
+  private n8nToDrawflow(workflow: any) {
     if (!workflow || !workflow.nodes || !workflow.connections) {
       return;
     }
 
-    // A Drawflow import requires this structure
     const drawflowData = { "drawflow": { "Home": { "data": {} } } };
     this.editor.import(drawflowData);
 
     const n8nNodeIdToDrawflowId = new Map<string, string>();
     const n8nNodeNameToNodeId = new Map<string, string>();
 
-    // First pass: add all nodes to Drawflow and create mappings
     for (const node of workflow.nodes) {
       const nodeType = this.getNodeType(node.type);
       const style = this.nodeStyleMap[nodeType] || this.nodeStyleMap['default'];
@@ -120,26 +148,18 @@ export class TemplateDetailComponent {
         </div>
       `;
 
-      // 'if' nodes have multiple distinct outputs
       const outputs = nodeType === 'if' ? 2 : 1;
       
-      const drawflowId = await this.editor.addNode(
-        node.name, // Name for Drawflow internal registry
-        1, // Inputs
-        outputs, // Outputs
-        node.position[0],
-        node.position[1],
-        '', // Class
-        {}, // Data
-        nodeHtml, // HTML content
-        false // Not a Vue component
+      const drawflowId = this.editor.addNode(
+        node.name, 1, outputs,
+        node.position[0], node.position[1],
+        '', {}, nodeHtml, false
       );
 
-      n8nNodeIdToDrawflowId.set(node.id, drawflowId);
+      n8nNodeIdToDrawflowId.set(node.id, String(drawflowId));
       n8nNodeNameToNodeId.set(node.name, node.id);
     }
 
-    // Second pass: add all connections
     for (const sourceNodeName in workflow.connections) {
       const sourceNodeId = n8nNodeNameToNodeId.get(sourceNodeName);
       if (!sourceNodeId) continue;
@@ -150,22 +170,18 @@ export class TemplateDetailComponent {
       const outputs = workflow.connections[sourceNodeName];
       for (const outputName in outputs) {
         const connectionGroups = outputs[outputName];
-        if (connectionGroups && Array.isArray(connectionGroups)) {
+        if (Array.isArray(connectionGroups)) {
           for (const connections of connectionGroups) {
-            if (connections && Array.isArray(connections)) {
+            if (Array.isArray(connections)) {
               for (const connection of connections) {
-                const targetNodeName = connection.node;
-                const targetNodeId = n8nNodeNameToNodeId.get(targetNodeName);
+                const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
                 if (targetNodeId) {
                   const drawflowTargetId = n8nNodeIdToDrawflowId.get(targetNodeId);
                   if (drawflowTargetId) {
-                    // Map n8n's 'true'/'false' outputs to Drawflow's output_1/output_2 for 'if' nodes
                     let sourceOutput = 'output_1';
                     if (outputName.toLowerCase() === 'false') {
                       sourceOutput = 'output_2';
                     }
-                    
-                    // Assuming all target nodes have a single input named 'input_1'
                     this.editor.addConnection(drawflowSourceId, drawflowTargetId, sourceOutput, 'input_1');
                   }
                 }
