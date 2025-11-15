@@ -1,5 +1,5 @@
 <div class="max-w-4xl mx-auto">
-  @if(loading()) {
+  @if(loading() && !topic()) {
     <p class="text-center text-gray-400 py-16">Carregando tópico...</p>
   } @else if(error()) {
     <div class="text-center text-red-400 py-16">
@@ -12,7 +12,11 @@
       <div class="text-sm text-gray-400 mb-2">
         <a routerLink="/forum" class="hover:text-blue-accent hover:underline">Fórum</a>
       </div>
-      <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">{{ t.title }}</h1>
+      @if(isEditingTopic()) {
+        <input type="text" formControlName="title" [formGroup]="topicEditForm" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-3xl md:text-4xl font-bold tracking-tight">
+      } @else {
+        <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">{{ t.title }}</h1>
+      }
       <p class="mt-3 text-sm text-gray-400">
         Aberto por <span class="font-medium text-gray-300">{{ t.author.email }}</span> em {{ t.created_at | date:'dd/MM/yyyy HH:mm' }}
       </p>
@@ -20,7 +24,17 @@
 
     <!-- Topic Post -->
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
-      <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ t.content }}</p>
+      @if(isEditingTopic()) {
+        <form [formGroup]="topicEditForm" class="space-y-4">
+          <textarea formControlName="content" rows="10" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent"></textarea>
+          <div class="flex items-center gap-4">
+            <button type="button" (click)="saveTopic()" [disabled]="topicEditForm.invalid || loading()" class="px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 disabled:opacity-50">Salvar</button>
+            <button type="button" (click)="cancelEditTopic()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600">Cancelar</button>
+          </div>
+        </form>
+      } @else {
+        <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ t.content }}</p>
+      }
       
       @if(t.attachments && t.attachments.length > 0) {
         <div class="mt-6 pt-4 border-t border-gray-800">
@@ -37,6 +51,27 @@
           </ul>
         </div>
       }
+      
+      @if(!isEditingTopic()) {
+        <div class="flex items-center gap-4 text-sm mt-4 pt-4 border-t border-gray-800">
+          @if(t.last_edited_at) {
+            <span class="text-gray-500 italic text-xs" [title]="t.last_edited_at | date:'full'">
+              (editado)
+            </span>
+            <button (click)="showHistory(t, 'topic')" class="text-gray-500 hover:text-blue-accent hover:underline text-xs">
+              Histórico
+            </button>
+          }
+          @if (authService.currentUser()?.id === t.user_id) {
+            <button (click)="startEditTopic()" class="text-gray-400 hover:text-blue-accent hover:underline text-xs">
+              Editar
+            </button>
+            <button (click)="deleteTopic()" class="text-gray-400 hover:text-red-400 hover:underline text-xs">
+              Excluir
+            </button>
+          }
+        </div>
+      }
     </div>
 
     <!-- Comments Section -->
@@ -50,23 +85,43 @@
               {{ comment.author.email?.[0] }}
             </div>
             <div class="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-4">
-              <div class="flex items-center justify-between text-sm mb-2">
-                <span class="font-semibold text-gray-300">{{ comment.author.email }}</span>
-                <span class="text-gray-500">{{ comment.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
-              </div>
-              <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ comment.content }}</p>
-               @if(comment.attachments && comment.attachments.length > 0) {
-                <div class="mt-4 pt-3 border-t border-gray-800/50">
-                  <ul class="space-y-2">
-                    @for(file of comment.attachments; track file.id) {
-                      <li>
-                        <a [href]="file.url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-blue-accent hover:underline text-xs p-1.5 bg-gray-800/50 rounded-md hover:bg-gray-700/50">
-                          <span class="material-icons-outlined text-sm">attach_file</span>
-                          <span>{{ file.file_name }}</span>
-                        </a>
-                      </li>
+               @if(editingCommentId() === comment.id) {
+                <form [formGroup]="commentEditForm" class="space-y-4">
+                    <textarea formControlName="content" rows="5" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent"></textarea>
+                    <div class="flex items-center gap-4">
+                        <button type="button" (click)="saveComment(comment)" [disabled]="commentEditForm.invalid || commentLoading()" class="px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 disabled:opacity-50 text-sm">Salvar</button>
+                        <button type="button" (click)="cancelEditComment()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 text-sm">Cancelar</button>
+                    </div>
+                </form>
+              } @else {
+                <div class="flex items-center justify-between text-sm mb-2">
+                  <span class="font-semibold text-gray-300">{{ comment.author.email }}</span>
+                  <span class="text-gray-500">{{ comment.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ comment.content }}</p>
+                 @if(comment.attachments && comment.attachments.length > 0) {
+                  <div class="mt-4 pt-3 border-t border-gray-800/50">
+                    <ul class="space-y-2">
+                      @for(file of comment.attachments; track file.id) {
+                        <li>
+                          <a [href]="file.url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-blue-accent hover:underline text-xs p-1.5 bg-gray-800/50 rounded-md hover:bg-gray-700/50">
+                            <span class="material-icons-outlined text-sm">attach_file</span>
+                            <span>{{ file.file_name }}</span>
+                          </a>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+                <div class="flex items-center gap-4 text-xs mt-3 text-gray-500">
+                    @if(comment.last_edited_at) {
+                        <span class="italic" [title]="comment.last_edited_at | date:'full'">(editado)</span>
+                        <button (click)="showHistory(comment, 'comment')" class="hover:text-blue-accent hover:underline">Histórico</button>
                     }
-                  </ul>
+                    @if (authService.currentUser()?.id === comment.user_id) {
+                        <button (click)="startEditComment(comment)" class="hover:text-blue-accent hover:underline">Editar</button>
+                        <button (click)="deleteComment(comment.id)" class="hover:text-red-400 hover:underline">Excluir</button>
+                    }
                 </div>
               }
             </div>
@@ -122,6 +177,60 @@
         </div>
       }
     </div>
-
   }
 </div>
+
+<!-- History Modal -->
+@if(isHistoryModalVisible()) {
+  <div class="fixed inset-0 z-50 bg-gray-950/80 backdrop-blur-sm flex justify-center items-center p-4" (click)="closeHistoryModal()">
+    <div (click)="$event.stopPropagation()" class="w-full max-w-4xl h-[90vh] bg-gray-900 border border-gray-700 rounded-lg shadow-2xl flex flex-col">
+      <div class="p-4 border-b border-gray-700 flex justify-between items-center flex-shrink-0">
+        <h3 class="text-xl font-semibold text-white">Histórico de Edições do {{ historyItemName() }}</h3>
+        <button (click)="closeHistoryModal()" class="p-1 text-gray-500 hover:text-white rounded-full">
+          <span class="material-icons-outlined">close</span>
+        </button>
+      </div>
+      <div class="flex-grow p-4 overflow-auto space-y-6">
+        <!-- Current Version -->
+        <div class="border border-gray-700 rounded-lg">
+            <div class="p-3 bg-gray-800/50">
+                <h4 class="font-semibold text-white">Versão Atual</h4>
+            </div>
+            <div class="p-3">
+                @if(historyCurrentTitle()) {
+                    <pre class="whitespace-pre-wrap text-sm font-bold mb-2"><code>{{ historyCurrentTitle() }}</code></pre>
+                }
+                <pre class="whitespace-pre-wrap text-sm"><code>{{ historyCurrentContent() }}</code></pre>
+            </div>
+        </div>
+
+        @for(item of historyItems(); track item.id; let i = $index) {
+           <div class="border border-gray-700 rounded-lg">
+             <div class="p-3 bg-gray-800/50">
+                <h4 class="font-semibold text-white">Editado em {{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</h4>
+                <p class="text-xs text-gray-400">por {{ item.author.email }}</p>
+             </div>
+             <div class="p-3 font-mono">
+                @if(historyCurrentTitle()) {
+                    @let prevTitle = i === 0 ? historyCurrentTitle() : historyItems()[i - 1].previous_title;
+                    @if(item.previous_title !== prevTitle) {
+                       <div class="mb-4">
+                         <h5 class="text-xs text-gray-500 uppercase mb-1">Título</h5>
+                         <pre class="whitespace-pre-wrap text-sm" [innerHTML]="getDiffHtml(item.previous_title || '', prevTitle || '') | safeHtml"></pre>
+                       </div>
+                    }
+                }
+                <div [class.mt-4]="historyCurrentTitle()">
+                    <h5 class="text-xs text-gray-500 uppercase mb-1">Conteúdo</h5>
+                    <pre class="whitespace-pre-wrap text-sm" [innerHTML]="getDiffHtml(item.previous_content, i === 0 ? historyCurrentContent() : historyItems()[i - 1].previous_content) | safeHtml"></pre>
+                </div>
+             </div>
+           </div>
+        }
+      </div>
+      <div class="bg-gray-800/50 px-6 py-3 flex justify-end flex-shrink-0">
+        <button (click)="closeHistoryModal()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">Fechar</button>
+      </div>
+    </div>
+  </div>
+}

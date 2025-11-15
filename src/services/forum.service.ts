@@ -25,6 +25,7 @@ export interface Comment {
   user_id: string;
   author: UserProfile;
   attachments: Attachment[];
+  last_edited_at?: string;
 }
 
 export interface Topic {
@@ -39,6 +40,16 @@ export interface Topic {
   comment_count: number;
   attachments: Attachment[];
   comments?: Comment[];
+  last_edited_at?: string;
+}
+
+export interface EditHistory {
+  id: string;
+  created_at: string;
+  user_id: string;
+  previous_title?: string;
+  previous_content: string;
+  author: UserProfile;
 }
 
 export type SortBy = 'updated_at' | 'comment_count';
@@ -64,7 +75,7 @@ export class ForumService {
     const { data, error } = await this.supabase
       .from('forum_topics')
       .select(`
-        id, created_at, updated_at, title, user_id, view_count, comment_count
+        id, created_at, updated_at, title, user_id, view_count, comment_count, last_edited_at
       `)
       .order(sortBy, { ascending: false });
 
@@ -88,7 +99,7 @@ export class ForumService {
 
     const { data: topicData, error: topicError } = await this.supabase
       .from('forum_topics')
-      .select('*')
+      .select('*, last_edited_at')
       .eq('id', topicId)
       .single();
 
@@ -153,10 +164,80 @@ export class ForumService {
     return commentData;
   }
 
+  async updateTopic(topicId: string, title: string, content: string): Promise<Topic> {
+    if (!this.user) throw new Error("Usuário não autenticado.");
+
+    const { data, error } = await this.supabase
+      .from('forum_topics')
+      .update({ title, content })
+      .eq('id', topicId)
+      .eq('user_id', this.user.id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async updateComment(commentId: string, content: string): Promise<Comment> {
+    if (!this.user) throw new Error("Usuário não autenticado.");
+
+    const { data, error } = await this.supabase
+      .from('forum_comments')
+      .update({ content })
+      .eq('id', commentId)
+      .eq('user_id', this.user.id)
+      .select()
+      .single();
+      
+    if (error) throw error;
+    return data;
+  }
+  
+  async deleteTopic(topicId: string): Promise<void> {
+    if (!this.user) throw new Error("Usuário não autenticado.");
+    const { error } = await this.supabase
+      .from('forum_topics')
+      .delete()
+      .eq('id', topicId)
+      .eq('user_id', this.user.id);
+    if (error) throw error;
+  }
+
+  async deleteComment(commentId: string): Promise<void> {
+    if (!this.user) throw new Error("Usuário não autenticado.");
+    const { error } = await this.supabase
+      .from('forum_comments')
+      .delete()
+      .eq('id', commentId)
+      .eq('user_id', this.user.id);
+    if (error) throw error;
+  }
+  
+  async getEditHistory(id: string, type: 'topic' | 'comment'): Promise<EditHistory[]> {
+    const parentIdColumn = type === 'topic' ? 'topic_id' : 'comment_id';
+    
+    const { data, error } = await this.supabase
+      .from('forum_edits')
+      .select(`*`)
+      .eq(parentIdColumn, id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    const userIds = [...new Set(data.map(edit => edit.user_id))];
+    const profiles = await this.getUserProfiles(userIds);
+
+    return data.map(edit => ({
+      ...edit,
+      author: profiles[edit.user_id] || { id: edit.user_id, email: 'Usuário desconhecido' }
+    }));
+  }
+
   private async getCommentsForTopic(topicId: string): Promise<Comment[]> {
      const { data, error } = await this.supabase
       .from('forum_comments')
-      .select('*')
+      .select('*, last_edited_at')
       .eq('topic_id', topicId)
       .order('created_at', { ascending: true });
 
@@ -212,20 +293,29 @@ export class ForumService {
   private async getUserProfiles(userIds: string[]): Promise<Record<string, UserProfile>> {
     if (userIds.length === 0) return {};
     
-    // In a real app, you would fetch from a 'profiles' table.
-    // Here we'll just simulate it based on what's available (email from user object)
-    // This is a placeholder. For a production app, you'd do:
-    // const { data, error } = await this.supabase.from('profiles').select('id, username, avatar_url').in('id', userIds);
-    // For now, we return the email as the main identifier.
+    const { data, error } = await this.supabase
+      .from('user_tool_data')
+      .select('user_id, user_email')
+      .in('user_id', userIds);
+
     const profiles: Record<string, UserProfile> = {};
-    for (const id of userIds) {
-        profiles[id] = { id, email: 'Usuário' }; // Placeholder, will be enriched by a more specific call if needed.
+    if (data) {
+        for (const profile of data) {
+            if (profile.user_id && !profiles[profile.user_id]) {
+                profiles[profile.user_id] = { id: profile.user_id, email: profile.user_email || `Usuário...${profile.user_id.substring(0,4)}`};
+            }
+        }
     }
     
-    // As we don't have a public profiles table, we can't get other users' emails.
-    // We can at least get the current user's email.
-    if(this.user && userIds.includes(this.user.id)){
-        profiles[this.user.id] = { id: this.user.id, email: this.user.email || 'Usuário' };
+    // Fallback for users not in user_tool_data
+    for (const id of userIds) {
+        if (!profiles[id]) {
+            profiles[id] = { id, email: `Usuário...${id.substring(0,4)}` };
+        }
+    }
+    
+    if(this.user && !profiles[this.user.id] && this.user.email){
+        profiles[this.user.id] = { id: this.user.id, email: this.user.email };
     }
 
     return profiles;

@@ -1,0 +1,7 @@
+pre ins {
+    @apply bg-green-900/50 text-green-300 no-underline;
+}
+
+pre del {
+    @apply bg-red-900/50 text-red-300;
+}

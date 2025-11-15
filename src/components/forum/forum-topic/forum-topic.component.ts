@@ -1,29 +1,33 @@
-import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
 import { map, switchMap } from 'rxjs/operators';
 import { from, of } from 'rxjs';
-import { ForumService, Topic } from '../../../services/forum.service';
+import { ForumService, Topic, Comment, EditHistory } from '../../../services/forum.service';
 import { AuthService } from '../../../services/auth.service';
+
+declare var diff_match_patch: any;
 
 @Component({
   selector: 'app-forum-topic',
   standalone: true,
-  imports: [RouterLink, DatePipe, FormsModule],
+  imports: [RouterLink, DatePipe, FormsModule, ReactiveFormsModule, SafeHtmlPipe],
   templateUrl: './forum-topic.component.html',
   styleUrls: ['./forum-topic.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForumTopicComponent {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private forumService = inject(ForumService);
   public authService = inject(AuthService);
+  private fb = inject(FormBuilder);
+  dmp = new diff_match_patch();
 
   loading = signal(true);
   error = signal<string | null>(null);
-
   topic = signal<Topic | null>(null);
 
   // New comment state
@@ -31,6 +35,26 @@ export class ForumTopicComponent {
   commentFiles = signal<File[]>([]);
   commentLoading = signal(false);
   commentError = signal<string | null>(null);
+  
+  // --- Editing State ---
+  isEditingTopic = signal(false);
+  editingCommentId = signal<string | null>(null);
+
+  topicEditForm = this.fb.group({
+    title: ['', [Validators.required, Validators.minLength(5)]],
+    content: ['', [Validators.required, Validators.minLength(10)]],
+  });
+
+  commentEditForm = this.fb.group({
+    content: ['', [Validators.required, Validators.minLength(10)]],
+  });
+  
+  // --- History Modal State ---
+  isHistoryModalVisible = signal(false);
+  historyItems = signal<EditHistory[]>([]);
+  historyCurrentContent = signal('');
+  historyCurrentTitle = signal('');
+  historyItemName = signal(''); // "Tópico" or "Comentário"
 
   private topicId$ = this.route.paramMap.pipe(map(params => params.get('topicId')));
 
@@ -55,6 +79,8 @@ export class ForumTopicComponent {
     } catch (e) {
       this.error.set(e instanceof Error ? e.message : 'Falha ao carregar o tópico.');
     } finally {
+      this.isEditingTopic.set(false);
+      this.editingCommentId.set(null);
       this.loading.set(false);
     }
   }
@@ -81,12 +107,121 @@ export class ForumTopicComponent {
       await this.forumService.createComment(this.topic()!.id, this.newCommentContent(), this.commentFiles());
       this.newCommentContent.set('');
       this.commentFiles.set([]);
-      // Reload topic to see the new comment
       await this.loadTopic(this.topic()!.id);
     } catch (e) {
       this.commentError.set(e instanceof Error ? e.message : 'Falha ao postar comentário.');
     } finally {
       this.commentLoading.set(false);
     }
+  }
+  
+  // --- Topic Methods ---
+  startEditTopic() {
+    if (!this.topic()) return;
+    this.topicEditForm.patchValue({
+      title: this.topic()!.title,
+      content: this.topic()!.content,
+    });
+    this.isEditingTopic.set(true);
+  }
+
+  cancelEditTopic() {
+    this.isEditingTopic.set(false);
+  }
+
+  async saveTopic() {
+    if (this.topicEditForm.invalid || !this.topic()) return;
+    this.loading.set(true);
+    const { title, content } = this.topicEditForm.value;
+    try {
+      await this.forumService.updateTopic(this.topic()!.id, title!, content!);
+      await this.loadTopic(this.topic()!.id);
+    } catch (e) {
+      this.error.set(e instanceof Error ? e.message : 'Falha ao salvar o tópico.');
+    } finally {
+      this.isEditingTopic.set(false);
+      this.loading.set(false);
+    }
+  }
+
+  async deleteTopic() {
+    if (!this.topic() || !confirm('Tem certeza de que deseja excluir este tópico? Todos os comentários também serão removidos. Esta ação é irreversível.')) return;
+    this.loading.set(true);
+    try {
+      await this.forumService.deleteTopic(this.topic()!.id);
+      this.router.navigate(['/forum']);
+    } catch (e) {
+      this.error.set(e instanceof Error ? e.message : 'Falha ao excluir o tópico.');
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  // --- Comment Methods ---
+  startEditComment(comment: Comment) {
+    this.editingCommentId.set(comment.id);
+    this.commentEditForm.patchValue({ content: comment.content });
+  }
+
+  cancelEditComment() {
+    this.editingCommentId.set(null);
+  }
+
+  async saveComment(comment: Comment) {
+    if (this.commentEditForm.invalid) return;
+    this.commentLoading.set(true);
+    const { content } = this.commentEditForm.value;
+    try {
+      await this.forumService.updateComment(comment.id, content!);
+      await this.loadTopic(this.topic()!.id);
+    } catch (e) {
+      this.commentError.set(e instanceof Error ? e.message : 'Falha ao salvar o comentário.');
+    } finally {
+      this.editingCommentId.set(null);
+      this.commentLoading.set(false);
+    }
+  }
+
+  async deleteComment(commentId: string) {
+    if (!confirm('Tem certeza de que deseja excluir este comentário?')) return;
+    this.commentLoading.set(true);
+    try {
+      await this.forumService.deleteComment(commentId);
+      await this.loadTopic(this.topic()!.id);
+    } catch (e) {
+      this.commentError.set(e instanceof Error ? e.message : 'Falha ao excluir o comentário.');
+    } finally {
+      this.commentLoading.set(false);
+    }
+  }
+  
+  // --- History Methods ---
+  async showHistory(item: Topic | Comment, type: 'topic' | 'comment') {
+    this.historyItemName.set(type === 'topic' ? 'Tópico' : 'Comentário');
+    this.historyCurrentContent.set(item.content);
+    if ('title' in item && item.title) {
+      this.historyCurrentTitle.set(item.title);
+    } else {
+      this.historyCurrentTitle.set('');
+    }
+    
+    try {
+      const history = await this.forumService.getEditHistory(item.id, type);
+      this.historyItems.set(history);
+      this.isHistoryModalVisible.set(true);
+    } catch(e) {
+      this.error.set("Falha ao carregar histórico de edições.");
+    }
+  }
+
+  closeHistoryModal() {
+    this.isHistoryModalVisible.set(false);
+    this.historyItems.set([]);
+  }
+  
+  getDiffHtml(text1: string, text2: string): string {
+    const diffs = this.dmp.diff_main(text1, text2);
+    this.dmp.diff_cleanupSemantic(diffs);
+    return this.dmp.diff_prettyHtml(diffs);
   }
 }
