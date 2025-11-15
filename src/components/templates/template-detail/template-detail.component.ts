@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, CUSTOM_ELEMENTS_SCHEMA, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, CUSTOM_ELEMENTS_SCHEMA, computed, viewChild, ElementRef, effect } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TemplateService, Template } from '../../../services/template.service';
 import { from, of } from 'rxjs';
@@ -56,6 +56,20 @@ export class TemplateDetailComponent {
     }
     return t.workflow_json;
   });
+
+  private workflowView = viewChild<ElementRef<HTMLElement & { workflow: any }>>('workflowView');
+
+  constructor() {
+    effect(() => {
+      const element = this.workflowView()?.nativeElement;
+      const data = this.workflowData();
+      if (element && data) {
+        // Imperatively set the property on the custom element.
+        // This can sometimes resolve timing issues with web components.
+        element.workflow = data;
+      }
+    });
+  }
   
   copyWorkflow() {
     const data = this.workflowData();
