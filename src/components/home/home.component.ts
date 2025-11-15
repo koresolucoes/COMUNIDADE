@@ -1,8 +1,9 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, inject, OnInit, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CronGeneratorComponent } from '../tools/cron-generator/cron-generator.component';
 import { JsonFormatterComponent } from '../tools/json-formatter/json-formatter.component';
 import { N8nExpressionSimulatorComponent } from '../tools/n8n-expression-simulator/n8n-expression-simulator.component';
+import { BlogService } from '../../services/blog.service';
 
 type FeaturedTool = 'cron' | 'json' | 'n8n';
 
@@ -18,7 +19,9 @@ type FeaturedTool = 'cron' | 'json' | 'n8n';
   templateUrl: './home.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
+  private blogService = inject(BlogService);
+  
   featuredTool = signal<FeaturedTool>('cron');
 
   featuredTools: { id: FeaturedTool, name: string }[] = [
@@ -34,10 +37,9 @@ export class HomeComponent {
     { title: 'Salvar Anexos de Email no Google Drive', apps: ['gmail', 'drive'] },
   ];
 
-  recentPosts = [
-    { title: 'Como debuguei um webhook que não retornava 200', type: 'Artigo', link: '/blog/debugando-webhook-que-nao-retorna-200' },
-    { title: 'Template: Sincronizar Calendários Google e Outlook', type: 'Template', link: '/templates' },
-    { title: 'Automatizando Relatórios Financeiros com n8n', type: 'Artigo', link: '/blog/automatizando-relatorios-financeiros-com-n8n' },
-    { title: 'Top 5 Nós do n8n que Você Precisa Conhecer', type: 'Artigo', link: '/blog/top-5-nos-n8n-que-voce-precisa-conhecer' },
-  ];
+  recentPosts = computed(() => this.blogService.posts().slice(0, 4));
+
+  ngOnInit() {
+    this.blogService.loadPosts();
+  }
 }
