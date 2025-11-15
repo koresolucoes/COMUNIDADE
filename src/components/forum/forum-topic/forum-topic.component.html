@@ -1,0 +1,127 @@
+<div class="max-w-4xl mx-auto">
+  @if(loading()) {
+    <p class="text-center text-gray-400 py-16">Carregando tópico...</p>
+  } @else if(error()) {
+    <div class="text-center text-red-400 py-16">
+      <h1 class="text-2xl font-bold">{{ error() }}</h1>
+      <a routerLink="/forum" class="mt-4 inline-block text-blue-accent hover:underline">Voltar para o Fórum</a>
+    </div>
+  } @else if(topic(); as t) {
+    <!-- Topic Header -->
+    <header class="mb-8">
+      <div class="text-sm text-gray-400 mb-2">
+        <a routerLink="/forum" class="hover:text-blue-accent hover:underline">Fórum</a>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">{{ t.title }}</h1>
+      <p class="mt-3 text-sm text-gray-400">
+        Aberto por <span class="font-medium text-gray-300">{{ t.author.email }}</span> em {{ t.created_at | date:'dd/MM/yyyy HH:mm' }}
+      </p>
+    </header>
+
+    <!-- Topic Post -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ t.content }}</p>
+      
+      @if(t.attachments && t.attachments.length > 0) {
+        <div class="mt-6 pt-4 border-t border-gray-800">
+          <h4 class="text-sm font-semibold text-gray-400 mb-2">Anexos:</h4>
+          <ul class="space-y-2">
+            @for(file of t.attachments; track file.id) {
+              <li>
+                <a [href]="file.url" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-blue-accent hover:underline text-sm p-2 bg-gray-800 rounded-md hover:bg-gray-700">
+                  <span class="material-icons-outlined">attach_file</span>
+                  <span>{{ file.file_name }} ({{ (file.size_bytes / 1024).toFixed(2) }} KB)</span>
+                </a>
+              </li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+
+    <!-- Comments Section -->
+    <div class="mt-12">
+      <h2 class="text-2xl font-semibold text-white mb-6">{{ t.comment_count }} Comentários</h2>
+
+      <div class="space-y-6">
+        @for(comment of t.comments; track comment.id) {
+          <div class="flex gap-4">
+            <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-sm font-bold text-white uppercase flex-shrink-0 mt-1">
+              {{ comment.author.email?.[0] }}
+            </div>
+            <div class="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-4">
+              <div class="flex items-center justify-between text-sm mb-2">
+                <span class="font-semibold text-gray-300">{{ comment.author.email }}</span>
+                <span class="text-gray-500">{{ comment.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ comment.content }}</p>
+               @if(comment.attachments && comment.attachments.length > 0) {
+                <div class="mt-4 pt-3 border-t border-gray-800/50">
+                  <ul class="space-y-2">
+                    @for(file of comment.attachments; track file.id) {
+                      <li>
+                        <a [href]="file.url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-blue-accent hover:underline text-xs p-1.5 bg-gray-800/50 rounded-md hover:bg-gray-700/50">
+                          <span class="material-icons-outlined text-sm">attach_file</span>
+                          <span>{{ file.file_name }}</span>
+                        </a>
+                      </li>
+                    }
+                  </ul>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    
+    <!-- New Comment Form -->
+    <div class="mt-12 pt-8 border-t border-gray-800">
+      @if(authService.currentUser()) {
+        <h3 class="text-xl font-semibold text-white mb-4">Adicionar um comentário</h3>
+        <div class="space-y-4">
+          <textarea 
+            [(ngModel)]="newCommentContent"
+            rows="5" 
+            class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent" 
+            placeholder="Digite seu comentário...">
+          </textarea>
+
+          <div>
+              <input type="file" multiple (change)="onFileSelected($event)" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-700 file:text-gray-300 hover:file:bg-gray-600"/>
+              @if(commentFiles().length > 0) {
+                  <div class="mt-3 space-y-2">
+                      @for(file of commentFiles(); track file.name) {
+                          <div class="flex items-center justify-between text-sm bg-gray-800 p-2 rounded-md">
+                              <span class="text-gray-300 truncate">{{ file.name }}</span>
+                              <button type="button" (click)="removeFile(file)" class="text-gray-500 hover:text-red-400 ml-2">
+                                  <span class="material-icons-outlined text-base">close</span>
+                              </button>
+                          </div>
+                      }
+                  </div>
+              }
+          </div>
+          
+          @if(commentError()) {
+            <p class="text-red-400 text-sm">{{ commentError() }}</p>
+          }
+
+          <button (click)="postComment()" [disabled]="commentLoading() || !newCommentContent().trim()" class="px-6 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            @if(commentLoading()) {
+              <span>Enviando...</span>
+            } @else {
+              Enviar Comentário
+            }
+          </button>
+        </div>
+      } @else {
+        <div class="text-center p-6 bg-gray-900 border border-dashed border-gray-700 rounded-lg">
+          <p class="text-gray-400">Você precisa estar logado para comentar.</p>
+          <a routerLink="/login" class="mt-2 inline-block font-semibold text-blue-accent hover:underline">Fazer Login</a>
+        </div>
+      }
+    </div>
+
+  }
+</div>

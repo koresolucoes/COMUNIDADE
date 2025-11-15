@@ -37,6 +37,7 @@ export class SidebarComponent {
     { path: '/profile', label: 'Meu Perfil', icon: 'person' },
     { path: '/blog', label: 'Blog', icon: 'article' },
     { path: '/templates', label: 'Templates n8n', icon: 'folder_copy' },
+    { path: '/forum', label: 'Fórum', icon: 'forum' },
     { 
       path: '/tools', 
       label: 'Ferramentas', 

@@ -1,0 +1,81 @@
+<div class="space-y-8">
+  <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div>
+      <h1 class="text-3xl md:text-4xl font-bold text-white">Fórum de Discussão</h1>
+      <p class="mt-2 text-gray-400">Compartilhe conhecimento, tire dúvidas e colabore com a comunidade.</p>
+    </div>
+    @if(authService.currentUser()) {
+       <a routerLink="/forum/new" class="inline-flex items-center justify-center px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors gap-2">
+        <span class="material-icons-outlined">add_comment</span>
+        Abrir Novo Tópico
+      </a>
+    } @else {
+      <a routerLink="/login" class="inline-flex items-center justify-center px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors gap-2">
+        <span class="material-icons-outlined">login</span>
+        Faça login para participar
+      </a>
+    }
+  </header>
+
+  <div class="border-b border-gray-800">
+    <nav class="flex -mb-px space-x-6">
+      <button 
+        (click)="changeTab('updated_at')"
+        class="py-3 px-1 text-sm font-medium border-b-2 transition-colors"
+        [class.text-white]="activeTab() === 'updated_at'"
+        [class.border-blue-accent]="activeTab() === 'updated_at'"
+        [class.text-gray-400]="activeTab() !== 'updated_at'"
+        [class.border-transparent]="activeTab() !== 'updated_at'"
+        [class.hover:text-gray-200]="activeTab() !== 'updated_at'">
+        Recentes
+      </button>
+      <button 
+        (click)="changeTab('comment_count')"
+        class="py-3 px-1 text-sm font-medium border-b-2 transition-colors"
+        [class.text-white]="activeTab() === 'comment_count'"
+        [class.border-blue-accent]="activeTab() === 'comment_count'"
+        [class.text-gray-400]="activeTab() !== 'comment_count'"
+        [class.border-transparent]="activeTab() !== 'comment_count'"
+        [class.hover:text-gray-200]="activeTab() !== 'comment_count'">
+        Populares
+      </button>
+    </nav>
+  </div>
+
+  @if(loading()) {
+    <p class="text-gray-400 text-center py-8">Carregando tópicos...</p>
+  } @else if(error()) {
+    <p class="text-red-400 text-center py-8">{{ error() }}</p>
+  } @else if(topics().length === 0) {
+    <div class="text-center py-16 bg-gray-900 border border-dashed border-gray-800 rounded-lg">
+      <span class="material-icons-outlined text-5xl text-gray-600">forum</span>
+      <p class="mt-4 text-gray-500">Nenhum tópico encontrado.</p>
+      <p class="text-sm text-gray-500">Seja o primeiro a iniciar uma discussão!</p>
+    </div>
+  } @else {
+    <div class="space-y-3">
+      @for(topic of topics(); track topic.id) {
+        <a [routerLink]="['/forum', topic.id]" class="block p-4 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-colors">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-white">{{ topic.title }}</h2>
+              <p class="text-xs text-gray-500 mt-1">
+                por <span class="font-medium text-gray-400">{{ topic.author.email }}</span> &middot; última atividade em {{ topic.updated_at | date:'dd/MM/yyyy HH:mm' }}
+              </p>
+            </div>
+            <div class="flex items-center gap-4 mt-3 sm:mt-0 text-sm text-gray-400">
+              <div class="flex items-center gap-1.5" title="Comentários">
+                <span class="material-icons-outlined text-base">comment</span>
+                <span>{{ topic.comment_count }}</span>
+              </div>
+              <div class="flex items-center gap-1.5" title="Visualizações">
+                <span class="material-icons-outlined text-base">visibility</span>
+                <span>{{ topic.view_count }}</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</div>

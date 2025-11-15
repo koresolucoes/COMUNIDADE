@@ -26,6 +26,9 @@ import { BlogPostComponent } from './components/blog/blog-post/blog-post.compone
 import { LoginComponent } from './components/login/login.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { N8nManagerComponent } from './components/tools/n8n-manager/n8n-manager.component';
+import { ForumListComponent } from './components/forum/forum-list/forum-list.component';
+import { ForumNewTopicComponent } from './components/forum/forum-new-topic/forum-new-topic.component';
+import { ForumTopicComponent } from './components/forum/forum-topic/forum-topic.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -33,6 +36,9 @@ export const APP_ROUTES: Routes = [
   { path: '', component: HomeComponent },
   { path: 'blog', component: BlogListComponent },
   { path: 'blog/:slug', component: BlogPostComponent },
+  { path: 'forum', component: ForumListComponent },
+  { path: 'forum/new', component: ForumNewTopicComponent },
+  { path: 'forum/:topicId', component: ForumTopicComponent },
   { 
     path: 'templates', 
     component: PlaceholderComponent, 

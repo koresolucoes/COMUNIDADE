@@ -19,6 +19,7 @@ export class BottomNavComponent {
   navItems: NavItem[] = [
     { path: '/', label: 'Início', icon: 'home' },
     { path: '/blog', label: 'Blog', icon: 'article' },
+    { path: '/forum', label: 'Fórum', icon: 'forum' },
     { path: '/templates', label: 'Templates', icon: 'folder_copy' },
     { path: '/tools', label: 'Ferramentas', icon: 'construction' }
   ];
