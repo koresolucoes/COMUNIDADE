@@ -24,7 +24,7 @@ export class ForumTopicComponent {
   private forumService = inject(ForumService);
   public authService = inject(AuthService);
   private fb = inject(FormBuilder);
-  dmp = new diff_match_patch();
+  private dmp: any | null = null;
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -220,6 +220,12 @@ export class ForumTopicComponent {
   }
   
   getDiffHtml(text1: string, text2: string): string {
+    if (typeof diff_match_patch === 'undefined') {
+      return '<span>Error: Diff library not available.</span>';
+    }
+    if (!this.dmp) {
+      this.dmp = new diff_match_patch();
+    }
     const diffs = this.dmp.diff_main(text1, text2);
     this.dmp.diff_cleanupSemantic(diffs);
     return this.dmp.diff_prettyHtml(diffs);
