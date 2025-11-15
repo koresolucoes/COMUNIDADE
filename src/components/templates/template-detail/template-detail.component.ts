@@ -89,7 +89,7 @@ export class TemplateDetailComponent {
   private initializeDrawflow(container: HTMLElement, workflowData: any) {
     this.editor = new Drawflow(container);
     this.editor.start();
-    this.editor.editor_mode = 'fixed';
+    this.editor.editor_mode = 'edit';
     this.editor.zoom_max = 1.6;
     this.editor.zoom_min = 0.2;
 
