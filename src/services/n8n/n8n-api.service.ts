@@ -119,7 +119,6 @@ export class N8nApiService {
       nodes: [],
       connections: {},
       settings: {},
-      tags: [],
     };
     return this._request('/workflows', 'POST', body);
   }

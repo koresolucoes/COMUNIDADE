@@ -264,6 +264,11 @@ export class TemplateDetailComponent {
           ...workflowJson,
           name: t.title,
       };
+
+      // Remove read-only properties before updating
+      delete (fullWorkflowData as any).tags;
+      delete (fullWorkflowData as any).active;
+      
       await this.n8nApiService.updateWorkflow(newWorkflow.id, fullWorkflowData);
 
       this.sendToN8nStatus.set('success');
