@@ -50,65 +50,23 @@
     </div>
 
     <div class="lg:col-span-1">
-       <!-- AI Automation Radar -->
+       <!-- Popular Templates -->
       <section>
-        <h2 class="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
-            <span class="material-icons-outlined text-blue-accent">radar</span>
-            Radar de Automação por IA
-        </h2>
-        <div class="bg-gray-900 p-4 border border-gray-800 rounded-lg min-h-[300px]">
-            @if(insightLoading()) {
-              <div class="animate-pulse space-y-4">
-                  <div class="h-4 bg-gray-700 rounded w-3/4"></div>
-                  <div class="space-y-2">
-                      <div class="h-3 bg-gray-700 rounded"></div>
-                      <div class="h-3 bg-gray-700 rounded w-5/6"></div>
-                  </div>
-                   <div class="h-4 bg-gray-700 rounded w-1/2 mt-4"></div>
-                   <div class="space-y-2">
-                      <div class="h-3 bg-gray-700 rounded w-4/5"></div>
-                      <div class="h-3 bg-gray-700 rounded w-3/5"></div>
-                  </div>
+        <h2 class="text-2xl font-semibold text-white mb-4">Templates Populares</h2>
+        <div class="space-y-4">
+          @for(template of popularTemplates; track template.title) {
+            <a routerLink="/templates" class="block bg-gray-900 p-4 border border-gray-800 rounded-lg hover:border-blue-accent transition-colors">
+              <h3 class="font-medium text-white">{{template.title}}</h3>
+              <div class="flex items-center gap-2 mt-2">
+                <span class="text-xs text-gray-400">Apps:</span>
+                <!-- In a real app, these would be dynamic icons -->
+                <div class="flex gap-2">
+                    <div class="w-5 h-5 bg-gray-700 rounded-full"></div>
+                    <div class="w-5 h-5 bg-gray-700 rounded-full"></div>
+                </div>
               </div>
-            } @else if (insightError(); as error) {
-              <div class="text-center text-red-400 py-8">
-                  <p>{{ error }}</p>
-              </div>
-            } @else if (insight(); as i) {
-              <div class="space-y-4">
-                  <h3 class="font-medium text-white">{{ i.title }}</h3>
-                  <p class="text-sm text-gray-400">{{ i.summary }}</p>
-                  
-                  <div>
-                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Principais Aprendizados</h4>
-                    <ul class="space-y-1.5">
-                        @for(takeaway of i.key_takeaways; track takeaway) {
-                          <li class="flex items-start gap-2 text-sm text-gray-300">
-                              <span class="material-icons-outlined text-green-accent text-base mt-0.5">check_circle</span>
-                              <span>{{ takeaway }}</span>
-                          </li>
-                        }
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Ferramentas Mencionadas</h4>
-                     <ul class="space-y-1.5">
-                        @for(tool of i.mentioned_tools; track tool) {
-                          <li class="flex items-start gap-2 text-sm text-gray-300">
-                              <span class="material-icons-outlined text-blue-accent text-base mt-0.5">construction</span>
-                              <span>{{ tool }}</span>
-                          </li>
-                        }
-                    </ul>
-                  </div>
-                  @if (recentPosts().length > 0) {
-                      <a [routerLink]="['/blog', recentPosts()[0].slug]" class="inline-block text-blue-accent font-semibold text-sm mt-2 hover:underline">
-                          Ver artigo completo &rarr;
-                      </a>
-                  }
-              </div>
-            }
+            </a>
+          }
         </div>
       </section>
     </div>
