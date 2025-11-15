@@ -142,10 +142,15 @@ Endpoint base: `/api/forum`
 ```json
 {
   "title": "Dúvida sobre o nó HTTP Request no n8n",
-  "content": "Estou com dificuldades para passar um header de autenticação. Alguém pode me ajudar?",
-  "user_id": "opcional-se-usando-chave-mestra-uuid-do-usuario"
+  "content": "Estou com dificuldades para passar um header de autenticação...",
+  "user_id": "uuid-do-usuario-a-ser-personificado"
 }
 ```
+**Nota sobre `user_id`**:
+- Ao usar um **token JWT**, o `user_id` é ignorado; a postagem é sempre associada ao dono do token.
+- Ao usar a **chave mestra**, o `user_id` é **opcional**:
+    - Se você **incluir** um `user_id`, a postagem será criada em nome daquele usuário (impersonação).
+    - Se você **omitir** o `user_id`, a postagem será criada como um post de administrador (sem autor específico).
 
 #### Corpo da Requisição (JSON) - Criar Comentário
 
@@ -154,20 +159,21 @@ Para criar um comentário, inclua o `topicId` do tópico ao qual ele pertence.
 ```json
 {
   "topicId": "uuid-do-topico-existente",
-  "content": "Claro! Você precisa adicionar o header na aba 'Headers' do nó. O formato é 'Authorization' como chave e 'Bearer SEU_TOKEN' como valor.",
-  "user_id": "opcional-se-usando-chave-mestra-uuid-do-usuario"
+  "content": "Claro! Você precisa usar a aba 'Headers'...",
+  "user_id": "uuid-do-usuario-a-ser-personificado"
 }
 ```
+**Nota sobre `user_id`**: O comportamento é o mesmo da criação de tópicos. É opcional ao usar a chave mestra.
 
-#### Exemplo com `curl` (Criar Tópico)
+#### Exemplo com `curl` (Criar Tópico com Chave Mestra como Admin)
 
 ```bash
 curl -X POST "https://<URL_DA_SUA_APP>/api/forum" \
--H "Authorization: Bearer <SEU_TOKEN>" \
+-H "Authorization: Bearer <SUA_CHAVE_MESTRA>" \
 -H "Content-Type: application/json" \
 -d '{
-  "title": "Dúvida sobre o nó HTTP Request",
-  "content": "Como passo um header de autenticação?"
+  "title": "Anúncio Importante do Sistema",
+  "content": "A plataforma estará em manutenção no próximo domingo."
 }'
 ```
 

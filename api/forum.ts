@@ -46,11 +46,9 @@ const handlePost = async (req: any, res: any) => {
     const masterKey = process.env.MASTER_FORUM_KEY || process.env.MASTER_BLOG_KEY;
 
     if (masterKey && token === masterKey) {
-        if (!body.user_id) {
-            res.statusCode = 400;
-            return res.end(JSON.stringify({ error: 'O campo "user_id" é obrigatório ao usar a chave mestra.' }));
-        }
-        userId = body.user_id;
+        // user_id is optional. If provided, post is on behalf of that user.
+        // If not, userId remains null, and it's an admin post.
+        userId = body.user_id || null;
     } else {
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
