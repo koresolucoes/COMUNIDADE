@@ -36,7 +36,17 @@ export class TemplateService {
       console.error('Error fetching templates:', error);
       throw error;
     }
-    return data;
+
+    if (!data) {
+      return [];
+    }
+
+    // The Supabase query may return `author` as an array `Profile[]`, but the `Template` type expects `Profile`.
+    // We map over the data to fix this structure before returning it.
+    return data.map((template: any) => ({
+      ...template,
+      author: Array.isArray(template.author) ? template.author[0] : template.author,
+    }));
   }
 
   async getTemplateById(id: string): Promise<Template | null> {
@@ -50,6 +60,12 @@ export class TemplateService {
       console.error(`Error fetching template with id ${id}:`, error);
       throw error;
     }
+    
+    // Also apply the fix here to be safe, as it uses the same select pattern.
+    if (data && Array.isArray((data as any).author)) {
+      (data as any).author = (data as any).author[0];
+    }
+    
     return data;
   }
 }

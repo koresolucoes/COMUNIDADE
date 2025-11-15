@@ -126,7 +126,8 @@ export class ForumService {
       ...topicAttachments.map(a => a.user_id)
     ];
     // FIX: Use Array.from() for better type inference when converting a Set to an Array.
-    const profiles = await this.getUserProfiles(Array.from(new Set(userIds)));
+    // Fix: Ensure userIds are strings and unique before fetching profiles to prevent type errors.
+    const profiles = await this.getUserProfiles(Array.from(new Set(userIds.filter(Boolean)), String));
     
     topicData.author = profiles[topicData.user_id];
     comments.forEach(c => {
@@ -234,7 +235,8 @@ export class ForumService {
     if (error) throw error;
 
     // FIX: Use Array.from() for better type inference when converting a Set to an Array.
-    const userIds = Array.from(new Set(data.map(edit => edit.user_id)));
+    // Fix: Ensure userIds is a string[] by filtering falsy values and using a String mapper.
+    const userIds = Array.from(new Set(data.map(edit => edit.user_id).filter(Boolean)), String);
     const profiles = await this.getUserProfiles(userIds);
 
     return data.map(edit => ({
