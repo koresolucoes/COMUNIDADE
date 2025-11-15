@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, output, signal, computed, effect, viewChild, ElementRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, output, signal, computed, effect, viewChild, ElementRef, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { BlogService } from '../../../services/blog.service';
 
 interface Command {
   name: string;
@@ -18,20 +19,23 @@ interface Command {
     '(keydown.escape)': 'close.emit()',
   }
 })
-export class CommandPaletteComponent {
+export class CommandPaletteComponent implements OnInit {
   close = output<void>();
   searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
   query = signal('');
-  commands = signal<Command[]>([]);
+  private allCommands = signal<Command[]>([]);
   activeIndex = signal(0);
   
   filteredCommands = computed(() => {
     const q = this.query().toLowerCase();
     if (!q) {
-      return this.commands();
+      return this.allCommands();
     }
-    return this.commands().filter(cmd => cmd.name.toLowerCase().includes(q));
+    return this.allCommands().filter(cmd => 
+        cmd.name.toLowerCase().includes(q) || 
+        cmd.section.toLowerCase().includes(q)
+    );
   });
 
   groupedCommands = computed(() => {
@@ -42,41 +46,88 @@ export class CommandPaletteComponent {
       }
       groups[command.section].push(command);
     }
-    return Object.entries(groups);
+    // Sort groups: Navegação, Blog, Templates, Ferramentas
+    const groupOrder = ['Navegação', 'Blog', 'Templates n8n', 'Ferramentas'];
+    return Object.entries(groups).sort(([a], [b]) => {
+      const indexA = groupOrder.indexOf(a);
+      const indexB = groupOrder.indexOf(b);
+      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
   });
 
-  constructor(private router: Router) {
-    this.commands.set([
-      { name: 'Início', section: 'Navegação', action: () => this.navigate('/'), icon: 'home' },
-      { name: 'Blog', section: 'Navegação', action: () => this.navigate('/blog'), icon: 'article' },
-      { name: 'Templates n8n', section: 'Navegação', action: () => this.navigate('/templates'), icon: 'folder_copy' },
-      { name: 'Fórum', section: 'Navegação', action: () => this.navigate('/forum'), icon: 'forum' },
-      { name: 'Ferramentas', section: 'Navegação', action: () => this.navigate('/tools'), icon: 'construction' },
-      { name: 'Gerador de CRON', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-cron'), icon: 'schedule' },
-      { name: 'Formatador de JSON', section: 'Ferramentas', action: () => this.navigate('/tools/formatador-json'), icon: 'data_object' },
-      { name: 'Simulador de Expressão n8n', section: 'Ferramentas', action: () => this.navigate('/tools/n8n-expression-simulator'), icon: 'play_circle' },
-      { name: 'Gerenciador n8n', section: 'Ferramentas', action: () => this.navigate('/tools/gerenciador-n8n'), icon: 'hub' },
-      { name: 'Testador de Regex', section: 'Ferramentas', action: () => this.navigate('/tools/testador-regex'), icon: 'spellcheck' },
-      { name: 'Gerador de Dados Falsos', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-dados-falsos'), icon: 'fact_check' },
-      { name: 'Construtor Docker-Compose', section: 'Ferramentas', action: () => this.navigate('/tools/docker-compose-generator'), icon: 'build_circle' },
-      { name: 'Codec de URL', section: 'Ferramentas', action: () => this.navigate('/tools/url-codec'), icon: 'link' },
-      { name: 'Codec Base64', section: 'Ferramentas', action: () => this.navigate('/tools/base64-codec'), icon: 'password' },
-      { name: 'Decoder de JWT', section: 'Ferramentas', action: () => this.navigate('/tools/jwt-decoder'), icon: 'vpn_key' },
-      { name: 'Conversor de Timestamp', section: 'Ferramentas', action: () => this.navigate('/tools/timestamp-converter'), icon: 'update' },
-      { name: 'Conversor de Dados', section: 'Ferramentas', action: () => this.navigate('/tools/data-converter'), icon: 'swap_horiz' },
-      { name: 'Comparador de Texto', section: 'Ferramentas', action: () => this.navigate('/tools/comparador-texto'), icon: 'difference' },
-      { name: 'Gerador de Hash', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-hash'), icon: 'fingerprint' },
-      { name: 'Gerador de Senhas', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-senha'), icon: 'key' },
-      { name: 'Gerador de UUID', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-uuid'), icon: 'tag' },
-      { name: 'Qual é o meu IP?', section: 'Ferramentas', action: () => this.navigate('/tools/meu-ip'), icon: 'location_on' },
-      { name: 'Cliente REST', section: 'Ferramentas', action: () => this.navigate('/tools/cliente-rest'), icon: 'http' },
-      { name: 'Verificador de DNS', section: 'Ferramentas', action: () => this.navigate('/tools/verificador-dns'), icon: 'dns' },
-      { name: 'Testador de Webhook', section: 'Ferramentas', action: () => this.navigate('/tools/webhook-tester'), icon: 'webhook' },
-    ]);
+  private router = inject(Router);
+  private blogService = inject(BlogService);
+
+  private readonly staticCommands: Command[] = [
+    { name: 'Início', section: 'Navegação', action: () => this.navigate('/'), icon: 'home' },
+    { name: 'Blog', section: 'Navegação', action: () => this.navigate('/blog'), icon: 'article' },
+    { name: 'Templates n8n', section: 'Navegação', action: () => this.navigate('/templates'), icon: 'folder_copy' },
+    { name: 'Fórum', section: 'Navegação', action: () => this.navigate('/forum'), icon: 'forum' },
+    { name: 'Ferramentas', section: 'Navegação', action: () => this.navigate('/tools'), icon: 'construction' },
+    { name: 'Gerador de CRON', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-cron'), icon: 'schedule' },
+    { name: 'Formatador de JSON', section: 'Ferramentas', action: () => this.navigate('/tools/formatador-json'), icon: 'data_object' },
+    { name: 'Simulador de Expressão n8n', section: 'Ferramentas', action: () => this.navigate('/tools/n8n-expression-simulator'), icon: 'play_circle' },
+    { name: 'Gerenciador n8n', section: 'Ferramentas', action: () => this.navigate('/tools/gerenciador-n8n'), icon: 'hub' },
+    { name: 'Testador de Regex', section: 'Ferramentas', action: () => this.navigate('/tools/testador-regex'), icon: 'spellcheck' },
+    { name: 'Gerador de Dados Falsos', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-dados-falsos'), icon: 'fact_check' },
+    { name: 'Construtor Docker-Compose', section: 'Ferramentas', action: () => this.navigate('/tools/docker-compose-generator'), icon: 'build_circle' },
+    { name: 'Codec de URL', section: 'Ferramentas', action: () => this.navigate('/tools/url-codec'), icon: 'link' },
+    { name: 'Codec Base64', section: 'Ferramentas', action: () => this.navigate('/tools/base64-codec'), icon: 'password' },
+    { name: 'Decoder de JWT', section: 'Ferramentas', action: () => this.navigate('/tools/jwt-decoder'), icon: 'vpn_key' },
+    { name: 'Conversor de Timestamp', section: 'Ferramentas', action: () => this.navigate('/tools/timestamp-converter'), icon: 'update' },
+    { name: 'Conversor de Dados', section: 'Ferramentas', action: () => this.navigate('/tools/data-converter'), icon: 'swap_horiz' },
+    { name: 'Comparador de Texto', section: 'Ferramentas', action: () => this.navigate('/tools/comparador-texto'), icon: 'difference' },
+    { name: 'Gerador de Hash', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-hash'), icon: 'fingerprint' },
+    { name: 'Gerador de Senhas', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-senha'), icon: 'key' },
+    { name: 'Gerador de UUID', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-uuid'), icon: 'tag' },
+    { name: 'Qual é o meu IP?', section: 'Ferramentas', action: () => this.navigate('/tools/meu-ip'), icon: 'location_on' },
+    { name: 'Cliente REST', section: 'Ferramentas', action: () => this.navigate('/tools/cliente-rest'), icon: 'http' },
+    { name: 'Verificador de DNS', section: 'Ferramentas', action: () => this.navigate('/tools/verificador-dns'), icon: 'dns' },
+    { name: 'Testador de Webhook', section: 'Ferramentas', action: () => this.navigate('/tools/webhook-tester'), icon: 'webhook' },
+  ];
+
+  private readonly templateCatalog = [
+    { title: 'Sincronizar Pedidos iFood com Google Sheets', slug: 'sincronizar-pedidos-ifood-com-google-sheets' },
+    { title: 'Notificar no Discord sobre novos PRs no GitHub', slug: 'notificar-discord-novos-prs-github' },
+    { title: 'Criar Cartão no Trello para novos emails com Label', slug: 'criar-cartao-trello-novos-emails-label' },
+    { title: 'Salvar Anexos de Email no Google Drive', slug: 'salvar-anexos-email-google-drive' },
+  ];
+
+  constructor() {
+    effect(() => {
+      this.searchInput()?.nativeElement.focus();
+    });
 
     effect(() => {
-        this.searchInput()?.nativeElement.focus();
+      const blogPosts = this.blogService.posts();
+
+      const blogCommands: Command[] = blogPosts.map(post => ({
+        name: post.title,
+        section: 'Blog',
+        action: () => this.navigate(`/blog/${post.slug}`),
+        icon: 'article'
+      }));
+      
+      const templateCommands: Command[] = this.templateCatalog.map(template => ({
+        name: template.title,
+        section: 'Templates n8n',
+        action: () => this.navigate('/templates'), // All go to the placeholder page for now
+        icon: 'folder_copy'
+      }));
+
+      this.allCommands.set([
+        ...this.staticCommands,
+        ...blogCommands,
+        ...templateCommands
+      ]);
     });
+  }
+  
+  ngOnInit(): void {
+    this.blogService.loadPosts();
   }
 
   navigate(path: string) {
