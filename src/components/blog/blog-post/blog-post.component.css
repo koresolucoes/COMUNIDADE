@@ -56,18 +56,6 @@
   @apply border-gray-800 my-12;
 }
 
-/* Card Animations */
-@keyframes slide-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-:host .card-animate {
-  animation: slide-in-up 0.5s ease-out forwards;
+:host ::ng-deep .prose-container pre {
+  @apply bg-gray-900 border border-gray-800 rounded-lg p-4 my-8 overflow-x-auto text-sm;
 }

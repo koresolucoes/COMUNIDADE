@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { BlogService, ContentSection, IntroductionSection, TextBlockSection, ImageSection, CodeBlockSection, TipCardSection, AdSection, TopicsSection } from '../../../services/blog.service';
+import { BlogService } from '../../../services/blog.service';
 import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
 import { map, switchMap } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -30,34 +30,4 @@ export class BlogPostComponent {
       })
     )
   );
-  
-  mainContent = computed(() => {
-    const p = this.post();
-    if (!p) return [];
-    return p.content.filter(section => section.type !== 'tipCard' && section.type !== 'ad');
-  });
-
-  sidebarContent = computed(() => {
-    const p = this.post();
-    if (!p) return [];
-    return p.content.filter(section => section.type === 'tipCard' || section.type === 'ad');
-  });
-
-  // Helper para o template saber o ícone do card
-  getCardIcon(variant: 'tip' | 'note' | 'curiosity'): string {
-    switch (variant) {
-      case 'tip': return 'lightbulb';
-      case 'note': return 'edit_note';
-      case 'curiosity': return 'help_outline';
-    }
-  }
-
-  // Helper para o template saber a cor do card
-  getCardColorClasses(variant: 'tip' | 'note' | 'curiosity'): string {
-    switch (variant) {
-      case 'tip': return 'border-blue-accent/50 text-blue-300';
-      case 'note': return 'border-green-accent/50 text-green-300';
-      case 'curiosity': return 'border-yellow-400/50 text-yellow-300';
-    }
-  }
 }

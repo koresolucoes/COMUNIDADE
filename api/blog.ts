@@ -121,9 +121,9 @@ const handlePost = async (req: any, res: any) => {
             return res.end(JSON.stringify({ error: 'Campos title, author, summary e content são obrigatórios.' }));
         }
 
-        if (!Array.isArray(content)) {
+        if (typeof content !== 'string') {
             res.statusCode = 400;
-            return res.end(JSON.stringify({ error: 'O campo "content" deve ser um array de seções.' }));
+            return res.end(JSON.stringify({ error: 'O campo "content" deve ser uma string de texto contendo HTML.' }));
         }
 
         const slug = slugify(title) + '-' + Date.now().toString(36);

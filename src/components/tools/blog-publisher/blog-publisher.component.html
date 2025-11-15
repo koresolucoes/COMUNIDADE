@@ -30,20 +30,15 @@
     </div>
 
     <div>
-      <label for="content" class="block text-sm font-medium text-gray-300 mb-2">Conteúdo do Post <span class="text-gray-500">(Array de seções em formato JSON)</span></label>
-      <textarea id="content" formControlName="content" required rows="15" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent font-mono" placeholder='[
-  { "type": "introduction", "text": "Este é o parágrafo introdutório..." },
-  { "type": "textBlock", "title": "Título da Seção", "text": "<p>Conteúdo em HTML aqui.</p>" },
-  { "type": "tipCard", "title": "Dica Rápida", "text": "Texto da dica.", "variant": "tip" }
-]'>
+      <label for="content" class="block text-sm font-medium text-gray-300 mb-2">Conteúdo do Post <span class="text-gray-500">(em HTML)</span></label>
+      <textarea id="content" formControlName="content" required rows="15" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent font-mono" placeholder='<h2>Título da Seção</h2>
+<p>Escreva seu conteúdo em HTML aqui. Você pode usar tags como &lt;p&gt;, &lt;h2&gt;, &lt;ul&gt;, &lt;code&gt;, etc.</p>
+<pre><code>// blocos de código também são estilizados</code></pre>'>
       </textarea>
       @if (blogForm.get('content')?.invalid && (blogForm.get('content')?.dirty || blogForm.get('content')?.touched)) {
         <div class="text-red-400 text-xs mt-1">
           @if (blogForm.get('content')?.errors?.['required']) {
             O conteúdo é obrigatório.
-          }
-          @if (blogForm.get('content')?.errors?.['jsonInvalid']) {
-            {{ blogForm.get('content')?.errors?.['jsonInvalid'] }}
           }
         </div>
       }
