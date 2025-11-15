@@ -15,8 +15,8 @@ export class ForumNewTopicComponent implements OnInit {
   private forumService = inject(ForumService);
   private authService = inject(AuthService);
   private router = inject(Router);
-  // Fix: Inject FormBuilder into a property to ensure proper type inference before use.
-  private fb = inject(FormBuilder);
+  // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.
+  private fb: FormBuilder = inject(FormBuilder);
   
   loading = signal(false);
   errorMessage = signal<string | null>(null);

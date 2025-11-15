@@ -13,8 +13,8 @@ export class BlogPublisherComponent {
   successMessage = signal<string | null>(null);
   errorMessage = signal<string | null>(null);
 
-  // Fix: Inject FormBuilder into a property to ensure proper type inference before use.
-  private fb = inject(FormBuilder);
+  // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.
+  private fb: FormBuilder = inject(FormBuilder);
   blogForm = this.fb.group({
     title: ['', [Validators.required]],
     author: ['', [Validators.required]],

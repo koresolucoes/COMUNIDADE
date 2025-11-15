@@ -14,8 +14,8 @@ export class ForumPublisherComponent {
   errorMessage = signal<string | null>(null);
   mode = signal<'topic' | 'comment'>('topic');
 
-  // Fix: Inject FormBuilder into a property to ensure proper type inference before use.
-  private fb = inject(FormBuilder);
+  // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.
+  private fb: FormBuilder = inject(FormBuilder);
   publisherForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(5)]],
     content: ['', [Validators.required, Validators.minLength(10)]],

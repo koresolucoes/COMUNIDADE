@@ -123,7 +123,7 @@ export class TemplateDetailComponent {
     this.editor.canvas_x = (containerWidth / 2) / zoom - (minX + contentWidth / 2);
     this.editor.canvas_y = (containerHeight / 2) / zoom - (minY + contentHeight / 2);
     
-    this.editor.update();
+    this.editor.zoom_refresh();
   }
 
   private n8nToDrawflow(workflow: any) {

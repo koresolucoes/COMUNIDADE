@@ -21,8 +21,8 @@ export class ForumTopicComponent {
   private router = inject(Router);
   private forumService = inject(ForumService);
   public authService = inject(AuthService);
-  // Fix: Inject FormBuilder into a property to ensure proper type inference before use.
-  private fb = inject(FormBuilder);
+  // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.
+  private fb: FormBuilder = inject(FormBuilder);
 
   loading = signal(true);
   error = signal<string | null>(null);

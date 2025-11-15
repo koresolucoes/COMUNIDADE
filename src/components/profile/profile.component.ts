@@ -19,8 +19,8 @@ export class ProfileComponent implements OnInit {
   private userDataService = inject(UserDataService);
   private toolDataStateService = inject(ToolDataStateService);
   private router = inject(Router);
-  // Fix: Inject FormBuilder into a property to ensure proper type inference before use.
-  private fb = inject(FormBuilder);
+  // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.
+  private fb: FormBuilder = inject(FormBuilder);
 
   currentUser = this.authService.currentUser;
   currentUserProfile = this.authService.currentUserProfile;
