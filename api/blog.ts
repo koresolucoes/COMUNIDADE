@@ -22,7 +22,6 @@ const slugify = (text: string) => {
     .replace(/-+$/, '') // Trim - from end of text
 }
 
-// Fix: Replaced body reading logic to avoid using Buffer, which was causing type errors.
 const readRequestBody = (req: any): Promise<any> => {
   return new Promise((resolve, reject) => {
     let body = '';
@@ -37,7 +36,7 @@ const readRequestBody = (req: any): Promise<any> => {
           reject(new Error('Corpo da requisição não é um JSON válido.'));
         }
       } else {
-        resolve({}); // Resolve with empty object if no body
+        resolve({});
       }
     });
     req.on('error', (err: any) => {
@@ -51,7 +50,6 @@ const handleGet = async (req: any, res: any) => {
 
     try {
         if (slug) {
-            // Fetch a single post from Supabase
             const { data, error } = await supabase
                 .from('posts')
                 .select('*')
@@ -67,7 +65,6 @@ const handleGet = async (req: any, res: any) => {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(data));
         } else {
-            // Fetch all posts from Supabase
             const { data, error } = await supabase
                 .from('posts')
                 .select('*')
@@ -98,12 +95,9 @@ const handlePost = async (req: any, res: any) => {
     let userId: string | null = null;
     const masterKey = process.env.MASTER_BLOG_KEY;
 
-    // Check for master key authentication
     if (masterKey && token === masterKey) {
-        // Master key provided, proceed without a specific user ID
         userId = null; 
     } else {
-        // Fallback to JWT authentication for a logged-in user
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
         if (authError || !user) {
@@ -134,7 +128,7 @@ const handlePost = async (req: any, res: any) => {
             summary,
             content,
             published_at: new Date().toISOString(),
-            user_id: userId // Can be null if using master key
+            user_id: userId
         };
 
         const { data: insertedPost, error: insertError } = await supabase
@@ -157,9 +151,108 @@ const handlePost = async (req: any, res: any) => {
     }
 };
 
-export default async (req: any, res: any) => {
+const handleUpdate = async (req: any, res: any) => {
+    const { slug } = req.query || {};
+    if (!slug) {
+        res.statusCode = 400;
+        return res.end(JSON.stringify({ error: 'O parâmetro "slug" é obrigatório para atualizar um post.' }));
+    }
+
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.split(' ')[1];
+
+    if (!token) {
+        res.statusCode = 401;
+        return res.end(JSON.stringify({ error: 'Token de autenticação não fornecido.' }));
+    }
+
+    const masterKey = process.env.MASTER_BLOG_KEY;
+
+    try {
+        const body = await readRequestBody(req);
+        const { title, author, summary, content } = body;
+        
+        const updateData: any = {};
+        if (title) updateData.title = title;
+        if (author) updateData.author = author;
+        if (summary) updateData.summary = summary;
+        if (content) updateData.content = content;
+
+        if (Object.keys(updateData).length === 0) {
+            res.statusCode = 400;
+            return res.end(JSON.stringify({ error: 'Pelo menos um campo (title, author, summary, content) deve ser fornecido para atualização.' }));
+        }
+
+        const query = supabase.from('posts').update(updateData).eq('slug', slug);
+
+        if (!masterKey || token !== masterKey) {
+            const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+            if (authError || !user) {
+                res.statusCode = 401;
+                return res.end(JSON.stringify({ error: 'Token inválido ou você não tem permissão para editar este post.' }));
+            }
+            query.eq('user_id', user.id);
+        }
+
+        const { data: updatedPost, error: updateError } = await query.select().single();
+
+        if (updateError) throw updateError;
+
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(updatedPost));
+    } catch (error) {
+        console.error('Supabase PUT/PATCH error:', error);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: 'Erro ao atualizar o post.' }));
+    }
+};
+
+const handleDelete = async (req: any, res: any) => {
+    const { slug } = req.query || {};
+    if (!slug) {
+        res.statusCode = 400;
+        return res.end(JSON.stringify({ error: 'O parâmetro "slug" é obrigatório para deletar um post.' }));
+    }
+
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.split(' ')[1];
+
+    if (!token) {
+        res.statusCode = 401;
+        return res.end(JSON.stringify({ error: 'Token de autenticação não fornecido.' }));
+    }
+
+    const masterKey = process.env.MASTER_BLOG_KEY;
+    
+    try {
+        const query = supabase.from('posts').delete().eq('slug', slug);
+
+        if (!masterKey || token !== masterKey) {
+             const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+            if (authError || !user) {
+                res.statusCode = 401;
+                return res.end(JSON.stringify({ error: 'Token inválido ou você não tem permissão para deletar este post.' }));
+            }
+            query.eq('user_id', user.id);
+        }
+        
+        const { error: deleteError } = await query;
+        if (deleteError) throw deleteError;
+        
+        res.statusCode = 204;
+        res.end();
+    } catch (error) {
+        console.error('Supabase DELETE error:', error);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: 'Erro ao deletar o post.' }));
+    }
+};
+
+
+const handleRequest = async (req: any, res: any) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
@@ -168,13 +261,25 @@ export default async (req: any, res: any) => {
     return;
   }
   
-  if (req.method === 'GET') {
-    await handleGet(req, res);
-  } else if (req.method === 'POST') {
-    await handlePost(req, res);
-  } else {
-    res.statusCode = 405;
-    res.setHeader('Allow', 'GET, POST');
-    res.end(JSON.stringify({ error: `Método ${req.method} não permitido.` }));
+  switch (req.method) {
+    case 'GET':
+      await handleGet(req, res);
+      break;
+    case 'POST':
+      await handlePost(req, res);
+      break;
+    case 'PUT':
+    case 'PATCH':
+      await handleUpdate(req, res);
+      break;
+    case 'DELETE':
+      await handleDelete(req, res);
+      break;
+    default:
+      res.statusCode = 405;
+      res.setHeader('Allow', 'GET, POST, PUT, PATCH, DELETE');
+      res.end(JSON.stringify({ error: `Método ${req.method} não permitido.` }));
   }
 };
+
+export default handleRequest;

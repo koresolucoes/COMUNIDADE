@@ -21,7 +21,7 @@ const readRequestBody = (req: any): Promise<any> => {
           reject(new Error('Corpo da requisição não é um JSON válido.'));
         }
       } else {
-        resolve({}); // Resolve with empty object if no body
+        resolve({});
       }
     });
     req.on('error', (err: any) => {
@@ -107,10 +107,118 @@ const handlePost = async (req: any, res: any) => {
     }
 };
 
+const handleUpdate = async (req: any, res: any) => {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+        res.statusCode = 401;
+        return res.end(JSON.stringify({ error: 'Token de autenticação não fornecido.' }));
+    }
+
+    const body = await readRequestBody(req);
+    const { topicId, commentId, title, content } = body;
+
+    if (!topicId && !commentId) {
+        res.statusCode = 400;
+        return res.end(JSON.stringify({ error: 'É necessário fornecer "topicId" ou "commentId".' }));
+    }
+
+    const masterKey = process.env.MASTER_FORUM_KEY || process.env.MASTER_BLOG_KEY;
+    let isMaster = masterKey && token === masterKey;
+    
+    try {
+        let query;
+        const updateData: any = {};
+        
+        if (commentId) { // Updating a comment
+            if (!content) {
+                 res.statusCode = 400;
+                 return res.end(JSON.stringify({ error: 'O campo "content" é obrigatório para atualizar comentários.' }));
+            }
+            updateData.content = content;
+            query = supabase.from('forum_comments').update(updateData).eq('id', commentId);
+        } else { // Updating a topic
+            if (title) updateData.title = title;
+            if (content) updateData.content = content;
+            if (Object.keys(updateData).length === 0) {
+                 res.statusCode = 400;
+                 return res.end(JSON.stringify({ error: 'É necessário fornecer "title" ou "content" para atualizar um tópico.' }));
+            }
+            query = supabase.from('forum_topics').update(updateData).eq('id', topicId);
+        }
+
+        if (!isMaster) {
+            const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+            if (authError || !user) {
+                res.statusCode = 401;
+                return res.end(JSON.stringify({ error: 'Token inválido ou permissão negada.' }));
+            }
+            query.eq('user_id', user.id);
+        }
+
+        const { data: updatedData, error: updateError } = await query.select().single();
+        if (updateError) throw updateError;
+        
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'application/json');
+        res.end(JSON.stringify(updatedData));
+    } catch (error) {
+        console.error('Supabase Forum PUT/PATCH error:', error);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: 'Erro ao atualizar o item.' }));
+    }
+};
+
+const handleDelete = async (req: any, res: any) => {
+    const authHeader = req.headers.authorization || '';
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+        res.statusCode = 401;
+        return res.end(JSON.stringify({ error: 'Token de autenticação não fornecido.' }));
+    }
+    
+    const { topicId, commentId } = req.query || {};
+
+    if (!topicId && !commentId) {
+        res.statusCode = 400;
+        return res.end(JSON.stringify({ error: 'É necessário fornecer o parâmetro "topicId" ou "commentId".' }));
+    }
+
+    const masterKey = process.env.MASTER_FORUM_KEY || process.env.MASTER_BLOG_KEY;
+    let isMaster = masterKey && token === masterKey;
+
+    try {
+        let query;
+        if (commentId) {
+            query = supabase.from('forum_comments').delete().eq('id', commentId);
+        } else {
+            query = supabase.from('forum_topics').delete().eq('id', topicId);
+        }
+
+        if (!isMaster) {
+            const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+            if (authError || !user) {
+                res.statusCode = 401;
+                return res.end(JSON.stringify({ error: 'Token inválido ou permissão negada.' }));
+            }
+            query.eq('user_id', user.id);
+        }
+
+        const { error: deleteError } = await query;
+        if (deleteError) throw deleteError;
+        
+        res.statusCode = 204;
+        res.end();
+    } catch (error) {
+        console.error('Supabase Forum DELETE error:', error);
+        res.statusCode = 500;
+        res.end(JSON.stringify({ error: 'Erro ao deletar o item.' }));
+    }
+};
 
 export default async (req: any, res: any) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, PUT, PATCH, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
   if (req.method === 'OPTIONS') {
@@ -119,11 +227,20 @@ export default async (req: any, res: any) => {
     return;
   }
   
-  if (req.method === 'POST') {
-    await handlePost(req, res);
-  } else {
-    res.statusCode = 405;
-    res.setHeader('Allow', 'POST');
-    res.end(JSON.stringify({ error: `Método ${req.method} não permitido.` }));
+  switch (req.method) {
+    case 'POST':
+      await handlePost(req, res);
+      break;
+    case 'PUT':
+    case 'PATCH':
+      await handleUpdate(req, res);
+      break;
+    case 'DELETE':
+      await handleDelete(req, res);
+      break;
+    default:
+      res.statusCode = 405;
+      res.setHeader('Allow', 'POST, PUT, PATCH, DELETE');
+      res.end(JSON.stringify({ error: `Método ${req.method} não permitido.` }));
   }
 };
