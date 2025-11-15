@@ -1,16 +1,16 @@
-<div class="space-y-8 h-full flex flex-col">
+<div class="space-y-8">
   <div>
     <h1 class="text-3xl md:text-4xl font-bold text-white">Gerador de Dados Falsos (Mock Data)</h1>
     <p class="mt-2 text-gray-400">Gere arrays de JSON com dados falsos para testar seus workflows e APIs.</p>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-0">
+  <div class="flex flex-col lg:flex-row gap-6">
     <!-- Left Column: Schema Builder -->
-    <div class="flex flex-col min-h-0">
+    <div class="lg:w-1/2 flex flex-col">
       <h2 class="text-lg font-semibold text-white mb-2">Estrutura (Schema)</h2>
-      <div class="w-full h-full bg-gray-900 border border-gray-700 rounded-md p-4 space-y-3 overflow-y-auto">
+      <div class="w-full bg-gray-900 border border-gray-700 rounded-md p-4 space-y-3">
         @for(field of schemaFields(); track field.id) {
-          <div class="flex items-center gap-2 bg-gray-800 p-2 rounded-md">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-gray-800 p-2 rounded-md">
             <input 
               type="text"
               placeholder="Nome do Campo"
@@ -56,12 +56,12 @@
     </div>
 
     <!-- Right Column: Output -->
-    <div class="flex flex-col min-h-0">
+    <div class="lg:w-1/2 flex flex-col">
        <h2 class="text-lg font-semibold text-white mb-2">Resultado JSON</h2>
-       <div class="relative w-full h-full">
+       <div class="relative w-full flex-grow">
         <textarea 
           readonly
-          class="w-full h-full bg-gray-900 border border-gray-700 font-mono text-gray-300 rounded-md p-4 resize-y"
+          class="w-full h-full bg-gray-900 border border-gray-700 font-mono text-gray-300 rounded-md p-4 resize-y min-h-[500px]"
           placeholder="Clique em 'Gerar Dados' para ver o resultado"
           [value]="generatedJson()">
         </textarea>
