@@ -31,14 +31,20 @@ const sendWebhookNotification = async (type: string, payload: any) => {
       headers['X-Kore-Signature'] = webhookSecret;
     }
 
-    // Fire-and-forget
-    fetch(webhookUrl, {
+    // Await the fetch to ensure it completes before the serverless function terminates.
+    const response = await fetch(webhookUrl, {
       method: 'POST',
       headers,
       body: JSON.stringify(webhookPayload)
-    }).catch(console.error); // Catch errors on the fetch itself
+    });
 
-    console.log(`Webhook notification sent for event: ${type}`);
+    if (!response.ok) {
+        // Log the error but don't throw, as we don't want to fail the user's request.
+        console.error(`Webhook for event ${type} failed with status ${response.status}:`, await response.text());
+    } else {
+        console.log(`Webhook notification sent for event: ${type}`);
+    }
+    
   } catch (error) {
     // This will catch errors in payload construction, etc.
     console.error(`Failed to send webhook for event ${type}:`, error);
