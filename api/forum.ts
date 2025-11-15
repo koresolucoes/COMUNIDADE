@@ -7,6 +7,44 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
+// Webhook Notification Utility
+const sendWebhookNotification = async (type: string, payload: any) => {
+  const webhookUrl = process.env.WEBHOOK_URL_NOTIFICATIONS;
+  const webhookSecret = process.env.WEBHOOK_SECRET;
+
+  if (!webhookUrl) {
+    console.log('WEBHOOK_URL_NOTIFICATIONS is not set. Skipping notification.');
+    return;
+  }
+
+  const webhookPayload = {
+    event: type,
+    timestamp: new Date().toISOString(),
+    data: payload
+  };
+
+  try {
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json'
+    };
+    if (webhookSecret) {
+      headers['X-Kore-Signature'] = webhookSecret;
+    }
+
+    // Fire-and-forget
+    fetch(webhookUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(webhookPayload)
+    }).catch(console.error); // Catch errors on the fetch itself
+
+    console.log(`Webhook notification sent for event: ${type}`);
+  } catch (error) {
+    // This will catch errors in payload construction, etc.
+    console.error(`Failed to send webhook for event ${type}:`, error);
+  }
+};
+
 const readRequestBody = (req: any): Promise<any> => {
   return new Promise((resolve, reject) => {
     let body = '';
@@ -86,6 +124,8 @@ const handlePost = async (req: any, res: any) => {
             
             if (insertError) throw insertError;
             
+            await sendWebhookNotification('forum.comment.created', insertedComment);
+
             res.statusCode = 201;
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(insertedComment));
@@ -103,6 +143,8 @@ const handlePost = async (req: any, res: any) => {
                 .single();
 
             if (insertError) throw insertError;
+            
+            await sendWebhookNotification('forum.topic.created', insertedTopic);
             
             res.statusCode = 201;
             res.setHeader('Content-Type', 'application/json');

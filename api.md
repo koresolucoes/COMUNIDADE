@@ -238,3 +238,122 @@ curl -X DELETE "https://<URL_DA_SUA_APP>/api/forum?topicId=123e4567-e89b-12d3-a4
 curl -X DELETE "https://<URL_DA_SUA_APP>/api/forum?commentId=789e0123-e89b-12d3-a456-426614174000" \
 -H "Authorization: Bearer <SEU_TOKEN>"
 ```
+
+---
+
+## Webhook Notifications
+
+O sistema pode enviar notificações via webhook para um endpoint configurado sempre que um novo conteúdo for criado. Isso é útil para integrações com outras plataformas, como Discord, Slack ou n8n.
+
+### Configuração
+
+Para habilitar os webhooks, configure as seguintes variáveis de ambiente no seu servidor:
+
+-   `WEBHOOK_URL_NOTIFICATIONS`: A URL do endpoint que receberá as notificações `POST`.
+-   `WEBHOOK_SECRET` (opcional): Um segredo que será enviado no cabeçalho `X-Kore-Signature` para que você possa verificar a autenticidade da requisição.
+
+### Verificação de Assinatura
+
+Se `WEBHOOK_SECRET` estiver configurado, cada requisição de webhook incluirá o cabeçalho:
+
+```
+X-Kore-Signature: <SEU_WEBHOOK_SECRET>
+```
+
+Você deve comparar o valor deste cabeçalho com o seu segredo para garantir que a requisição é legítima.
+
+### Eventos e Payloads
+
+As notificações são enviadas como uma requisição `POST` com um corpo JSON.
+
+#### Estrutura Comum do Payload
+
+```json
+{
+  "event": "event.type.string",
+  "timestamp": "2024-01-01T12:00:00.000Z",
+  "data": { ... }
+}
+```
+
+-   `event`: O tipo de evento que acionou o webhook.
+-   `timestamp`: O timestamp ISO 8601 de quando o evento ocorreu.
+-   `data`: O objeto de dados completo que foi criado.
+
+---
+
+#### 1. Novo Post no Blog
+
+-   **Evento**: `blog.post.created`
+-   **Descrição**: Acionado quando um novo post é publicado no blog.
+-   **Payload (`data`)**: O objeto completo do post.
+
+##### Exemplo
+
+```json
+{
+  "event": "blog.post.created",
+  "timestamp": "2024-07-29T18:30:00.000Z",
+  "data": {
+    "id": "uuid-do-post",
+    "slug": "meu-novo-post-1a2b3c",
+    "title": "Meu Novo Post Incrível",
+    "author": "Nome do Autor",
+    "summary": "Um resumo conciso.",
+    "content": "<p>Conteúdo em HTML.</p>",
+    "published_at": "2024-07-29T18:30:00.000Z",
+    "user_id": "uuid-do-usuario-autor"
+  }
+}
+```
+
+---
+
+#### 2. Novo Tópico no Fórum
+
+-   **Evento**: `forum.topic.created`
+-   **Descrição**: Acionado quando um novo tópico é criado no fórum.
+-   **Payload (`data`)**: O objeto completo do tópico.
+
+##### Exemplo
+
+```json
+{
+  "event": "forum.topic.created",
+  "timestamp": "2024-07-29T18:35:00.000Z",
+  "data": {
+    "id": "uuid-do-topico",
+    "created_at": "2024-07-29T18:35:00.000Z",
+    "updated_at": "2024-07-29T18:35:00.000Z",
+    "title": "Dúvida sobre o nó HTTP Request",
+    "content": "Estou com dificuldades para passar um header...",
+    "user_id": "uuid-do-usuario-autor",
+    "view_count": 0,
+    "comment_count": 0
+  }
+}
+```
+
+---
+
+#### 3. Novo Comentário no Fórum
+
+-   **Evento**: `forum.comment.created`
+-   **Descrição**: Acionado quando um novo comentário é adicionado a um tópico do fórum.
+-   **Payload (`data`)**: O objeto completo do comentário.
+
+##### Exemplo
+
+```json
+{
+  "event": "forum.comment.created",
+  "timestamp": "2024-07-29T18:40:00.000Z",
+  "data": {
+    "id": "uuid-do-comentario",
+    "created_at": "2024-07-29T18:40:00.000Z",
+    "content": "Claro! Você precisa usar a aba 'Headers'...",
+    "user_id": "uuid-do-usuario-autor",
+    "topic_id": "uuid-do-topico-pai"
+  }
+}
+```
