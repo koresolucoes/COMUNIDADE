@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, signal, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal, CUSTOM_ELEMENTS_SCHEMA, computed } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TemplateService, Template } from '../../../services/template.service';
 import { from, of } from 'rxjs';
@@ -32,9 +32,29 @@ export class TemplateDetailComponent {
 
   template = toSignal(this.template$, { initialValue: null });
   
-  copyWorkflow(workflowJson: any) {
-    if (!workflowJson) return;
-    navigator.clipboard.writeText(JSON.stringify(workflowJson, null, 2)).then(() => {
+  workflowData = computed(() => {
+    const t = this.template();
+    if (!t || !t.workflow_json) {
+      return null;
+    }
+    if (typeof t.workflow_json === 'string') {
+      try {
+        return JSON.parse(t.workflow_json);
+      } catch (e) {
+        console.error("Failed to parse workflow_json", e);
+        return null;
+      }
+    }
+    return t.workflow_json;
+  });
+  
+  copyWorkflow() {
+    const data = this.workflowData();
+    if (!data) return;
+
+    const jsonString = JSON.stringify(data, null, 2);
+    
+    navigator.clipboard.writeText(jsonString).then(() => {
         this.copyButtonText.set('Copiado!');
         setTimeout(() => this.copyButtonText.set('Copiar Workflow (JSON)'), 2000);
     }).catch(err => {

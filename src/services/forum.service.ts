@@ -89,7 +89,8 @@ export class ForumService {
       throw error;
     }
 
-    const userIds = [...new Set(data.map(topic => topic.user_id))];
+    // FIX: Correctly filter and type user IDs to prevent passing `unknown[]` to a function expecting `string[]`.
+    const userIds = [...new Set(data.map(topic => topic.user_id))].filter((id): id is string => !!id);
     const profiles = await this.getUserProfiles(userIds);
 
     return data.map(topic => ({
@@ -125,9 +126,9 @@ export class ForumService {
       ...comments.flatMap(c => c.attachments.map(a => a.user_id)),
       ...topicAttachments.map(a => a.user_id)
     ];
-    // FIX: Use Array.from() for better type inference when converting a Set to an Array.
-    // Fix: Ensure userIds are strings and unique before fetching profiles to prevent type errors.
-    const profiles = await this.getUserProfiles(Array.from(new Set(userIds.filter(Boolean)), String));
+    // FIX: Correctly filter and type user IDs to prevent passing `unknown[]` to a function expecting `string[]`.
+    const uniqueStringUserIds = [...new Set(userIds)].filter((id): id is string => !!id);
+    const profiles = await this.getUserProfiles(uniqueStringUserIds);
     
     topicData.author = profiles[topicData.user_id];
     comments.forEach(c => {
@@ -234,9 +235,8 @@ export class ForumService {
 
     if (error) throw error;
 
-    // FIX: Use Array.from() for better type inference when converting a Set to an Array.
-    // Fix: Ensure userIds is a string[] by filtering falsy values and using a String mapper.
-    const userIds = Array.from(new Set(data.map(edit => edit.user_id).filter(Boolean)), String);
+    // FIX: Correctly filter and type user IDs to prevent passing `unknown[]` to a function expecting `string[]`.
+    const userIds = [...new Set(data.map(edit => edit.user_id))].filter((id): id is string => !!id);
     const profiles = await this.getUserProfiles(userIds);
 
     return data.map(edit => ({
