@@ -150,7 +150,7 @@ Endpoint base: `/api/forum`
 - Ao usar um **token JWT**, o `user_id` é ignorado; a postagem é sempre associada ao dono do token.
 - Ao usar a **chave mestra**, o `user_id` é **opcional**:
     - Se você **incluir** um `user_id`, a postagem será criada em nome daquele usuário (impersonação).
-    - Se você **omitir** o `user_id`, a postagem será criada como um post de administrador (sem autor específico).
+    - Se você **omitir** o `user_id`, a postagem será atribuída ao primeiro usuário registrado no sistema (geralmente um administrador), pois a autoria é obrigatória no fórum.
 
 #### Corpo da Requisição (JSON) - Criar Comentário
 

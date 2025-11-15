@@ -46,9 +46,21 @@ const handlePost = async (req: any, res: any) => {
     const masterKey = process.env.MASTER_FORUM_KEY || process.env.MASTER_BLOG_KEY;
 
     if (masterKey && token === masterKey) {
-        // user_id is optional. If provided, post is on behalf of that user.
-        // If not, userId remains null, and it's an admin post.
-        userId = body.user_id || null;
+        if (body.user_id) {
+            userId = body.user_id;
+        } else {
+            // The forum tables require a user_id (NOT NULL).
+            // As a fallback for admin posts without a specified user,
+            // we assign it to the first user created in the system (assumed to be an admin).
+            const { data: { users }, error: adminError } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
+            
+            if (adminError || users.length === 0) {
+                console.error('Forum API Master Key Error: Could not find a default user to assign the post to.', adminError);
+                res.statusCode = 500;
+                return res.end(JSON.stringify({ error: 'Não foi possível encontrar um usuário padrão para a postagem. Ao usar a chave mestra, forneça um "user_id" no corpo da requisição.' }));
+            }
+            userId = users[0].id;
+        }
     } else {
         const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
