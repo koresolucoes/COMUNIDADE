@@ -22,7 +22,6 @@ export class ForumTopicComponent {
   private forumService = inject(ForumService);
   public authService = inject(AuthService);
   private fb = inject(FormBuilder);
-  private dmp: any | null = null;
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -217,19 +216,35 @@ export class ForumTopicComponent {
     this.historyItems.set([]);
   }
   
+  private escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   getDiffHtml(text1: string, text2: string): string {
-    const dmpClass = (window as any).diff_match_patch;
-    if (typeof dmpClass === 'undefined') {
+    const jsdiff = (window as any).Diff;
+    if (typeof jsdiff === 'undefined') {
       return '<span>Aguardando biblioteca de comparação...</span>';
     }
 
     try {
-      if (!this.dmp) {
-        this.dmp = new dmpClass();
-      }
-      const diffs = this.dmp.diff_main(text1, text2);
-      this.dmp.diff_cleanupSemantic(diffs);
-      return this.dmp.diff_prettyHtml(diffs);
+      const diff = jsdiff.diffChars(text1, text2);
+      let html = '';
+      diff.forEach((part: any) => {
+        const tag = part.added ? 'ins' :
+                      part.removed ? 'del' : null;
+        const escapedValue = this.escapeHtml(part.value);
+        if (tag) {
+          html += `<${tag}>${escapedValue}</${tag}>`;
+        } else {
+          html += escapedValue;
+        }
+      });
+      return html;
     } catch (e) {
       console.error("Diff error:", e);
       return '<span>Ocorreu um erro ao gerar a comparação.</span>';

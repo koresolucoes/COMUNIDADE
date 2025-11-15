@@ -22,22 +22,27 @@ export class DiffCheckerComponent implements OnInit {
   
   text1 = signal('{\n  "id": 123,\n  "status": "pending"\n}');
   text2 = signal('{\n  "id": 123,\n  "status": "completed",\n  "timestamp": 1672531200\n}');
-  private dmpInstance: any | null = null;
   
   diffHtml = computed(() => {
-    const dmpClass = (window as any).diff_match_patch;
-    if (typeof dmpClass === 'undefined') {
+    const jsdiff = (window as any).Diff;
+    if (typeof jsdiff === 'undefined') {
       return 'Aguardando a biblioteca de comparação...';
     }
 
-    if (!this.dmpInstance) {
-      this.dmpInstance = new dmpClass();
-    }
-
     try {
-      const diffs = this.dmpInstance.diff_main(this.text1(), this.text2());
-      this.dmpInstance.diff_cleanupSemantic(diffs);
-      return this.dmpInstance.diff_prettyHtml(diffs);
+      const diff = jsdiff.diffChars(this.text1(), this.text2());
+      let html = '';
+      diff.forEach((part: any) => {
+        const tag = part.added ? 'ins' :
+                      part.removed ? 'del' : null;
+        const escapedValue = this.escapeHtml(part.value);
+        if (tag) {
+          html += `<${tag}>${escapedValue}</${tag}>`;
+        } else {
+          html += escapedValue;
+        }
+      });
+      return html;
     } catch (e) {
       console.error("Diff error:", e);
       return 'Ocorreu um erro ao gerar a comparação.';
@@ -76,5 +81,14 @@ export class DiffCheckerComponent implements OnInit {
     if (!state) return;
     this.text1.set(state.text1 ?? '');
     this.text2.set(state.text2 ?? '');
+  }
+
+  private escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   }
 }
