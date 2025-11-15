@@ -15,12 +15,14 @@ export class ForumNewTopicComponent implements OnInit {
   private forumService = inject(ForumService);
   private authService = inject(AuthService);
   private router = inject(Router);
+  // Fix: Inject FormBuilder into a property to ensure proper type inference before use.
+  private fb = inject(FormBuilder);
   
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   selectedFiles = signal<File[]>([]);
 
-  topicForm = inject(FormBuilder).group({
+  topicForm = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(5)]],
     content: ['', [Validators.required, Validators.minLength(10)]],
   });

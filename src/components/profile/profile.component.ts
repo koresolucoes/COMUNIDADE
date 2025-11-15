@@ -1,7 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-// FIX: Import `Profile` interface from auth service.
 import { AuthService, Profile } from '../../services/auth.service';
 import { UserDataService, ToolData } from '../../services/user-data.service';
 import { ToolDataStateService } from '../../services/tool-data-state.service';
@@ -20,7 +19,8 @@ export class ProfileComponent implements OnInit {
   private userDataService = inject(UserDataService);
   private toolDataStateService = inject(ToolDataStateService);
   private router = inject(Router);
-  // private fb = inject(FormBuilder); // This was causing an error with `this` context.
+  // Fix: Inject FormBuilder into a property to ensure proper type inference before use.
+  private fb = inject(FormBuilder);
 
   currentUser = this.authService.currentUser;
   currentUserProfile = this.authService.currentUserProfile;
@@ -34,8 +34,7 @@ export class ProfileComponent implements OnInit {
   avatarPreview = signal<string | null>(null);
   profileMessage = signal<{type: 'success' | 'error', text: string} | null>(null);
 
-  // FIX: Use `inject(FormBuilder)` directly in the initializer to avoid issues with `this` context.
-  profileForm = inject(FormBuilder).group({
+  profileForm = this.fb.group({
     username: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]+$/), Validators.minLength(3)]],
     full_name: [''],
   });

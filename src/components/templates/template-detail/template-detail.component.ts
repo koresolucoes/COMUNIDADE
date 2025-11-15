@@ -20,6 +20,15 @@ export class TemplateDetailComponent {
 
   copyButtonText = signal('Copiar Workflow (JSON)');
 
+  readonly viewOptions = {
+    nodesDraggable: true,
+    nodesConnectable: false,
+    elementsSelectable: true,
+    zoomOnScroll: true,
+    panOnDrag: true,
+    fitView: true,
+  };
+
   private template$ = this.route.paramMap.pipe(
     map(params => params.get('id')),
     switchMap(id => {

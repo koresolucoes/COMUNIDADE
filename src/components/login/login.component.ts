@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -13,13 +13,14 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  // Fix: Inject FormBuilder into a property to ensure proper type inference before use.
+  private fb = inject(FormBuilder);
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
   currentUser = this.authService.currentUser;
 
-  // FIX: Use inject(FormBuilder) directly to initialize the form group, avoiding potential issues with `this` context during property initialization.
-  loginForm = inject(FormBuilder).group({
+  loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
