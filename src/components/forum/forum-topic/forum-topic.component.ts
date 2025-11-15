@@ -8,8 +8,6 @@ import { from, of } from 'rxjs';
 import { ForumService, Topic, Comment, EditHistory } from '../../../services/forum.service';
 import { AuthService } from '../../../services/auth.service';
 
-declare var diff_match_patch: any;
-
 @Component({
   selector: 'app-forum-topic',
   standalone: true,
@@ -220,14 +218,21 @@ export class ForumTopicComponent {
   }
   
   getDiffHtml(text1: string, text2: string): string {
-    if (typeof diff_match_patch === 'undefined') {
-      return '<span>Error: Diff library not available.</span>';
+    const dmpClass = (window as any).diff_match_patch;
+    if (typeof dmpClass === 'undefined') {
+      return '<span>Aguardando biblioteca de comparação...</span>';
     }
-    if (!this.dmp) {
-      this.dmp = new diff_match_patch();
+
+    try {
+      if (!this.dmp) {
+        this.dmp = new dmpClass();
+      }
+      const diffs = this.dmp.diff_main(text1, text2);
+      this.dmp.diff_cleanupSemantic(diffs);
+      return this.dmp.diff_prettyHtml(diffs);
+    } catch (e) {
+      console.error("Diff error:", e);
+      return '<span>Ocorreu um erro ao gerar a comparação.</span>';
     }
-    const diffs = this.dmp.diff_main(text1, text2);
-    this.dmp.diff_cleanupSemantic(diffs);
-    return this.dmp.diff_prettyHtml(diffs);
   }
 }

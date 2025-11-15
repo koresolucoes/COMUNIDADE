@@ -6,8 +6,6 @@ import { AuthService } from '../../../services/auth.service';
 import { UserDataService } from '../../../services/user-data.service';
 import { ToolDataStateService } from '../../../services/tool-data-state.service';
 
-declare var diff_match_patch: any;
-
 @Component({
   selector: 'app-diff-checker',
   standalone: true,
@@ -24,16 +22,22 @@ export class DiffCheckerComponent implements OnInit {
   
   text1 = signal('{\n  "id": 123,\n  "status": "pending"\n}');
   text2 = signal('{\n  "id": 123,\n  "status": "completed",\n  "timestamp": 1672531200\n}');
+  private dmpInstance: any | null = null;
   
   diffHtml = computed(() => {
+    const dmpClass = (window as any).diff_match_patch;
+    if (typeof dmpClass === 'undefined') {
+      return 'Aguardando a biblioteca de comparação...';
+    }
+
+    if (!this.dmpInstance) {
+      this.dmpInstance = new dmpClass();
+    }
+
     try {
-      if (typeof diff_match_patch === 'undefined') {
-        return 'Aguardando a biblioteca de comparação...';
-      }
-      const dmp = new diff_match_patch();
-      const diffs = dmp.diff_main(this.text1(), this.text2());
-      dmp.diff_cleanupSemantic(diffs);
-      return dmp.diff_prettyHtml(diffs);
+      const diffs = this.dmpInstance.diff_main(this.text1(), this.text2());
+      this.dmpInstance.diff_cleanupSemantic(diffs);
+      return this.dmpInstance.diff_prettyHtml(diffs);
     } catch (e) {
       console.error("Diff error:", e);
       return 'Ocorreu um erro ao gerar a comparação.';
