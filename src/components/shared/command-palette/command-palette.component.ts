@@ -49,8 +49,8 @@ export class CommandPaletteComponent {
     this.commands.set([
       { name: 'Início', section: 'Navegação', action: () => this.navigate('/'), icon: 'home' },
       { name: 'Blog', section: 'Navegação', action: () => this.navigate('/blog'), icon: 'article' },
-      { name: 'Fórum', section: 'Navegação', action: () => this.navigate('/forum'), icon: 'forum' },
       { name: 'Templates n8n', section: 'Navegação', action: () => this.navigate('/templates'), icon: 'folder_copy' },
+      { name: 'Fórum', section: 'Navegação', action: () => this.navigate('/forum'), icon: 'forum' },
       { name: 'Ferramentas', section: 'Navegação', action: () => this.navigate('/tools'), icon: 'construction' },
       { name: 'Gerador de CRON', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-cron'), icon: 'schedule' },
       { name: 'Formatador de JSON', section: 'Ferramentas', action: () => this.navigate('/tools/formatador-json'), icon: 'data_object' },
