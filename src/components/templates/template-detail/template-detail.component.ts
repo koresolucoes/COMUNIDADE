@@ -60,12 +60,14 @@ export class TemplateDetailComponent {
   private workflowView = viewChild<ElementRef<HTMLElement & { workflow: any }>>('workflowView');
 
   constructor() {
-    effect(() => {
+    effect(async () => {
       const element = this.workflowView()?.nativeElement;
       const data = this.workflowData();
+
       if (element && data) {
-        // Imperatively set the property on the custom element.
-        // This can sometimes resolve timing issues with web components.
+        // Ensure the custom element is defined before assigning properties.
+        // This avoids race conditions with the component's script loading from the CDN.
+        await customElements.whenDefined('n8n-workflow-view');
         element.workflow = data;
       }
     });
