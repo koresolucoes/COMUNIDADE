@@ -6,7 +6,10 @@ import { AuthService } from './auth.service';
 // --- Type Definitions ---
 export interface UserProfile {
   id: string;
-  email: string;
+  username: string | null;
+  full_name: string | null;
+  avatar_url: string | null;
+  display_name: string;
 }
 
 export interface Attachment {
@@ -15,6 +18,8 @@ export interface Attachment {
   file_path: string;
   mime_type: string;
   size_bytes: number;
+  // FIX: Add user_id to match the database schema and type usage.
+  user_id: string;
   url?: string;
 }
 
@@ -117,12 +122,14 @@ export class ForumService {
     const userIds = [
       topicData.user_id,
       ...comments.map(c => c.user_id),
+      ...comments.flatMap(c => c.attachments.map(a => a.user_id)),
+      ...topicAttachments.map(a => a.user_id)
     ];
     const profiles = await this.getUserProfiles([...new Set(userIds)]);
     
-    topicData.author = profiles[topicData.user_id] || { id: topicData.user_id, email: 'Usuário desconhecido' };
+    topicData.author = profiles[topicData.user_id];
     comments.forEach(c => {
-        c.author = profiles[c.user_id] || { id: c.user_id, email: 'Usuário desconhecido' }
+        c.author = profiles[c.user_id];
     });
 
     return { ...topicData, comments, attachments: topicAttachments } as Topic;
@@ -230,7 +237,7 @@ export class ForumService {
 
     return data.map(edit => ({
       ...edit,
-      author: profiles[edit.user_id] || { id: edit.user_id, email: 'Usuário desconhecido' }
+      author: profiles[edit.user_id]
     }));
   }
 
@@ -294,28 +301,33 @@ export class ForumService {
     if (userIds.length === 0) return {};
     
     const { data, error } = await this.supabase
-      .from('user_tool_data')
-      .select('user_id, user_email')
-      .in('user_id', userIds);
+      .from('profiles')
+      .select('id, username, full_name, avatar_url')
+      .in('id', userIds);
+
+    if (error) {
+      console.error('Error fetching profiles for forum:', error);
+      throw error;
+    }
 
     const profiles: Record<string, UserProfile> = {};
+    const storageUrl = `${environment.supabaseUrl}/storage/v1/object/public/avatars/`;
+    
     if (data) {
         for (const profile of data) {
-            if (profile.user_id && !profiles[profile.user_id]) {
-                profiles[profile.user_id] = { id: profile.user_id, email: profile.user_email || `Usuário...${profile.user_id.substring(0,4)}`};
-            }
+            profiles[profile.id] = { 
+                ...profile,
+                avatar_url: profile.avatar_url ? `${storageUrl}${profile.avatar_url}` : null,
+                display_name: profile.username || profile.full_name || `Usuário...${profile.id.substring(0,4)}`
+            };
         }
     }
     
-    // Fallback for users not in user_tool_data
+    // Fallback for users without a profile entry yet
     for (const id of userIds) {
         if (!profiles[id]) {
-            profiles[id] = { id, email: `Usuário...${id.substring(0,4)}` };
+            profiles[id] = { id, username: null, full_name: null, avatar_url: null, display_name: `Usuário...${id.substring(0,4)}` };
         }
-    }
-    
-    if(this.user && !profiles[this.user.id] && this.user.email){
-        profiles[this.user.id] = { id: this.user.id, email: this.user.email };
     }
 
     return profiles;

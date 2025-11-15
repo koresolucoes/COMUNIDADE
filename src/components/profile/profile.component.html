@@ -1,55 +1,136 @@
-<div class="space-y-12">
+<div class="space-y-8">
   <section>
     <h1 class="text-3xl md:text-4xl font-bold text-white">Meu Perfil</h1>
-    @if(currentUser(); as user) {
-      <p class="mt-2 text-gray-400">Logado como: <span class="font-semibold text-gray-300">{{ user.email }}</span></p>
-    }
   </section>
 
-  <section>
-    <h2 class="text-2xl font-semibold text-white mb-6">Meus Dados Salvos</h2>
-    
-    @if(loading()) {
-      <p class="text-gray-400">Carregando dados...</p>
-    } @else if (groupedData().length === 0) {
-      <div class="text-center py-16 bg-gray-900 border border-gray-800 rounded-lg">
-        <span class="material-icons-outlined text-5xl text-gray-600">inventory_2</span>
-        <p class="mt-4 text-gray-500">Você ainda não salvou nenhum dado das ferramentas.</p>
-        <p class="text-sm text-gray-500">Use o botão "Salvar" nas ferramentas para guardar suas configurações aqui.</p>
-      </div>
-    } @else {
-      <div class="space-y-8">
-        @for(group of groupedData(); track group[0]) {
-          <div>
-            <h3 class="text-xl font-semibold text-white mb-4 border-b border-gray-800 pb-2">{{ getToolName(group[0]) }}</h3>
-            <div class="overflow-hidden border border-gray-800 rounded-lg">
-              <table class="min-w-full divide-y divide-gray-800">
-                <thead class="bg-gray-800/50">
-                  <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Título</th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Salvo em</th>
-                    <th scope="col" class="relative px-6 py-3">
-                      <span class="sr-only">Ações</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="bg-gray-900 divide-y divide-gray-800">
-                  @for(item of group[1]; track item.id) {
-                    <tr>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">{{ item.title }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
-                      <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                        <button (click)="loadItem(item)" class="text-blue-accent hover:text-blue-400">Carregar</button>
-                        <button (click)="deleteItem(item.id)" class="text-red-500 hover:text-red-400">Excluir</button>
-                      </td>
-                    </tr>
-                  }
-                </tbody>
-              </table>
+  <div class="border-b border-gray-800">
+    <nav class="-mb-px flex space-x-8">
+      <button 
+        (click)="activeTab.set('profile')"
+        class="py-3 px-1 text-sm font-medium border-b-2 transition-colors"
+        [class.text-white]="activeTab() === 'profile'"
+        [class.border-blue-accent]="activeTab() === 'profile'"
+        [class.text-gray-400]="activeTab() !== 'profile'"
+        [class.border-transparent]="activeTab() !== 'profile'"
+        [class.hover:text-gray-200]="activeTab() !== 'profile'">
+        Editar Perfil
+      </button>
+      <button 
+        (click)="activeTab.set('data')"
+        class="py-3 px-1 text-sm font-medium border-b-2 transition-colors"
+        [class.text-white]="activeTab() === 'data'"
+        [class.border-blue-accent]="activeTab() === 'data'"
+        [class.text-gray-400]="activeTab() !== 'data'"
+        [class.border-transparent]="activeTab() !== 'data'"
+        [class.hover:text-gray-200]="activeTab() !== 'data'">
+        Meus Dados Salvos
+      </button>
+    </nav>
+  </div>
+  
+  @if(activeTab() === 'profile') {
+    <section class="max-w-2xl">
+      <form [formGroup]="profileForm" (ngSubmit)="updateProfile()" class="space-y-6">
+        <!-- Avatar -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Avatar</label>
+          <div class="flex items-center gap-4">
+            <div class="w-20 h-20 bg-gray-800 rounded-full flex items-center justify-center overflow-hidden">
+              @if(avatarPreview(); as avatarUrl) {
+                <img [src]="avatarUrl" alt="Avatar preview" class="w-full h-full object-cover">
+              } @else {
+                <span class="text-2xl font-bold text-white uppercase">{{ currentUserProfile()?.username?.[0] || currentUser()?.email?.[0] }}</span>
+              }
             </div>
+            <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/png, image/jpeg" class="hidden">
+            <button type="button" (click)="fileInput.click()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+              Mudar Avatar
+            </button>
+          </div>
+        </div>
+        
+        <!-- Email -->
+        <div>
+          <label class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+          <input type="email" readonly [value]="currentUser()?.email || ''" class="w-full bg-gray-800 border-gray-700 text-gray-400 rounded-md p-2 cursor-not-allowed">
+        </div>
+
+        <!-- Username -->
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-300 mb-2">Nome de usuário</label>
+          <input id="username" type="text" formControlName="username" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent">
+           @if (profileForm.get('username')?.invalid && (profileForm.get('username')?.dirty || profileForm.get('username')?.touched)) {
+            <p class="text-red-400 text-xs mt-1">O nome de usuário é obrigatório (mín. 3 caracteres, apenas letras, números e _).</p>
+          }
+        </div>
+
+        <!-- Full Name -->
+        <div>
+          <label for="full_name" class="block text-sm font-medium text-gray-300 mb-2">Nome Completo</label>
+          <input id="full_name" type="text" formControlName="full_name" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent">
+        </div>
+        
+        @if(profileMessage(); as msg) {
+          <div class="p-3 rounded-md text-sm" [class.bg-green-900/50]="msg.type === 'success'" [class.border-green-500/50]="msg.type === 'success'" [class.text-green-300]="msg.type === 'success'" [class.bg-red-900/50]="msg.type === 'error'" [class.border-red-500/50]="msg.type === 'error'" [class.text-red-300]="msg.type === 'error'">
+            {{ msg.text }}
           </div>
         }
-      </div>
-    }
-  </section>
+
+        <div class="flex items-center gap-4 pt-4 border-t border-gray-800">
+          <button type="submit" [disabled]="profileLoading() || profileForm.invalid" class="px-6 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 disabled:opacity-50 flex items-center">
+             @if(profileLoading()) { <span class="material-icons-outlined animate-spin mr-2 text-sm">sync</span> }
+            Salvar Alterações
+          </button>
+          <button type="button" (click)="onLogout()" class="text-gray-400 hover:text-red-400 text-sm font-medium">Sair (Logout)</button>
+        </div>
+      </form>
+    </section>
+  }
+
+  @if(activeTab() === 'data') {
+    <section>
+      @if(loading()) {
+        <p class="text-gray-400">Carregando dados...</p>
+      } @else if (groupedData().length === 0) {
+        <div class="text-center py-16 bg-gray-900 border border-gray-800 rounded-lg">
+          <span class="material-icons-outlined text-5xl text-gray-600">inventory_2</span>
+          <p class="mt-4 text-gray-500">Você ainda não salvou nenhum dado das ferramentas.</p>
+          <p class="text-sm text-gray-500">Use o botão "Salvar" nas ferramentas para guardar suas configurações aqui.</p>
+        </div>
+      } @else {
+        <div class="space-y-8">
+          @for(group of groupedData(); track group[0]) {
+            <div>
+              <h3 class="text-xl font-semibold text-white mb-4 border-b border-gray-800 pb-2">{{ getToolName(group[0]) }}</h3>
+              <div class="overflow-hidden border border-gray-800 rounded-lg">
+                <table class="min-w-full divide-y divide-gray-800">
+                  <thead class="bg-gray-800/50">
+                    <tr>
+                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Título</th>
+                      <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Salvo em</th>
+                      <th scope="col" class="relative px-6 py-3">
+                        <span class="sr-only">Ações</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="bg-gray-900 divide-y divide-gray-800">
+                    @for(item of group[1]; track item.id) {
+                      <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-200">{{ item.title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
+                          <button (click)="loadItem(item)" class="text-blue-accent hover:text-blue-400">Carregar</button>
+                          <button (click)="deleteItem(item.id)" class="text-red-500 hover:text-red-400">Excluir</button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  }
 </div>

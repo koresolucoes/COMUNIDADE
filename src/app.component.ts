@@ -22,6 +22,7 @@ export class AppComponent {
   private router = inject(Router);
   
   currentUser = this.authService.currentUser;
+  currentUserProfile = this.authService.currentUserProfile;
   isCommandPaletteVisible = signal(false);
   isDarkMode = signal(true);
   isSidebarExpanded = signal(true);

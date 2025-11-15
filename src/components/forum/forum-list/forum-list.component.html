@@ -60,7 +60,7 @@
             <div>
               <h2 class="text-lg font-semibold text-white">{{ topic.title }}</h2>
               <p class="text-xs text-gray-500 mt-1">
-                por <span class="font-medium text-gray-400">{{ topic.author.email }}</span> &middot; última atividade em {{ topic.updated_at | date:'dd/MM/yyyy HH:mm' }}
+                por <span class="font-medium text-gray-400">{{ topic.author.display_name }}</span> &middot; última atividade em {{ topic.updated_at | date:'dd/MM/yyyy HH:mm' }}
                 @if(topic.last_edited_at) {
                   <span class="italic text-gray-600">(editado)</span>
                 }

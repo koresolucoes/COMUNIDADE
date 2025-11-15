@@ -21,7 +21,7 @@ export class ForumTopicComponent {
   private router = inject(Router);
   private forumService = inject(ForumService);
   public authService = inject(AuthService);
-  private fb = inject(FormBuilder);
+  // private fb = inject(FormBuilder); // This was causing an error with `this` context.
 
   loading = signal(true);
   error = signal<string | null>(null);
@@ -37,12 +37,14 @@ export class ForumTopicComponent {
   isEditingTopic = signal(false);
   editingCommentId = signal<string | null>(null);
 
-  topicEditForm = this.fb.group({
+  // FIX: Use `inject(FormBuilder)` directly in the initializer to avoid issues with `this` context.
+  topicEditForm = inject(FormBuilder).group({
     title: ['', [Validators.required, Validators.minLength(5)]],
     content: ['', [Validators.required, Validators.minLength(10)]],
   });
 
-  commentEditForm = this.fb.group({
+  // FIX: Use `inject(FormBuilder)` directly in the initializer to avoid issues with `this` context.
+  commentEditForm = inject(FormBuilder).group({
     content: ['', [Validators.required, Validators.minLength(10)]],
   });
   
