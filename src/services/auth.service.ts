@@ -103,24 +103,63 @@ export class AuthService {
   async uploadAvatar(file: File): Promise<string> {
     const user = this.currentUser();
     if (!user) throw new Error('User not authenticated.');
-
+  
     const fileExt = file.name.split('.').pop();
-    const filePath = `${user.id}/${Date.now()}.${fileExt}`;
-
+    const newPath = `${user.id}/avatar.${fileExt}`;
+  
+    // Upload the new file. Upsert is good here in case of retries or overwriting.
     const { error: uploadError } = await this.supabase.storage
       .from('avatars')
-      .upload(filePath, file);
-
+      .upload(newPath, file, {
+        cacheControl: '3600',
+        upsert: true,
+      });
+  
     if (uploadError) {
       throw uploadError;
     }
-
-    return filePath;
+    
+    // After a successful upload, clean up old avatars with different extensions.
+    const { data: filesInFolder, error: listError } = await this.supabase.storage
+      .from('avatars')
+      .list(user.id, { search: 'avatar.' });
+  
+    if (listError) {
+      console.warn('Could not list old avatars for cleanup:', listError);
+      return newPath; // Return new path anyway, cleanup is not critical
+    }
+    
+    const newFileName = `avatar.${fileExt}`;
+    const filesToRemove = filesInFolder
+      .filter(f => f.name !== newFileName)
+      .map(f => `${user.id}/${f.name}`);
+  
+    if (filesToRemove.length > 0) {
+      const { error: removeError } = await this.supabase.storage
+        .from('avatars')
+        .remove(filesToRemove);
+      
+      if (removeError) {
+        console.warn('Failed to remove old avatar files with different extensions:', removeError);
+      }
+    }
+  
+    return newPath;
   }
 
   private getAvatarPublicUrl(path: string): string | null {
     if (!path) return null;
-    const { data } = this.supabase.storage.from('avatars').getPublicUrl(path);
+
+    // Check if the path already contains a cache-busting query parameter and remove it
+    const cleanPath = path.split('?')[0];
+    
+    const { data } = this.supabase.storage.from('avatars').getPublicUrl(cleanPath);
+
+    // Add a new cache-busting parameter to ensure the latest version is displayed
+    if (data.publicUrl) {
+      return `${data.publicUrl}?t=${new Date().getTime()}`;
+    }
+    
     return data.publicUrl;
   }
 }
