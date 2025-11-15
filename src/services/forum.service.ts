@@ -125,7 +125,8 @@ export class ForumService {
       ...comments.flatMap(c => c.attachments.map(a => a.user_id)),
       ...topicAttachments.map(a => a.user_id)
     ];
-    const profiles = await this.getUserProfiles([...new Set(userIds)]);
+    // FIX: Use Array.from() for better type inference when converting a Set to an Array.
+    const profiles = await this.getUserProfiles(Array.from(new Set(userIds)));
     
     topicData.author = profiles[topicData.user_id];
     comments.forEach(c => {
@@ -232,7 +233,8 @@ export class ForumService {
 
     if (error) throw error;
 
-    const userIds = [...new Set(data.map(edit => edit.user_id))];
+    // FIX: Use Array.from() for better type inference when converting a Set to an Array.
+    const userIds = Array.from(new Set(data.map(edit => edit.user_id)));
     const profiles = await this.getUserProfiles(userIds);
 
     return data.map(edit => ({

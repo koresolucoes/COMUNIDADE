@@ -29,6 +29,8 @@ import { N8nManagerComponent } from './components/tools/n8n-manager/n8n-manager.
 import { ForumListComponent } from './components/forum/forum-list/forum-list.component';
 import { ForumNewTopicComponent } from './components/forum/forum-new-topic/forum-new-topic.component';
 import { ForumTopicComponent } from './components/forum/forum-topic/forum-topic.component';
+import { TemplateListComponent } from './components/templates/template-list/template-list.component';
+import { TemplateDetailComponent } from './components/templates/template-detail/template-detail.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -39,11 +41,8 @@ export const APP_ROUTES: Routes = [
   { path: 'forum', component: ForumListComponent },
   { path: 'forum/new', component: ForumNewTopicComponent },
   { path: 'forum/:topicId', component: ForumTopicComponent },
-  { 
-    path: 'templates', 
-    component: PlaceholderComponent, 
-    data: { title: 'Templates n8n', message: 'Uma galeria de workflows prontos para usar.' } 
-  },
+  { path: 'templates', component: TemplateListComponent },
+  { path: 'templates/:id', component: TemplateDetailComponent },
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-cron', component: CronGeneratorComponent },
   { path: 'tools/formatador-json', component: JsonFormatterComponent },
