@@ -263,7 +263,6 @@ export class TemplateDetailComponent {
       const fullWorkflowData = {
           ...workflowJson,
           name: t.title,
-          active: false,
       };
       await this.n8nApiService.updateWorkflow(newWorkflow.id, fullWorkflowData);
 

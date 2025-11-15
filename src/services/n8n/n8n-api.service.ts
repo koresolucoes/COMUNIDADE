@@ -118,7 +118,6 @@ export class N8nApiService {
       name,
       nodes: [],
       connections: {},
-      active: false,
       settings: {},
       tags: [],
     };
