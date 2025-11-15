@@ -1,16 +1,20 @@
 import { Component, ChangeDetectionStrategy, inject, signal, computed, viewChild, ElementRef, effect } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { TemplateService } from '../../../services/template.service';
+import { TemplateService, Template, TemplateComment } from '../../../services/template.service';
 import { from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { N8nApiService } from '../../../services/n8n/n8n-api.service';
+import { AuthService } from '../../../services/auth.service';
 
 declare var Drawflow: any;
 
 @Component({
   selector: 'app-template-detail',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe, FormsModule],
   templateUrl: './template-detail.component.html',
   styleUrl: './template-detail.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,9 +22,21 @@ declare var Drawflow: any;
 export class TemplateDetailComponent {
   private route = inject(ActivatedRoute);
   private templateService = inject(TemplateService);
+  public n8nApiService = inject(N8nApiService);
+  public authService = inject(AuthService);
 
-  copyButtonText = signal('Copiar Workflow (JSON)');
+  copyJsonButtonText = signal('Copiar Workflow (JSON)');
   private editor: any;
+
+  // Comment state
+  comments = signal<TemplateComment[]>([]);
+  commentsLoading = signal(false);
+  commentsError = signal<string | null>(null);
+  newCommentContent = signal('');
+
+  // Action states
+  sendToN8nStatus = signal<'idle' | 'loading' | 'success' | 'error'>('idle');
+  sendToN8nMessage = signal('');
 
   private readonly nodeStyleMap: Record<string, { color: string; icon: string }> = {
     start: { color: '#16a34a', icon: 'play_arrow' },
@@ -75,6 +91,11 @@ export class TemplateDetailComponent {
            this.editor.clear();
         }
         this.initializeDrawflow(container, data);
+      }
+      
+      const t = this.template();
+      if(t) {
+        this.loadComments(t.id);
       }
     });
   }
@@ -200,11 +221,89 @@ export class TemplateDetailComponent {
     const jsonString = JSON.stringify(data, null, 2);
     
     navigator.clipboard.writeText(jsonString).then(() => {
-        this.copyButtonText.set('Copiado!');
-        setTimeout(() => this.copyButtonText.set('Copiar Workflow (JSON)'), 2000);
+        this.copyJsonButtonText.set('Copiado!');
+        setTimeout(() => this.copyJsonButtonText.set('Copiar Workflow (JSON)'), 2000);
     }).catch(err => {
         console.error('Failed to copy text: ', err);
-        this.copyButtonText.set('Falha ao copiar');
+        this.copyJsonButtonText.set('Falha ao copiar');
     });
+  }
+
+  downloadWorkflow() {
+    const workflowJson = this.workflowData();
+    const t = this.template();
+    if (!workflowJson || !t) return;
+
+    const jsonString = JSON.stringify(workflowJson, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    
+    const filename = t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    a.download = `${filename}.n8n.json`;
+
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  
+  async sendToN8n() {
+    const t = this.template();
+    const workflowJson = this.workflowData();
+    if (!t || !workflowJson) return;
+
+    this.sendToN8nStatus.set('loading');
+    this.sendToN8nMessage.set('');
+
+    try {
+      const newWorkflow = await this.n8nApiService.createWorkflow(t.title);
+      
+      const fullWorkflowData = {
+          ...workflowJson,
+          name: t.title,
+          active: false,
+      };
+      await this.n8nApiService.updateWorkflow(newWorkflow.id, fullWorkflowData);
+
+      this.sendToN8nStatus.set('success');
+      this.sendToN8nMessage.set(`Workflow "${t.title}" criado com sucesso!`);
+      setTimeout(() => this.sendToN8nStatus.set('idle'), 5000);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Ocorreu um erro desconhecido.';
+      this.sendToN8nStatus.set('error');
+      this.sendToN8nMessage.set(`Falha ao enviar: ${message}`);
+    }
+  }
+
+  async loadComments(templateId: number) {
+    this.commentsLoading.set(true);
+    this.commentsError.set(null);
+    try {
+      const commentsData = await this.templateService.getComments(templateId);
+      this.comments.set(commentsData);
+    } catch (e) {
+      this.commentsError.set(e instanceof Error ? e.message : 'Falha ao carregar comentários.');
+    } finally {
+      this.commentsLoading.set(false);
+    }
+  }
+
+  async postComment() {
+    const t = this.template();
+    if (!this.newCommentContent().trim() || !t) return;
+
+    this.commentsLoading.set(true);
+    this.commentsError.set(null);
+    try {
+      const newComment = await this.templateService.createComment(t.id, this.newCommentContent());
+      this.comments.update(c => [...c, newComment]);
+      this.newCommentContent.set('');
+    } catch (e) {
+      this.commentsError.set(e instanceof Error ? e.message : 'Falha ao enviar comentário.');
+    } finally {
+      this.commentsLoading.set(false);
+    }
   }
 }

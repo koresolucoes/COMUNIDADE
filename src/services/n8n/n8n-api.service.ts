@@ -77,7 +77,7 @@ export class N8nApiService {
     }
   }
 
-  private async _request(endpoint: string, method: 'GET' | 'POST' | 'DELETE', body?: any): Promise<any> {
+  private async _request(endpoint: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', body?: any): Promise<any> {
     const creds = this.credentials();
     if (!creds) {
       throw new Error('Não conectado à instância n8n.');
@@ -123,6 +123,10 @@ export class N8nApiService {
       tags: [],
     };
     return this._request('/workflows', 'POST', body);
+  }
+
+  async updateWorkflow(id: string, workflowData: Partial<Workflow>): Promise<Workflow> {
+    return this._request(`/workflows/${id}`, 'PUT', workflowData);
   }
 
   async deleteWorkflow(id: string): Promise<{ message: string }> {

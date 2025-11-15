@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
-import { Profile } from './auth.service';
+import { Profile, AuthService } from './auth.service';
 
 export interface Template {
   id: number;
@@ -16,11 +16,21 @@ export interface Template {
   author?: Profile;
 }
 
+export interface TemplateComment {
+  id: string;
+  created_at: string;
+  content: string;
+  user_id: string;
+  template_id: number;
+  author?: Profile;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class TemplateService {
   private supabase: SupabaseClient;
+  private authService = inject(AuthService);
 
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
@@ -67,5 +77,52 @@ export class TemplateService {
     }
     
     return data;
+  }
+
+  async getComments(templateId: number): Promise<TemplateComment[]> {
+    const { data, error } = await this.supabase
+      .from('template_comments')
+      .select('*, author:profiles(id, username, full_name, avatar_url)')
+      .eq('template_id', templateId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching comments:', error);
+      throw error;
+    }
+    
+    return data.map((comment: any) => ({
+      ...comment,
+      author: Array.isArray(comment.author) ? comment.author[0] : comment.author,
+    }));
+  }
+
+  async createComment(templateId: number, content: string): Promise<TemplateComment> {
+    const user = this.authService.currentUser();
+    if (!user) {
+      throw new Error('Usuário não autenticado.');
+    }
+
+    const { data, error } = await this.supabase
+      .from('template_comments')
+      .insert({
+        template_id: templateId,
+        content: content,
+        user_id: user.id,
+      })
+      .select('*, author:profiles(id, username, full_name, avatar_url)')
+      .single();
+
+    if (error) {
+      console.error('Error creating comment:', error);
+      throw error;
+    }
+
+    const commentData = data as any;
+    if (commentData && Array.isArray(commentData.author)) {
+      commentData.author = commentData.author[0];
+    }
+    
+    return commentData;
   }
 }

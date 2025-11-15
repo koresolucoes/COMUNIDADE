@@ -36,7 +36,7 @@
                       @if(t.author.avatar_url; as avatarUrl) {
                           <img [src]="avatarUrl" [alt]="t.author.username || ''" class="w-full h-full object-cover">
                       } @else {
-                          {{ (t.author.username || '?')[0] }}
+                          <span>{{ (t.author.username || '?')[0] }}</span>
                       }
                   </div>
                   <span class="font-medium text-gray-300">{{ t.author.username }}</span>
@@ -46,17 +46,103 @@
             <div>
               <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Como Usar</h3>
               <ol class="list-decimal list-inside text-sm text-gray-400 space-y-1 mt-2">
-                <li>Clique no botão "Copiar Workflow" abaixo.</li>
+                <li>Copie ou baixe o workflow abaixo.</li>
                 <li>Na sua instância n8n, vá em "Workflows".</li>
-                <li>Clique em "Import from Clipboard" ou "Import from File" e cole.</li>
+                <li>Clique em "Import from Clipboard" ou "Import from File".</li>
+                <li>Ou conecte sua instância e envie diretamente.</li>
               </ol>
             </div>
-            <button (click)="copyWorkflow()" [disabled]="!workflowData()" class="w-full px-4 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
-              <span class="material-icons-outlined">content_copy</span>
-              {{ copyButtonText() }}
-            </button>
+
+            <div class="space-y-3">
+              <button (click)="copyWorkflow()" [disabled]="!workflowData()" class="w-full px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+                <span class="material-icons-outlined text-base">content_copy</span>
+                {{ copyJsonButtonText() }}
+              </button>
+              <button (click)="downloadWorkflow()" [disabled]="!workflowData()" class="w-full px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
+                <span class="material-icons-outlined text-base">download</span>
+                Download (JSON)
+              </button>
+              <button 
+                (click)="sendToN8n()" 
+                [disabled]="!workflowData() || !n8nApiService.isConnected() || sendToN8nStatus() === 'loading'"
+                class="w-full px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                [title]="!n8nApiService.isConnected() ? 'Conecte sua instância n8n no Gerenciador para usar esta função' : ''">
+                @if(sendToN8nStatus() === 'loading') {
+                  <span class="material-icons-outlined animate-spin text-base">sync</span>
+                  <span>Enviando...</span>
+                } @else {
+                  <span class="material-icons-outlined text-base">send</span>
+                  <span>Enviar para n8n</span>
+                }
+              </button>
+            </div>
+
+            @if(sendToN8nStatus() === 'success') {
+              <p class="text-xs text-center text-green-accent">{{ sendToN8nMessage() }}</p>
+            }
+            @if(sendToN8nStatus() === 'error') {
+              <p class="text-xs text-center text-red-400">{{ sendToN8nMessage() }}</p>
+            }
           </div>
         </div>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="mt-16 pt-8 border-t border-gray-800">
+        <h2 class="text-2xl font-semibold text-white mb-6">{{ comments().length }} Comentários</h2>
+        <div class="space-y-6">
+          @if(commentsLoading() && comments().length === 0) {
+            <p class="text-gray-400">Carregando comentários...</p>
+          } @else if(commentsError()) {
+            <p class="text-red-400">{{ commentsError() }}</p>
+          } @else {
+            @for(comment of comments(); track comment.id) {
+              <div class="flex gap-4">
+                <div class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-sm font-bold text-white uppercase flex-shrink-0 mt-1 overflow-hidden">
+                   @if(comment.author?.avatar_url; as avatarUrl) {
+                      <img [src]="avatarUrl" [alt]="comment.author?.username || ''" class="w-full h-full object-cover">
+                  } @else {
+                      <span>{{ (comment.author?.username || '?')[0] }}</span>
+                  }
+                </div>
+                <div class="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-4">
+                  <div class="flex items-center justify-between text-sm mb-2">
+                    <span class="font-semibold text-gray-300">{{ comment.author?.username || 'Usuário' }}</span>
+                    <span class="text-gray-500">{{ comment.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+                  </div>
+                  <p class="text-gray-300 leading-relaxed whitespace-pre-wrap">{{ comment.content }}</p>
+                </div>
+              </div>
+            }
+          }
+        </div>
+      </div>
+      
+      <!-- New Comment Form -->
+      <div class="mt-12 pt-8 border-t border-gray-800">
+        @if(authService.currentUser()) {
+          <h3 class="text-xl font-semibold text-white mb-4">Adicionar um comentário</h3>
+          <div class="space-y-4">
+            <textarea 
+              [(ngModel)]="newCommentContent"
+              rows="4" 
+              class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent" 
+              placeholder="Digite seu comentário...">
+            </textarea>
+            <button (click)="postComment()" [disabled]="commentsLoading() || !newCommentContent().trim()" class="px-6 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              @if(commentsLoading()) {
+                <span>Enviando...</span>
+              } @else {
+                Enviar Comentário
+              }
+            </button>
+          </div>
+        } @else {
+          <div class="text-center p-6 bg-gray-900 border border-dashed border-gray-700 rounded-lg">
+            <p class="text-gray-400">Você precisa estar logado para comentar.</p>
+            <a routerLink="/login" class="mt-2 inline-block font-semibold text-blue-accent hover:underline">Fazer Login</a>
+          </div>
+        }
       </div>
     } @else {
       <div class="text-center py-16">
