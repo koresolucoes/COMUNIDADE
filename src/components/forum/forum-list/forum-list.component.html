@@ -54,7 +54,7 @@
     </div>
   } @else {
     <div class="space-y-3">
-      @for(topic of topics(); track topic.id) {
+      @for(topic of paginatedTopics(); track topic.id) {
         <a [routerLink]="['/forum', topic.id]" class="block p-4 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-colors">
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -80,5 +80,51 @@
         </a>
       }
     </div>
+
+    <!-- Pagination Controls -->
+    @if (totalPages() > 1) {
+      <div class="flex justify-center items-center mt-12 space-x-2">
+        <button 
+          (click)="previousPage()" 
+          [disabled]="currentPage() === 1"
+          class="px-4 py-2 bg-gray-800 text-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700">
+          Anterior
+        </button>
+        
+        @if (pages().length > 0 && pages()[0] > 1) {
+          <button (click)="goToPage(1)" class="w-10 h-10 rounded-md bg-gray-800 text-gray-300 hover:bg-gray-700">
+            1
+          </button>
+          <span class="text-gray-600 px-1">...</span>
+        }
+
+        @for(page of pages(); track page) {
+          <button 
+            (click)="goToPage(page)"
+            class="w-10 h-10 rounded-md"
+            [class.bg-blue-accent]="currentPage() === page"
+            [class.text-white]="currentPage() === page"
+            [class.bg-gray-800]="currentPage() !== page"
+            [class.text-gray-300]="currentPage() !== page"
+            [class.hover:bg-gray-700]="currentPage() !== page">
+            {{ page }}
+          </button>
+        }
+
+        @if (pages().length > 0 && pages()[pages().length - 1] < totalPages()) {
+          <span class="text-gray-600 px-1">...</span>
+          <button (click)="goToPage(totalPages())" class="w-10 h-10 rounded-md bg-gray-800 text-gray-300 hover:bg-gray-700">
+            {{ totalPages() }}
+          </button>
+        }
+        
+        <button 
+          (click)="nextPage()" 
+          [disabled]="currentPage() === totalPages()"
+          class="px-4 py-2 bg-gray-800 text-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-700">
+          Próximo
+        </button>
+      </div>
+    }
   }
 </div>

@@ -1,12 +1,12 @@
 .n8n-node-card {
   width: 250px;
-  min-height: 60px;
   background-color: #21262d; /* gray-800 */
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #30363d; /* gray-700 */
   box-shadow: 0 4px 14px 0 rgba(0,0,0,0.25);
   flex-shrink: 0;
+  position: relative;
 }
 
 .n8n-node-header {
@@ -28,7 +28,6 @@
 
 .n8n-node-body {
   padding: 10px;
-  min-height: 28px;
 }
 
 .n8n-node-label {
@@ -38,4 +37,59 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
+}
+
+.n8n-node-parameters {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #30363d; /* gray-700 */
+  font-size: 12px;
+  color: #8b949e; /* gray-400 */
+  space-y: 4px;
+}
+
+.parameter-item {
+  display: flex;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.parameter-key {
+  font-weight: 600;
+  color: #a3aab2;
+  flex-shrink: 0;
+}
+
+.parameter-value {
+  color: #c9d1d9;
+  font-family: 'Fira Code', monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.connector-path {
+  stroke: #484f58; /* gray-600 */
+  stroke-width: 2;
+  fill: none;
+}
+
+.node-port {
+    width: 10px;
+    height: 10px;
+    background-color: #161b22; /* gray-900 */
+    border: 2px solid #484f58; /* gray-600 */
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.node-port.in {
+    left: -6px;
+}
+
+.node-port.out {
+    right: -6px;
 }

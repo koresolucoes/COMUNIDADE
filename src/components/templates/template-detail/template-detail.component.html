@@ -10,30 +10,41 @@
           <div class="mt-2 mb-4">
             <span class="text-sm font-medium bg-blue-accent/20 text-blue-300 px-2.5 py-1 rounded-full capitalize">{{ t.category }}</span>
           </div>
-          <div class="h-[75vh] w-full bg-gray-900 border border-gray-800 rounded-lg overflow-hidden relative">
-            @if(workflowTimeline(); as timeline) {
-              <div class="h-full flex items-start p-8 overflow-auto gap-8">
-                @for(column of timeline; track column.level; let isLast = $last) {
-                  <!-- Node Column -->
-                  <div class="flex flex-col gap-4">
-                    @for(node of column.nodes; track node.id) {
-                      <div class="n8n-node-card">
-                        <div class="n8n-node-header" [style.background-color]="node.color">
-                          <span class="material-icons-outlined">{{ node.icon }}</span>
-                          <span class="n8n-node-type-name">{{ node.friendlyName }}</span>
-                        </div>
-                        <div class="n8n-node-body">
-                          <span class="n8n-node-label">{{ node.name }}</span>
-                        </div>
-                      </div>
-                    }
-                  </div>
-                  <!-- Connector -->
-                  @if(!isLast) {
-                    <div class="flex-shrink-0 self-center">
-                      <span class="material-icons-outlined text-4xl text-gray-600">arrow_forward</span>
-                    </div>
+          <div class="h-[75vh] w-full bg-gray-900 border border-gray-800 rounded-lg overflow-auto relative">
+            @if(visualGraph(); as graph) {
+              <div class="relative" [style.width.px]="graph.width" [style.height.px]="graph.height">
+                <!-- SVG for Connectors -->
+                <svg class="absolute top-0 left-0 w-full h-full" [attr.viewBox]="'0 0 ' + graph.width + ' ' + graph.height">
+                  @for(edge of graph.edges; track edge.id) {
+                    <path [attr.d]="edge.path" class="connector-path" />
                   }
+                </svg>
+
+                <!-- Nodes -->
+                @for(node of graph.nodes; track node.id) {
+                  <div class="absolute" [style.left.px]="node.x" [style.top.px]="node.y" [style.width.px]="node.width" [style.height.px]="node.height">
+                    <div class="n8n-node-card">
+                       <div class="node-port in"></div>
+                       <div class="node-port out"></div>
+                      <div class="n8n-node-header" [style.background-color]="node.color">
+                        <span class="material-icons-outlined">{{ node.icon }}</span>
+                        <span class="n8n-node-type-name">{{ node.friendlyName }}</span>
+                      </div>
+                      <div class="n8n-node-body">
+                        <span class="n8n-node-label" [title]="node.name">{{ node.name }}</span>
+                        @if(node.parameters.length > 0) {
+                          <div class="n8n-node-parameters">
+                            @for(param of node.parameters; track param.key) {
+                              <div class="parameter-item">
+                                <span class="parameter-key">{{ param.key }}:</span>
+                                <span class="parameter-value" [title]="param.value">{{ param.value }}</span>
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
                 }
               </div>
             } @else if (workflowData()) {
@@ -46,7 +57,7 @@
               </div>
             }
             <div class="absolute bottom-2 right-2 bg-gray-950/50 backdrop-blur-sm p-1 rounded-md text-xs text-gray-400">
-              Role horizontalmente para ver todos os passos.
+              Role para ver todo o fluxo.
             </div>
           </div>
         </div>

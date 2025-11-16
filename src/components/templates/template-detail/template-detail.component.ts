@@ -16,12 +16,31 @@ export interface TimelineNode {
   friendlyName: string;
   icon: string;
   color: string;
+  parameters: { key: string; value: any }[];
 }
 
-export interface TimelineColumn {
-  level: number;
-  nodes: TimelineNode[];
+// New interfaces for the visual graph
+export interface VisualNode extends TimelineNode {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 }
+
+export interface VisualEdge {
+  id: string;
+  sourceId: string;
+  targetId: string;
+  path: string; // SVG path 'd' attribute
+}
+
+export interface VisualGraph {
+  nodes: VisualNode[];
+  edges: VisualEdge[];
+  width: number;
+  height: number;
+}
+
 
 @Component({
   selector: 'app-template-detail',
@@ -93,107 +112,151 @@ export class TemplateDetailComponent {
     return t.workflow_json;
   });
 
-  workflowTimeline = computed<TimelineColumn[] | null>(() => {
+  visualGraph = computed<VisualGraph | null>(() => {
     const workflow = this.workflowData();
     if (!workflow || !workflow.nodes || !workflow.connections) {
       return null;
     }
-    
+
+    // Constants for layout
+    const NODE_WIDTH = 250;
+    const NODE_HEADER_HEIGHT = 34;
+    const NODE_BODY_MIN_HEIGHT = 28;
+    const NODE_PARAM_HEIGHT = 18;
+    const HORIZONTAL_SPACING = 150;
+    const VERTICAL_SPACING = 40;
+    const PADDING = 20;
+
+    // --- 1. Build Graph Structure ---
     const n8nNodeNameToNodeId = new Map<string, string>();
-    workflow.nodes.forEach((node: any) => n8nNodeNameToNodeId.set(node.name, node.id));
+    const nodeMap = new Map<string, any>();
+    workflow.nodes.forEach((node: any) => {
+      n8nNodeNameToNodeId.set(node.name, node.id);
+      nodeMap.set(node.id, node);
+    });
 
     const adj = new Map<string, string[]>();
     const revAdj = new Map<string, string[]>();
     workflow.nodes.forEach((node: any) => {
-        adj.set(node.id, []);
-        revAdj.set(node.id, []);
+      adj.set(node.id, []);
+      revAdj.set(node.id, []);
     });
 
     for (const sourceNodeName in workflow.connections) {
       const sourceNodeId = n8nNodeNameToNodeId.get(sourceNodeName);
       if (!sourceNodeId) continue;
-
       const outputs = workflow.connections[sourceNodeName];
       for (const outputName in outputs) {
-        const connectionGroups = outputs[outputName];
-        if (Array.isArray(connectionGroups)) {
-          for (const connection of connectionGroups) {
-            const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
-            if (targetNodeId) {
-              adj.get(sourceNodeId)?.push(targetNodeId);
-              revAdj.get(targetNodeId)?.push(sourceNodeId);
-            }
+        for (const connection of outputs[outputName]) {
+          const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
+          if (targetNodeId) {
+            adj.get(sourceNodeId)?.push(targetNodeId);
+            revAdj.get(targetNodeId)?.push(sourceNodeId);
           }
         }
       }
     }
 
+    // --- 2. Calculate Node Levels (Columns) ---
     const nodeLevels = new Map<string, number>();
-    const queue: { nodeId: string; level: number }[] = [];
-    
+    const queue: string[] = [];
     workflow.nodes.forEach((node: any) => {
-      if ((revAdj.get(node.id)?.length || 0) === 0) {
-        if (!nodeLevels.has(node.id)) {
-            nodeLevels.set(node.id, 0);
-            queue.push({ nodeId: node.id, level: 0 });
-        }
+      if (!revAdj.get(node.id)?.length) {
+        queue.push(node.id);
+        nodeLevels.set(node.id, 0);
       }
     });
 
     let head = 0;
-    while (head < queue.length) {
-        const { nodeId, level } = queue[head++];
-        (adj.get(nodeId) || []).forEach(neighborId => {
-            const newLevel = level + 1;
-            const existingLevel = nodeLevels.get(neighborId);
-            if (existingLevel === undefined || newLevel > existingLevel) {
-                nodeLevels.set(neighborId, newLevel);
-                const queueItem = queue.find(item => item.nodeId === neighborId);
-                if (queueItem) {
-                    queueItem.level = newLevel;
-                } else {
-                    queue.push({ nodeId: neighborId, level: newLevel });
-                }
+    while(head < queue.length) {
+        const u = queue[head++];
+        (adj.get(u) || []).forEach(v => {
+            const newLevel = (nodeLevels.get(u) || 0) + 1;
+            const currentLevel = nodeLevels.get(v) || -1;
+            if (newLevel > currentLevel) {
+              nodeLevels.set(v, newLevel);
+            }
+            // Simple cycle detection / break
+            if (!queue.includes(v) && head < workflow.nodes.length * 2) {
+                queue.push(v);
             }
         });
     }
 
-    const levelMap = new Map<number, any[]>();
-    let maxLevel = 0;
+    // --- 3. Create Visual Nodes and Position them ---
+    const columns: VisualNode[][] = [];
+    let maxGraphHeight = 0;
+    const visualNodes = new Map<string, VisualNode>();
+
     workflow.nodes.forEach((node: any) => {
-        const level = nodeLevels.get(node.id) ?? (maxLevel + 1);
-        if (!levelMap.has(level)) {
-            levelMap.set(level, []);
-        }
-        levelMap.get(level)!.push(node);
-        maxLevel = Math.max(maxLevel, level);
+      const level = nodeLevels.get(node.id) ?? 0;
+      if (!columns[level]) columns[level] = [];
+      
+      const nodeTypeKey = this.getNodeType(node.type);
+      const style = this.nodeStyleMap[nodeTypeKey] || this.nodeStyleMap['default'];
+      const parameters = this.getNodeParameters(node);
+      const bodyHeight = Math.max(NODE_BODY_MIN_HEIGHT, parameters.length * NODE_PARAM_HEIGHT + 12);
+      
+      const visualNode: VisualNode = {
+        id: node.id,
+        name: node.name,
+        type: node.type,
+        friendlyName: this.getFriendlyNodeName(node.type),
+        icon: style.icon,
+        color: style.color,
+        parameters,
+        width: NODE_WIDTH,
+        height: NODE_HEADER_HEIGHT + bodyHeight,
+        x: PADDING + level * (NODE_WIDTH + HORIZONTAL_SPACING),
+        y: 0, // Will be set next
+      };
+      columns[level].push(visualNode);
+      visualNodes.set(node.id, visualNode);
+    });
+    
+    columns.forEach(column => {
+        let currentY = PADDING;
+        column.forEach(node => {
+            node.y = currentY;
+            currentY += node.height + VERTICAL_SPACING;
+        });
+        maxGraphHeight = Math.max(maxGraphHeight, currentY);
     });
 
-    const timeline: TimelineColumn[] = [];
-    const sortedLevels = Array.from(levelMap.keys()).sort((a,b) => a - b);
+    // --- 4. Create Visual Edges ---
+    const edges: VisualEdge[] = [];
+    for (const [sourceId, targets] of adj.entries()) {
+      for (const targetId of targets) {
+        const sourceNode = visualNodes.get(sourceId);
+        const targetNode = visualNodes.get(targetId);
+        if (sourceNode && targetNode) {
+          const x1 = sourceNode.x + sourceNode.width;
+          const y1 = sourceNode.y + sourceNode.height / 2;
+          const x2 = targetNode.x;
+          const y2 = targetNode.y + targetNode.height / 2;
+          const c1x = x1 + HORIZONTAL_SPACING / 2;
+          const c2x = x2 - HORIZONTAL_SPACING / 2;
+          const path = `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
 
-    for (const level of sortedLevels) {
-        const nodesInLevel = levelMap.get(level) || [];
-        timeline.push({
-            level: level,
-            nodes: nodesInLevel.map(node => {
-                const nodeTypeKey = this.getNodeType(node.type);
-                const style = this.nodeStyleMap[nodeTypeKey] || this.nodeStyleMap['default'];
-                return {
-                    id: node.id,
-                    name: node.name,
-                    type: node.type,
-                    friendlyName: this.getFriendlyNodeName(node.type),
-                    icon: style.icon,
-                    color: style.color,
-                };
-            })
-        });
+          edges.push({
+            id: `${sourceId}-${targetId}`,
+            sourceId,
+            targetId,
+            path
+          });
+        }
+      }
     }
 
-    return timeline;
+    const graphWidth = PADDING * 2 + columns.length * NODE_WIDTH + (columns.length - 1) * HORIZONTAL_SPACING;
+    
+    return {
+      nodes: Array.from(visualNodes.values()),
+      edges: edges,
+      width: Math.max(graphWidth, 600),
+      height: maxGraphHeight,
+    };
   });
-
   constructor() {
     effect(() => {
       const t = this.template();
@@ -202,6 +265,38 @@ export class TemplateDetailComponent {
       }
     });
   }
+
+  private getNodeParameters(node: any): { key: string; value: any }[] {
+    const params = node.parameters;
+    if (!params) return [];
+
+    try {
+      switch (node.type) {
+        case 'n8n-nodes-base.if':
+          return (params.conditions?.values || []).map((cond: any, i: number) => ({
+            key: `Condição ${i + 1}`,
+            value: `${cond.firstValue || ''} ${cond.operation || ''} ${cond.secondValue || ''}`,
+          }));
+        case 'n8n-nodes-base.httpRequest':
+          return [
+            { key: 'Method', value: params.method },
+            { key: 'URL', value: params.url },
+          ].filter(p => p.value);
+        case 'n8n-nodes-base.set':
+          return (params.values?.values || []).map((v: any) => ({
+            key: v.name,
+            value: v.value,
+          }));
+        case 'n8n-nodes-base.webhook':
+          return [{ key: 'Path', value: params.path }];
+        default:
+          return [];
+      }
+    } catch(e) {
+      console.warn("Could not parse parameters for node", node, e);
+      return [{key: "Error", value: "Could not parse parameters"}];
+    }
+}
 
   private getNodeType(n8nType: string): string {
     if (!n8nType) return 'default';
