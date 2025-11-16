@@ -11,15 +11,42 @@
             <span class="text-sm font-medium bg-blue-accent/20 text-blue-300 px-2.5 py-1 rounded-full capitalize">{{ t.category }}</span>
           </div>
           <div class="h-[75vh] w-full bg-gray-900 border border-gray-800 rounded-lg overflow-hidden relative">
-            @if(workflowData()) {
-              <div #drawflowContainer id="drawflow" class="absolute inset-0 w-full h-full bg-gray-950"></div>
+            @if(workflowTimeline(); as timeline) {
+              <div class="h-full flex items-start p-8 overflow-auto gap-8">
+                @for(column of timeline; track column.level; let isLast = $last) {
+                  <!-- Node Column -->
+                  <div class="flex flex-col gap-4">
+                    @for(node of column.nodes; track node.id) {
+                      <div class="n8n-node-card">
+                        <div class="n8n-node-header" [style.background-color]="node.color">
+                          <span class="material-icons-outlined">{{ node.icon }}</span>
+                          <span class="n8n-node-type-name">{{ node.friendlyName }}</span>
+                        </div>
+                        <div class="n8n-node-body">
+                          <span class="n8n-node-label">{{ node.name }}</span>
+                        </div>
+                      </div>
+                    }
+                  </div>
+                  <!-- Connector -->
+                  @if(!isLast) {
+                    <div class="flex-shrink-0 self-center">
+                      <span class="material-icons-outlined text-4xl text-gray-600">arrow_forward</span>
+                    </div>
+                  }
+                }
+              </div>
+            } @else if (workflowData()) {
+              <div class="flex items-center justify-center h-full text-center text-gray-500 p-4">
+                Este workflow não contém nós para visualizar.
+              </div>
             } @else {
               <div class="flex items-center justify-center h-full text-center text-gray-500 p-4">
                 Visualização indisponível. O JSON do workflow pode ser inválido ou não foi fornecido.
               </div>
             }
-             <div class="absolute bottom-2 right-2 bg-gray-950/50 backdrop-blur-sm p-1 rounded-md text-xs text-gray-400">
-              Scroll para zoom. Arraste o fundo para mover o canvas.
+            <div class="absolute bottom-2 right-2 bg-gray-950/50 backdrop-blur-sm p-1 rounded-md text-xs text-gray-400">
+              Role horizontalmente para ver todos os passos.
             </div>
           </div>
         </div>

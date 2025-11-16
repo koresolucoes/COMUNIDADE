@@ -1,39 +1,15 @@
-:host ::ng-deep #drawflow {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 0);
-  background-size: 25px 25px;
-  background-color: #0d1117; /* gray-950 */
-}
-
-/* Hide the default drawflow node title, we use our own custom HTML */
-:host ::ng-deep .drawflow-node .title-box {
-  display: none;
-}
-
-:host ::ng-deep .drawflow-node {
-  padding: 0 !important;
-  border-radius: 8px !important;
-  border: none !important;
-  background: transparent !important;
-  width: 250px !important;
-  min-height: 60px !important;
-  box-shadow: 0 4px 14px 0 rgba(0,0,0,0.25) !important;
-}
-
-:host ::ng-deep .drawflow-node.selected {
-    outline: 2px solid #58a6ff;
-    outline-offset: 3px;
-}
-
-/* n8n node structure */
-:host ::ng-deep .n8n-node-wrapper {
-  width: 100%;
+.n8n-node-card {
+  width: 250px;
+  min-height: 60px;
   background-color: #21262d; /* gray-800 */
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #30363d; /* gray-700 */
+  box-shadow: 0 4px 14px 0 rgba(0,0,0,0.25);
+  flex-shrink: 0;
 }
 
-:host ::ng-deep .n8n-node-header {
+.n8n-node-header {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -41,57 +17,25 @@
   color: white;
 }
 
-:host ::ng-deep .n8n-node-header .material-icons-outlined {
+.n8n-node-header .material-icons-outlined {
   font-size: 18px;
 }
 
-:host ::ng-deep .n8n-node-type-name {
+.n8n-node-type-name {
   font-size: 13px;
   font-weight: 600;
 }
 
-:host ::ng-deep .n8n-node-body {
+.n8n-node-body {
   padding: 10px;
   min-height: 28px;
 }
 
-:host ::ng-deep .n8n-node-label {
+.n8n-node-label {
   font-size: 14px;
   color: #c9d1d9; /* lighter gray */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-}
-
-/* Connection points */
-:host ::ng-deep .drawflow-node .input,
-:host ::ng-deep .drawflow-node .output {
-    background: #484f58 !important; /* gray-600 */
-    border: 2px solid #161b22 !important; /* gray-900 */
-    width: 16px !important;
-    height: 16px !important;
-    border-radius: 50%;
-}
-
-:host ::ng-deep .drawflow-node .input:hover,
-:host ::ng-deep .drawflow-node .output:hover {
-    background: #58a6ff !important;
-}
-
-/* Connection lines */
-:host ::ng-deep .drawflow-connection .main-path {
-    stroke-width: 3px !important;
-    stroke: #60a5fa !important; /* blue-400 */
-    opacity: 0.8;
-}
-
-:host ::ng-deep .drawflow-connection.selected .main-path {
-    stroke: #2563eb !important; /* blue-600 */
-    opacity: 1;
-}
-
-/* Panning cursor */
-:host ::ng-deep #drawflow:active {
-  cursor: grabbing;
 }
