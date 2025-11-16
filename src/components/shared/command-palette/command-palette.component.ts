@@ -44,6 +44,7 @@ export class CommandPaletteComponent implements OnInit {
     { name: 'Blog', section: 'Navegação', action: () => this.navigate('/blog'), icon: 'article' },
     { name: 'Templates n8n', section: 'Navegação', action: () => this.navigate('/templates'), icon: 'folder_copy' },
     { name: 'Fórum', section: 'Navegação', action: () => this.navigate('/forum'), icon: 'forum' },
+    { name: 'Trilhas de Aprendizagem', section: 'Navegação', action: () => this.navigate('/learning'), icon: 'school' },
     { name: 'Ferramentas', section: 'Navegação', action: () => this.navigate('/tools'), icon: 'construction' },
     { name: 'Gerador de Box Shadow', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-box-shadow'), icon: 'palette' },
     { name: 'Gerador de Gradiente CSS', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-gradiente-css'), icon: 'gradient' },

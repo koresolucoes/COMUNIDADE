@@ -39,6 +39,8 @@ import { ClipPathGeneratorComponent } from './components/tools/clip-path-generat
 import { CssGridBuilderComponent } from './components/tools/css-grid-builder/css-grid-builder.component';
 import { CssFilterGeneratorComponent } from './components/tools/css-filter-generator/css-filter-generator.component';
 import { CssAnimationGeneratorComponent } from './components/tools/css-animation-generator/css-animation-generator.component';
+import { LearningIndexComponent } from './components/learning/learning-index/learning-index.component';
+import { LearningPathComponent } from './components/learning/learning-path/learning-path.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -51,6 +53,8 @@ export const APP_ROUTES: Routes = [
   { path: 'forum/:topicId', component: ForumTopicComponent },
   { path: 'templates', component: TemplateListComponent },
   { path: 'templates/:id', component: TemplateDetailComponent },
+  { path: 'learning', component: LearningIndexComponent },
+  { path: 'learning/:slug', component: LearningPathComponent },
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },
   { path: 'tools/gerador-gradiente-css', component: CssGradientGeneratorComponent },

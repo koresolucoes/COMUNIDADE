@@ -1,0 +1,40 @@
+<div class="space-y-10">
+  <section>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Trilhas de Aprendizagem</h1>
+    <p class="mt-2 text-gray-400">Cursos guiados para dominar ferramentas e conceitos de automação, passo a passo.</p>
+  </section>
+
+  @if (paths().length === 0) {
+    <div class="text-center py-16 bg-gray-900 border border-dashed border-gray-800 rounded-lg">
+      <span class="material-icons-outlined text-5xl text-gray-600">school</span>
+      <p class="mt-4 text-gray-500">Nenhuma trilha de aprendizagem disponível no momento.</p>
+    </div>
+  } @else {
+    @for(category of groupedPaths(); track category[0]) {
+      <section>
+        <h2 class="text-2xl font-semibold text-white mb-6 flex items-center gap-3">
+          <span class="material-icons-outlined text-blue-accent">{{ getAreaIcon(category[0]) }}</span>
+          <span class="capitalize">{{ category[0] }}</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          @for(path of category[1]; track path.slug) {
+            <a [routerLink]="['/learning', path.slug]" class="relative block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 hover:z-10 group">
+              <span class="absolute top-4 right-4 text-xs font-semibold px-2 py-1 rounded-full"
+                [class.bg-green-accent/20]="path.category === 'Iniciante'" [class.text-green-300]="path.category === 'Iniciante'"
+                [class.bg-yellow-500/20]="path.category === 'Intermediário'" [class.text-yellow-300]="path.category === 'Intermediário'"
+                [class.bg-red-500/20]="path.category === 'Avançado'" [class.text-red-300]="path.category === 'Avançado'">
+                {{ path.category }}
+              </span>
+              <h3 class="text-xl font-semibold text-white group-hover:text-blue-accent transition-colors">{{ path.title }}</h3>
+              <p class="mt-2 text-sm text-gray-400">{{ path.description }}</p>
+              <div class="mt-4 text-sm text-gray-500 flex items-center gap-2">
+                <span class="material-icons-outlined text-base">list_alt</span>
+                <span>{{ path.steps.length }} passos</span>
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

@@ -39,6 +39,7 @@ export class SidebarComponent {
     { path: '/blog', label: 'Blog', icon: 'article' },
     { path: '/templates', label: 'Templates n8n', icon: 'folder_copy' },
     { path: '/forum', label: 'Fórum', icon: 'forum' },
+    { path: '/learning', label: 'Trilhas de Aprendizagem', icon: 'school' },
     { 
       path: '/tools', 
       label: 'Ferramentas', 

@@ -1,0 +1,47 @@
+<div class="max-w-4xl mx-auto">
+  @if (path(); as p) {
+    <header class="mb-12">
+      <div class="text-sm text-gray-400 mb-2">
+        <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">{{ p.title }}</h1>
+      <p class="mt-4 text-lg text-gray-400">{{ p.description }}</p>
+    </header>
+
+    <div class="relative pl-8">
+      <!-- Vertical line for the timeline -->
+      <div class="absolute left-0 top-0 h-full w-0.5 bg-gray-800" style="transform: translateX(1.5px);"></div>
+
+      <div class="space-y-10">
+        @for (step of p.steps; track step.path; let i = $index) {
+          <div class="relative">
+            <!-- Timeline Circle -->
+            <div class="absolute -left-8 top-1.5 w-4 h-4 rounded-full flex items-center justify-center bg-gray-800">
+              <div class="w-2 h-2 rounded-full bg-blue-accent"></div>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
+              <span class="text-xs font-semibold uppercase tracking-wider text-blue-accent">Passo {{ i + 1 }}</span>
+              <h2 class="text-xl font-bold text-white mt-2">{{ step.title }}</h2>
+              <p class="mt-3 text-gray-400 text-sm leading-relaxed">{{ step.description }}</p>
+              <a [routerLink]="step.path" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded-md font-semibold hover:bg-gray-700 hover:text-white transition-colors">
+                <span class="material-icons-outlined text-base">
+                  {{ step.icon === 'article' ? 'article' : 'construction' }}
+                </span>
+                <span>Acessar {{ step.type === 'article' ? 'Artigo' : 'Ferramenta' }}</span>
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <div class="text-center py-16">
+      <h1 class="text-3xl font-bold text-white">Trilha não encontrada</h1>
+      <p class="mt-2 text-gray-400">A trilha de aprendizagem que você está procurando não existe ou foi movida.</p>
+      <a routerLink="/learning" class="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-accent hover:bg-blue-accent/90">
+          Voltar para as Trilhas
+      </a>
+    </div>
+  }
+</div>
