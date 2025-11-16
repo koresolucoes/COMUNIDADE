@@ -84,6 +84,14 @@
         </div>
 
       </div>
+
+      <!-- Generate Button -->
+      <button 
+        (click)="generateQrCode()"
+        class="w-full px-4 py-3 bg-green-accent text-white rounded-md font-semibold hover:bg-green-accent/90 transition-colors flex items-center justify-center gap-2">
+        <span class="material-icons-outlined">qr_code_2</span>
+        Gerar / Atualizar QR Code
+      </button>
     </div>
     
     <!-- Right Column: QR Code Preview -->
@@ -92,14 +100,14 @@
         class="p-4 rounded-lg shadow-lg transition-colors inline-block"
         [style.background-color]="lightColor()">
           @if(qrCodeDataUrl()) {
-            <img [src]="qrCodeDataUrl()" [width]="size()" [height]="size()" alt="QR Code gerado">
+            <img [src]="qrCodeDataUrl()" [attr.width]="size()" [attr.height]="size()" alt="QR Code gerado">
           } @else if (generationError()) {
             <div class="flex items-center justify-center text-center p-8" [style.width.px]="size()" [style.height.px]="size()">
               <p class="text-red-500">{{ generationError() }}</p>
             </div>
           } @else {
             <div class="flex items-center justify-center text-center p-8" [style.width.px]="size()" [style.height.px]="size()">
-              <p [style.color]="darkColor()">Digite um texto para gerar o QR Code.</p>
+              <p [style.color]="darkColor()">Ajuste as opções e clique em 'Gerar / Atualizar QR Code'.</p>
             </div>
           }
        </div>

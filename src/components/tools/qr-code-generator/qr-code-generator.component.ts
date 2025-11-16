@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, effect } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 declare var QRCode: any;
@@ -11,7 +11,7 @@ declare var QRCode: any;
   styleUrls: ['./qr-code-generator.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QrCodeGeneratorComponent {
+export class QrCodeGeneratorComponent implements OnInit {
   // --- State ---
   text = signal('https://kore.solutions');
   size = signal(300);
@@ -22,10 +22,8 @@ export class QrCodeGeneratorComponent {
   qrCodeDataUrl = signal('');
   generationError = signal<string | null>(null);
 
-  constructor() {
-    effect(() => {
-      this.generateQrCode();
-    });
+  ngOnInit() {
+    this.generateQrCode();
   }
 
   generateQrCode() {
