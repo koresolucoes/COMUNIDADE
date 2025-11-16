@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, output, signal, computed, effect, v
 import { Router } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
 import { TemplateService } from '../../../services/template.service';
+import { ForumService, Topic } from '../../../services/forum.service';
 
 interface Command {
   name: string;
@@ -25,43 +26,16 @@ export class CommandPaletteComponent implements OnInit {
   searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
   query = signal('');
-  private allCommands = signal<Command[]>([]);
   activeIndex = signal(0);
   
-  filteredCommands = computed(() => {
-    const q = this.query().toLowerCase();
-    if (!q) {
-      return this.allCommands();
-    }
-    return this.allCommands().filter(cmd => 
-        cmd.name.toLowerCase().includes(q) || 
-        cmd.section.toLowerCase().includes(q)
-    );
-  });
-
-  groupedCommands = computed(() => {
-    const groups: { [key: string]: Command[] } = {};
-    for (const command of this.filteredCommands()) {
-      if (!groups[command.section]) {
-        groups[command.section] = [];
-      }
-      groups[command.section].push(command);
-    }
-    // Sort groups: Navegação, Blog, Templates, Ferramentas
-    const groupOrder = ['Navegação', 'Blog', 'Templates n8n', 'Ferramentas'];
-    return Object.entries(groups).sort(([a], [b]) => {
-      const indexA = groupOrder.indexOf(a);
-      const indexB = groupOrder.indexOf(b);
-      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
-      if (indexA === -1) return 1;
-      if (indexB === -1) return -1;
-      return indexA - indexB;
-    });
-  });
-
   private router = inject(Router);
   private blogService = inject(BlogService);
   private templateService = inject(TemplateService);
+  private forumService = inject(ForumService);
+
+  private blogPosts = this.blogService.posts;
+  private templates = this.templateService.templates;
+  private forumTopics = signal<Topic[]>([]);
 
   private readonly staticCommands: Command[] = [
     { name: 'Início', section: 'Navegação', action: () => this.navigate('/'), icon: 'home' },
@@ -91,40 +65,92 @@ export class CommandPaletteComponent implements OnInit {
     { name: 'Testador de Webhook', section: 'Ferramentas', action: () => this.navigate('/tools/webhook-tester'), icon: 'webhook' },
   ];
 
+  private blogCommands = computed<Command[]>(() =>
+    this.blogPosts().slice(0, 5).map(post => ({
+      name: post.title,
+      section: 'Blog',
+      action: () => this.navigate(`/blog/${post.slug}`),
+      icon: 'article'
+    }))
+  );
+  
+  private templateCommands = computed<Command[]>(() =>
+    this.templates().slice(0, 5).map(template => ({
+      name: template.title,
+      section: 'Templates n8n',
+      action: () => this.navigate(`/templates/${template.id}`),
+      icon: 'folder_copy'
+    }))
+  );
+
+  private forumCommands = computed<Command[]>(() =>
+    this.forumTopics().slice(0, 5).map(topic => ({
+      name: topic.title,
+      section: 'Fórum',
+      action: () => this.navigate(`/forum/${topic.id}`),
+      icon: 'forum'
+    }))
+  );
+
+  private allCommands = computed<Command[]>(() => [
+    ...this.staticCommands,
+    ...this.blogCommands(),
+    ...this.templateCommands(),
+    ...this.forumCommands(),
+  ]);
+
+  filteredCommands = computed(() => {
+    const q = this.query().toLowerCase();
+    const source = q ? this.allCommands() : this.staticCommands;
+
+    if (!q) {
+      return source;
+    }
+    return source.filter(cmd => 
+        cmd.name.toLowerCase().includes(q) || 
+        cmd.section.toLowerCase().includes(q)
+    );
+  });
+
+  groupedCommands = computed(() => {
+    const groups: { [key: string]: Command[] } = {};
+    for (const command of this.filteredCommands()) {
+      if (!groups[command.section]) {
+        groups[command.section] = [];
+      }
+      groups[command.section].push(command);
+    }
+    // Sort groups: Navegação, Blog, Templates, Fórum, Ferramentas
+    const groupOrder = ['Navegação', 'Blog', 'Templates n8n', 'Fórum', 'Ferramentas'];
+    return Object.entries(groups).sort(([a], [b]) => {
+      const indexA = groupOrder.indexOf(a);
+      const indexB = groupOrder.indexOf(b);
+      if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  });
+
   constructor() {
     effect(() => {
       this.searchInput()?.nativeElement.focus();
-    });
-
-    effect(() => {
-      const blogPosts = this.blogService.posts();
-      const templates = this.templateService.templates();
-
-      const blogCommands: Command[] = blogPosts.map(post => ({
-        name: post.title,
-        section: 'Blog',
-        action: () => this.navigate(`/blog/${post.slug}`),
-        icon: 'article'
-      }));
-      
-      const templateCommands: Command[] = templates.map(template => ({
-        name: template.title,
-        section: 'Templates n8n',
-        action: () => this.navigate(`/templates/${template.id}`),
-        icon: 'folder_copy'
-      }));
-
-      this.allCommands.set([
-        ...this.staticCommands,
-        ...blogCommands,
-        ...templateCommands
-      ]);
     });
   }
   
   ngOnInit(): void {
     this.blogService.loadPosts();
     this.templateService.loadTemplates();
+    this.loadForumTopics();
+  }
+
+  async loadForumTopics() {
+    try {
+      const topics = await this.forumService.getTopics('updated_at');
+      this.forumTopics.set(topics);
+    } catch (e) {
+      console.error('Failed to load forum topics for command palette', e);
+    }
   }
 
   navigate(path: string) {

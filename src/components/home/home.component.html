@@ -8,30 +8,23 @@
   <!-- Main Grid -->
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="lg:col-span-2 space-y-8">
-      <!-- Featured Tool -->
+      <!-- Quick Access Tools -->
       <section>
-        <h2 class="text-2xl font-semibold text-white mb-4">Ferramentas em Destaque</h2>
-        <div class="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
-           <div class="flex border-b border-gray-800">
-              @for(tool of featuredTools; track tool.id) {
-                <button 
-                  (click)="featuredTool.set(tool.id)"
-                  class="px-4 py-3 text-sm font-medium transition-colors"
-                  [class.text-white]="featuredTool() === tool.id"
-                  [class.bg-gray-800]="featuredTool() === tool.id"
-                  [class.text-gray-400]="featuredTool() !== tool.id"
-                  [class.hover:bg-gray-800/50]="featuredTool() !== tool.id">
-                  {{ tool.name }}
-                </button>
-              }
-            </div>
-            <div class="min-h-[500px] relative">
-               @switch(featuredTool()) {
-                @case('cron') { <app-cron-generator [isEmbedded]="true"></app-cron-generator> }
-                @case('json') { <app-json-formatter [isEmbedded]="true"></app-json-formatter> }
-                @case('n8n') { <app-n8n-expression-simulator [isEmbedded]="true"></app-n8n-expression-simulator> }
-              }
-            </div>
+        <h2 class="text-2xl font-semibold text-white mb-4">Acesso Rápido</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          @for(tool of quickAccessTools; track tool.path) {
+            <a [routerLink]="tool.path" class="block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 group">
+              <div class="flex items-center gap-4">
+                <div class="p-2 bg-gray-800 rounded-lg">
+                  <span class="material-icons-outlined text-blue-accent text-2xl">{{ tool.icon }}</span>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-white group-hover:text-blue-accent transition-colors">{{ tool.label }}</h3>
+                  <p class="mt-1 text-sm text-gray-400">{{ tool.description }}</p>
+                </div>
+              </div>
+            </a>
+          }
         </div>
       </section>
 
