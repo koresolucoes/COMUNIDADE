@@ -32,7 +32,7 @@ export class QrCodeGeneratorComponent {
   }
 
   generateQrCode() {
-    const canvas = this.qrCanvas?.nativeElement;
+    const canvas = this.qrCanvas().nativeElement;
     if (!canvas) {
       return;
     }
@@ -59,7 +59,7 @@ export class QrCodeGeneratorComponent {
   }
 
   downloadQrCode() {
-    const canvas = this.qrCanvas.nativeElement;
+    const canvas = this.qrCanvas().nativeElement;
     const dataUrl = canvas.toDataURL('image/png');
     const link = document.createElement('a');
     link.download = 'qrcode.png';
