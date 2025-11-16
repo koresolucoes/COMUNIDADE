@@ -35,6 +35,10 @@ import { TemplateListComponent } from './components/templates/template-list/temp
 import { TemplateDetailComponent } from './components/templates/template-detail/template-detail.component';
 import { BoxShadowGeneratorComponent } from './components/tools/box-shadow-generator/box-shadow-generator.component';
 import { CssGradientGeneratorComponent } from './components/tools/css-gradient-generator/css-gradient-generator.component';
+import { ClipPathGeneratorComponent } from './components/tools/clip-path-generator/clip-path-generator.component';
+import { CssGridBuilderComponent } from './components/tools/css-grid-builder/css-grid-builder.component';
+import { CssFilterGeneratorComponent } from './components/tools/css-filter-generator/css-filter-generator.component';
+import { CssAnimationGeneratorComponent } from './components/tools/css-animation-generator/css-animation-generator.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -50,10 +54,10 @@ export const APP_ROUTES: Routes = [
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },
   { path: 'tools/gerador-gradiente-css', component: CssGradientGeneratorComponent },
-  { path: 'tools/gerador-clip-path', component: PlaceholderComponent, data: { title: 'Gerador de Clip-Path' } },
-  { path: 'tools/construtor-grid-css', component: PlaceholderComponent, data: { title: 'Construtor de Grid CSS' } },
-  { path: 'tools/gerador-filtros-css', component: PlaceholderComponent, data: { title: 'Gerador de Filtros CSS' } },
-  { path: 'tools/gerador-animacao-css', component: PlaceholderComponent, data: { title: 'Gerador de Animação CSS' } },
+  { path: 'tools/gerador-clip-path', component: ClipPathGeneratorComponent },
+  { path: 'tools/construtor-grid-css', component: CssGridBuilderComponent },
+  { path: 'tools/gerador-filtros-css', component: CssFilterGeneratorComponent },
+  { path: 'tools/gerador-animacao-css', component: CssAnimationGeneratorComponent },
   { path: 'tools/gerador-cron', component: CronGeneratorComponent },
   { path: 'tools/formatador-json', component: JsonFormatterComponent },
   { path: 'tools/url-codec', component: UrlCodecComponent },

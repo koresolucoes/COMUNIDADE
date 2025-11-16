@@ -1,0 +1,155 @@
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Gerador de Clip-Path CSS</h1>
+    <p class="mt-2 text-gray-400">Crie formas de mascaramento complexas com a propriedade `clip-path`.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Controls Column -->
+    <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6">
+      <h2 class="text-xl font-semibold text-white">Configurações da Forma</h2>
+      
+      <!-- Shape Selector -->
+      <div>
+        <label class="block text-sm font-medium text-gray-400 mb-2">Forma</label>
+        <select [ngModel]="selectedShape()" (ngModelChange)="selectedShape.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent">
+          <option value="polygon">Polígono (Polygon)</option>
+          <option value="inset">Recorte (Inset)</option>
+          <option value="circle">Círculo (Circle)</option>
+          <option value="ellipse">Elipse (Ellipse)</option>
+        </select>
+      </div>
+
+      <!-- Shape-specific Controls -->
+      <div class="pt-4 border-t border-gray-800">
+        @switch(selectedShape()) {
+          @case('polygon') {
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-400 mb-2">Polígonos Pré-definidos</label>
+              <select [ngModel]="selectedPolygon()" (ngModelChange)="selectedPolygon.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent">
+                @for(shape of polygonShapes; track shape) {
+                  <option [value]="shape">{{ getPolygonName(shape) }}</option>
+                }
+              </select>
+            </div>
+          }
+          @case('inset') {
+            @let params = insetParams();
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="insetTop" class="text-gray-300">Topo</label>
+                  <span class="text-white font-mono">{{ params.top }}%</span>
+                </div>
+                <input id="insetTop" type="range" min="0" max="100" [ngModel]="params.top" (ngModelChange)="updateInset('top', +$event)" class="w-full slider-thumb">
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="insetRight" class="text-gray-300">Direita</label>
+                  <span class="text-white font-mono">{{ params.right }}%</span>
+                </div>
+                <input id="insetRight" type="range" min="0" max="100" [ngModel]="params.right" (ngModelChange)="updateInset('right', +$event)" class="w-full slider-thumb">
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="insetBottom" class="text-gray-300">Base</label>
+                  <span class="text-white font-mono">{{ params.bottom }}%</span>
+                </div>
+                <input id="insetBottom" type="range" min="0" max="100" [ngModel]="params.bottom" (ngModelChange)="updateInset('bottom', +$event)" class="w-full slider-thumb">
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="insetLeft" class="text-gray-300">Esquerda</label>
+                  <span class="text-white font-mono">{{ params.left }}%</span>
+                </div>
+                <input id="insetLeft" type="range" min="0" max="100" [ngModel]="params.left" (ngModelChange)="updateInset('left', +$event)" class="w-full slider-thumb">
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="borderRadius" class="text-gray-300">Raio da Borda</label>
+                  <span class="text-white font-mono">{{ params.borderRadius }}%</span>
+                </div>
+                <input id="borderRadius" type="range" min="0" max="50" [ngModel]="params.borderRadius" (ngModelChange)="updateInset('borderRadius', +$event)" class="w-full slider-thumb">
+              </div>
+            </div>
+          }
+          @case('circle') {
+            @let params = circleParams();
+             <div class="space-y-4">
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="circleRadius" class="text-gray-300">Raio</label>
+                  <span class="text-white font-mono">{{ params.radius }}%</span>
+                </div>
+                <input id="circleRadius" type="range" min="0" max="100" [ngModel]="params.radius" (ngModelChange)="updateCircle('radius', +$event)" class="w-full slider-thumb">
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="circlePosX" class="text-gray-300">Posição X</label>
+                  <span class="text-white font-mono">{{ params.posX }}%</span>
+                </div>
+                <input id="circlePosX" type="range" min="0" max="100" [ngModel]="params.posX" (ngModelChange)="updateCircle('posX', +$event)" class="w-full slider-thumb">
+              </div>
+               <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="circlePosY" class="text-gray-300">Posição Y</label>
+                  <span class="text-white font-mono">{{ params.posY }}%</span>
+                </div>
+                <input id="circlePosY" type="range" min="0" max="100" [ngModel]="params.posY" (ngModelChange)="updateCircle('posY', +$event)" class="w-full slider-thumb">
+              </div>
+            </div>
+          }
+          @case('ellipse') {
+            @let params = ellipseParams();
+             <div class="space-y-4">
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="ellipseRadiusX" class="text-gray-300">Raio X</label>
+                  <span class="text-white font-mono">{{ params.radiusX }}%</span>
+                </div>
+                <input id="ellipseRadiusX" type="range" min="0" max="100" [ngModel]="params.radiusX" (ngModelChange)="updateEllipse('radiusX', +$event)" class="w-full slider-thumb">
+              </div>
+               <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="ellipseRadiusY" class="text-gray-300">Raio Y</label>
+                  <span class="text-white font-mono">{{ params.radiusY }}%</span>
+                </div>
+                <input id="ellipseRadiusY" type="range" min="0" max="100" [ngModel]="params.radiusY" (ngModelChange)="updateEllipse('radiusY', +$event)" class="w-full slider-thumb">
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="ellipsePosX" class="text-gray-300">Posição X</label>
+                  <span class="text-white font-mono">{{ params.posX }}%</span>
+                </div>
+                <input id="ellipsePosX" type="range" min="0" max="100" [ngModel]="params.posX" (ngModelChange)="updateEllipse('posX', +$event)" class="w-full slider-thumb">
+              </div>
+               <div class="space-y-2">
+                <div class="flex justify-between items-center text-sm font-medium">
+                  <label for="ellipsePosY" class="text-gray-300">Posição Y</label>
+                  <span class="text-white font-mono">{{ params.posY }}%</span>
+                </div>
+                <input id="ellipsePosY" type="range" min="0" max="100" [ngModel]="params.posY" (ngModelChange)="updateEllipse('posY', +$event)" class="w-full slider-thumb">
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <!-- Preview Column -->
+    <div class="space-y-6">
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[400px] flex items-center justify-center checkerboard">
+        <img src="https://picsum.photos/400/400" alt="Preview Image" width="400" height="400" class="transition-all duration-300" [style.clip-path]="clipPathCss()">
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+        <h3 class="text-lg font-semibold text-white mb-3">Código CSS</h3>
+        <div class="relative">
+          <pre class="w-full bg-gray-800 rounded-md p-4 text-cyan-300 font-mono text-sm overflow-x-auto"><code>clip-path: {{ clipPathCss() }};</code></pre>
+          <button (click)="copyCss()" class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs">
+            {{ copyButtonText() }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
