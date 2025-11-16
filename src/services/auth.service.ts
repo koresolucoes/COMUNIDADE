@@ -1,3 +1,4 @@
+
 import { Injectable, signal, effect } from '@angular/core';
 import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
@@ -73,6 +74,7 @@ export class AuthService {
       provider: 'google',
       options: {
         redirectTo: 'https://comunidade.koresolucoes.com.br',
+        skipBrowserRedirect: true,
       },
     });
   }

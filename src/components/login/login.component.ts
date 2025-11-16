@@ -1,4 +1,5 @@
 
+
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -56,9 +57,16 @@ export class LoginComponent implements OnInit {
   async onGoogleLogin() {
     this.loading.set(true);
     this.errorMessage.set(null);
-    const { error } = await this.authService.signInWithGoogle();
+    const { data, error } = await this.authService.signInWithGoogle();
     if (error) {
       this.errorMessage.set(error.message);
+      this.loading.set(false);
+    } else if (data?.url) {
+      // Manually trigger a top-level redirect to break out of the iframe
+      window.top!.location.href = data.url;
+    } else {
+      // Fallback for an unexpected response
+      this.errorMessage.set('Não foi possível obter a URL de login do Google.');
       this.loading.set(false);
     }
   }
