@@ -68,6 +68,12 @@ export class AuthService {
     return this.supabase.auth.signInWithPassword({ email, password });
   }
 
+  signInWithGoogle() {
+    return this.supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
+  }
+
   signOut() {
     this.currentUserProfile.set(null);
     return this.supabase.auth.signOut();

@@ -52,4 +52,14 @@ export class LoginComponent implements OnInit {
     }
     this.loading.set(false);
   }
+
+  async onGoogleLogin() {
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    const { error } = await this.authService.signInWithGoogle();
+    if (error) {
+      this.errorMessage.set(error.message);
+      this.loading.set(false);
+    }
+  }
 }
