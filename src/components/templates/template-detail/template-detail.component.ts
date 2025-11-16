@@ -132,7 +132,6 @@ export class TemplateDetailComponent {
     this.editor.editor_mode = 'view';
     this.editor.zoom_max = 1.6;
     this.editor.zoom_min = 0.2;
-    this.editor.reroute = true;
     this.editor.curvature = 0.5;
 
     // Enable panning with left-click on the background
@@ -146,114 +145,208 @@ export class TemplateDetailComponent {
     container.addEventListener('mouseup', () => { this.editor.panning = false; });
     container.addEventListener('mouseleave', () => { this.editor.panning = false; });
 
-    this.n8nToDrawflow(workflowData);
-    this.centerWorkflow(workflowData.nodes, container);
+    this.renderVerticalWorkflow(workflowData);
   }
   
-  private centerWorkflow(nodes: any[], container: HTMLElement) {
-    if (!this.editor || !nodes || nodes.length === 0) return;
-
-    const NODE_WIDTH = 250;
-    const NODE_HEIGHT = 60;
-
-    const xCoords = nodes.map(n => n.position[0]);
-    const yCoords = nodes.map(n => n.position[1]);
-
-    const minX = Math.min(...xCoords);
-    const maxX = Math.max(...xCoords) + NODE_WIDTH;
-    const minY = Math.min(...yCoords);
-    const maxY = Math.max(...yCoords) + NODE_HEIGHT;
-
-    const contentWidth = maxX - minX;
-    const contentHeight = maxY - minY;
-
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    
-    const zoom = this.editor.zoom;
-
-    // Pan canvas to center the content
-    this.editor.canvas_x = (containerWidth / 2) / zoom - (minX + contentWidth / 2);
-    this.editor.canvas_y = (containerHeight / 2) / zoom - (minY + contentHeight / 2);
-    
-    this.editor.update();
-  }
-
-  private n8nToDrawflow(workflow: any) {
+  private renderVerticalWorkflow(workflow: any) {
     if (!workflow || !workflow.nodes || !workflow.connections) {
       return;
     }
 
-    const drawflowData = { "drawflow": { "Home": { "data": {} } } };
-    this.editor.import(drawflowData);
-
-    const n8nNodeIdToDrawflowId = new Map<string, string>();
+    // 1. Preprocessing: Build graph structure
     const n8nNodeNameToNodeId = new Map<string, string>();
+    workflow.nodes.forEach((node: any) => n8nNodeNameToNodeId.set(node.name, node.id));
 
-    for (const node of workflow.nodes) {
-      const nodeTypeKey = this.getNodeType(node.type);
-      const nodeTypeName = this.getFriendlyNodeName(node.type);
-      const style = this.nodeStyleMap[nodeTypeKey] || this.nodeStyleMap['default'];
-
-      const nodeHtml = `
-        <div class="n8n-node-wrapper">
-          <div class="n8n-node-header" style="background-color: ${style.color}">
-            <span class="material-icons-outlined">${style.icon}</span>
-            <span class="n8n-node-type-name">${nodeTypeName}</span>
-          </div>
-          <div class="n8n-node-body">
-            <span class="n8n-node-label">${this.escapeHtml(node.name)}</span>
-          </div>
-        </div>
-      `;
-
-      const outputs = nodeTypeKey === 'if' ? 2 : (nodeTypeKey === 'switch' ? (node.parameters.rules.values.length + 1) : 1);
-      
-      const drawflowId = this.editor.addNode(
-        node.name, 1, outputs,
-        node.position[0], node.position[1],
-        'n8n-node', {}, nodeHtml, false
-      );
-
-      n8nNodeIdToDrawflowId.set(node.id, String(drawflowId));
-      n8nNodeNameToNodeId.set(node.name, node.id);
-    }
+    const adj = new Map<string, string[]>();
+    const revAdj = new Map<string, string[]>();
+    workflow.nodes.forEach((node: any) => {
+        adj.set(node.id, []);
+        revAdj.set(node.id, []);
+    });
 
     for (const sourceNodeName in workflow.connections) {
       const sourceNodeId = n8nNodeNameToNodeId.get(sourceNodeName);
       if (!sourceNodeId) continue;
-      
-      const drawflowSourceId = n8nNodeIdToDrawflowId.get(sourceNodeId);
-      if (!drawflowSourceId) continue;
 
       const outputs = workflow.connections[sourceNodeName];
       for (const outputName in outputs) {
         const connectionGroups = outputs[outputName];
         if (Array.isArray(connectionGroups)) {
           for (const connection of connectionGroups) {
-             const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
-              if (targetNodeId) {
-                const drawflowTargetId = n8nNodeIdToDrawflowId.get(targetNodeId);
-                if (drawflowTargetId) {
-                  let sourceOutput = 'output_1'; // Default output
-                  const sourceNode = workflow.nodes.find((n:any) => n.id === sourceNodeId);
-
-                  if (sourceNode && this.getNodeType(sourceNode.type) === 'if') {
-                     sourceOutput = outputName.toLowerCase() === 'true' ? 'output_1' : 'output_2';
-                  } else if (sourceNode && this.getNodeType(sourceNode.type) === 'switch') {
-                     // In n8n, switch outputIndex starts at 0. 'output_1' is the first rule.
-                     const outputIndex = parseInt(outputName, 10);
-                     if (!isNaN(outputIndex)) {
-                       sourceOutput = `output_${outputIndex + 1}`;
-                     }
-                  }
-                  
-                  this.editor.addConnection(drawflowSourceId, drawflowTargetId, sourceOutput, 'input_1');
-                }
-              }
+            const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
+            if (targetNodeId) {
+              adj.get(sourceNodeId)?.push(targetNodeId);
+              revAdj.get(targetNodeId)?.push(sourceNodeId);
+            }
           }
         }
       }
+    }
+
+    // 2. Leveling (BFS variant to find longest path from start)
+    const nodeLevels = new Map<string, number>();
+    const queue: { nodeId: string; level: number }[] = [];
+    
+    // Find start nodes
+    workflow.nodes.forEach((node: any) => {
+      if ((revAdj.get(node.id)?.length || 0) === 0) {
+        if (!nodeLevels.has(node.id)) {
+            nodeLevels.set(node.id, 0);
+            queue.push({ nodeId: node.id, level: 0 });
+        }
+      }
+    });
+
+    let head = 0;
+    while (head < queue.length) {
+        const { nodeId, level } = queue[head++];
+        (adj.get(nodeId) || []).forEach(neighborId => {
+            const newLevel = level + 1;
+            const existingLevel = nodeLevels.get(neighborId);
+            if (existingLevel === undefined || newLevel > existingLevel) {
+                nodeLevels.set(neighborId, newLevel);
+                const queueItem = queue.find(item => item.nodeId === neighborId);
+                if (queueItem) {
+                    queueItem.level = newLevel;
+                } else {
+                    queue.push({ nodeId: neighborId, level: newLevel });
+                }
+            }
+        });
+    }
+
+    // Build map from level number to nodes at that level
+    const levelMap = new Map<number, string[]>();
+    let maxLevel = 0;
+    workflow.nodes.forEach((node: any) => {
+        const level = nodeLevels.get(node.id) ?? (maxLevel + 1); // Place un-leveled nodes at the end
+        if (!levelMap.has(level)) {
+            levelMap.set(level, []);
+        }
+        levelMap.get(level)!.push(node.id);
+        maxLevel = Math.max(maxLevel, level);
+    });
+
+    // 3. Positioning
+    const nodePositions = new Map<string, { x: number; y: number }>();
+    const Y_SPACING = 150;
+    const X_SPACING = 300;
+
+    levelMap.forEach((nodesInLevel, level) => {
+      const y = level * Y_SPACING;
+      const numNodes = nodesInLevel.length;
+      const startX = -((numNodes - 1) * X_SPACING) / 2;
+      
+      nodesInLevel.forEach((nodeId, index) => {
+        const x = startX + index * X_SPACING;
+        nodePositions.set(nodeId, { x, y });
+      });
+    });
+
+    // 4. Drawflow Node Creation
+    const drawflowData = { "drawflow": { "Home": { "data": {} } } };
+    this.editor.import(drawflowData);
+    const n8nNodeIdToDrawflowId = new Map<string, string>();
+
+    for (const node of workflow.nodes) {
+      const pos = nodePositions.get(node.id) || { x: 0, y: 0 };
+      
+      let outputs = 1;
+      const nodeTypeKey = this.getNodeType(node.type);
+      if (nodeTypeKey === 'if') {
+        outputs = 2; // true, false
+      } else if (nodeTypeKey === 'switch' && node.parameters?.rules?.values) {
+        outputs = node.parameters.rules.values.length + 1; // one for each rule + default
+      }
+
+      const drawflowId = this.editor.addNode(
+        node.name, 1, outputs, pos.x, pos.y,
+        'n8n-node', {}, this.createNodeHtml(node), false
+      );
+
+      n8nNodeIdToDrawflowId.set(node.id, String(drawflowId));
+    }
+    
+    // 5. Drawflow Connection Creation
+    for (const sourceNodeName in workflow.connections) {
+        const sourceNodeId = n8nNodeNameToNodeId.get(sourceNodeName);
+        if (!sourceNodeId) continue;
+        const drawflowSourceId = n8nNodeIdToDrawflowId.get(sourceNodeId);
+        if (!drawflowSourceId) continue;
+
+        const outputs = workflow.connections[sourceNodeName];
+        for (const outputName in outputs) {
+            const connectionGroups = outputs[outputName];
+            for (const connection of connectionGroups) {
+                const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
+                if (!targetNodeId) continue;
+                const drawflowTargetId = n8nNodeIdToDrawflowId.get(targetNodeId);
+                if (!drawflowTargetId) continue;
+
+                let sourceOutput = 'output_1';
+                const sourceNode = workflow.nodes.find((n: any) => n.id === sourceNodeId);
+                
+                if (sourceNode) {
+                    const sourceNodeTypeKey = this.getNodeType(sourceNode.type);
+                    if (sourceNodeTypeKey === 'if') {
+                        sourceOutput = outputName === '0' ? 'output_1' : 'output_2';
+                    } else if (sourceNodeTypeKey === 'switch') {
+                        const outputIndex = parseInt(outputName, 10);
+                        if (!isNaN(outputIndex)) {
+                            sourceOutput = `output_${outputIndex + 1}`;
+                        } else if (outputName === 'default') {
+                            const numRules = sourceNode.parameters?.rules?.values?.length || 0;
+                            sourceOutput = `output_${numRules + 1}`;
+                        }
+                    }
+                }
+                
+                this.editor.addConnection(drawflowSourceId, drawflowTargetId, sourceOutput, 'input_1');
+            }
+        }
+    }
+    
+    // 6. Set initial view
+    const startNodesForView = levelMap.get(0) || [];
+    this.setInitialCanvasView(nodePositions, startNodesForView);
+  }
+
+  private createNodeHtml(node: any): string {
+    const nodeTypeKey = this.getNodeType(node.type);
+    const nodeTypeName = this.getFriendlyNodeName(node.type);
+    const style = this.nodeStyleMap[nodeTypeKey] || this.nodeStyleMap['default'];
+    return `
+      <div class="n8n-node-wrapper">
+        <div class="n8n-node-header" style="background-color: ${style.color}">
+          <span class="material-icons-outlined">${style.icon}</span>
+          <span class="n8n-node-type-name">${nodeTypeName}</span>
+        </div>
+        <div class="n8n-node-body">
+          <span class="n8n-node-label">${this.escapeHtml(node.name)}</span>
+        </div>
+      </div>
+    `;
+  }
+  
+  private setInitialCanvasView(nodePositions: Map<string, {x: number, y: number}>, startNodeIds: string[]) {
+    if (!this.editor || startNodeIds.length === 0) return;
+
+    const startPos = nodePositions.get(startNodeIds[0]);
+    if (!startPos) return;
+
+    const container = this.drawflowContainer()?.nativeElement;
+    if (!container) return;
+
+    const containerWidth = container.clientWidth;
+    const zoom = this.editor.zoom;
+
+    // Center horizontally on the first start node
+    this.editor.canvas_x = (containerWidth / 2) / zoom - (startPos.x + 125); // 125 = node width / 2
+    // Position vertically near the top
+    this.editor.canvas_y = -startPos.y + 50; // 50px margin from top
+
+    if (typeof this.editor.update === 'function') {
+      this.editor.update();
     }
   }
 
