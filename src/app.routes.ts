@@ -62,6 +62,9 @@ import { OQueEBancoDeDadosComponent } from './components/learning/articles/o-que
 import { ConectandoAppBancoDadosComponent } from './components/learning/articles/conectando-app-banco-dados/conectando-app-banco-dados.component';
 import { ConstruindoApiRestCrudComponent } from './components/learning/articles/construindo-api-rest-crud/construindo-api-rest-crud.component';
 import { OQueEJwtComponent } from './components/learning/articles/o-que-e-jwt/o-que-e-jwt.component';
+import { DockerizandoAppNodejsComponent } from './components/learning/articles/dockerizando-app-nodejs/dockerizando-app-nodejs.component';
+import { OQueEVpsComponent } from './components/learning/articles/o-que-e-vps/o-que-e-vps.component';
+import { PublicandoAppVpsComponent } from './components/learning/articles/publicando-app-vps/publicando-app-vps.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -99,9 +102,9 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/conectando-app-banco-dados', component: ConectandoAppBancoDadosComponent },
   { path: 'learning/article/construindo-primeira-api-rest', component: ConstruindoApiRestCrudComponent },
   { path: 'learning/article/o-que-e-jwt', component: OQueEJwtComponent },
-  { path: 'learning/article/dockerizando-app-nodejs', component: PlaceholderComponent, data: { title: 'Dockerizando sua Aplicação Node.js', message: 'Este artigo está sendo escrito e estará disponível em breve.' } },
-  { path: 'learning/article/o-que-e-vps', component: PlaceholderComponent, data: { title: 'O que é uma VPS? Seu Servidor na Nuvem', message: 'Este artigo está sendo escrito e estará disponível em breve.' } },
-  { path: 'learning/article/publicando-app-vps', component: PlaceholderComponent, data: { title: 'Publicando sua Aplicação Docker em uma VPS', message: 'Este artigo está sendo escrito e estará disponível em breve.' } },
+  { path: 'learning/article/dockerizando-app-nodejs', component: DockerizandoAppNodejsComponent },
+  { path: 'learning/article/o-que-e-vps', component: OQueEVpsComponent },
+  { path: 'learning/article/publicando-app-vps', component: PublicandoAppVpsComponent },
   
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },

@@ -1,0 +1,94 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/do-codigo-a-nuvem" class="hover:text-blue-accent hover:underline">Do Código à Nuvem</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Dockerizando sua Aplicação Node.js</h1>
+    <p class="mt-4 text-lg text-gray-400">Crie um `Dockerfile` para empacotar sua aplicação Node.js, preparando-a para a publicação.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. A Receita: Criando o `Dockerfile`</h2>
+      <p>
+        O `Dockerfile` é o coração do processo. É um arquivo de texto, sem extensão, chamado literalmente <code>Dockerfile</code>. Ele contém a "receita" passo a passo que o Docker seguirá para montar sua imagem.
+      </p>
+      <p>
+        Crie este arquivo na raiz do seu projeto (a mesma pasta do <code>package.json</code>) e adicione o seguinte conteúdo:
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Dockerfile</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-dockerfile" [textContent]="dockerfileSnippet"></code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. O Segredo: O Arquivo `.dockerignore`</h2>
+      <p>
+        Assim como o <code>.gitignore</code>, o <code>.dockerignore</code> diz ao Docker quais arquivos e pastas ignorar ao construir a imagem. Isso é crucial para manter a imagem pequena e segura.
+      </p>
+      <p>Crie um arquivo chamado <code>.dockerignore</code> na raiz do projeto com este conteúdo:</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">.dockerignore</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-bash" [textContent]="dockerignoreSnippet"></code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. A Construção: Montando a "Marmita"</h2>
+      <p>
+        Com os dois arquivos prontos, volte ao seu terminal (na pasta do projeto) e execute o comando de construção:
+      </p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash" [textContent]="buildSnippet"></code></pre>
+      <p>O Docker seguirá os passos do seu <code>Dockerfile</code> e, ao final, você terá uma imagem chamada <code>minha-api-tarefas</code> pronta para ser usada.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">4. A Execução: Servindo a "Marmita"</h2>
+      <p>
+        Agora que temos a imagem, podemos criar e rodar um contêiner a partir dela:
+      </p>
+       <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash" [textContent]="runSnippet"></code></pre>
+      <p>
+        Seu terminal mostrará a mensagem <code>Servidor rodando em http://localhost:3000</code>. Se você acessar <a href="http://localhost:3000" target="_blank" rel="noopener noreferrer">http://localhost:3000</a> no navegador, verá o "Hello World!". Nossa API está rodando dentro de um contêiner!
+      </p>
+    </div>
+
+    <div class="p-6 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg">
+      <h2 class="text-2xl font-semibold text-yellow-200 !mt-0">5. O "Uh Oh!": O Problema da Conexão</h2>
+      <p>
+        Tudo parece perfeito, mas há um problema escondido. Se você tentar acessar uma rota que fala com o banco de dados (como <code>/tarefas</code>), o terminal onde o contêiner está rodando mostrará um erro:
+      </p>
+      <pre class="!bg-gray-950/50 !p-2 !my-1 text-xs"><code>Error: connect ECONNREFUSED 127.0.0.1:5432
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1494:16) {{ '{' }}
+  errno: -111,
+  code: 'ECONNREFUSED',
+  syscall: 'connect',
+  address: '127.0.0.1',
+  port: 5432
+{{ '}' }}</code></pre>
+      <p class="mt-3">
+        <strong>Por que isso acontece?</strong> Lembre-se: contêineres são ilhas isoladas. O <code>localhost</code> (ou <code>127.0.0.1</code>) <em>dentro</em> do contêiner se refere ao próprio contêiner, não ao seu computador (o host) onde o banco de dados está rodando. O contêiner da API está tentando encontrar o PostgreSQL dentro de si mesmo e, obviamente, não encontra.
+      </p>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão e Próximos Passos</h3>
+      <p>
+        Você alcançou um marco importantíssimo: transformou sua aplicação local em uma imagem Docker portátil e autossuficiente. Isso resolve o problema do "na minha máquina funciona".
+      </p>
+      <p>
+        O erro de conexão que encontramos é esperado e nos leva diretamente ao próximo nível do Docker: a <strong>orquestração</strong>. Nos próximos artigos, aprenderemos a usar o <strong>Docker Compose</strong> e as <strong>Redes Docker</strong> para rodar múltiplos contêineres (nossa API e nosso banco de dados) juntos, permitindo que eles se comuniquem de forma segura e resolvam o problema do <code>localhost</code>.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/do-codigo-a-nuvem" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

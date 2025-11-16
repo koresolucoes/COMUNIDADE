@@ -1,0 +1,108 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/do-codigo-a-nuvem" class="hover:text-blue-accent hover:underline">Do Código à Nuvem</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Publicando sua Aplicação Docker em uma VPS</h1>
+    <p class="mt-4 text-lg text-gray-400">Um guia com os passos essenciais para copiar sua aplicação Docker para uma VPS e colocá-la no ar.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      Chegamos ao momento final! Vamos pegar nossa API de tarefas, que já está "dockerizada", e publicá-la em um servidor na nuvem para que ela fique acessível ao mundo.
+    </p>
+
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. O Plano de Voo</h2>
+      <p>
+        Nossa estratégia será simples, mas poderosa e muito próxima do que é feito em ambientes de produção reais:
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>Conectar na VPS via SSH</strong> para ter acesso ao terminal do nosso servidor.</li>
+        <li><strong>Instalar as ferramentas:</strong> Git, Docker e Docker Compose.</li>
+        <li><strong>Clonar nosso projeto</strong> do GitHub para a VPS.</li>
+        <li><strong>Criar um `docker-compose.prod.yml`</strong> que orquestra nossa API, o banco de dados e um reverse proxy (Traefik) para HTTPS automático.</li>
+        <li><strong>Configurar nossas senhas</strong> de forma segura em um arquivo <code>.env</code>.</li>
+        <li><strong>Construir a imagem e "subir"</strong> tudo com Docker Compose.</li>
+        <li><strong>Apontar um domínio</strong> para o IP da nossa VPS.</li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Preparando a VPS: Instalando as Ferramentas</h2>
+      <p>
+        O primeiro passo é preparar nosso servidor. Conecte-se à sua VPS (usando o IP que seu provedor forneceu) e execute os seguintes comandos. Este exemplo é para sistemas baseados em Debian/Ubuntu.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Comandos de Instalação</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-bash" [textContent]="installCommandsSnippet"></code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. O Coração da Publicação: `docker-compose.prod.yml`</h2>
+      <p>
+        Dentro da sua VPS, quando você clonar seu projeto, crie um novo arquivo chamado <code>docker-compose.prod.yml</code>. Ele será responsável por orquestrar três serviços:
+      </p>
+      <ul class="list-disc list-inside text-gray-400">
+        <li><strong>db:</strong> Nosso contêiner do PostgreSQL.</li>
+        <li><strong>api:</strong> O contêiner da nossa API Node.js.</li>
+        <li><strong>traefik:</strong> Um "porteiro" inteligente (reverse proxy) que receberá todo o tráfego, direcionará para a API e cuidará de gerar e renovar os certificados SSL/TLS (o "cadeado" do HTTPS) automaticamente.</li>
+      </ul>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">docker-compose.prod.yml</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml" [textContent]="dockerComposeProdSnippet"></code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">4. Os Segredos: Clonando e Configurando o `.env`</h2>
+      <p>
+        Agora, na sua VPS, clone o repositório do seu projeto do GitHub. Depois de clonar, entre na pasta do projeto e crie o arquivo <code>.env</code>. Lembre-se, este arquivo <strong>nunca deve ir para o GitHub</strong>; ele contém suas senhas e chaves.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">.env (exemplo)</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-bash" [textContent]="envSnippet"></code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">5. A Lançamento: Subindo a Aplicação</h2>
+      <p>
+        Com tudo configurado, estamos prontos para o lançamento. Execute estes comandos no terminal da sua VPS, dentro da pasta do projeto:
+      </p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash" [textContent]="buildAndRunSnippet"></code></pre>
+      <p>
+        O Docker vai construir sua imagem e iniciar os três contêineres. O Traefik detectará a configuração da API e, assim que o domínio apontar para o servidor, ele irá provisionar o certificado SSL.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">6. Apontando o Domínio</h2>
+      <p>
+        O passo final é ir ao painel de controle do seu provedor de domínio (onde você comprou <code>seudominio.com</code>) e criar um registro DNS do tipo <strong>"A"</strong>.
+      </p>
+      <ul class="list-disc list-inside text-gray-400">
+        <li><strong>Nome/Host:</strong> <code>api</code> (ou o subdomínio que você escolheu)</li>
+        <li><strong>Valor/Aponta para:</strong> O endereço de IP da sua VPS</li>
+      </ul>
+      <p>Após alguns minutos (ou horas, dependendo da propagação do DNS), sua API estará acessível publicamente em <code>https://api.seudominio.com</code>!</p>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Do Código à Nuvem!</h3>
+      <p>
+        Parabéns! Você completou a jornada completa de um desenvolvedor: teve uma ideia, escreveu o código, conectou a um banco de dados, empacotou em um contêiner Docker e publicou na internet de forma segura e escalável. Este fluxo de trabalho é a base para a maioria dos projetos de software modernos.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/do-codigo-a-nuvem" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>
