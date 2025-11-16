@@ -47,20 +47,17 @@ export default (req: VercelRequest, res: VercelResponse) => {
       const issuerChain = (issuerCert: any): any[] => {
           const chain = [];
           let current = issuerCert;
-          while (current && current.issuerCertificate) {
+          const seenFingerprints = new Set<string>(); // Track seen certs to prevent loops
+
+          // Loop until there's no next cert, or a circular reference is detected
+          while (current && current.fingerprint && !seenFingerprints.has(current.fingerprint)) {
+              seenFingerprints.add(current.fingerprint);
               chain.push({
                   subject: formatIssuer(current.subject),
                   issuer: formatIssuer(current.issuer),
-                  fingerprint: current.fingerprint
+                  fingerprint: current.fingerprint,
               });
               current = current.issuerCertificate;
-          }
-          if (current) { // Add the root
-             chain.push({
-                  subject: formatIssuer(current.subject),
-                  issuer: formatIssuer(current.issuer),
-                  fingerprint: current.fingerprint
-              });
           }
           return chain;
       };
