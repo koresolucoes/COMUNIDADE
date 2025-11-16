@@ -1,0 +1,104 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-basico" class="hover:text-blue-accent hover:underline">n8n Básico</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Conectando ao Mundo: O Nó "HTTP Request"</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a buscar dados de APIs externas ou enviar informações para outros sistemas usando o nó HTTP Request.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Nó Mais Poderoso do n8n</h2>
+      <p>
+        O n8n tem centenas de nós para serviços específicos (Google Sheets, Discord, etc.). Mas e se você precisar se conectar a um serviço que não tem um nó dedicado? É aí que entra o <strong>HTTP Request Node</strong>.
+      </p>
+      <p>
+        Este nó é um "canivete suíço" que permite que você se comunique com praticamente qualquer API na internet. Ele permite que você construa e envie requisições HTTP customizadas, dando a você um poder quase ilimitado de integração.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Configurando uma Requisição GET</h2>
+      <p>
+        Uma requisição <code>GET</code> é usada para <strong>buscar</strong> dados. Vamos ver os campos principais para configurar uma.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Buscando um usuário de uma API de teste</h4>
+        <ul class="!list-none !pl-0 space-y-2 text-sm">
+          <li><strong>URL:</strong> O endereço do endpoint da API.
+            <br>
+            <code class="text-cyan-300">https://jsonplaceholder.typicode.com/users/1</code>
+          </li>
+          <li><strong>Method:</strong> O verbo HTTP.
+            <br>
+            <code class="text-cyan-300">GET</code>
+          </li>
+          <li><strong>Response Format:</strong> Como o n8n deve interpretar a resposta.
+            <br>
+            <code class="text-cyan-300">JSON</code>
+          </li>
+        </ul>
+        <p class="text-sm text-gray-400 mt-3">
+          Ao executar este nó, o n8n fará a requisição e o JSON da resposta estará disponível em <code>$json</code> para o próximo nó.
+        </p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Enviando Dados com POST</h2>
+      <p>
+        Uma requisição <code>POST</code> é usada para <strong>criar</strong> um novo recurso. A configuração é similar, mas com a adição do "corpo" (Body) da requisição.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Criando um novo post</h4>
+        <ul class="!list-none !pl-0 space-y-2 text-sm">
+          <li><strong>URL:</strong> <code>https://jsonplaceholder.typicode.com/posts</code></li>
+          <li><strong>Method:</strong> <code>POST</code></li>
+          <li><strong>Body Content Type:</strong> <code>JSON</code></li>
+          <li><strong>Body:</strong> Aqui você insere o JSON que quer enviar. Você pode usar expressões para torná-lo dinâmico!
+            <pre class="!bg-gray-900 !p-2 !my-1 text-xs"><code class="language-json">{{ '{' }}
+  "title": "{{ '{{' }} $json.titulo_do_passo_anterior {{ '}}' }}",
+  "body": "Este é o conteúdo do post.",
+  "userId": 1
+{{ '}' }}</code></pre>
+          </li>
+        </ul>
+       </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Autenticação com Cabeçalhos (Headers)</h2>
+      <p>
+        A maioria das APIs exige algum tipo de autenticação. A forma mais comum é através de um <strong>Cabeçalho (Header)</strong>. No nó HTTP Request, você pode adicionar headers na seção "Authentication" ou diretamente na aba "Headers".
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Enviando uma Chave de API</h4>
+         <ul class="!list-none !pl-0 space-y-2 text-sm mt-2">
+          <li>Na aba "Headers", clique em "Add Header".</li>
+          <li><strong>Name:</strong> <code>X-Api-Key</code> (ou o nome que a API exigir, como <code>Authorization</code>).</li>
+          <li><strong>Value:</strong> <code>SUA_CHAVE_DE_API_SECRETA</code></li>
+        </ul>
+        <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
+          <strong class="font-semibold">Atenção:</strong> Nunca coloque chaves de API diretamente no campo "Value"! O próximo artigo ensinará a forma correta e segura de fazer isso usando <strong>Credenciais</strong>.
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: A Porta para o Mundo</h3>
+      <p>
+        O nó HTTP Request é a sua porta de entrada para se conectar com qualquer serviço que tenha uma API. Dominá-lo significa que você não está mais limitado aos nós pré-construídos do n8n; você pode integrar qualquer ferramenta que precise, tornando suas possibilidades de automação praticamente infinitas.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-basico" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Segurança com Credenciais
+      </a>
+    </div>
+  </article>
+</div>

@@ -1,0 +1,76 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-intermediario" class="hover:text-blue-accent hover:underline">n8n Intermediário</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Manipulando Arquivos: Dados Binários</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda como o n8n lida com arquivos (imagens, PDFs) e como ler, criar e enviar dados binários em seus workflows.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Além do JSON: O Mundo dos Arquivos</h2>
+      <p>
+        Até agora, lidamos principalmente com dados em formato JSON. Mas muitas automações envolvem arquivos: ler um PDF, baixar uma imagem, enviar um anexo por e-mail, etc.
+      </p>
+      <p>
+        O n8n trata arquivos como <strong>dados binários</strong>. Enquanto o JSON é texto estruturado, um dado binário é a "matéria-prima" de um arquivo, uma sequência de bytes que o computador entende.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Estrutura de Dados: `json` e `binary`</h2>
+      <p>
+        Quando um nó lida com um arquivo, a estrutura de dados de um item no n8n ganha um novo protagonista. Além da propriedade <code>json</code>, agora temos a propriedade <code>binary</code>.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Saída de um nó "Read Binary File"</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-json">[
+  {{ '{' }}
+    "json": {{ '{' }}
+      // Metadados sobre o arquivo podem aparecer aqui
+      "fileName": "relatorio.pdf",
+      "mimeType": "application/pdf"
+    {{ '}' }},
+    "binary": {{ '{' }}
+      // A propriedade que contém os dados do arquivo
+      "data": {{ '{' }}
+        "type": "Buffer",
+        "data": [ 80, 68, 70, 45, ... ]
+      {{ '}' }}
+    {{ '}' }}
+  {{ '}' }}
+]</code></pre>
+        <p class="text-xs text-gray-400 mt-2">O importante é saber que quando um arquivo está "anexado" a um item, ele vive dentro da propriedade <code>binary</code>.</p>
+       </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como Usar Dados Binários</h2>
+      <p>
+        A maioria dos nós que trabalham com arquivos sabe procurar por essa propriedade <code>binary</code> automaticamente.
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Enviar um anexo:</strong> Se você conectar um nó que leu um arquivo a um nó "Send Email", o nó de e-mail automaticamente pegará o dado binário e o adicionará como anexo.</li>
+        <li><strong>Fazer upload para um serviço:</strong> Se você conectar a um nó "Google Drive", ele fará o upload do arquivo contido no <code>binary</code>.</li>
+        <li><strong>Enviar em uma requisição HTTP:</strong> No nó "HTTP Request", você pode especificar que o corpo da requisição deve usar o "Binary Data", e o n8n enviará o arquivo.</li>
+      </ul>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: O "Pacote Físico" da Automação</h3>
+      <p>
+        Se os dados JSON são as "cartas e documentos" que fluem pelo seu workflow, os dados binários são os "pacotes físicos". O n8n gerencia ambos de forma transparente, permitindo que você crie automações que não apenas manipulam informações, mas também leem, criam e movem arquivos entre diferentes sistemas.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-intermediario" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: O Poder do Nó "Code"
+      </a>
+    </div>
+  </article>
+</div>

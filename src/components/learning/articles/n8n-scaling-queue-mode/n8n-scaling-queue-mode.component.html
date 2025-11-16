@@ -1,0 +1,116 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-avancado" class="hover:text-blue-accent hover:underline">n8n Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Escalando o n8n: Queue Mode vs. Standalone</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda as arquiteturas de execução do n8n e descubra quando e por que migrar para o modo de fila para alta performance e escalabilidade.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia: Pedágio com uma Cabine vs. Múltiplas Cabines</h2>
+      <p>
+        Imagine uma estrada que leva a uma cidade importante. No início, há apenas uma cabine de pedágio. Enquanto o tráfego for leve, tudo funciona bem. Mas na hora do rush, uma fila enorme se forma. Um único carro lento pode atrasar todos os outros. Este é o <strong>modo Standalone</strong>.
+      </p>
+      <p>
+        Agora, imagine que a concessionária constrói múltiplas cabines de pedágio, cada uma dedicada a um tipo de veículo (carros, caminhões, motos) e com várias cabines para os tipos mais comuns. Mesmo que uma cabine tenha um problema, as outras continuam funcionando. O tráfego flui muito melhor. Este é o <strong>modo Queue (Fila)</strong>.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Modo Standalone: Simplicidade Tem um Preço</h2>
+      <p>
+        Por padrão, o n8n roda em modo <strong>Standalone</strong>. Isso significa que um único processo do Node.js é responsável por <strong>tudo</strong>:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li>Carregar a interface do editor.</li>
+        <li>Receber webhooks.</li>
+        <li>Executar workflows agendados (CRON).</li>
+        <li>Executar workflows manuais.</li>
+      </ul>
+      <div class="diagram">
+        <div class="diagram-box">
+          <h4>Modo Standalone</h4>
+          <div class="diagram-component">
+            <p><strong>Processo Único n8n</strong></p>
+            <p class="text-xs text-gray-500">Editor UI, Webhooks, Workers</p>
+          </div>
+        </div>
+      </div>
+      <h4>Vantagens:</h4>
+      <p>Fácil de configurar e ótimo para desenvolvimento, testes e cargas de trabalho pequenas.</p>
+      <h4>Desvantagens:</h4>
+      <ul>
+          <li><strong>Ponto Único de Falha:</strong> Se um workflow pesado consome toda a memória e trava o processo, a UI, os webhooks e todas as outras execuções param de funcionar.</li>
+          <li><strong>Gargalo de Performance:</strong> Não consegue processar muitos workflows simultaneamente. Webhooks podem ser perdidos se muitos chegarem ao mesmo tempo enquanto um workflow longo está em execução.</li>
+      </ul>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Modo Queue: Desacoplado para Escalar</h2>
+      <p>
+        O modo Queue (ou "fila") separa as responsabilidades do n8n em processos diferentes e independentes. Ele introduz um sistema de fila (geralmente usando <a href="https://redis.io/" target="_blank" rel="noopener noreferrer">Redis</a>) para gerenciar as execuções.
+      </p>
+       <div class="diagram">
+        <div class="diagram-box">
+          <h4>Modo Queue</h4>
+          <div class="diagram-component">
+            <p><strong>Processo Principal</strong></p>
+            <p class="text-xs text-gray-500">Editor UI, API</p>
+          </div>
+          <div class="diagram-component">
+            <p><strong>Processo(s) de Webhook</strong></p>
+            <p class="text-xs text-gray-500">Apenas recebe webhooks</p>
+          </div>
+          <div class="diagram-component">
+            <p><strong>Processo(s) de Worker</strong></p>
+            <p class="text-xs text-gray-500">Apenas executa workflows</p>
+          </div>
+        </div>
+      </div>
+      <h4 class="!mt-4">Os Componentes do Modo Queue:</h4>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>Processo Principal (Main):</strong> Similar ao modo standalone, mas agora sua principal responsabilidade é servir a interface do editor e a API. Ele <strong>não executa</strong> workflows diretamente.</li>
+        <li><strong>Processos de Worker:</strong> São os "trabalhadores braçais". Sua única função é pegar execuções da fila e processá-las. Você pode ter vários workers, até mesmo em máquinas diferentes, para processar muitos workflows em paralelo.</li>
+        <li><strong>Processos de Webhook:</strong> Um processo especializado e super leve cuja única missão é receber requisições de webhook o mais rápido possível, adicioná-las à fila e responder "OK". Isso evita que webhooks se percam durante picos de tráfego.</li>
+        <li><strong>Fila (Queue):</strong> Um intermediário (geralmente Redis) que armazena as execuções que precisam ser processadas. O processo principal e os de webhook adicionam tarefas à fila, e os workers as retiram.</li>
+      </ol>
+    </div>
+
+    <div>
+        <h2 class="text-2xl font-semibold text-white">Quando Devo Mudar para o Modo Queue?</h2>
+        <p>A migração para o modo de fila é recomendada quando você atinge um dos seguintes cenários:</p>
+         <div class="space-y-4">
+            <div class="p-4 bg-gray-800/50 rounded-lg">
+                <h4 class="font-semibold text-gray-200">1. Alto Volume de Execuções</h4>
+                <p class="text-sm text-gray-400 mt-1">Se você tem muitos workflows rodando simultaneamente ou recebe centenas de webhooks por minuto. O modo Queue distribui a carga entre múltiplos workers.</p>
+            </div>
+            <div class="p-4 bg-gray-800/50 rounded-lg">
+                <h4 class="font-semibold text-gray-200">2. Workflows de Longa Duração</h4>
+                <p class="text-sm text-gray-400 mt-1">Se você tem tarefas que podem levar vários minutos (ou horas) para serem concluídas. No modo Standalone, um workflow longo bloquearia todo o resto. No modo Queue, ele apenas ocupa um worker, enquanto outros workers e os processos de webhook continuam livres.</p>
+            </div>
+            <div class="p-4 bg-gray-800/50 rounded-lg">
+                <h4 class="font-semibold text-gray-200">3. Alta Disponibilidade (High Availability)</h4>
+                <p class="text-sm text-gray-400 mt-1">Se a sua automação é crítica para o seu negócio e não pode parar. No modo Queue, se um worker falhar, os outros assumem o trabalho. A fila garante que nenhuma execução seja perdida durante a falha.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Da Simplicidade à Escalabilidade</h3>
+      <p>
+        O <strong>modo Standalone</strong> é a porta de entrada perfeita para o n8n. O <strong>modo Queue</strong> é o caminho para a produção robusta. Entender a diferença entre eles é o primeiro passo para projetar e implantar soluções de automação que não apenas funcionam, mas que também são escaláveis, resilientes e prontas para lidar com as demandas do mundo real.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-avancado" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha "n8n Avançado"
+      </a>
+    </div>
+  </article>
+</div>

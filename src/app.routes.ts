@@ -72,6 +72,21 @@ import { OQueEN8nComponent } from './components/learning/articles/o-que-e-n8n/o-
 import { ConhecendoInterfaceN8nComponent } from './components/learning/articles/conhecendo-interface-n8n/conhecendo-interface-n8n.component';
 import { OQueENoN8nComponent } from './components/learning/articles/o-que-e-no-n8n/o-que-e-no-n8n.component';
 import { PrimeiroWorkflowN8nComponent } from './components/learning/articles/primeiro-workflow-n8n/primeiro-workflow-n8n.component';
+import { N8nDataFlowComponent } from './components/learning/articles/n8n-data-flow/n8n-data-flow.component';
+import { N8nSetNodeComponent } from './components/learning/articles/n8n-set-node/n8n-set-node.component';
+import { N8nIfNodeComponent } from './components/learning/articles/n8n-if-node/n8n-if-node.component';
+import { N8nLoopingComponent } from './components/learning/articles/n8n-looping/n8n-looping.component';
+import { N8nHttpRequestComponent } from './components/learning/articles/n8n-http-request/n8n-http-request.component';
+import { N8nCredentialsComponent } from './components/learning/articles/n8n-credentials/n8n-credentials.component';
+import { N8nMergeNodeComponent } from './components/learning/articles/n8n-merge-node/n8n-merge-node.component';
+import { N8nSplitInBatchesComponent } from './components/learning/articles/n8n-split-in-batches/n8n-split-in-batches.component';
+import { N8nBinaryDataComponent } from './components/learning/articles/n8n-binary-data/n8n-binary-data.component';
+import { N8nCodeNodeComponent } from './components/learning/articles/n8n-code-node/n8n-code-node.component';
+import { N8nSubworkflowsComponent } from './components/learning/articles/n8n-subworkflows/n8n-subworkflows.component';
+import { N8nErrorHandlingComponent } from './components/learning/articles/n8n-error-handling/n8n-error-handling.component';
+import { N8nScalingQueueModeComponent } from './components/learning/articles/n8n-scaling-queue-mode/n8n-scaling-queue-mode.component';
+import { N8nSubworkflowsVsCodeComponent } from './components/learning/articles/n8n-subworkflows-vs-code/n8n-subworkflows-vs-code.component';
+import { N8nStaticDataComponent } from './components/learning/articles/n8n-static-data/n8n-static-data.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -119,6 +134,27 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/conhecendo-interface-n8n', component: ConhecendoInterfaceN8nComponent },
   { path: 'learning/article/o-que-e-no-n8n', component: OQueENoN8nComponent },
   { path: 'learning/article/primeiro-workflow-n8n', component: PrimeiroWorkflowN8nComponent },
+
+  // n8n Básico
+  { path: 'learning/article/n8n-data-flow', component: N8nDataFlowComponent },
+  { path: 'learning/article/n8n-set-node', component: N8nSetNodeComponent },
+  { path: 'learning/article/n8n-if-node', component: N8nIfNodeComponent },
+  { path: 'learning/article/n8n-looping', component: N8nLoopingComponent },
+  { path: 'learning/article/n8n-http-request', component: N8nHttpRequestComponent },
+  { path: 'learning/article/n8n-credentials', component: N8nCredentialsComponent },
+
+  // n8n Intermediário
+  { path: 'learning/article/n8n-merge-node', component: N8nMergeNodeComponent },
+  { path: 'learning/article/n8n-split-in-batches', component: N8nSplitInBatchesComponent },
+  { path: 'learning/article/n8n-binary-data', component: N8nBinaryDataComponent },
+  { path: 'learning/article/n8n-code-node', component: N8nCodeNodeComponent },
+  { path: 'learning/article/n8n-subworkflows', component: N8nSubworkflowsComponent },
+  { path: 'learning/article/n8n-error-handling', component: N8nErrorHandlingComponent },
+
+  // n8n Avançado
+  { path: 'learning/article/n8n-scaling-queue-mode', component: N8nScalingQueueModeComponent },
+  { path: 'learning/article/n8n-subworkflows-vs-code', component: N8nSubworkflowsVsCodeComponent },
+  { path: 'learning/article/n8n-static-data', component: N8nStaticDataComponent },
   
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },

@@ -1,0 +1,62 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-intermediario" class="hover:text-blue-accent hover:underline">n8n Intermediário</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Workflows Reutilizáveis (Sub-Workflows)</h1>
+    <p class="mt-4 text-lg text-gray-400">Crie "sub-workflows" modulares para tarefas repetitivas e chame-os a partir de outros workflows, mantendo seu trabalho organizado e DRY.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema da Repetição</h2>
+      <p>
+        Imagine que você tem uma sequência de 5 nós que usa em vários workflows diferentes: buscar um cliente no seu CRM, formatar o endereço e verificar o score de crédito. Copiar e colar esses 5 nós em todo lugar que você precisa é ineficiente. Se você precisar mudar a lógica, terá que editar em 10 lugares diferentes. Isso viola o princípio de programação <strong>DRY (Don't Repeat Yourself - Não se Repita)</strong>.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Solução: Nó "Execute Workflow"</h2>
+      <p>
+        O n8n oferece uma solução elegante para isso: o nó <strong>Execute Workflow</strong>. Ele permite que você trate um workflow inteiro como se fosse uma única "função" ou um "bloco de construção" que pode ser chamado por outros workflows.
+      </p>
+      <p>Isso permite criar um <strong>workflow principal</strong> (o "chamador") e vários <strong>sub-workflows</strong> (os "chamados"), cada um com uma responsabilidade específica.</p>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como Funciona o Fluxo</h2>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <ol class="list-decimal list-inside text-gray-400 space-y-3">
+          <li>
+            <strong>Crie o Sub-Workflow:</strong> Primeiro, você cria um workflow normal que realiza a tarefa reutilizável (ex: "Buscar e Formatar Cliente"). O gatilho deste workflow pode ser um simples "Start Node", pois ele será acionado pelo outro workflow, não por um evento externo.
+          </li>
+          <li>
+            <strong>Adicione o Nó "Execute Workflow":</strong> No seu workflow principal, adicione o nó "Execute Workflow" no ponto em que você precisa realizar a tarefa.
+          </li>
+           <li>
+            <strong>Configure o Nó:</strong> No painel de parâmetros, selecione o workflow que você criou no passo 1.
+          </li>
+          <li>
+            <strong>Execução:</strong> Quando o workflow principal chega ao nó "Execute Workflow", ele pausa, envia os dados atuais para o sub-workflow, espera o sub-workflow terminar sua execução e então recebe os dados de volta para continuar seu próprio fluxo.
+          </li>
+        </ol>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Organização e Manutenibilidade</h3>
+      <p>
+        Usar sub-workflows é um salto em direção à construção de automações mais limpas, organizadas e fáceis de manter. Ao modularizar suas lógicas repetitivas, você economiza tempo, reduz a chance de erros e torna seus workflows principais muito mais fáceis de ler e entender.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-intermediario" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Tratamento de Erros
+      </a>
+    </div>
+  </article>
+</div>

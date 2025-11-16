@@ -1,0 +1,82 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-basico" class="hover:text-blue-accent hover:underline">n8n Básico</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Manipulando Dados com o Nó "Set"</h1>
+    <p class="mt-4 text-lg text-gray-400">Descubra como criar, modificar e remover dados que passam pelo seu workflow usando o versátil nó Set.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O "Canivete Suíço" dos Dados</h2>
+      <p>
+        O nó <strong>Set</strong> é uma das ferramentas mais fundamentais e versáteis do n8n. Seu propósito é simples: <strong>manipular os dados</strong> que estão fluindo pelo workflow. Ele não se conecta a nenhum serviço externo; ele apenas trabalha com os dados que recebe.
+      </p>
+      <p>Você o usará constantemente para:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+          <li>Adicionar novas informações ao item.</li>
+          <li>Modificar valores existentes.</li>
+          <li>Remover dados desnecessários.</li>
+          <li>Formatar os dados para que o próximo nó os entenda.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Modos de Operação: Append vs. Keep Only Set</h2>
+      <p>O nó Set tem dois modos principais que mudam drasticamente seu comportamento:</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">Append (Padrão)</h4>
+          <p class="text-sm text-gray-400 mt-2">Neste modo, o nó <strong>adiciona</strong> os novos valores aos dados existentes que ele recebeu. É como adicionar um novo post-it a um documento.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">Keep Only Set</h4>
+          <p class="text-sm text-gray-400 mt-2">Neste modo, o nó <strong>descarta todos os dados recebidos</strong> e passa para frente apenas os valores que você definiu nele. É como jogar fora o documento antigo e criar um novo do zero.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Adicionando e Modificando Valores</h2>
+      <p>
+        Na seção "Values", você pode adicionar "propriedades" para manipular. Cada propriedade tem um <strong>Nome (Name)</strong> e um <strong>Valor (Value)</strong>.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Formatando uma Mensagem</h4>
+        <p class="text-xs text-gray-400">Imagine que o nó anterior te deu este JSON de entrada:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-json">{{ '{' }}
+  "nome": "Carlos",
+  "total_compra": 150.75
+{{ '}' }}</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Você quer criar uma mensagem personalizada. No nó Set, você adicionaria uma propriedade:</p>
+        <ul class="!list-none !pl-0 space-y-2 text-sm mt-2">
+          <li><strong>Name:</strong> <code>mensagem_email</code></li>
+          <li><strong>Value (usando uma expressão):</strong> <code>Olá {{ '{{' }} $json.nome {{ '}}' }}, obrigado pela sua compra de R$ {{ '{{' }} $json.total_compra.toFixed(2) {{ '}}' }}!</code></li>
+        </ul>
+        <p class="text-xs text-gray-400 mt-2">O JSON de saída do nó Set seria:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-json">{{ '{' }}
+  "nome": "Carlos",
+  "total_compra": 150.75,
+  "mensagem_email": "Olá Carlos, obrigado pela sua compra de R$ 150.75!"
+{{ '}' }}</code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: O Escultor de Dados</h3>
+      <p>
+        O nó Set é a sua principal ferramenta para "esculpir" os dados que fluem pelo seu workflow. Ele permite que você prepare, enriqueça e limpe as informações para que cada nó subsequente receba exatamente o que precisa, no formato correto.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-basico" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Tomando Decisões com o Nó "IF"
+      </a>
+    </div>
+  </article>
+</div>

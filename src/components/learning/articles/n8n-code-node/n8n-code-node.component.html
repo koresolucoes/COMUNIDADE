@@ -1,0 +1,80 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-intermediario" class="hover:text-blue-accent hover:underline">n8n Intermediário</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Lógica Avançada: O Poder do Nó "Code"</h1>
+    <p class="mt-4 text-lg text-gray-400">Vá além das expressões simples. Aprenda a escrever código JavaScript para realizar transformações de dados complexas que outros nós não conseguem.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Quando os Nós Não São Suficientes</h2>
+      <p>
+        O n8n é fantástico com sua abordagem "low-code". Para 90% das tarefas, os nós Set, IF e Merge são suficientes para manipular seus dados. Mas e se você precisar de uma lógica mais complexa?
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+          <li>Calcular uma pontuação com base em múltiplas variáveis.</li>
+          <li>Fazer um loop dentro de um loop.</li>
+          <li>Formatar os dados de uma maneira muito específica que uma API exige.</li>
+      </ul>
+      <p>
+        Para esses casos, em vez de usar 10 nós "Set" e "IF" em sequência, você pode usar um único e poderoso <strong>Nó Code</strong>.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O que é o Nó Code?</h2>
+      <p>
+        O nó Code é uma "caixa de areia" onde você pode escrever código <strong>JavaScript</strong>. Ele te dá acesso total aos dados de entrada e permite que você retorne novos dados, modificados da forma que precisar.
+      </p>
+      <p>
+        Dentro do nó, você tem acesso aos mesmos dados que teria em uma expressão, mas com a flexibilidade de usar loops, funções, variáveis e toda a potência do JavaScript.
+      </p>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Acessando Dados e Retornando Resultados</h2>
+      <p>O nó Code funciona com base em um princípio simples:</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Estrutura Básica</h4>
+        <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-javascript">// 'items' é um array com todos os itens que chegam ao nó.
+// Geralmente, trabalhamos com um item de cada vez.
+const item = items[0];
+
+// Acesse os dados do item, como faria em uma expressão.
+const nome = item.json.nome;
+const valor = item.json.valor;
+
+// *** Faça sua lógica complexa aqui ***
+const nomeMaiusculo = nome.toUpperCase();
+const valorComTaxa = valor * 1.1;
+
+// Modifique o item original ou crie um novo.
+item.json.nome_maiusculo = nomeMaiusculo;
+item.json.valor_final = valorComTaxa;
+
+// RETORNE o array de itens modificados. Isso é crucial!
+return items;
+</code></pre>
+        <p class="text-xs text-gray-400 mt-2">O que você <code>return</code> no final do código é o que será passado para o próximo nó na esteira de produção.</p>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: O Melhor dos Dois Mundos</h3>
+      <p>
+        O nó Code é a ponte perfeita entre o "low-code" e o "pro-code". Ele permite que você construa a maior parte do seu workflow visualmente e, para aquele 10% de lógica super específica, você pode "mergulhar" no código para ter controle total. Dominar o nó Code é o que separa um usuário básico de um automatizador avançado no n8n.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-intermediario" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Workflows Reutilizáveis
+      </a>
+    </div>
+  </article>
+</div>

@@ -1,0 +1,85 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-avancado" class="hover:text-blue-accent hover:underline">n8n Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Gerenciamento de Estado: A Variável Global ($workflow.staticData)</h1>
+    <p class="mt-4 text-lg text-gray-400">Descubra como manter dados persistentes durante uma execução de workflow para contadores, agregações e compartilhamento de informações entre branches.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: A Memória Curta dos Workflows</h2>
+      <p>
+        O fluxo de dados padrão do n8n é linear: um nó passa seus dados para o próximo. Isso é ótimo para simplicidade, mas cria desafios em cenários mais complexos:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li>Como contar quantos itens passaram por um loop e usar esse total <strong>após</strong> o loop terminar?</li>
+        <li>Como buscar uma informação no primeiro nó e usá-la no último, sem ter que passá-la por todos os nós intermediários?</li>
+        <li>Como agregar resultados de duas ramificações diferentes (branches) de um workflow?</li>
+      </ul>
+      <p>
+        A resposta para esses problemas é o gerenciamento de estado, e a ferramenta do n8n para isso é o <code>$workflow.staticData</code>.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Solução: `staticData`, a "Lousa" do Workflow</h2>
+      <p>
+        Pense no <code>$workflow.staticData</code> como uma lousa branca disponível durante <strong>uma única execução do seu workflow</strong>. Qualquer nó pode escrever, ler ou apagar informações dessa lousa a qualquer momento.
+      </p>
+      <p>
+        É um objeto global, único para cada vez que o workflow roda. Isso significa que ele não persiste entre diferentes execuções, mas mantém seu estado enquanto um workflow está ativo, mesmo através de loops e branches.
+      </p>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como Usar o `staticData`</h2>
+      <p>O `staticData` é mais poderoso quando usado dentro do <strong>Nó Code</strong>, mas também pode ser acessado em expressões comuns.</p>
+
+      <h3 class="text-xl font-bold text-white mt-6">Em Expressões</h3>
+      <p>Você pode ler um valor da lousa em qualquer campo de expressão:</p>
+      <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-javascript">{{ '{{' }} $workflow.staticData.meuContador {{ '}}' }}</code></pre>
+
+      <h3 class="text-xl font-bold text-white mt-6">No Nó Code (Onde a Magia Acontece)</h3>
+      <p>O Nó Code oferece a flexibilidade para inicializar, modificar e ler os dados.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Contando Itens em um Loop</h4>
+        <p class="text-xs text-gray-400">Este código, colocado em um Nó Code dentro de um "loop" (após um Split in Batches, por exemplo), incrementará um contador para cada item processado.</p>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-javascript" [textContent]="codeSnippet"></code></pre>
+        <p class="text-xs text-gray-400 mt-3">Depois que todos os itens passaram pelo loop, qualquer nó subsequente pode acessar o valor final com a expressão <code>{{ '{{' }} $workflow.staticData.counter {{ '}}' }}</code>.</p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Boas Práticas e Cuidados</h2>
+      <ul class="list-disc list-inside text-gray-400 space-y-3">
+        <li>
+          <strong>Sempre Inicialize:</strong> Como no exemplo acima, sempre verifique se sua variável estática já existe (<code>=== undefined</code>) antes de tentar usá-la. Isso evita que seu workflow quebre na primeira iteração.
+        </li>
+        <li>
+          <strong>Use com Moderação:</strong> O <code>staticData</code> quebra o fluxo de dados linear e visível do n8n. Usá-lo para tudo pode tornar seu workflow muito difícil de depurar. Prefira passar dados de nó para nó sempre que possível. Use o <code>staticData</code> apenas para <strong>gerenciamento de estado</strong> (contadores, somas, flags).
+        </li>
+         <li>
+          <strong>Não é para Dados Enormes:</strong> Evite armazenar grandes volumes de dados (como arquivos ou milhares de registros) no <code>staticData</code>, pois ele é mantido na memória durante a execução do workflow.
+        </li>
+      </ul>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: A Chave para Workflows Complexos</h3>
+      <p>
+        O <code>$workflow.staticData</code> é uma ferramenta avançada que resolve uma classe inteira de problemas de automação. Ao usá-lo com sabedoria, você pode criar workflows que agregam dados, contam resultados e compartilham informações entre diferentes lógicas, tudo dentro de uma única e poderosa execução.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-avancado" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha "n8n Avançado"
+      </a>
+    </div>
+  </article>
+</div>

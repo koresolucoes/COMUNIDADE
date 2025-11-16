@@ -1,0 +1,82 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-basico" class="hover:text-blue-accent hover:underline">n8n Básico</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Tomando Decisões com o Nó "IF"</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a criar ramificações e lógicas condicionais em seus workflows, executando diferentes ações com base nos dados.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Encruzilhada da Automação</h2>
+      <p>
+        Nem todo workflow é uma linha reta. Muitas vezes, você precisa que sua automação tome decisões: "<strong>Se</strong> o valor da compra for maior que R$100, envie um cupom de frete grátis. <strong>Senão</strong>, apenas envie o e-mail de confirmação."
+      </p>
+      <p>
+        O nó <strong>IF</strong> é a ferramenta que cria essas "encruzilhadas" no seu workflow. Ele avalia uma ou mais condições e, com base no resultado, direciona os dados para diferentes caminhos.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como o Nó IF Funciona</h2>
+      <p>
+        O nó IF tem uma entrada (à esquerda) e duas saídas (à direita): uma para <code>true</code> (verdadeiro) e outra para <code>false</code> (falso).
+      </p>
+      <p>
+        No painel de parâmetros, você define uma condição. Para cada item que chega ao nó, ele testa a condição:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+          <li>Se a condição for <strong>verdadeira</strong>, o item sai pela saída <code>true</code>.</li>
+          <li>Se a condição for <strong>falsa</strong>, o item sai pela saída <code>false</code>.</li>
+      </ul>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Construindo uma Condição</h2>
+      <p>
+        Uma condição no nó IF tem três partes principais:
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Verificando o Valor de um Pedido</h4>
+        <p class="text-xs text-gray-400">Imagine que o nó anterior te deu um JSON com <code>{{ '{' }} "valor": 150 {{ '}' }}</code>.</p>
+        <ul class="!list-none !pl-0 space-y-2 text-sm mt-2">
+          <li>
+            <strong>Value 1:</strong> Aqui você coloca uma expressão para pegar o dado que quer testar.
+            <br>
+            <code class="text-cyan-300">{{ '{{' }} $json.valor {{ '}}' }}</code>
+          </li>
+          <li>
+            <strong>Operation:</strong> O tipo de comparação que você quer fazer.
+            <br>
+            <code class="text-cyan-300">Greater Than</code> (Maior que)
+          </li>
+          <li>
+            <strong>Value 2:</strong> O valor com o qual você quer comparar.
+            <br>
+            <code class="text-cyan-300">100</code>
+          </li>
+        </ul>
+        <p class="text-sm text-gray-400 mt-3">
+          Neste caso, como 150 é maior que 100, a condição é verdadeira e o item será enviado para a saída <code>true</code>.
+        </p>
+       </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Dando Inteligência ao seu Workflow</h3>
+      <p>
+        O nó IF é o que transforma um simples roteiro em uma automação inteligente. Ele permite que seus workflows se adaptem a diferentes cenários e executem as ações corretas para cada situação, tornando suas automações muito mais poderosas e flexíveis.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-basico" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Trabalhando com Listas
+      </a>
+    </div>
+  </article>
+</div>

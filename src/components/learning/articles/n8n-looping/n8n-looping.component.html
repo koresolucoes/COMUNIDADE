@@ -1,0 +1,63 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-basico" class="hover:text-blue-accent hover:underline">n8n Básico</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Trabalhando com Listas: O Loop Automático</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda como o n8n processa listas de itens automaticamente e como lidar com múltiplos registros de uma vez.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Comportamento Mágico do n8n</h2>
+      <p>
+        Uma das características mais poderosas (e às vezes confusas para iniciantes) do n8n é como ele lida com listas. Imagine que um nó anterior, como um "Google Sheets", retorna 10 linhas de uma planilha. O n8n não passa um único pacote de dados com 10 linhas. Em vez disso, ele passa uma <strong>lista de 10 itens</strong> para o próximo nó.
+      </p>
+      <p>
+        E aqui está a mágica: <strong>o próximo nó será executado uma vez para cada um desses 10 itens, automaticamente.</strong> Você não precisa criar um "loop" manual. O n8n faz isso por você.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Visualizando o Fluxo</h2>
+      <p>
+        Vamos imaginar um workflow simples:
+      </p>
+      <p class="text-center font-semibold text-lg">Google Sheets &rarr; Set &rarr; Discord</p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2 mt-4">
+        <li>O nó <strong>Google Sheets</strong> lê uma planilha e encontra 3 linhas. Ele envia uma lista de 3 itens para o próximo nó.</li>
+        <li>O nó <strong>Set</strong> recebe a lista. Ele é executado 3 vezes, uma para cada item (linha). Em cada execução, ele formata uma mensagem usando os dados daquela linha específica.</li>
+        <li>O nó <strong>Discord</strong> recebe a lista de 3 itens (agora com a mensagem formatada em cada um). Ele também é executado 3 vezes, enviando uma mensagem separada para o Discord para cada item.</li>
+      </ol>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Exemplo Prático</h2>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Entrada do Nó "Google Sheets" (Output)</h4>
+        <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-json">[
+  {{ '{' }} "json": {{ '{' }} "nome": "Ana", "status": "Aprovado" {{ '}' }} {{ '}' }},
+  {{ '{' }} "json": {{ '{' }} "nome": "Bruno", "status": "Pendente" {{ '}' }} {{ '}' }},
+  {{ '{' }} "json": {{ '{' }} "nome": "Carla", "status": "Aprovado" {{ '}' }} {{ '}' }}
+]</code></pre>
+        <p class="text-xs text-gray-400 mt-2">O próximo nó (um nó IF, por exemplo) será executado 3 vezes. Na primeira vez, <code>{{ '{{' }} $json.nome {{ '}}' }}</code> será "Ana". Na segunda, "Bruno". Na terceira, "Carla".</p>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Pense em Itens, não em Listas</h3>
+      <p>
+        Ao construir workflows no n8n, a principal mudança de mentalidade é parar de se preocupar em "como fazer um loop" e começar a pensar em "o que fazer com cada item". O n8n cuida da repetição para você, permitindo que você se concentre na lógica que deve ser aplicada a cada pedaço de dado individualmente.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-basico" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Conectando ao Mundo com o "HTTP Request"
+      </a>
+    </div>
+  </article>
+</div>

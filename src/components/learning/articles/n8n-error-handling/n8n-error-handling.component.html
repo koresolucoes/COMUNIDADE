@@ -1,0 +1,68 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-intermediario" class="hover:text-blue-accent hover:underline">n8n Intermediário</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Construindo Workflows Resilientes: Tratamento de Erros</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a capturar e tratar erros com o "Error Trigger" e a configuração "Continue on Fail", criando automações que não quebram facilmente.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: O Mundo Real é Imperfeito</h2>
+      <p>
+        Seu workflow é perfeito, mas o mundo exterior não é. Uma API pode estar fora do ar, um dado pode vir em um formato inesperado, uma planilha pode ser renomeada. Por padrão, quando um nó falha no n8n, a execução inteira para.
+      </p>
+      <p>
+        Isso pode ser um problema. Você pode querer ser notificado sobre a falha, tentar a operação novamente mais tarde ou simplesmente continuar o workflow com os itens que não falharam. É aqui que entra o tratamento de erros.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Opção 1: "Continue on Fail" - A Rede de Segurança</h2>
+      <p>
+        Esta é a forma mais simples de tratamento de erros. Em qualquer nó de ação, você pode ir na aba "Settings" e ativar a opção <strong>Continue on Fail</strong>.
+      </p>
+      <p>
+        Com essa opção ativada, se o nó falhar para um determinado item, ele não irá parar o workflow. Em vez disso, ele enviará esse item para uma saída especial de erro (marcada em vermelho), enquanto os itens que foram bem-sucedidos continuarão pela saída normal.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo de Uso</h4>
+        <p class="text-xs text-gray-400">Você pode conectar a saída de erro a um nó do Discord para te notificar imediatamente sobre a falha, enquanto o fluxo principal continua.</p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Opção 2: O Nó "Error Trigger" - O Alarme Central</h2>
+      <p>
+        Configurar "Continue on Fail" em cada nó pode ser repetitivo. Uma abordagem mais centralizada é usar um <strong>workflow de tratamento de erros</strong>.
+      </p>
+       <ol class="list-decimal list-inside text-gray-400 space-y-2">
+          <li><strong>Crie um novo workflow:</strong> Este será seu "Workflow de Erros".</li>
+          <li><strong>Adicione o "Error Trigger":</strong> Em vez do nó "Start", adicione o gatilho <strong>Error Trigger</strong>.</li>
+          <li><strong>Configure suas ações de erro:</strong> Depois do Error Trigger, adicione os nós que você quer que sejam executados quando qualquer erro ocorrer (ex: enviar um e-mail para o admin, postar no Slack, registrar em uma planilha).</li>
+          <li><strong>Ative o Workflow de Erros:</strong> Salve e ative este workflow.</li>
+          <li><strong>Vincule aos seus workflows principais:</strong> Agora, em qualquer outro workflow, vá em "Workflow Settings" (ícone de engrenagem no painel esquerdo) e, no campo "Error Workflow", selecione o "Workflow de Erros" que você criou.</li>
+      </ol>
+      <p class="mt-4">
+        Com isso configurado, sempre que qualquer nó em seu workflow principal falhar (e não tiver "Continue on Fail" ativado), o n8n irá automaticamente acionar seu Workflow de Erros, passando para ele todos os detalhes sobre a falha.
+      </p>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Construindo para a Realidade</h3>
+      <p>
+        Workflows que não tratam erros são frágeis e não confiáveis. Ao usar "Continue on Fail" para falhas pontuais e um "Error Trigger" para um monitoramento centralizado, você constrói automações resilientes que podem lidar com as imperfeições do mundo real, notificando você quando algo dá errado em vez de simplesmente pararem de funcionar silenciosamente.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-intermediario" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha "n8n Intermediário"
+      </a>
+    </div>
+  </article>
+</div>

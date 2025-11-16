@@ -1,0 +1,75 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-intermediario" class="hover:text-blue-accent hover:underline">n8n Intermediário</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Juntando Caminhos: O Nó "Merge"</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a unificar diferentes ramificações do seu workflow, combinando dados que seguiram caminhos separados após um nó IF.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: Estradas Divergentes</h2>
+      <p>
+        Imagine um workflow que usa um nó <strong>IF</strong> para verificar se um cliente é "VIP". Clientes VIP seguem um caminho (saída <code>true</code>) onde recebem um desconto, enquanto clientes normais seguem outro (saída <code>false</code>).
+      </p>
+      <p>
+        Depois dessas ações específicas, você quer que <strong>todos</strong> os clientes continuem pelo mesmo fluxo, por exemplo, para enviar um e-mail de confirmação. Como você junta esses dois caminhos de volta em um só? É para isso que serve o nó <strong>Merge</strong>.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como o Nó Merge Funciona</h2>
+      <p>
+        O nó Merge é como um ponto de encontro. Ele possui múltiplas entradas e uma única saída. Ele espera os "itens" (dados) chegarem de diferentes ramificações e os combina em uma única lista para passar para o próximo nó.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo Visual</h4>
+        <p class="text-xs text-gray-400">Um workflow típico com IF e Merge.</p>
+        <div class="text-center font-mono text-sm my-4">
+          <p>Webhook &rarr; IF &rarr; (Caminho True: Nó A)</p>
+          <p class="ml-16">&searr;</p>
+          <p class="ml-24">Merge &rarr; Enviar E-mail</p>
+          <p class="ml-16">&nearr;</p>
+          <p class="ml-16">(Caminho False: Nó B)</p>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">O nó "Enviar E-mail" será executado para todos os itens, tanto os que passaram pelo Nó A quanto os que passaram pelo Nó B.</p>
+       </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Modos de Operação do Merge</h2>
+      <p>O nó Merge tem diferentes modos que determinam <strong>como</strong> ele combina os dados. Os mais comuns são:</p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">Append (Padrão)</h4>
+          <p class="text-sm text-gray-400 mt-1">Simplesmente junta todos os itens de todas as entradas em uma única lista. Se a Entrada 1 tem 3 itens e a Entrada 2 tem 5 itens, a saída será uma lista de 8 itens. É o modo mais usado.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">Merge By Index</h4>
+          <p class="text-sm text-gray-400 mt-1">Combina os itens com base em sua posição. O primeiro item da Entrada 1 é combinado com o primeiro item da Entrada 2, o segundo com o segundo, e assim por diante. Útil quando você processou a mesma lista em paralelo e quer juntar os resultados.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">Merge By Key</h4>
+          <p class="text-sm text-gray-400 mt-1">Combina os itens que têm o mesmo valor em uma chave específica. Por exemplo, junte o item da Entrada 1 com o item da Entrada 2 que tenham o mesmo <code>email</code> ou <code>id_pedido</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Organizando a Complexidade</h3>
+      <p>
+        O nó Merge é essencial para construir workflows com lógicas condicionais complexas. Ele garante que, não importa qual caminho os dados sigam, eles possam ser reunidos para continuar um processo unificado, mantendo seu workflow limpo, organizado e fácil de entender.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-intermediario" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Processando em Lotes
+      </a>
+    </div>
+  </article>
+</div>

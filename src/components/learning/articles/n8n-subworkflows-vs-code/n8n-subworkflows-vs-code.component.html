@@ -1,0 +1,101 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-avancado" class="hover:text-blue-accent hover:underline">n8n Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Sub-Workflows vs. Nó Code: Organizando Lógica Complexa</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda quando modularizar sua lógica com o nó Execute Workflow e quando usar o poder do JavaScript no nó Code.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Dilema da Complexidade Crescente</h2>
+      <p>
+        Seu workflow começa simples. Mas, com o tempo, você adiciona mais regras de negócio, mais manipulações de dados, mais condicionais. Logo, o que era um fluxograma limpo se torna um emaranhado de nós difícil de entender e manter.
+      </p>
+      <p>
+        No n8n, quando a lógica se torna complexa, você tem duas ferramentas principais para organizá-la: o <strong>Nó Code</strong> e os <strong>Sub-Workflows (com o nó Execute Workflow)</strong>. A escolha entre eles é uma decisão de arquitetura fundamental.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Analogia: Kit de Ferramentas vs. Especialista Contratado</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">O Nó Code: Seu Canivete Suíço</h4>
+          <p class="text-sm text-gray-400 mt-2">É a ferramenta versátil que você tem no bolso. Perfeita para uma tarefa específica e contida. Você precisa formatar uma data de um jeito estranho ou fazer um cálculo rápido? O Nó Code é rápido, eficiente e está ali mesmo no seu workflow.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">O Sub-Workflow: O Especialista Contratado</h4>
+          <p class="text-sm text-gray-400 mt-2">É como contratar um encanador. Você tem um problema (um vazamento), você chama o especialista (executa o sub-workflow), ele faz o trabalho dele, e te entrega o resultado (o cano consertado). Você não precisa saber os detalhes de como ele fez, apenas que o trabalho foi feito. Se você precisar do mesmo serviço em outro lugar, chama o mesmo especialista.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Análise Detalhada: Prós e Contras</h2>
+      
+      <h3 class="text-xl font-bold text-white mt-6">Sub-Workflows (Nó Execute Workflow)</h3>
+      <div class="space-y-2">
+          <p><strong>✅ Prós:</strong></p>
+          <ul class="list-disc list-inside text-sm text-gray-400 pl-4">
+              <li><strong>Reutilização (DRY):</strong> A maior vantagem. Crie uma lógica de "Enriquecer Cliente" uma vez e use-a em 10 workflows diferentes.</li>
+              <li><strong>Legibilidade:</strong> Mantém o workflow principal limpo e de alto nível. Em vez de 15 nós, você tem um único nó que diz "Processar Fatura".</li>
+              <li><strong>Manutenibilidade:</strong> Precisa atualizar a lógica? Edite o sub-workflow em um só lugar, e a mudança se reflete em todos os chamadores.</li>
+              <li><strong>Testabilidade Isolada:</strong> Você pode testar o sub-workflow de forma independente para garantir que sua lógica específica está correta.</li>
+          </ul>
+          <p><strong>❌ Contras:</strong></p>
+          <ul class="list-disc list-inside text-sm text-gray-400 pl-4">
+              <li><strong>Overhead de Performance:</strong> Iniciar uma nova execução de workflow tem um pequeno custo. Para tarefas que rodam milhares de vezes por segundo, isso pode ser um fator.</li>
+              <li><strong>Gerenciamento de Contexto:</strong> Passar dados de entrada e receber dados de saída pode ser um pouco mais complexo do que simplesmente ter os dados no mesmo fluxo.</li>
+              <li><strong>Depuração Fragmentada:</strong> Rastrear um problema pode exigir que você navegue entre o workflow principal e o sub-workflow.</li>
+          </ul>
+      </div>
+
+      <h3 class="text-xl font-bold text-white mt-6">Nó Code</h3>
+      <div class="space-y-2">
+          <p><strong>✅ Prós:</strong></p>
+          <ul class="list-disc list-inside text-sm text-gray-400 pl-4">
+              <li><strong>Performance Máxima:</strong> Para manipulações de dados complexas em memória (loops aninhados, transformações de grandes arrays/objetos), é a opção mais rápida.</li>
+              <li><strong>Poder e Flexibilidade:</strong> Acesso total ao JavaScript para lógicas que são impossíveis de replicar com nós padrão.</li>
+              <li><strong>Lógica Contida:</strong> Toda a complexidade está encapsulada em um único ponto, o que pode ser mais fácil de encontrar do que um sub-workflow separado.</li>
+          </ul>
+          <p><strong>❌ Contras:</strong></p>
+          <ul class="list-disc list-inside text-sm text-gray-400 pl-4">
+              <li><strong>"Caixa Preta":</strong> Um nó Code com 100 linhas de código esconde a lógica de negócio, tornando o workflow difícil de entender para quem não é desenvolvedor (ou para você mesmo daqui a 6 meses).</li>
+              <li><strong>Não Reutilizável:</strong> O código está preso àquele workflow. Se precisar da mesma lógica em outro lugar, você terá que copiar e colar (violando o princípio DRY).</li>
+              <li><strong>Manutenibilidade:</strong> Um Nó Code muito grande se torna um "monolito" dentro do seu workflow, difícil de depurar e modificar.</li>
+              <li><strong>Quebra o Paradigma Visual:</strong> O principal apelo do n8n é ser low-code. Um uso excessivo do Nó Code transforma-o em uma plataforma de "escrever código em caixinhas".</li>
+          </ul>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Quando Usar Cada Um? (A Regra de Ouro)</h2>
+        <div class="p-4 bg-gray-800/50 rounded-lg mb-4">
+            <h4 class="font-semibold text-blue-accent">Use o Nó Code para...</h4>
+            <p class="text-sm text-gray-400 mt-1"><strong>Transformações de dados específicas e contidas.</strong> Pense nele como um "super Set". Se você precisa reformatar um objeto, fazer um cálculo complexo ou um loop rápido que é único para aquele ponto do workflow, o Nó Code é perfeito.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+            <h4 class="font-semibold text-green-accent">Use Sub-Workflows para...</h4>
+            <p class="text-sm text-gray-400 mt-1"><strong>Abstrair processos de negócio reutilizáveis.</strong> Se a sequência de nós representa uma ideia de negócio (como "Validar Pedido", "Gerar Relatório Diário", "Sincronizar Contato"), ela é uma forte candidata a se tornar um sub-workflow.</p>
+        </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Encontrando o Equilíbrio</h3>
+      <p>
+        Não é uma questão de "qual é melhor", mas de "qual é o mais apropriado para a tarefa". Um automatizador sênior sabe usar as duas ferramentas em harmonia. A regra geral é: comece com os nós padrão. Se a lógica de transformação se tornar complexa, mas for específica, use um Nó Code. Se a lógica representa um processo de negócio que você pode reutilizar ou que está poluindo seu workflow principal, transforme-a em um Sub-Workflow.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-avancado" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha "n8n Avançado"
+      </a>
+    </div>
+  </article>
+</div>

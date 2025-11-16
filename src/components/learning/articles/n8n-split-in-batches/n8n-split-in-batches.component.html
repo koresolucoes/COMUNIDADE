@@ -1,0 +1,63 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-intermediario" class="hover:text-blue-accent hover:underline">n8n Intermediário</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Processando em Lotes: O Nó "Split in Batches"</h1>
+    <p class="mt-4 text-lg text-gray-400">Descubra como processar grandes volumes de dados de forma eficiente, dividindo-os em lotes menores para evitar sobrecarregar APIs.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: Muitos Itens, Pouca Paciência</h2>
+      <p>
+        Imagine que seu workflow lê uma planilha com 5.000 clientes e, para cada um, precisa fazer uma requisição a uma API externa. Se o n8n tentar executar 5.000 requisições de uma vez, duas coisas ruins podem acontecer:
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>Sua instância n8n pode travar:</strong> Processar tantos itens simultaneamente consome muita memória e CPU.</li>
+        <li><strong>A API externa pode te bloquear:</strong> A maioria das APIs tem um "rate limit", um limite de quantas requisições elas aceitam por minuto. 5.000 requisições de uma vez certamente ultrapassarão esse limite.</li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Solução: Dividir para Conquistar</h2>
+      <p>
+        O nó <strong>Split in Batches</strong> resolve esse problema. Ele funciona como um "organizador de filas": ele pega uma longa lista de itens e a divide em várias listas menores (lotes ou "batches").
+      </p>
+      <p>
+        Em vez de o próximo nó ser executado 5.000 vezes, uma para cada item, ele será executado um número menor de vezes, uma para cada <em>lote</em>.
+      </p>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como Funciona na Prática</h2>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Processando 100 itens em lotes de 10</h4>
+        <ul class="!list-none !pl-0 space-y-2 text-sm">
+          <li><strong>Entrada do Nó:</strong> Uma lista com 100 itens.</li>
+          <li><strong>Configuração do "Split in Batches":</strong> Você define o parâmetro <code>Batch Size</code> como <code>10</code>.</li>
+          <li><strong>Saída do Nó:</strong> O nó irá gerar 10 itens. Cada um desses 10 itens conterá um array com 10 dos itens originais.</li>
+        </ul>
+        <p class="text-sm text-gray-400 mt-3">
+          O nó seguinte (ex: um HTTP Request) será executado apenas 10 vezes. Dentro dele, você pode então fazer um loop sobre os 10 itens do lote, talvez com um pequeno intervalo entre cada requisição para respeitar o rate limit.
+        </p>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Estabilidade e Respeito às APIs</h3>
+      <p>
+        O nó "Split in Batches" é uma ferramenta essencial para construir workflows robustos e escaláveis. Ele garante que suas automações possam lidar com grandes volumes de dados sem travar sua instância ou serem bloqueadas por serviços externos. Sempre que for lidar com centenas ou milhares de itens, lembre-se de "dividir para conquistar".
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-intermediario" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Manipulando Arquivos
+      </a>
+    </div>
+  </article>
+</div>
