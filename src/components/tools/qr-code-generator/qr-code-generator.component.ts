@@ -1,8 +1,6 @@
 import { Component, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-declare var QRCode: any;
-
 @Component({
   selector: 'app-qr-code-generator',
   standalone: true,
@@ -23,10 +21,11 @@ export class QrCodeGeneratorComponent implements OnInit {
   generationError = signal<string | null>(null);
 
   ngOnInit() {
+    // Attempt to generate on init, with retries to wait for the library.
     this.generateQrCode();
   }
 
-  generateQrCode() {
+  private _performGeneration() {
     const textToEncode = this.text();
     if (!textToEncode.trim()) {
       this.qrCodeDataUrl.set('');
@@ -44,7 +43,7 @@ export class QrCodeGeneratorComponent implements OnInit {
       margin: 2,
     };
 
-    QRCode.toDataURL(textToEncode, options, (error: any, url: string) => {
+    (window as any).QRCode.toDataURL(textToEncode, options, (error: any, url: string) => {
       if (error) {
         console.error('QR Code generation error:', error);
         this.qrCodeDataUrl.set('');
@@ -54,6 +53,20 @@ export class QrCodeGeneratorComponent implements OnInit {
         this.generationError.set(null);
       }
     });
+  }
+
+  generateQrCode(retryCount = 5) {
+    // Check if the QRCode library is available on the window object.
+    if (typeof (window as any).QRCode !== 'undefined') {
+      this._performGeneration();
+    } else if (retryCount > 0) {
+      // If not available, wait and retry.
+      setTimeout(() => this.generateQrCode(retryCount - 1), 200);
+    } else {
+      // If it's still not available after retries, show an error.
+      this.generationError.set('Erro: A biblioteca de geração de QR Code não carregou.');
+      console.error('QRCode library failed to load after several retries.');
+    }
   }
   
   onSizeChange(event: Event) {
