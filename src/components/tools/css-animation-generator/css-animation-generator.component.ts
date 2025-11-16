@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -81,31 +82,54 @@ export class CssAnimationGeneratorComponent {
             <h4>Como Usar o Gerador de Animações</h4>
             <ol>
                 <li><strong>Escolha uma Animação:</strong> Selecione um dos presets no menu "Animação". A pré-visualização será atualizada automaticamente.</li>
-                <li><strong>Ajuste as Propriedades:</strong> Use os sliders e menus para customizar a duração (em segundos), o atraso antes de iniciar, o número de repetições, a direção e a curva de aceleração (timing-function).</li>
+                <li><strong>Ajuste as Propriedades:</strong> Use os sliders e menus para customizar a duração, o atraso, o número de repetições, a direção e a curva de aceleração (timing-function).</li>
                 <li><strong>Teste a Animação:</strong> Clique no botão "Repetir Animação" a qualquer momento para ver o resultado de suas customizações.</li>
-                <li><strong>Copie o Código:</strong>
-                    <ul>
-                        <li>Clique em "Copiar @keyframes" e cole essa regra no seu arquivo CSS principal. Você só precisa fazer isso uma vez por tipo de animação.</li>
-                        <li>Clique em "Copiar Classe" e adicione a classe <code>.animated-element</code> (ou renomeie-a) ao elemento HTML que você deseja animar.</li>
-                    </ul>
-                </li>
+                <li><strong>Copie o Código:</strong> Copie a classe CSS e os <code>@keyframes</code> separadamente para uma melhor organização do seu código e cole no seu projeto.</li>
             </ol>
             
-            <h4>Integrando em seu Projeto</h4>
-            <p><strong>1. Adicione os @keyframes ao seu CSS:</strong></p>
-            <div class="code-wrapper">
-                <pre><code>${this.animationKeyframesCss()}</code></pre>
-                <button class="copy-button" data-copy-code="${this.animationKeyframesCss()}">Copiar</button>
-            </div>
-            <p><strong>2. Adicione a classe ao seu CSS:</strong></p>
-            <div class="code-wrapper">
-                <pre><code>${this.animationClassCss()}</code></pre>
-                <button class="copy-button" data-copy-code="${this.animationClassCss()}">Copiar</button>
-            </div>
-            <p><strong>3. Aplique a classe ao seu HTML:</strong></p>
-            <div class="code-wrapper">
-                <pre><code>&lt;div class="animated-element"&gt;Olá, Mundo!&lt;/div&gt;</code></pre>
-                <button class="copy-button" data-copy-code='<div class="animated-element">Olá, Mundo!</div>'>Copiar</button>
+            <h4>Exemplos Interativos</h4>
+            <p>Passe o mouse sobre os cards abaixo para ver a animação em ação e copie o código pronto para uso.</p>
+            <div class="presets-grid">
+                <div class="preset-card">
+                    <h5>Fade In</h5>
+                    <div class="preset-preview-wrapper">
+                        <div class="preset-preview anim-fadeIn"></div>
+                    </div>
+                    <div class="code-wrapper">
+                        <pre><code>animation: fadeIn 1s ease both;</code></pre>
+                        <button class="copy-button" data-copy-code="animation: fadeIn 1s ease both;">Copiar</button>
+                    </div>
+                </div>
+                <div class="preset-card">
+                    <h5>Slide In (Esquerda)</h5>
+                    <div class="preset-preview-wrapper">
+                        <div class="preset-preview anim-slideInLeft"></div>
+                    </div>
+                    <div class="code-wrapper">
+                        <pre><code>animation: slideInLeft 0.8s ease-out both;</code></pre>
+                        <button class="copy-button" data-copy-code="animation: slideInLeft 0.8s ease-out both;">Copiar</button>
+                    </div>
+                </div>
+                <div class="preset-card">
+                    <h5>Bounce</h5>
+                    <div class="preset-preview-wrapper">
+                        <div class="preset-preview anim-bounce"></div>
+                    </div>
+                    <div class="code-wrapper">
+                        <pre><code>animation: bounce 1s ease both;</code></pre>
+                        <button class="copy-button" data-copy-code="animation: bounce 1s ease both;">Copiar</button>
+                    </div>
+                </div>
+                <div class="preset-card">
+                    <h5>Pulse</h5>
+                    <div class="preset-preview-wrapper">
+                        <div class="preset-preview anim-pulse"></div>
+                    </div>
+                    <div class="code-wrapper">
+                        <pre><code>animation: pulse 2s ease-in-out infinite;</code></pre>
+                        <button class="copy-button" data-copy-code="animation: pulse 2s ease-in-out infinite;">Copiar</button>
+                    </div>
+                </div>
             </div>
         `
     },

@@ -1,3 +1,4 @@
+
 /* Re-using slider styles for consistency */
 .slider-thumb {
   -webkit-appearance: none;
@@ -131,4 +132,36 @@
   20%, 40%, 60%, 80% {
     transform: translate3d(10px, 0, 0);
   }
+}
+
+/* Styles for animated presets in Tool Info Section */
+:host ::ng-deep .preset-preview.anim-fadeIn {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+:host ::ng-deep .preset-card:hover .preset-preview.anim-fadeIn {
+  animation: fadeIn 1s ease both;
+}
+
+:host ::ng-deep .preset-preview.anim-slideInLeft {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 0.3s;
+}
+:host ::ng-deep .preset-card:hover .preset-preview.anim-slideInLeft {
+  animation: slideInLeft 0.8s ease-out both;
+}
+
+:host ::ng-deep .preset-preview.anim-bounce {
+  /* No initial state needed for bounce */
+}
+:host ::ng-deep .preset-card:hover .preset-preview.anim-bounce {
+  animation: bounce 1s ease both;
+}
+
+:host ::ng-deep .preset-preview.anim-pulse {
+  /* No initial state needed for pulse */
+}
+:host ::ng-deep .preset-card:hover .preset-preview.anim-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
 }
