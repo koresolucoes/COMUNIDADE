@@ -2,28 +2,31 @@
 import tls from 'node:tls';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
-export default async (req: VercelRequest, res: VercelResponse) => {
+export default (req: VercelRequest, res: VercelResponse) => {
   const { domain } = req.query;
 
   const writeError = (statusCode: number, message: string) => {
-    res.status(statusCode).json({ error: message });
+    res.status(statusCode).setHeader('Content-Type', 'application/json').end(JSON.stringify({ error: message }));
+  };
+
+  const writeSuccess = (data: any) => {
+    res.status(200).setHeader('Content-Type', 'application/json').end(JSON.stringify(data));
   };
 
   if (!domain || typeof domain !== 'string') {
     return writeError(400, 'Parâmetro "domain" é obrigatório.');
   }
 
-  const options = {
-    host: domain,
-    port: 443,
-    servername: domain, // Crucial for SNI
-    rejectUnauthorized: false, // We want the cert even if it's invalid
-  };
+  return new Promise<void>((resolve) => {
+    const options = {
+      host: domain,
+      port: 443,
+      servername: domain, // Crucial for SNI
+      rejectUnauthorized: false, // We want the cert even if it's invalid
+    };
 
-  try {
     const socket = tls.connect(options, () => {
       if (!socket.authorized) {
-        // Even if not authorized (self-signed, etc.), we can still get the cert
         if (socket.authorizationError) {
           console.warn(`SSL Authorization Error for ${domain}: ${socket.authorizationError}`);
         }
@@ -33,10 +36,11 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       socket.end();
 
       if (!cert || Object.keys(cert).length === 0) {
-        return writeError(404, `Nenhum certificado SSL encontrado para ${domain}. O site pode não usar HTTPS.`);
+        writeError(404, `Nenhum certificado SSL encontrado para ${domain}. O site pode não usar HTTPS ou o servidor não está respondendo na porta 443.`);
+        return resolve();
       }
       
-      const formatIssuer = (issuer: any) => {
+      const formatIssuer = (issuer: any): string => {
           if (!issuer) return '';
           return Object.entries(issuer)
               .map(([key, value]) => `${key}=${value}`)
@@ -76,27 +80,28 @@ export default async (req: VercelRequest, res: VercelResponse) => {
         issuerChain: issuerChain(cert.issuerCertificate)
       };
 
-      res.status(200).json(responseData);
+      writeSuccess(responseData);
+      resolve();
     });
 
     socket.on('error', (err: any) => {
       let message = 'Falha ao conectar ao host. Verifique o nome do domínio.';
-      if (err.message.includes('ENOTFOUND')) {
-          message = `Domínio "${domain}" não encontrado.`;
-      } else if (err.message.includes('ECONNREFUSED')) {
-          message = `A conexão foi recusada. A porta 443 pode estar fechada.`
+      if (err.code === 'ENOTFOUND') {
+          message = `Domínio "${domain}" não encontrado. Verifique se digitou corretamente.`;
+      } else if (err.code === 'ECONNREFUSED') {
+          message = `A conexão foi recusada. O servidor pode estar offline ou a porta 443 está fechada.`;
+      } else if (err.code === 'ETIMEDOUT') {
+          message = 'A conexão expirou. O servidor demorou muito para responder.';
       }
-      return writeError(500, message);
+      socket.destroy();
+      writeError(500, message);
+      resolve();
     });
     
-    // Set a timeout to prevent the function from hanging
-    socket.setTimeout(5000, () => {
+    socket.setTimeout(8000, () => {
         socket.destroy();
-        writeError(504, 'A conexão expirou. O servidor pode estar offline ou bloqueando conexões.');
+        writeError(504, 'A conexão expirou (timeout). O servidor pode estar offline ou bloqueando conexões.');
+        resolve();
     });
-
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Erro desconhecido no servidor.';
-    return writeError(500, message);
-  }
+  });
 };
