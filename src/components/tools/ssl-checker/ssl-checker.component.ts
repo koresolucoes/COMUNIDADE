@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 
@@ -27,9 +27,23 @@ export class SslCheckerComponent {
   error = signal<string | null>(null);
   results = signal<CertificateDetails | null>(null);
 
+  activeTab = signal<'summary' | 'raw'>('summary');
+
   daysRemaining = signal<number | null>(null);
   validityPercentage = signal<number>(0);
   status = signal<'valid' | 'expiring' | 'expired' | 'error' | 'idle'>('idle');
+
+  rawJsonResults = computed(() => {
+    const res = this.results();
+    if (!res) return '';
+    try {
+      const replacer = (key: string, value: any) =>
+        typeof value === 'bigint' ? value.toString() : value;
+      return JSON.stringify(res, replacer, 2);
+    } catch (e) {
+      return 'Erro ao formatar os dados brutos.';
+    }
+  });
 
 
   async checkSsl() {
@@ -42,6 +56,7 @@ export class SslCheckerComponent {
     this.error.set(null);
     this.results.set(null);
     this.status.set('idle');
+    this.activeTab.set('summary');
 
     try {
       const response = await fetch(`/api/ssl-check?domain=${encodeURIComponent(this.domain().trim())}`);
