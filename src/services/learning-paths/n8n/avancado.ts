@@ -21,7 +21,21 @@ const steps: LearningStep[] = [
     description: 'Descubra como manter dados persistentes durante uma execução de workflow para contadores, agregações e compartilhamento de informações entre branches.',
     path: '/learning/article/n8n-static-data',
     icon: 'memory',
-  }
+  },
+  {
+    type: 'article',
+    title: 'Controle de Versão para Workflows com Git',
+    description: 'Aprenda a usar o Git para salvar o histórico de alterações dos seus workflows, colaborar em equipe e reverter para versões anteriores com segurança.',
+    path: '/learning/article/n8n-git-versioning',
+    icon: 'history',
+  },
+  {
+    type: 'article',
+    title: 'CI/CD para Workflows n8n: Automatizando a Implantação',
+    description: 'Leve seu controle de versão para o próximo nível. Aprenda a configurar um pipeline de CI/CD para testar e implantar automaticamente seus workflows n8n a partir do Git.',
+    path: '/learning/article/n8n-cicd',
+    icon: 'rocket_launch',
+  },
 ];
 
 export const n8nAvancadoPath: LearningPath = {

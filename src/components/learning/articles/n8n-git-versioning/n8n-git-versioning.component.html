@@ -1,0 +1,95 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-avancado" class="hover:text-blue-accent hover:underline">n8n Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Controle de Versão para Workflows com Git</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a usar o Git para salvar o histórico de alterações dos seus workflows, colaborar em equipe e reverter para versões anteriores com segurança.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: "O que eu mudei que quebrou tudo?"</h2>
+      <p>
+        Você está trabalhando em um workflow complexo, faz uma pequena alteração e, de repente, nada mais funciona. Você não lembra exatamente o que mudou e agora precisa reconstruir a lógica do zero. Ou pior: um colega de equipe altera um workflow compartilhado sem avisar, e a automação para de funcionar.
+      </p>
+      <p>
+        Assim como o código tradicional, os workflows do n8n são ativos de software valiosos. Eles precisam de um histórico de alterações, um backup e uma forma de colaboração organizada. É aqui que o <strong>Git</strong> entra em cena.
+      </p>
+       <div class="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs">
+          <strong class="font-semibold">Revisão:</strong> Se você não está familiarizado com Git, recomendamos fortemente ler nosso artigo <a routerLink="/learning/article/git-github" class="font-semibold underline hover:text-blue-200">Git & GitHub: Versionando e Colaborando</a> primeiro.
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Workflows como Código: O JSON</h2>
+      <p>
+        A beleza do n8n é que todo workflow pode ser representado como um arquivo de texto no formato <strong>JSON</strong>. Isso significa que podemos tratá-lo como qualquer outro arquivo de código-fonte.
+      </p>
+      <p>
+        Para exportar seu workflow, basta clicar nos três pontos no canto superior direito da tela do n8n e selecionar "Download". Você receberá um arquivo `.json` que contém toda a definição do seu workflow: os nós, suas posições, configurações e conexões.
+      </p>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Configurando seu Repositório de Workflows</h2>
+      <p>
+        A melhor prática é ter uma pasta no seu computador dedicada a guardar os arquivos JSON dos seus workflows. Esta pasta será um <strong>repositório Git</strong>.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Inicializando o Repositório</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-bash" [textContent]="gitInitSnippet"></code></pre>
+       </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O Fluxo de Trabalho do Dia a Dia</h2>
+      <p>
+        Seu novo processo de desenvolvimento de workflows será:
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li>Faça alterações no seu workflow na interface do n8n.</li>
+        <li>Quando atingir um ponto estável (uma nova funcionalidade, uma correção), faça o download do JSON e salve-o na sua pasta do repositório, sobrescrevendo o arquivo antigo.</li>
+        <li>Use o Git para "commitar" (salvar) essa nova versão com uma mensagem clara sobre o que mudou.</li>
+        <li>Envie (<code>push</code>) para o GitHub para ter um backup e compartilhar com a equipe.</li>
+      </ol>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Comandos no Terminal</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-bash" [textContent]="workflowSnippet"></code></pre>
+       </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Superpoderes do Git: Vendo as Diferenças e Voltando no Tempo</h2>
+      <p>
+        Agora que temos um histórico, podemos fazer coisas incríveis.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Vendo o que Mudou (`git diff`)</h4>
+        <p class="text-xs text-gray-400">Antes de fazer um commit, você pode ver exatamente quais linhas do JSON foram alteradas. Isso é ótimo para revisar seu trabalho.</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash" [textContent]="diffSnippet"></code></pre>
+       </div>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Desfazendo um Desastre (`git checkout` / `git reset`)</h4>
+        <p class="text-xs text-gray-400">Fez uma alteração que quebrou tudo? Sem pânico. Você pode facilmente voltar para a última versão salva.</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash" [textContent]="restoreSnippet"></code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Profissionalizando sua Automação</h3>
+      <p>
+        Tratar seus workflows n8n como código e usar o Git para gerenciá-los é o que diferencia uma automação amadora de uma solução de nível profissional. Isso traz segurança, histórico, colaboração e a paz de espírito de saber que você nunca mais perderá seu trabalho ou ficará "caçando" um bug introduzido por uma pequena mudança.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-avancado" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha "n8n Avançado"
+      </a>
+    </div>
+  </article>
+</div>

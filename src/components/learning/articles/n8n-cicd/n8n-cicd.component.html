@@ -1,0 +1,105 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-avancado" class="hover:text-blue-accent hover:underline">n8n Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">CI/CD para Workflows n8n: Automatizando a Implantação</h1>
+    <p class="mt-4 text-lg text-gray-400">Leve seu controle de versão para o próximo nível. Aprenda a configurar um pipeline de CI/CD para testar e implantar automaticamente seus workflows n8n a partir do Git.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: A Implantação Manual é Frágil</h2>
+      <p>
+        No artigo anterior, aprendemos a versionar nossos workflows com Git. Isso é um grande avanço, mas o processo ainda tem um ponto de falha manual: alguém precisa lembrar de baixar o JSON do n8n, salvar no repositório, e outra pessoa (ou a mesma) precisa lembrar de pegar o JSON do repositório e importá-lo na instância de produção.
+      </p>
+      <p>
+        Esse processo manual é lento, propenso a erros e não escala. A solução é automatizar a implantação.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Solução: CI/CD com a API REST do n8n</h2>
+      <p>
+        <strong>CI/CD</strong> significa <strong>Integração Contínua / Implantação Contínua</strong>. É uma prática de DevOps que automatiza os passos para levar o código do repositório para a produção.
+      </p>
+      <p>Nosso objetivo é simples: <strong>quando enviarmos uma alteração (<code>git push</code>) para a branch principal do nosso repositório, um robô deve pegar os arquivos de workflow atualizados e enviá-los automaticamente para nossa instância do n8n usando a API oficial.</strong></p>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">As Ferramentas Necessárias</h2>
+      <ul class="list-disc list-inside text-gray-400">
+        <li><strong>Repositório Git:</strong> Onde seus workflows (arquivos <code>.json</code>) são armazenados (ex: <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>).</li>
+        <li><strong>Ferramenta de CI/CD:</strong> O "robô" que executa a automação. Usaremos o <strong>GitHub Actions</strong>, que é integrado ao GitHub.</li>
+        <li><strong>Uma Instância n8n:</strong> Onde os workflows serão implantados. Você precisará de uma chave de API com permissões de escrita. A documentação da API pode ser encontrada <a href="https://docs.n8n.io/api-reference/rest-api/" target="_blank" rel="noopener noreferrer">aqui</a>.</li>
+        <li><strong>Ferramentas de Linha de Comando:</strong> Usaremos <code>curl</code> para fazer as requisições à API e <code>jq</code> para processar as respostas JSON.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Passo a Passo: Configurando com GitHub Actions</h2>
+      <ol class="list-decimal list-inside text-gray-400 space-y-4">
+        <li>
+          <strong>Guarde seus Segredos:</strong><br>
+          No seu repositório do GitHub, vá em <code>Settings > Secrets and variables > Actions</code>. Crie dois "Repository secrets":
+          <ul class="list-disc list-inside text-sm mt-2 pl-6">
+            <li><code>N8N_URL</code>: A URL da sua instância n8n (ex: <code>https://n8n.meudominio.com</code>).</li>
+            <li><code>N8N_API_KEY</code>: Sua chave de API do n8n.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Crie o Arquivo do Workflow:</strong><br>
+          Na raiz do seu repositório, crie a seguinte estrutura de pastas e arquivo: <code>.github/workflows/deploy.yml</code>. Este arquivo YAML dirá ao GitHub Actions o que fazer.
+        </li>
+        <li>
+          <strong>Defina o Pipeline:</strong><br>
+          Cole o seguinte conteúdo no seu arquivo <code>deploy.yml</code>. Este script irá iterar sobre seus arquivos de workflow, verificando se eles já existem no n8n para atualizá-los ou criá-los se forem novos.
+           <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-2">
+            <h4 class="text-sm font-semibold text-gray-300 mb-2">.github/workflows/deploy.yml</h4>
+            <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml" [textContent]="githubActionSnippet"></code></pre>
+           </div>
+        </li>
+         <li>
+          <strong>Organize seus Workflows:</strong><br>
+          Certifique-se de que todos os seus arquivos <code>.json</code> de workflow estejam dentro de uma pasta chamada <code>workflows</code> na raiz do seu repositório. O nome do arquivo (ex: <code>Sincronizar Clientes.json</code>) deve ser único.
+        </li>
+      </ol>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como a Mágica Acontece</h2>
+      <p>
+        O coração do processo é o passo "Sync workflows", que executa um script:
+      </p>
+      <ol class="list-decimal list-inside text-gray-400">
+        <li><strong>Instalação do `jq`:</strong> O `jq` é uma ferramenta poderosa para manipular JSON na linha de comando. Nós a usamos para ler os nomes dos workflows dos arquivos e IDs das respostas da API.</li>
+        <li><strong>Busca de Workflows Existentes:</strong> O primeiro comando <code>curl</code> faz uma requisição <code>GET</code> à API <code>/api/v1/workflows</code> para obter uma lista de todos os workflows que já existem na sua instância.</li>
+        <li><strong>Loop e Sincronização:</strong> O script então passa por cada arquivo <code>.json</code> na sua pasta <code>workflows</code>. Para cada um, ele:
+          <ul>
+            <li>Extrai o nome do workflow do arquivo JSON.</li>
+            <li>Procura na lista de workflows da instância se já existe um com aquele nome para obter seu ID.</li>
+            <li><strong>Se o ID existe</strong>, ele faz uma requisição <code>PUT</code> para <code>/api/v1/workflows/{{ '{' }}id{{ '}' }}</code>, enviando o conteúdo do arquivo para <strong>atualizar</strong> o workflow existente.</li>
+            <li><strong>Se o ID não existe</strong>, ele faz uma requisição <code>POST</code> para <code>/api/v1/workflows</code> para <strong>criar</strong> um novo workflow.</li>
+          </ul>
+        </li>
+      </ol>
+      <p class="mt-2">Este método garante que seu repositório Git seja a "fonte da verdade", e a sua instância n8n sempre refletirá o estado do seu código, de forma totalmente automatizada.</p>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Automação da Automação</h3>
+      <p>
+        Ao configurar um pipeline de CI/CD, você alcançou o nível mais alto de maturidade no gerenciamento de automações. Seus workflows agora são tratados como código de primeira classe, com um processo de implantação robusto, repetível e totalmente automatizado. Qualquer alteração é versionada, revisada e implantada com confiança.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-avancado" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha "n8n Avançado"
+      </a>
+    </div>
+  </article>
+</div>

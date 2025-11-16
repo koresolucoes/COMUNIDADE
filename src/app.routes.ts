@@ -1,5 +1,3 @@
-
-
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { ToolsIndexComponent } from './components/tools/tools-index/tools-index.component';
@@ -87,6 +85,8 @@ import { N8nErrorHandlingComponent } from './components/learning/articles/n8n-er
 import { N8nScalingQueueModeComponent } from './components/learning/articles/n8n-scaling-queue-mode/n8n-scaling-queue-mode.component';
 import { N8nSubworkflowsVsCodeComponent } from './components/learning/articles/n8n-subworkflows-vs-code/n8n-subworkflows-vs-code.component';
 import { N8nStaticDataComponent } from './components/learning/articles/n8n-static-data/n8n-static-data.component';
+import { N8nGitVersioningComponent } from './components/learning/articles/n8n-git-versioning/n8n-git-versioning.component';
+import { N8nCicdComponent } from './components/learning/articles/n8n-cicd/n8n-cicd.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -155,6 +155,8 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/n8n-scaling-queue-mode', component: N8nScalingQueueModeComponent },
   { path: 'learning/article/n8n-subworkflows-vs-code', component: N8nSubworkflowsVsCodeComponent },
   { path: 'learning/article/n8n-static-data', component: N8nStaticDataComponent },
+  { path: 'learning/article/n8n-git-versioning', component: N8nGitVersioningComponent },
+  { path: 'learning/article/n8n-cicd', component: N8nCicdComponent },
   
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },
