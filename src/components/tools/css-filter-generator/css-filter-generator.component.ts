@@ -31,6 +31,7 @@ export class CssFilterGeneratorComponent {
     { name: 'invert', value: 0, min: 0, max: 100, step: 1, unit: '%' },
     { name: 'opacity', value: 100, min: 0, max: 100, step: 1, unit: '%' },
     { name: 'saturate', value: 100, min: 0, max: 200, step: 1, unit: '%' },
+    { name: 'sepia', value: 0, min: 0, max: 100, step: 1, unit: '%' }
   ];
 
   filters = signal<Filter[]>(JSON.parse(JSON.stringify(this.initialFilters)));
@@ -55,7 +56,7 @@ export class CssFilterGeneratorComponent {
 
         <h4>Características ⚡️</h4>
         <ul>
-            <li><strong>Múltiplos Filtros:</strong> Ajuste e combine 8 filtros CSS diferentes.</li>
+            <li><strong>Múltiplos Filtros:</strong> Ajuste e combine 9 filtros CSS diferentes, incluindo <code>sepia</code>.</li>
             <li><strong>Controles com Sliders:</strong> Interface intuitiva para modificar os valores de cada filtro.</li>
             <li><strong>Pré-visualização ao Vivo:</strong> Veja o resultado de suas alterações instantaneamente.</li>
             <li><strong>Reset Rápido:</strong> Volte aos valores padrão com um único clique.</li>
@@ -75,21 +76,50 @@ export class CssFilterGeneratorComponent {
           <li><strong>Copiar o CSS:</strong> Clique no botão "Copiar CSS" para obter a linha de código completa.</li>
         </ol>
 
-        <h4>Exemplo: Efeito Sépia Vintage</h4>
-        <p>Para dar a uma imagem uma aparência envelhecida, você pode combinar <code>grayscale</code>, <code>contrast</code> e <code>brightness</code>.</p>
-        <pre><code>.imagem-vintage {
-  filter: grayscale(80%) contrast(120%) brightness(90%);
-}</code></pre>
-        
-        <h4>Exemplo: Imagem dessaturada no hover</h4>
-        <pre><code>.galeria img {
-  filter: grayscale(100%);
-  transition: filter 0.3s ease;
-}
-.galeria img:hover {
-  filter: grayscale(0%);
-}
-</code></pre>
+        <h4>Exemplos Prontos para Copiar</h4>
+        <p>Combine filtros para criar efeitos interessantes. Use os presets abaixo como inspiração.</p>
+        <div class="presets-grid">
+            <div class="preset-card">
+                <h5>Sépia Vintage</h5>
+                <div class="preset-preview-wrapper">
+                    <img src="https://picsum.photos/200/200?image=1040" alt="Preview Sépia" style="filter: sepia(60%) contrast(110%) brightness(90%) saturate(130%);">
+                </div>
+                <div class="code-wrapper">
+                    <pre><code>filter: sepia(60%) contrast(110%) brightness(90%) saturate(130%);</code></pre>
+                    <button class="copy-button" data-copy-code="filter: sepia(60%) contrast(110%) brightness(90%) saturate(130%);">Copiar</button>
+                </div>
+            </div>
+            <div class="preset-card">
+                <h5>Preto e Branco (Alto Contraste)</h5>
+                <div class="preset-preview-wrapper">
+                    <img src="https://picsum.photos/200/200?image=1041" alt="Preview P&B" style="filter: grayscale(100%) contrast(150%);">
+                </div>
+                 <div class="code-wrapper">
+                    <pre><code>filter: grayscale(100%) contrast(150%);</code></pre>
+                    <button class="copy-button" data-copy-code="filter: grayscale(100%) contrast(150%);">Copiar</button>
+                </div>
+            </div>
+            <div class="preset-card">
+                <h5>Cores Vibrantes</h5>
+                <div class="preset-preview-wrapper">
+                    <img src="https://picsum.photos/200/200?image=1043" alt="Preview Vibrante" style="filter: saturate(200%) brightness(110%);">
+                </div>
+                 <div class="code-wrapper">
+                    <pre><code>filter: saturate(200%) brightness(110%);</code></pre>
+                    <button class="copy-button" data-copy-code="filter: saturate(200%) brightness(110%);">Copiar</button>
+                </div>
+            </div>
+            <div class="preset-card">
+                <h5>Efeito Invertido</h5>
+                <div class="preset-preview-wrapper">
+                    <img src="https://picsum.photos/200/200?image=1044" alt="Preview Invertido" style="filter: invert(100%);">
+                </div>
+                 <div class="code-wrapper">
+                    <pre><code>filter: invert(100%);</code></pre>
+                    <button class="copy-button" data-copy-code="filter: invert(100%);">Copiar</button>
+                </div>
+            </div>
+        </div>
       `
     },
     {
@@ -163,6 +193,7 @@ export class CssFilterGeneratorComponent {
       'invert': 'Inverter',
       'opacity': 'Opacidade',
       'saturate': 'Saturação',
+      'sepia': 'Sépia',
     };
     return nameMap[name] || name;
   }

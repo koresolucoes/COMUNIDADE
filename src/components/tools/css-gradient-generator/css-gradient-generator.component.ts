@@ -41,7 +41,7 @@ export class CssGradientGeneratorComponent {
   // --- UI State ---
   copyButtonText = signal('Copiar CSS');
 
-  infoSections: InfoSection[] = [
+  infoSections = computed<InfoSection[]>(() => [
     {
       title: 'Introdução e Valor da Ferramenta',
       content: `
@@ -90,17 +90,50 @@ export class CssGradientGeneratorComponent {
           <li><strong>Copiar o Código:</strong> Clique em "Copiar CSS" para obter a propriedade <code>background-image</code>.</li>
         </ol>
 
-        <h4>Exemplos Práticos</h4>
-        <p><strong>Fundo Suave para uma Seção:</strong></p>
-        <pre><code>.hero-section {
-  background-image: linear-gradient(120deg, #1d2b40, #0d1117);
-}</code></pre>
-        <p><strong>Botão Chamativo:</strong></p>
-        <pre><code>.call-to-action-button {
-  background-image: linear-gradient(to right, #58a6ff, #3b82f6);
-  color: white;
-  border: none;
-}</code></pre>
+        <h4>Gradientes Prontos para Usar</h4>
+        <p>Precisa de inspiração? Use estes presets como ponto de partida.</p>
+        <div class="presets-grid">
+            <div class="preset-card">
+                <h5>Azul Oceano</h5>
+                <div class="preset-preview-wrapper">
+                    <div class="gradient-preset-preview" style="background-image: linear-gradient(135deg, #2E3192 0%, #1BFFFF 100%);"></div>
+                </div>
+                <div class="code-wrapper">
+                    <pre><code>background-image: linear-gradient(135deg, #2E3192 0%, #1BFFFF 100%);</code></pre>
+                    <button class="copy-button" data-copy-code="background-image: linear-gradient(135deg, #2E3192 0%, #1BFFFF 100%);">Copiar</button>
+                </div>
+            </div>
+            <div class="preset-card">
+                <h5>Pôr do Sol Quente</h5>
+                <div class="preset-preview-wrapper">
+                    <div class="gradient-preset-preview" style="background-image: linear-gradient(to right, #ff7e5f, #feb47b);"></div>
+                </div>
+                <div class="code-wrapper">
+                    <pre><code>background-image: linear-gradient(to right, #ff7e5f, #feb47b);</code></pre>
+                    <button class="copy-button" data-copy-code="background-image: linear-gradient(to right, #ff7e5f, #feb47b);">Copiar</button>
+                </div>
+            </div>
+            <div class="preset-card">
+                <h5>Festa Neon</h5>
+                <div class="preset-preview-wrapper">
+                    <div class="gradient-preset-preview" style="background-image: linear-gradient(to right, #f857a6, #ff5858);"></div>
+                </div>
+                <div class="code-wrapper">
+                    <pre><code>background-image: linear-gradient(to right, #f857a6, #ff5858);</code></pre>
+                    <button class="copy-button" data-copy-code="background-image: linear-gradient(to right, #f857a6, #ff5858);">Copiar</button>
+                </div>
+            </div>
+            <div class="preset-card">
+                <h5>Floresta Verdejante</h5>
+                <div class="preset-preview-wrapper">
+                    <div class="gradient-preset-preview" style="background-image: linear-gradient(135deg, #5A3F37 0%, #2C7744 100%);"></div>
+                </div>
+                <div class="code-wrapper">
+                    <pre><code>background-image: linear-gradient(135deg, #5A3F37 0%, #2C7744 100%);</code></pre>
+                    <button class="copy-button" data-copy-code="background-image: linear-gradient(135deg, #5A3F37 0%, #2C7744 100%);">Copiar</button>
+                </div>
+            </div>
+        </div>
       `
     },
     {
@@ -130,7 +163,7 @@ export class CssGradientGeneratorComponent {
         <p>São gradientes que se repetem para preencher o fundo. Esta ferramenta não os gera diretamente, mas você pode criar o efeito adicionando <code>repeating-</code> antes da função no seu CSS, por exemplo: <code>repeating-linear-gradient(...)</code>. Isso é útil para criar padrões como listras.</p>
       `
     }
-  ];
+  ]);
 
   // --- Computed Properties ---
   activeStop = computed(() => {

@@ -50,7 +50,6 @@ export class CssAnimationGeneratorComponent {
     return this.animations.find(a => a.name === this.selectedAnimation())?.keyframes || '';
   });
 
-  // FIX: Converted infoSections to a computed signal to resolve initialization order errors and make example code dynamic.
   infoSections = computed<InfoSection[]>(() => [
     {
         title: 'Introdução e Valor da Ferramenta',
@@ -94,12 +93,20 @@ export class CssAnimationGeneratorComponent {
             
             <h4>Integrando em seu Projeto</h4>
             <p><strong>1. Adicione os @keyframes ao seu CSS:</strong></p>
-            <pre><code>${this.animationKeyframesCss()}</code></pre>
-            <p><strong>2. Adicione a classe ao seu CSS e aplique-a ao seu HTML:</strong></p>
-            <pre><code>${this.animationClassCss()}
-
-&lt;div class="animated-element"&gt;Olá, Mundo!&lt;/div&gt;
-</code></pre>
+            <div class="code-wrapper">
+                <pre><code>${this.animationKeyframesCss()}</code></pre>
+                <button class="copy-button" data-copy-code="${this.animationKeyframesCss()}">Copiar</button>
+            </div>
+            <p><strong>2. Adicione a classe ao seu CSS:</strong></p>
+            <div class="code-wrapper">
+                <pre><code>${this.animationClassCss()}</code></pre>
+                <button class="copy-button" data-copy-code="${this.animationClassCss()}">Copiar</button>
+            </div>
+            <p><strong>3. Aplique a classe ao seu HTML:</strong></p>
+            <div class="code-wrapper">
+                <pre><code>&lt;div class="animated-element"&gt;Olá, Mundo!&lt;/div&gt;</code></pre>
+                <button class="copy-button" data-copy-code='<div class="animated-element">Olá, Mundo!</div>'>Copiar</button>
+            </div>
         `
     },
     {

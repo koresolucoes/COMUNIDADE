@@ -1,7 +1,21 @@
-import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed, ElementRef, viewChild, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToolInfoSectionComponent, InfoSection } from '../../shared/tool-info-section/tool-info-section.component';
+
+interface GridItem {
+  id: number;
+  colStart: number;
+  rowStart: number;
+  colEnd: number;
+  rowEnd: number;
+}
+
+interface ResizeState {
+  active: boolean;
+  itemId: number | null;
+  itemInitialState: GridItem | null;
+}
 
 @Component({
   selector: 'app-css-grid-builder',
@@ -12,145 +26,188 @@ import { ToolInfoSectionComponent, InfoSection } from '../../shared/tool-info-se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CssGridBuilderComponent {
-  // --- Grid Settings ---
-  numCols = signal(4);
-  numRows = signal(2);
+  gridContainer = viewChild<ElementRef<HTMLDivElement>>('gridContainer');
+  
+  cols = signal(6);
+  rows = signal(4);
+  gap = signal(8);
 
-  templateCols = signal('1fr 1fr 1fr 1fr');
-  templateRows = signal('100px 100px');
+  items = signal<GridItem[]>([]);
 
-  colGap = signal(16);
-  rowGap = signal(16);
+  private resizeState = signal<ResizeState>({
+    active: false,
+    itemId: null,
+    itemInitialState: null,
+  });
 
-  copyButtonText = signal('Copiar CSS');
+  previewSpan = signal<{ colEnd: number; rowEnd: number } | null>(null);
+  
+  cellArray = computed(() => {
+    return Array.from({ length: this.cols() * this.rows() });
+  });
 
-  infoSections: InfoSection[] = [
-    {
-        title: 'Introdução e Valor da Ferramenta',
-        content: `
-            <h4>O que é o Construtor de Grid CSS?</h4>
-            <p>Esta ferramenta é um assistente visual para a criação de layouts complexos usando CSS Grid. Ela permite definir o número de colunas e linhas, ajustar seus tamanhos e espaçamentos, e gera instantaneamente o código CSS para o seu container de grid. É a maneira mais rápida de prototipar e construir a estrutura de uma página ou componente.</p>
-            
-            <h4>Por que usar CSS Grid?</h4>
-            <p>CSS Grid é um sistema de layout bidimensional que revolucionou a forma como construímos layouts na web. Ao contrário do Flexbox, que é principalmente unidimensional, o Grid se destaca no gerenciamento de colunas e linhas simultaneamente. Use-o para:</p>
-            <ul>
-                <li>Criar layouts de página inteira (cabeçalho, rodapé, barra lateral, conteúdo).</li>
-                <li>Organizar galerias de imagens ou cards de produtos de forma alinhada e responsiva.</li>
-                <li>Construir layouts complexos que antes exigiriam hacks ou frameworks pesados.</li>
-            </ul>
-
-            <h4>Características ⚡️</h4>
-            <ul>
-                <li><strong>Controle Bidimensional:</strong> Defina o número de colunas e linhas com facilidade.</li>
-                <li><strong>Unidades Flexíveis:</strong> Use unidades como <code>fr</code> (fração), <code>px</code>, <code>%</code> e <code>auto</code> para definir o tamanho das trilhas.</li>
-                <li><strong>Espaçamento (Gap):</strong> Controle o espaçamento entre colunas e linhas com sliders intuitivos.</li>
-                <li><strong>Visualização em Tempo Real:</strong> Veja seu grid tomar forma instantaneamente na área de pré-visualização.</li>
-                <li><strong>Geração de Código Limpo:</strong> Obtenha um código CSS claro e pronto para ser copiado.</li>
-            </ul>
-        `
-    },
-    {
-        title: 'Guia de Uso e Exemplos',
-        content: `
-            <h4>Como Usar o Construtor de Grid</h4>
-            <ol>
-                <li><strong>Defina as Dimensões:</strong> Use os campos 'Colunas' e 'Linhas' para definir a estrutura básica do seu grid. A pré-visualização e os campos de template serão atualizados automaticamente.</li>
-                <li><strong>Ajuste os Templates:</strong> Modifique os campos <code>grid-template-columns</code> e <code>grid-template-rows</code>. Experimente diferentes unidades. Por exemplo, <code>1fr 2fr</code> cria duas colunas, onde a segunda é duas vezes maior que a primeira.</li>
-                <li><strong>Defina os Espaçamentos:</strong> Use os sliders para ajustar <code>column-gap</code> e <code>row-gap</code>, o espaço entre os itens do grid.</li>
-                <li><strong>Copie o CSS:</strong> Pegue o código gerado na caixa de "Código CSS" e aplique-o à classe do seu container principal no seu projeto.</li>
-            </ol>
-
-            <h4>Exemplo: Layout "Holy Grail"</h4>
-            <p>Para um layout clássico com cabeçalho, rodapé, conteúdo principal e duas barras laterais, você poderia usar:</p>
-            <pre><code>.holy-grail-layout {
-  display: grid;
-  grid-template-columns: 150px 1fr 150px;
-  grid-template-rows: auto 1fr auto;
-  gap: 16px;
-  min-height: 100vh;
-}
-.header { grid-column: 1 / 4; }
-.nav { grid-column: 1 / 2; }
-.main { grid-column: 2 / 3; }
-.ads { grid-column: 3 / 4; }
-.footer { grid-column: 1 / 4; }
-</code></pre>
-            <p>Esta ferramenta te ajuda a gerar a classe principal <code>.holy-grail-layout</code>.</p>
-        `
-    },
-    {
-        title: 'Melhores Práticas e Contexto Técnico',
-        content: `
-            <h4>Grid vs. Flexbox: Quando usar cada um?</h4>
-            <ul>
-                <li>Use <strong>Grid</strong> para o layout geral da página ou para layouts bidimensionais complexos (linhas E colunas).</li>
-                <li>Use <strong>Flexbox</strong> para alinhar itens em uma única direção (uma linha OU uma coluna), como itens de um menu de navegação ou os elementos dentro de um card.</li>
-                <li>Eles não são mutuamente exclusivos! É muito comum ter um item de Grid que é, ele mesmo, um container Flexbox.</li>
-            </ul>
-            
-            <h4>Entendendo a Unidade <code>fr</code></h4>
-            <p>A unidade <code>fr</code> (fração) representa uma fração do espaço disponível no container do grid. Se você tem <code>grid-template-columns: 1fr 2fr;</code>, o espaço disponível é dividido em 3 partes, com a primeira coluna ocupando 1 parte e a segunda ocupando 2.</p>
-        `
-    },
-    {
-        title: 'Perguntas Frequentes (FAQ)',
-        content: `
-            <h4>Como faço para um item ocupar mais de uma coluna ou linha?</h4>
-            <p>Você precisa aplicar propriedades CSS diretamente ao item do grid (o filho), como <code>grid-column: span 2;</code> (para ocupar duas colunas) ou <code>grid-row-start: 1; grid-row-end: 3;</code>. Esta ferramenta foca na configuração do container pai.</p>
-
-            <h4>Como tornar o grid responsivo?</h4>
-            <p>A abordagem mais moderna é usar a função <code>repeat()</code> com <code>auto-fit</code> e <code>minmax()</code>. Por exemplo: <code>grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));</code>. Isso cria quantas colunas de no mínimo 250px couberem no container, distribuindo o espaço restante igualmente.</p>
-            
-            <h4>Posso nomear áreas do grid?</h4>
-            <p>Sim! A propriedade <code>grid-template-areas</code> é extremamente poderosa para criar layouts semânticos. No entanto, para manter a simplicidade, esta ferramenta visual foca em <code>grid-template-columns</code> e <code>grid-template-rows</code>.</p>
-        `
+  cssCode = computed(() => {
+    let css = `.parent {\n  display: grid;\n  grid-template-columns: repeat(${this.cols()}, 1fr);\n  grid-template-rows: repeat(${this.rows()}, 1fr);\n  gap: ${this.gap()}px;\n}\n\n`;
+    for (const item of this.items()) {
+      css += `.item-${item.id} {\n  grid-column: ${item.colStart} / ${item.colEnd};\n  grid-row: ${item.rowStart} / ${item.rowEnd};\n}\n\n`;
     }
-];
-
-  // --- Computed properties ---
-  gridItems = computed(() => {
-    const count = this.numCols() * this.numRows();
-    return Array.from({ length: count }, (_, i) => i + 1);
+    return css.trim();
   });
-  
-  gridContainerStyle = computed(() => ({
-    display: 'grid',
-    gridTemplateColumns: this.templateCols(),
-    gridTemplateRows: this.templateRows(),
-    gridColumnGap: `${this.colGap()}px`,
-    gridRowGap: `${this.rowGap()}px`,
-  }));
 
-  generatedCss = computed(() => {
-    return `
-.grid-container {
-  display: grid;
-  grid-template-columns: ${this.templateCols()};
-  grid-template-rows: ${this.templateRows()};
-  column-gap: ${this.colGap()}px;
-  row-gap: ${this.rowGap()}px;
-}
-    `.trim();
+  htmlCode = computed(() => {
+    let html = '<div class="parent">\n';
+    for (const item of this.items()) {
+      html += `  <div class="item-${item.id}">${item.id}</div>\n`;
+    }
+    html += '</div>';
+    return html;
   });
-  
-  // --- Methods ---
-  
-  updateNumCols(value: number) {
-    const count = Math.max(1, value);
-    this.numCols.set(count);
-    this.templateCols.set(Array(count).fill('1fr').join(' '));
+
+  infoSections = computed<InfoSection[]>(() => [
+    {
+      title: 'O que é o Construtor de Grid Interativo?',
+      content: `
+        <p>Esta é uma ferramenta totalmente visual e interativa para prototipar layouts com <strong>CSS Grid</strong>. Em vez de escrever código, você pode "desenhar" seu grid clicando para adicionar itens e arrastando para redimensioná-los. O código HTML e CSS correspondente é gerado em tempo real, pronto para ser copiado.</p>
+        <h4>Características Principais ⚡️</h4>
+        <ul>
+            <li><strong>Criação Visual:</strong> Clique em qualquer célula vazia (+) para adicionar um novo item ao grid.</li>
+            <li><strong>Redimensionamento por Arraste:</strong> Clique e arraste a alça no canto de um item para expandi-lo por múltiplas colunas e linhas.</li>
+            <li><strong>Geração de Código Instantânea:</strong> O HTML e o CSS são atualizados a cada ação, refletindo exatamente o seu layout visual.</li>
+            <li><strong>Controle da Estrutura:</strong> Defina facilmente o número de colunas, linhas e o espaçamento (gap) da sua grade.</li>
+        </ul>
+      `
+    },
+    {
+      title: 'Guia de Uso Rápido',
+      content: `
+        <ol>
+          <li><strong>Defina a Grade:</strong> Use os seletores no topo para configurar o número de <strong>colunas</strong> e <strong>linhas</strong> da sua área de trabalho.</li>
+          <li><strong>Adicione um Item:</strong> Clique em qualquer célula com um ícone de <strong>+</strong>. Um novo item de grid aparecerá naquela posição.</li>
+          <li><strong>Redimensione o Item:</strong> Cada item possui uma alça no canto inferior direito. Clique e arraste esta alça sobre as células vizinhas para expandir o item. A pré-visualização mostrará a área que ele ocupará.</li>
+          <li><strong>Remova um Item:</strong> Clique no ícone de <strong>X</strong> no canto superior direito de qualquer item para removê-lo.</li>
+          <li><strong>Copie o Código:</strong> O código nas caixas de "HTML Gerado" e "CSS Gerado" está sempre sincronizado com sua pré-visualização.</li>
+        </ol>
+      `
+    },
+    {
+      title: 'Perguntas Frequentes (FAQ)',
+      content: `
+        <h4>Por que o CSS usa <code>grid-column: start / end</code>?</h4>
+        <p>A ferramenta gera o código usando a sintaxe de linha de início e fim (ex: <code>grid-column: 1 / 3;</code>) porque é a forma mais explícita e robusta de definir o posicionamento de um item no grid. Isso evita ambiguidades e garante que o layout seja exatamente como o visualizado, sendo fácil de entender e manter.</p>
+
+        <h4>Posso criar layouts complexos?</h4>
+        <p>Sim! A ferramenta foi projetada para permitir a criação de qualquer layout de grid 2D, desde simples galerias até layouts de página complexos. A sobreposição de itens não é suportada diretamente pela UI para manter a simplicidade, mas você pode ajustar o CSS gerado manualmente se precisar.</p>
+        
+        <h4>Como a ferramenta lida com responsividade?</h4>
+        <p>O CSS gerado usa unidades <code>fr</code> (fração), que são inerentemente flexíveis. Para designs responsivos mais avançados, você pode usar o código gerado como ponto de partida dentro de suas media queries (ex: <code>@media (max-width: 768px) { ... }</code>) para redefinir o posicionamento dos itens em telas menores.</p>
+      `
+    }
+  ]);
+
+  getColRowFromIndex(index: number): { col: number; row: number } {
+    const col = (index % this.cols()) + 1;
+    const row = Math.floor(index / this.cols()) + 1;
+    return { col, row };
   }
   
-  updateNumRows(value: number) {
-    const count = Math.max(1, value);
-    this.numRows.set(count);
-    this.templateRows.set(Array(count).fill('100px').join(' '));
+  addItem(index: number) {
+    const { col, row } = this.getColRowFromIndex(index);
+    
+    // Check if the cell is already occupied
+    for (const item of this.items()) {
+      if (
+        row >= item.rowStart && row < item.rowEnd &&
+        col >= item.colStart && col < item.colEnd
+      ) {
+        return; 
+      }
+    }
+    
+    const existingIds = this.items().map(item => item.id).sort((a, b) => a - b);
+    let newId = 1;
+    for (const id of existingIds) {
+      if (id === newId) {
+        newId++;
+      } else {
+        break;
+      }
+    }
+
+    this.items.update(items => [
+      ...items,
+      { id: newId, colStart: col, rowStart: row, colEnd: col + 1, rowEnd: row + 1 }
+    ]);
   }
 
-  copyCss(): void {
-    navigator.clipboard.writeText(this.generatedCss()).then(() => {
-      this.copyButtonText.set('Copiado!');
-      setTimeout(() => this.copyButtonText.set('Copiar CSS'), 2000);
+  removeItem(id: number) {
+    this.items.update(items => items.filter(item => item.id !== id));
+  }
+  
+  resetGrid() {
+    this.items.set([]);
+  }
+  
+  onResizeStart(event: MouseEvent, item: GridItem) {
+    event.preventDefault();
+    this.resizeState.set({
+      active: true,
+      itemId: item.id,
+      itemInitialState: { ...item }
     });
+  }
+
+  @HostListener('window:mousemove', ['$event'])
+  onGridMouseMove(event: MouseEvent) {
+    if (!this.resizeState().active) return;
+
+    const currentCell = this.getCellFromEvent(event);
+    const initialState = this.resizeState().itemInitialState;
+    if (!currentCell || !initialState) return;
+
+    // cell col/row are 0-indexed, grid lines are 1-indexed
+    // colEnd/rowEnd are exclusive
+    const colEnd = Math.max(initialState.colStart + 1, currentCell.col + 2);
+    const rowEnd = Math.max(initialState.rowStart + 1, currentCell.row + 2);
+
+    this.previewSpan.set({ colEnd, rowEnd });
+  }
+
+  @HostListener('window:mouseup', ['$event'])
+  onGridMouseUp(event: MouseEvent) {
+    if (!this.resizeState().active) return;
+
+    const finalSpan = this.previewSpan();
+    const itemId = this.resizeState().itemId;
+
+    if (finalSpan && itemId !== null) {
+      this.items.update(items =>
+        items.map(item =>
+          item.id === itemId
+            ? { ...item, colEnd: finalSpan.colEnd, rowEnd: finalSpan.rowEnd }
+            : item
+        )
+      );
+    }
+    
+    this.resizeState.set({ active: false, itemId: null, itemInitialState: null });
+    this.previewSpan.set(null);
+  }
+
+  private getCellFromEvent(event: MouseEvent): { col: number; row: number } | null {
+    const container = this.gridContainer()?.nativeElement;
+    if (!container) return null;
+
+    const rect = container.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const col = Math.floor(x / (rect.width / this.cols()));
+    const row = Math.floor(y / (rect.height / this.rows()));
+
+    if (col < 0 || col >= this.cols() || row < 0 || row >= this.rows()) {
+        return null;
+    }
+
+    return { col, row };
   }
 }
