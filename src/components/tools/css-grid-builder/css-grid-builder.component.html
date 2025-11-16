@@ -7,69 +7,108 @@
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <!-- Controls Column -->
     <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6">
-      <h2 class="text-xl font-semibold text-white">Configurações da Grade</h2>
-      
-      <!-- Grid Dimensions -->
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label for="columns" class="block text-sm font-medium text-gray-400 mb-2">Colunas</label>
-          <input id="columns" type="number" min="1" [ngModel]="columns()" (ngModelChange)="updateColumns($any($event))" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
-        </div>
-        <div>
-          <label for="rows" class="block text-sm font-medium text-gray-400 mb-2">Linhas</label>
-          <input id="rows" type="number" min="1" [ngModel]="rows()" (ngModelChange)="updateRows($any($event))" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
-        </div>
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-semibold text-white">Configurações da Grade</h2>
+        <button (click)="resetLayout()" class="text-sm text-blue-accent hover:underline flex items-center gap-1">
+          <span class="material-icons-outlined text-base">restart_alt</span>
+          Resetar Layout
+        </button>
       </div>
 
-      <!-- Gaps -->
-       <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label for="column-gap" class="block text-sm font-medium text-gray-400 mb-2">Espaço entre Colunas (px)</label>
-          <input id="column-gap" type="number" min="0" [ngModel]="columnGap()" (ngModelChange)="columnGap.set(+$event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+      <!-- Grid Dimensions & Gaps -->
+      <div class="p-4 bg-gray-800/30 border border-gray-700/50 rounded-lg space-y-4">
+        <h3 class="text-sm font-medium text-gray-400">Dimensões e Espaçamento</h3>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="columns" class="block text-xs text-gray-300 mb-1">Colunas</label>
+            <input id="columns" type="number" min="1" [ngModel]="columns()" (ngModelChange)="updateColumns($any($event))" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+          </div>
+          <div>
+            <label for="rows" class="block text-xs text-gray-300 mb-1">Linhas</label>
+            <input id="rows" type="number" min="1" [ngModel]="rows()" (ngModelChange)="updateRows($any($event))" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+          </div>
         </div>
-        <div>
-          <label for="row-gap" class="block text-sm font-medium text-gray-400 mb-2">Espaço entre Linhas (px)</label>
-          <input id="row-gap" type="number" min="0" [ngModel]="rowGap()" (ngModelChange)="rowGap.set(+$event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="column-gap" class="block text-xs text-gray-300 mb-1">Espaço Colunas (px)</label>
+            <input id="column-gap" type="number" min="0" [ngModel]="columnGap()" (ngModelChange)="columnGap.set(+$event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+          </div>
+          <div>
+            <label for="row-gap" class="block text-xs text-gray-300 mb-1">Espaço Linhas (px)</label>
+            <input id="row-gap" type="number" min="0" [ngModel]="rowGap()" (ngModelChange)="rowGap.set(+$event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+          </div>
         </div>
       </div>
 
       <!-- Column & Row Sizing -->
-      <div class="space-y-4">
+      <div class="p-4 bg-gray-800/30 border border-gray-700/50 rounded-lg space-y-4">
+        <h3 class="text-sm font-medium text-gray-400">Tamanhos das Trilhas</h3>
         <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">Tamanhos das Colunas (grid-template-columns)</label>
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            @for(col of columnValues(); track trackByIndex($index)) {
-              <input type="text" [ngModel]="col" (ngModelChange)="updateColumnValue($index, $event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm font-mono">
+          <label class="block text-xs text-gray-300 mb-2">Colunas</label>
+          <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
+            @for(track of columnTracks(); track trackByIndex($index)) {
+              <div class="flex items-center bg-gray-800 rounded-md border border-gray-700">
+                <input type="number" [ngModel]="track.value" (ngModelChange)="updateTrack('column', $index, 'value', +$event)" class="w-full bg-transparent border-none text-white p-2 text-sm font-mono focus:ring-0" [disabled]="track.unit === 'auto'">
+                <select [ngModel]="track.unit" (ngModelChange)="updateTrack('column', $index, 'unit', $event)" class="bg-gray-700 border-none text-white rounded-r-md p-2 text-sm focus:ring-0 appearance-none">
+                  @for(unit of units; track unit) { <option [value]="unit">{{unit}}</option> }
+                </select>
+              </div>
             }
           </div>
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-400 mb-2">Tamanhos das Linhas (grid-template-rows)</label>
-           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            @for(row of rowValues(); track trackByIndex($index)) {
-              <input type="text" [ngModel]="row" (ngModelChange)="updateRowValue($index, $event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm font-mono">
+          <label class="block text-xs text-gray-300 mb-2">Linhas</label>
+           <div class="grid grid-cols-2 lg:grid-cols-3 gap-2">
+            @for(track of rowTracks(); track trackByIndex($index)) {
+              <div class="flex items-center bg-gray-800 rounded-md border border-gray-700">
+                <input type="number" [ngModel]="track.value" (ngModelChange)="updateTrack('row', $index, 'value', +$event)" class="w-full bg-transparent border-none text-white p-2 text-sm font-mono focus:ring-0" [disabled]="track.unit === 'auto'">
+                <select [ngModel]="track.unit" (ngModelChange)="updateTrack('row', $index, 'unit', $event)" class="bg-gray-700 border-none text-white rounded-r-md p-2 text-sm focus:ring-0 appearance-none">
+                  @for(unit of units; track unit) { <option [value]="unit">{{unit}}</option> }
+                </select>
+              </div>
             }
           </div>
         </div>
       </div>
 
-      <!-- Item Control -->
-      <div>
-        <label class="block text-sm font-medium text-gray-400 mb-2">Itens da Grade</label>
+      <!-- Item Controls -->
+      <div class="p-4 bg-gray-800/30 border border-gray-700/50 rounded-lg space-y-4">
+        <h3 class="text-sm font-medium text-gray-400">Itens da Grade</h3>
         <div class="flex items-center gap-4">
           <button (click)="addItem()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">+</button>
           <span class="text-white font-mono">{{ itemCount() }} Itens</span>
           <button (click)="removeItem()" [disabled]="itemCount() === 0" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">-</button>
         </div>
+        
+        @if(selectedItem(); as item) {
+          <div class="pt-4 border-t border-gray-700 space-y-4">
+              <h3 class="text-base font-semibold text-white">Item Selecionado (#{{ (selectedItemIndex() ?? -1) + 1 }})</h3>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="col-span" class="block text-xs text-gray-300 mb-1">Expandir Colunas (Span)</label>
+                  <input id="col-span" type="number" min="1" [max]="columns()" [ngModel]="item.colSpan" (ngModelChange)="updateItemSpan('colSpan', $any($event))" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+                </div>
+                <div>
+                  <label for="row-span" class="block text-xs text-gray-300 mb-1">Expandir Linhas (Span)</label>
+                  <input id="row-span" type="number" min="1" [max]="rows()" [ngModel]="item.rowSpan" (ngModelChange)="updateItemSpan('rowSpan', $any($event))" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+                </div>
+              </div>
+          </div>
+        }
       </div>
     </div>
 
     <!-- Preview & Code Column -->
-    <div class="space-y-6">
+    <div class="flex flex-col gap-6">
       <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[400px]">
         <div class="grid-preview-container" [style.display]="gridContainerStyle()['display']" [style.grid-template-columns]="gridContainerStyle()['grid-template-columns']" [style.grid-template-rows]="gridContainerStyle()['grid-template-rows']" [style.column-gap]="gridContainerStyle()['column-gap']" [style.row-gap]="gridContainerStyle()['row-gap']">
           @for(item of items(); track item) {
-            <div class="grid-item" (click)="selectItem(item)" [class.selected]="selectedItemIndex() === item">
+            <div 
+              class="grid-item" 
+              (click)="selectItem(item)" 
+              [class.selected]="selectedItemIndex() === item"
+              [style.grid-column-end]="getItemStyle(item)['grid-column-end']"
+              [style.grid-row-end]="getItemStyle(item)['grid-row-end']">
               {{ item + 1 }}
             </div>
           }
