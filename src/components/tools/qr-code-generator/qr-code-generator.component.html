@@ -87,13 +87,25 @@
     </div>
     
     <!-- Right Column: QR Code Preview -->
-    <div class="flex flex-col items-center justify-center bg-gray-900 border border-gray-800 rounded-lg p-6">
-       <div class="bg-white p-4 rounded-lg shadow-lg">
-          <canvas #qrCanvas></canvas>
+    <div class="flex flex-col items-center justify-center bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[400px]">
+       <div 
+        class="p-4 rounded-lg shadow-lg transition-colors inline-block"
+        [style.background-color]="lightColor()">
+          @if(qrCodeDataUrl()) {
+            <img [src]="qrCodeDataUrl()" [width]="size()" [height]="size()" alt="QR Code gerado">
+          } @else if (generationError()) {
+            <div class="flex items-center justify-center text-center p-8" [style.width.px]="size()" [style.height.px]="size()">
+              <p class="text-red-500">{{ generationError() }}</p>
+            </div>
+          } @else {
+            <div class="flex items-center justify-center text-center p-8" [style.width.px]="size()" [style.height.px]="size()">
+              <p [style.color]="darkColor()">Digite um texto para gerar o QR Code.</p>
+            </div>
+          }
        </div>
        <button 
           (click)="downloadQrCode()"
-          [disabled]="!text()"
+          [disabled]="!qrCodeDataUrl()"
           class="mt-6 w-full max-w-xs px-4 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
           <span class="material-icons-outlined">download</span>
           Baixar PNG
