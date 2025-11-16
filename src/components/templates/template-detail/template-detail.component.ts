@@ -145,6 +145,18 @@ export class TemplateDetailComponent {
     container.addEventListener('mouseup', () => { this.editor.panning = false; });
     container.addEventListener('mouseleave', () => { this.editor.panning = false; });
 
+    // Enable vertical scrolling with mouse wheel, allow zoom with Ctrl/Cmd
+    container.addEventListener('wheel', (e: WheelEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        // Allow default zoom behavior
+        return;
+      }
+      e.preventDefault();
+      // Adjust canvas Y position for vertical panning.
+      this.editor.canvas_y -= e.deltaY;
+      this.editor.update();
+    }, { passive: false });
+
     this.renderVerticalWorkflow(workflowData);
   }
   
@@ -331,19 +343,24 @@ export class TemplateDetailComponent {
   private setInitialCanvasView(nodePositions: Map<string, {x: number, y: number}>, startNodeIds: string[]) {
     if (!this.editor || startNodeIds.length === 0) return;
 
-    const startPos = nodePositions.get(startNodeIds[0]);
-    if (!startPos) return;
-
     const container = this.drawflowContainer()?.nativeElement;
     if (!container) return;
+    
+    const startPositions = startNodeIds.map(id => nodePositions.get(id)).filter(pos => !!pos) as {x: number, y: number}[];
+    if (startPositions.length === 0) return;
 
+    const minX = Math.min(...startPositions.map(p => p.x));
+    const maxX = Math.max(...startPositions.map(p => p.x));
+    const topY = startPositions[0].y; // All start nodes are at the same level/y
+
+    const centerX = minX + (maxX - minX) / 2;
     const containerWidth = container.clientWidth;
     const zoom = this.editor.zoom;
 
-    // Center horizontally on the first start node
-    this.editor.canvas_x = (containerWidth / 2) / zoom - (startPos.x + 125); // 125 = node width / 2
+    // Center horizontally on the midpoint of start nodes
+    this.editor.canvas_x = (containerWidth / 2) / zoom - (centerX + 125); // 125 = node width / 2
     // Position vertically near the top
-    this.editor.canvas_y = -startPos.y + 50; // 50px margin from top
+    this.editor.canvas_y = -topY + 50; // 50px margin from top
 
     if (typeof this.editor.update === 'function') {
       this.editor.update();
