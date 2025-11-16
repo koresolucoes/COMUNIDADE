@@ -1,0 +1,137 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-logica-web" class="hover:text-blue-accent hover:underline">Fundamentos da Lógica e da Web</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O que é Programação?</h1>
+    <p class="mt-4 text-lg text-gray-400">Descubra o que significa "escrever código" e como os computadores entendem as instruções que damos a eles.</p>
+  </header>
+
+  <article class="prose-container space-y-8">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia da Receita</h2>
+      <p>
+        Imagine que você quer ensinar um robô a fazer um sanduíche. Você não pode simplesmente dizer "faça um sanduíche". O robô não entenderia. Você precisa dar instruções extremamente precisas e sequenciais:
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li>Pegue duas fatias de pão.</li>
+        <li>Passe manteiga na fatia 1.</li>
+        <li>Coloque uma fatia de queijo sobre a fatia 1.</li>
+        <li>Coloque a fatia 2 sobre a fatia 1.</li>
+      </ol>
+      <p>
+        <strong>Programação é exatamente isso:</strong> é a arte de escrever uma "receita" (um conjunto de instruções) que um computador pode entender e executar para realizar uma tarefa. O computador é como o nosso robô: incrivelmente poderoso, mas muito literal. Ele só faz o que mandamos.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O que é "Código"?</h2>
+      <p>
+        O "código" é a receita em si. É um texto que escrevemos em um arquivo, seguindo as regras de uma linguagem específica que o computador foi treinado para entender. Cada linha de código é uma instrução.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: O famoso "Olá, Mundo!"</h4>
+        <p class="text-xs text-gray-400 mb-2">Esta é a primeira instrução que a maioria dos programadores aprende. Ela simplesmente diz ao computador para mostrar a mensagem "Olá, Mundo!" na tela.</p>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">print("Olá, Mundo!")</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">As Linguagens de Programação</h2>
+      <p>
+        Assim como os humanos têm diferentes idiomas (Português, Inglês, Japonês), existem muitas linguagens de programação. Cada uma tem sua própria "gramática" (sintaxe), mas muitas compartilham os mesmos conceitos lógicos fundamentais.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">"Olá, Mundo!" em diferentes linguagens:</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+          <div>
+            <p class="text-xs font-semibold text-gray-400">Python (popular para automação e dados)</p>
+            <pre class="!bg-gray-900 !p-3 !my-0 text-sm"><code class="language-python">print("Olá, Mundo!")</code></pre>
+          </div>
+          <div>
+            <p class="text-xs font-semibold text-gray-400">JavaScript (a linguagem da web)</p>
+            <pre class="!bg-gray-900 !p-3 !my-0 text-sm"><code class="language-js">console.log("Olá, Mundo!");</code></pre>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mt-4">Note que o objetivo é o mesmo, mas a forma de escrever (a sintaxe) é um pouco diferente. Você não precisa aprender todas! A maioria dos desenvolvedores se especializa em algumas.</p>
+      </div>
+    </div>
+    
+     <div>
+      <h2 class="text-2xl font-semibold text-white">Como o Computador Entende? O "Tradutor"</h2>
+      <p>
+        O código que escrevemos é feito para ser lido por humanos. Mas o processador de um computador só entende "código de máquina" (basicamente, zeros e uns). Então, como a mágica acontece? Usamos um programa especial que atua como um tradutor.
+      </p>
+      <div class="p-6 bg-gray-800 border-l-4 border-blue-accent rounded-r-lg">
+          <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
+              <div class="p-3 bg-gray-700 rounded-md">
+                  <p class="text-sm font-semibold text-white">Seu Código</p>
+                  <p class="text-xs text-gray-400">(Legível por humanos)</p>
+              </div>
+              <span class="material-icons-outlined text-blue-accent text-2xl">arrow_forward</span>
+              <div class="p-3 bg-gray-700 rounded-md">
+                  <p class="text-sm font-semibold text-white">Compilador / Interpretador</p>
+                  <p class="text-xs text-gray-400">(O Tradutor)</p>
+              </div>
+              <span class="material-icons-outlined text-blue-accent text-2xl">arrow_forward</span>
+              <div class="p-3 bg-gray-700 rounded-md">
+                  <p class="text-sm font-semibold text-white">Código de Máquina</p>
+                  <p class="text-xs text-gray-400">(Linguagem do Computador)</p>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O Que Podemos Construir com Programação?</h2>
+      <p>Praticamente tudo no mundo digital! A programação é a base para:</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+        <div class="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg">
+          <span class="material-icons-outlined text-blue-accent text-3xl">public</span>
+          <div>
+            <h4 class="font-semibold text-gray-200">Websites e Aplicações</h4>
+            <p class="text-sm text-gray-400">Desde blogs simples até redes sociais complexas como o Facebook.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg">
+          <span class="material-icons-outlined text-blue-accent text-3xl">lan</span>
+          <div>
+            <h4 class="font-semibold text-gray-200">Automação de Tarefas</h4>
+            <p class="text-sm text-gray-400">Rotinas que transferem dados, enviam e-mails e conectam sistemas, como o n8n faz.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg">
+          <span class="material-icons-outlined text-blue-accent text-3xl">sports_esports</span>
+          <div>
+            <h4 class="font-semibold text-gray-200">Jogos</h4>
+            <p class="text-sm text-gray-400">Dos jogos de celular aos grandes títulos de console, tudo é feito com código.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg">
+          <span class="material-icons-outlined text-blue-accent text-3xl">analytics</span>
+          <div>
+            <h4 class="font-semibold text-gray-200">Análise de Dados e IA</h4>
+            <p class="text-sm text-gray-400">Inteligências Artificiais e algoritmos que analisam grandes volumes de dados.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Programar é Resolver Problemas</h3>
+      <p>
+        No fim do dia, programar é a arte de resolver problemas. É sobre quebrar um grande desafio em passos lógicos e minúsculos que um computador pode executar. A linguagem de programação é apenas a ferramenta que usamos para escrever a solução.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+
+  </article>
+</div>

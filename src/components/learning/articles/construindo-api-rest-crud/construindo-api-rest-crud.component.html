@@ -1,0 +1,110 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/do-codigo-a-nuvem" class="hover:text-blue-accent hover:underline">Do Código à Nuvem</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Construindo sua Primeira API REST (CRUD)</h1>
+    <p class="mt-4 text-lg text-gray-400">Crie os endpoints básicos para Criar, Ler, Atualizar e Deletar (CRUD) dados em seu banco através da sua API.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      Agora que nosso servidor Node.js sabe como se conectar ao banco de dados, vamos ensiná-lo a fazer as quatro operações fundamentais que toda aplicação precisa: <strong>CRUD (Create, Read, Update, Delete)</strong>. Vamos construir uma API para gerenciar uma lista de tarefas.
+    </p>
+
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. Preparando o Terreno: A Tabela no Banco</h2>
+      <p>
+        Primeiro, precisamos de um lugar no nosso banco de dados PostgreSQL para guardar as tarefas. Conecte-se ao seu banco usando sua ferramenta preferida (DBeaver, pgAdmin, etc.) e execute o seguinte comando SQL para criar nossa tabela:
+      </p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-sql" [textContent]="sqlCreateTable"></code></pre>
+      <p class="text-sm text-gray-400">Isso cria uma tabela chamada <code>tarefas</code> com um ID que se auto-incrementa, uma descrição de texto e um status booleano que começa como falso.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. O Ingrediente Secreto: `express.json()`</h2>
+      <p>
+        Para que nossa API consiga ler os dados enviados nos corpos das requisições `POST` e `PUT` (que virão em formato JSON), precisamos adicionar uma linha de "configuração" ao nosso <code>index.js</code>. Essa linha é chamada de <strong>middleware</strong>.
+      </p>
+      <p>Adicione <code>app.use(express.json());</code> logo após a linha <code>const app = express();</code>.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">index.js (início)</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-javascript" [textContent]="middlewareSnippet"></code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Construindo as Rotas (Endpoints)</h2>
+      <p>Agora, vamos adicionar cada uma das operações CRUD como um endpoint no nosso <code>index.js</code>.</p>
+      
+      <h3 class="text-xl font-bold text-white mt-6">Read (Ler): GET /tarefas e GET /tarefas/:id</h3>
+      <p>Vamos criar duas rotas GET: uma para listar todas as tarefas e outra para buscar uma tarefa específica pelo seu ID.</p>
+      <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-javascript" [textContent]="getTasksSnippet"></code></pre>
+      <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-javascript" [textContent]="getTaskByIdSnippet"></code></pre>
+
+      <h3 class="text-xl font-bold text-white mt-6">Create (Criar): POST /tarefas</h3>
+      <p>Esta rota receberá um JSON no corpo da requisição com a descrição da nova tarefa e a inserirá no banco.</p>
+      <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-javascript" [textContent]="createTaskSnippet"></code></pre>
+      
+      <h3 class="text-xl font-bold text-white mt-6">Update (Atualizar): PUT /tarefas/:id</h3>
+      <p>Esta rota atualizará uma tarefa existente, identificada pelo ID na URL.</p>
+      <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-javascript" [textContent]="updateTaskSnippet"></code></pre>
+
+      <h3 class="text-xl font-bold text-white mt-6">Delete (Deletar): DELETE /tarefas/:id</h3>
+      <p>Finalmente, esta rota removerá uma tarefa do banco de dados.</p>
+      <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-javascript" [textContent]="deleteTaskSnippet"></code></pre>
+    </div>
+
+    <div class="p-6 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg">
+      <h2 class="text-2xl font-semibold text-blue-200 !mt-0">4. Hora de Testar com `curl` no Terminal!</h2>
+      <p>Com todas as rotas prontas, é hora de testar nossa API. Reinicie seu servidor (<code>node index.js</code>). Agora, abra uma <strong>nova janela do terminal</strong> (deixe a do servidor rodando!) e use o comando <code>curl</code> para interagir com seus endpoints.</p>
+      <ol class="list-decimal list-inside space-y-4">
+        <li><strong>Crie uma tarefa (POST):</strong>
+          <p class="text-sm">Copie e cole o comando abaixo no seu novo terminal.</p>
+          <pre class="!bg-gray-950/50 !p-2 !my-1 text-xs"><code [textContent]="curlCreate"></code></pre>
+          <p class="text-sm">Você deve receber de volta o JSON da tarefa criada com um ID.</p>
+        </li>
+        <li><strong>Liste todas as tarefas (GET):</strong>
+          <p class="text-sm">Agora, liste as tarefas existentes.</p>
+          <pre class="!bg-gray-950/50 !p-2 !my-1 text-xs"><code [textContent]="curlGetAll"></code></pre>
+          <p class="text-sm">Você deve ver uma lista (array) com a tarefa que acabou de criar. Anote o <code>id</code> dela.</p>
+        </li>
+        <li><strong>Atualize a tarefa (PUT):</strong>
+          <p class="text-sm">Vamos atualizar a tarefa com ID 1 (substitua o <code>/1</code> se seu ID for diferente).</p>
+           <pre class="!bg-gray-950/50 !p-2 !my-1 text-xs"><code [textContent]="curlUpdate"></code></pre>
+          <p class="text-sm">Você verá a tarefa retornada com os dados atualizados.</p>
+        </li>
+        <li><strong>Delete a tarefa (DELETE):</strong>
+          <p class="text-sm">Finalmente, vamos apagar a tarefa (lembre-se de usar o ID correto).</p>
+          <pre class="!bg-gray-950/50 !p-2 !my-1 text-xs"><code [textContent]="curlDelete"></code></pre>
+          <p class="text-sm">Este comando não retorna nada se for bem-sucedido. Se você rodar o <code>curl http://localhost:3000/tarefas</code> novamente, a lista estará vazia.</p>
+        </li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">5. O Código Final</h2>
+      <p>Seu arquivo <code>index.js</code> completo deve se parecer com isto:</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">index.js (Completo)</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-javascript" [textContent]="finalIndexJs"></code></pre>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Você Construiu uma API!</h3>
+      <p>
+        Parabéns! Você acaba de construir e testar uma API REST completa. Você criou "portas" (endpoints) na sua aplicação que permitem que o mundo exterior (ou outras aplicações) interaja com seus dados de forma estruturada e segura. Este é o alicerce para construir qualquer tipo de aplicação web ou automação complexa.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/do-codigo-a-nuvem" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

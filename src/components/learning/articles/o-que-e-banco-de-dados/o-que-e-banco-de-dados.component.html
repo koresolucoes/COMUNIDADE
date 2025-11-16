@@ -1,0 +1,119 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/do-codigo-a-nuvem" class="hover:text-blue-accent hover:underline">Do Código à Nuvem</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O que é um Banco de Dados?</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda a diferença entre bancos de dados SQL (como PostgreSQL) e NoSQL e quando usar cada um.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia do Arquivo de Escritório</h2>
+      <p>
+        Imagine que sua aplicação é um escritório movimentado. As informações não podem ficar espalhadas em papéis soltos. Você precisa de um sistema organizado para guardar, encontrar e atualizar informações de forma rápida e segura.
+      </p>
+      <p>
+        Um <strong>Banco de Dados</strong> é o arquivo de aço super organizado do seu escritório digital. É um software especializado em armazenar, gerenciar e recuperar dados de forma estruturada e eficiente. É o "cérebro" da sua aplicação, guardando tudo, desde informações de usuários até listas de produtos.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">As Duas Grandes Famílias: SQL vs. NoSQL</h2>
+      <p>
+        Existem muitas maneiras de organizar um arquivo. As duas filosofias mais populares no mundo dos bancos de dados são SQL e NoSQL.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">SQL (Relacional)</h4>
+          <p class="text-sm text-gray-400 mt-2">Pense em uma coleção de <strong>planilhas do Excel (tabelas)</strong>, onde cada linha é um registro e cada coluna tem um tipo de dado fixo (texto, número, data). As planilhas podem se relacionar umas com as outras.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">NoSQL (Não-Relacional)</h4>
+          <p class="text-sm text-gray-400 mt-2">Pense em um <strong>arquivo de documentos (como JSON)</strong>. Cada documento é autossuficiente e pode ter uma estrutura diferente. Não há regras rígidas sobre colunas, e os dados são mais flexíveis.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">SQL (Relacional) em Detalhes</h2>
+      <p>A sigla SQL significa <strong>Structured Query Language</strong> (Linguagem de Consulta Estruturada). O modelo relacional organiza dados em tabelas. A principal força é a <strong>integridade dos dados</strong> e a capacidade de criar relações complexas.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Usuários e Pedidos</h4>
+        <p class="text-xs text-gray-400">Tabela `usuarios`:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-sql">| id | nome        | email                |
+|----|-------------|----------------------|
+| 1  | Ana Silva   | ana.silva@email.com  |
+| 2  | Bruno Costa | bruno.costa@email.com|</code></pre>
+        <p class="text-xs text-gray-400 mt-4">Tabela `pedidos`:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-sql">| id | id_usuario | produto     | valor |
+|----|------------|-------------|-------|
+| 101| 1          | Livro       | 49.90 |
+| 102| 1          | Caneca      | 25.00 |
+| 103| 2          | Camiseta    | 79.90 |</code></pre>
+        <p class="text-xs text-gray-400 mt-2">A coluna `id_usuario` na tabela de pedidos se relaciona com a coluna `id` na tabela de usuários. Isso garante que cada pedido pertença a um usuário existente.</p>
+      </div>
+      <p class="mt-4"><strong>Exemplos Populares:</strong> PostgreSQL, MySQL, SQL Server, Oracle.</p>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">NoSQL (Não-Relacional) em Detalhes</h2>
+      <p>NoSQL significa "Not Only SQL". Essa família abrange vários modelos, sendo o mais comum o de "documentos". A principal força é a <strong>flexibilidade e escalabilidade horizontal</strong> (adicionar mais máquinas para lidar com mais dados).</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Usuários e Pedidos em um Documento JSON</h4>
+        <p class="text-xs text-gray-400">Em vez de duas tabelas, teríamos uma "coleção" de documentos de usuários, onde os pedidos de cada um podem estar aninhados dentro do próprio documento.</p>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-json">{{ '{' }}
+  "id": "1",
+  "nome": "Ana Silva",
+  "email": "ana.silva@email.com",
+  "pedidos": [
+    {{ '{' }} "id_pedido": "101", "produto": "Livro", "valor": 49.90 {{ '}' }},
+    {{ '{' }} "id_pedido": "102", "produto": "Caneca", "valor": 25.00 {{ '}' }}
+  ]
+{{ '}' }}</code></pre>
+       </div>
+       <p class="mt-4"><strong>Exemplos Populares:</strong> MongoDB (Documento), Redis (Chave-Valor), Cassandra (Colunar).</p>
+    </div>
+    
+    <div>
+        <h2 class="text-2xl font-semibold text-white">Quando Usar Cada Um?</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 bg-gray-800/50 rounded-lg">
+                <h4 class="font-semibold text-green-accent">Use SQL quando...</h4>
+                <ul class="list-disc list-inside text-sm text-gray-400 mt-2 space-y-1">
+                    <li>A integridade e consistência dos dados são críticas (sistemas financeiros, e-commerce).</li>
+                    <li>Seus dados são bem estruturados e os "esquemas" (colunas das tabelas) não mudam com frequência.</li>
+                    <li>Você precisa fazer consultas complexas que juntam informações de várias tabelas.</li>
+                </ul>
+            </div>
+            <div class="p-4 bg-gray-800/50 rounded-lg">
+                <h4 class="font-semibold text-blue-accent">Use NoSQL quando...</h4>
+                <ul class="list-disc list-inside text-sm text-gray-400 mt-2 space-y-1">
+                    <li>Você precisa de altíssima performance e escala para um volume massivo de dados (Big Data, redes sociais).</li>
+                    <li>A estrutura dos seus dados é flexível ou muda constantemente.</li>
+                    <li>Seus dados não são fortemente relacionados (ex: logs, dados de sensores).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Ferramentas Diferentes para Problemas Diferentes</h3>
+      <p>
+        Não existe "o melhor" banco de dados, apenas o mais adequado para o seu projeto. Para a maioria das aplicações web tradicionais e para quem está começando, o modelo <strong>SQL (Relacional)</strong> é uma base fantástica, sólida e confiável.
+      </p>
+      <p>
+        Por isso, para os próximos passos desta trilha, vamos focar no <strong>PostgreSQL</strong>, um dos bancos de dados relacionais de código aberto mais poderosos e amados pela comunidade de desenvolvedores.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/do-codigo-a-nuvem" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

@@ -1,0 +1,114 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-logica-web" class="hover:text-blue-accent hover:underline">Fundamentos da Lógica e da Web</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Entendendo JSON: A Estrutura de Dados da Web</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a ler e entender o formato JSON, a maneira mais comum de trocar dados entre sistemas na internet.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      Quando uma API nos responde ou quando um webhook nos envia dados, essa informação precisa vir em um formato estruturado que tanto humanos quanto máquinas possam entender. O formato mais popular para isso é o <strong>JSON (JavaScript Object Notation)</strong>.
+    </p>
+
+    <!-- 1. Analogia -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia do Cartão de Visitas</h2>
+      <p>
+        Pense em um cartão de visitas. Ele contém informações estruturadas:
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg text-sm">
+        <p><strong>Nome:</strong> João Silva</p>
+        <p><strong>Cargo:</strong> Desenvolvedor</p>
+        <p><strong>Telefone:</strong> (11) 99999-8888</p>
+        <p><strong>Ativo:</strong> Sim</p>
+      </div>
+      <p class="mt-4">
+        Cada informação tem uma "etiqueta" (Nome, Cargo) e um "valor" (João Silva, Desenvolvedor). O JSON funciona exatamente da mesma maneira, mas com uma sintaxe específica que os computadores entendem.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O que é JSON?</h2>
+      <p>
+        JSON é um formato de texto para representar dados estruturados. É "a língua que os dados falam na web". Vamos traduzir nosso cartão de visitas para JSON:
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Cartão de Visitas em JSON</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-json">{{ '{' }}
+  "nome": "João Silva",
+  "cargo": "Desenvolvedor",
+  "telefone": "(11) 99999-8888",
+  "ativo": true
+{{ '}' }}</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">As Regras da Sintaxe</h2>
+      <p>O JSON tem poucas e simples regras:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li>Os dados são organizados em pares de <strong>"chave": valor</strong>.</li>
+        <li>As <strong>chaves</strong> devem ser sempre texto, envoltas em aspas duplas <code>"</code>.</li>
+        <li>Cada par chave-valor é separado por dois pontos <code>:</code>.</li>
+        <li>Pares são separados uns dos outros por vírgulas <code>,</code>.</li>
+        <li><strong>Objetos</strong> (como nosso cartão) são envoltos por chaves <code>{{ '{' }} {{ '}' }}</code>.</li>
+        <li><strong>Arrays</strong> (listas ordenadas) são envoltos por colchetes <code>[ ]</code>.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Tipos de Dados em JSON</h2>
+      <p>Os "valores" em JSON podem ser de diferentes tipos, muitos dos quais você já conhece:</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg text-sm space-y-3">
+          <p>&#123; "exemplo_string": <code class="text-green-accent">"Olá, mundo!"</code> &#125; <span class="text-gray-500">// Texto, sempre com aspas duplas.</span></p>
+          <p>&#123; "exemplo_numero": <code class="text-blue-accent">123.45</code> &#125; <span class="text-gray-500">// Números (inteiros ou decimais), sem aspas.</span></p>
+          <p>&#123; "exemplo_booleano": <code class="text-yellow-400">true</code> &#125; <span class="text-gray-500">// Verdadeiro ou falso (<code>true</code> ou <code>false</code>), sem aspas.</span></p>
+          <p>&#123; "exemplo_array": <code class="text-purple-400">[ "maçã", "banana", "laranja" ]</code> &#125; <span class="text-gray-500">// Uma lista de valores.</span></p>
+          <p>&#123; "exemplo_objeto": <code class="text-orange-400">{{ '{' }} "chave": "valor" {{ '}' }}</code> &#125; <span class="text-gray-500">// Outro objeto JSON aninhado.</span></p>
+          <p>&#123; "exemplo_nulo": <code class="text-gray-500">null</code> &#125; <span class="text-gray-500">// Representa a ausência de valor.</span></p>
+       </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Juntando Tudo: Um Exemplo Complexo</h2>
+      <p>Vamos ver como o JSON pode descrever algo mais complexo, como um produto em um site de e-commerce. Note como podemos combinar objetos e arrays para criar estruturas ricas.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: JSON de um Produto</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-json">{{ '{' }}
+  "id": 101,
+  "nome": "n8n Workflow Automation Tool",
+  "disponivel": true,
+  "preco": null,
+  "caracteristicas": [
+    "Código Aberto",
+    "Auto-hospedável",
+    "Extensível"
+  ],
+  "conexoes_populares": {{ '{' }}
+    "armazenamento": "Google Drive",
+    "comunicacao": "Discord",
+    "crm": "HubSpot"
+  {{ '}' }}
+{{ '}' }}</code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Simples, Leve e Universal</h3>
+      <p>
+        O JSON se tornou o padrão da web por três motivos principais: é <strong>leve</strong> (ocupa pouco espaço), é <strong>fácil para humanos lerem</strong> e é <strong>fácil para máquinas interpretarem</strong>. Ao entender sua estrutura, você está um passo mais perto de dominar como os sistemas se comunicam e como manipular os dados que fluem entre eles.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

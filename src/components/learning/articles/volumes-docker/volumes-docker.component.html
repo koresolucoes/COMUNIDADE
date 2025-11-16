@@ -1,0 +1,93 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ferramentas-essenciais-dev" class="hover:text-blue-accent hover:underline">Ferramentas Essenciais do Desenvolvedor</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Dados Persistentes: O que são Volumes Docker?</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a salvar os dados do seu banco de dados ou aplicação mesmo que o contêiner seja destruído, usando volumes.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: Contêineres são como Memória de Curto Prazo</h2>
+      <p>
+        Como vimos, um contêiner é uma "marmita" isolada e padronizada. Isso é ótimo para consistência, mas tem uma característica crucial: contêineres são <strong>efêmeros</strong>. Isso significa que eles são projetados para serem temporários e descartáveis.
+      </p>
+      <p>
+        Se você remove um contêiner (com <code>docker rm</code>), qualquer arquivo ou dado que sua aplicação criou <em>dentro</em> dele é <strong>permanentemente apagado</strong>. Imagine um contêiner de banco de dados: se todos os seus usuários cadastrados desaparecessem toda vez que você atualizasse a versão do banco, seria um desastre!
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Solução: A Analogia da Mochila (Volumes)</h2>
+      <p>
+        Pense em um contêiner como um funcionário temporário em um escritório. Ele tem sua própria mesa e suas próprias anotações. Quando o dia de trabalho acaba e ele vai embora, tudo o que estava na sua mesa é jogado fora.
+      </p>
+      <p>
+        Um <strong>Volume Docker</strong> é como uma mochila. Em vez de fazer anotações em papéis soltos na mesa, o funcionário guarda tudo na mochila. No fim do dia, ele deixa a mochila no escritório e vai embora. No dia seguinte, um novo funcionário (um novo contêiner, talvez de uma versão atualizada) pode pegar a mesma mochila e ter acesso a todas as anotações do dia anterior.
+      </p>
+       <div class="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs">
+          <strong class="font-semibold">Em termos técnicos:</strong> um Volume é um diretório no seu computador (o "host") que o Docker gerencia e "monta" (conecta) dentro do contêiner. Os dados são salvos fora do contêiner, sobrevivendo à sua remoção.
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como Usamos Volumes no Docker Compose</h2>
+      <p>
+        A forma mais comum de gerenciar volumes é através do arquivo <code>docker-compose.yml</code>. A sintaxe é simples e envolve duas partes:
+      </p>
+       <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>No serviço:</strong> Você mapeia um volume para uma pasta dentro do contêiner.</li>
+        <li><strong>No nível raiz:</strong> Você declara o volume para que o Docker saiba que deve gerenciá-lo.</li>
+      </ol>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Um banco de dados PostgreSQL com dados persistentes</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml">version: '3.7'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      # A mágica acontece aqui:
+      # O nome 'postgres-data' antes dos dois pontos...
+      - postgres-data:/var/lib/postgresql/data
+      # ...é mapeado para a pasta de dados do PostgreSQL dentro do contêiner.
+
+# Aqui declaramos o volume, tornando-o gerenciável pelo Docker.
+volumes:
+  postgres-data:
+</code></pre>
+        <p class="text-xs text-gray-400 mt-3">Com essa configuração, você pode parar, remover e recriar o contêiner <code>db</code> quantas vezes quiser. Os dados dos usuários, tabelas, etc., estarão sempre seguros dentro do volume <code>postgres-data</code>.</p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Benefícios de Usar Volumes</h2>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Persistência de Dados:</strong> O benefício mais óbvio. Seus dados sobrevivem ao ciclo de vida do contêiner.</li>
+        <li><strong>Compartilhamento de Dados:</strong> Múltiplos contêineres podem montar o mesmo volume, permitindo que eles compartilhem arquivos.</li>
+        <li><strong>Backup e Migração:</strong> Como os dados estão no host, fica muito mais fácil fazer backup, migrar ou inspecionar os dados.</li>
+        <li><strong>Desempenho:</strong> Para muitas operações de escrita intensiva, os volumes podem ter um desempenho melhor do que o sistema de arquivos interno do contêiner.</li>
+      </ul>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Separe a Lógica dos Dados</h3>
+      <p>
+        Volumes são a forma correta e recomendada de lidar com qualquer tipo de dado que precise persistir (<strong>dados "stateful"</strong>). Eles separam a lógica da sua aplicação (que vive no contêiner descartável) dos dados preciosos (que vivem no volume durável). Dominar o uso de volumes é um passo essencial para construir aplicações robustas e prontas para produção com Docker.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ferramentas-essenciais-dev" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

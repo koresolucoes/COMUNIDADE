@@ -1,0 +1,112 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-logica-web" class="hover:text-blue-accent hover:underline">Fundamentos da Lógica e da Web</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Como a Internet Funciona?</h1>
+    <p class="mt-4 text-lg text-gray-400">Uma visão geral de como clientes (seu navegador) e servidores se comunicam para exibir websites e aplicações.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia do Restaurante Digital</h2>
+      <p>
+        Usar a internet parece mágica: você digita um endereço, aperta Enter e um site aparece. Mas por trás dessa simplicidade, existe um processo fascinante de comunicação. A melhor maneira de entendê-lo é pensar em pedir comida em um restaurante.
+      </p>
+      <p>
+        Nesta analogia, <strong>você</strong> é o cliente faminto, o <strong>restaurante</strong> é o lugar que tem a comida (o site) e a <strong>internet</strong> é todo o sistema de ruas e entregadores que conecta vocês dois.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Personagens Principais</h2>
+      <div class="space-y-4">
+        <div class="flex items-start gap-4 p-4 bg-gray-800/50 rounded-lg">
+          <span class="material-icons-outlined text-blue-accent text-3xl mt-1">devices</span>
+          <div>
+            <h4 class="font-semibold text-gray-200">O Cliente (Seu Navegador)</h4>
+            <p class="text-sm text-gray-400">É o seu dispositivo (computador, celular) rodando um navegador como Chrome, Firefox ou Safari. O cliente é quem <strong>inicia a conversa</strong>. Ele sabe o que quer (ex: "o site da Google"), mas não sabe onde encontrá-lo.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-4 p-4 bg-gray-800/50 rounded-lg">
+          <span class="material-icons-outlined text-blue-accent text-3xl mt-1">dns</span>
+          <div>
+            <h4 class="font-semibold text-gray-200">O Servidor</h4>
+            <p class="text-sm text-gray-400">É um computador superpotente, ligado 24/7, que armazena todos os arquivos de um site (textos, imagens, códigos). Pense nele como a cozinha do restaurante. Ele fica esperando os pedidos chegarem para poder "preparar" a resposta e enviá-la de volta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O Fluxo da Informação: Passo a Passo</h2>
+      <p>Vamos seguir a jornada desde o momento em que você digita <code>google.com</code> no navegador até o site aparecer na tela.</p>
+      
+      <div class="p-6 bg-gray-800 border-l-4 border-blue-accent rounded-r-lg my-6">
+        <div class="flex flex-col space-y-4 md:space-y-0 md:flex-row items-center justify-around text-center">
+            <div class="step">
+                <span class="material-icons-outlined icon">computer</span>
+                <p class="label">1. Você digita o endereço</p>
+            </div>
+            <span class="arrow">&rarr;</span>
+            <div class="step">
+                <span class="material-icons-outlined icon">map</span>
+                <p class="label">2. DNS: A "Lista Telefônica" da Web</p>
+            </div>
+            <span class="arrow">&rarr;</span>
+            <div class="step">
+                <span class="material-icons-outlined icon">dns</span>
+                <p class="label">3. O Servidor recebe o pedido</p>
+            </div>
+            <span class="arrow">&rarr;</span>
+             <div class="step">
+                <span class="material-icons-outlined icon">receipt_long</span>
+                <p class="label">4. O Servidor envia a "encomenda"</p>
+            </div>
+            <span class="arrow">&rarr;</span>
+            <div class="step">
+                <span class="material-icons-outlined icon">web</span>
+                <p class="label">5. O Navegador "monta" a página</p>
+            </div>
+        </div>
+      </div>
+
+      <h3 class="!mt-8">Passo 1 & 2: Encontrando o Endereço Certo (DNS)</h3>
+      <p>
+        Assim como um restaurante tem um endereço físico (Rua X, nº 123), cada servidor na internet tem um endereço único chamado <strong>Endereço IP</strong> (ex: <code>142.251.128.142</code>). Mas ninguém decora esses números. Nós usamos nomes fáceis como <code>google.com</code>.
+      </p>
+      <p>
+        O <strong>DNS (Domain Name System)</strong> é a lista telefônica da internet. Quando você digita <code>google.com</code>, seu navegador pergunta ao DNS: "Qual é o endereço IP do 'google.com'?" O DNS responde com o número correto. É como usar o GPS para encontrar o endereço de um restaurante pelo nome.
+      </p>
+      
+      <h3>Passo 3 & 4: O Pedido e a Resposta (HTTP)</h3>
+      <p>
+        Agora que seu navegador tem o endereço IP, ele envia uma "mensagem de pedido" para o servidor. Essa mensagem é chamada de <strong>Requisição HTTP</strong> (HyperText Transfer Protocol). A requisição mais comum é a <code>GET</code>, que significa "Me dê a página principal".
+      </p>
+      <p>
+        O servidor, ao receber a requisição, localiza os arquivos necessários (HTML, CSS, JavaScript), os empacota e os envia de volta para o seu navegador. Essa "encomenda" é chamada de <strong>Resposta HTTP</strong>.
+      </p>
+
+      <h3>Passo 5: A Montagem Final (Renderização)</h3>
+      <p>
+        Seu navegador recebe os arquivos e começa a "montar" a página. Ele lê o arquivo <strong>HTML</strong> para entender a estrutura (títulos, parágrafos, imagens), aplica o <strong>CSS</strong> para dar estilo (cores, fontes, layout) e executa o <strong>JavaScript</strong> para adicionar interatividade (animações, menus, formulários). Esse processo de montar a página visual é chamado de <strong>renderização</strong>.
+      </p>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Uma Conversa Organizada</h3>
+      <p>
+        A internet é uma grande conversa entre Clientes e Servidores. O Cliente pede, o Servidor responde. O DNS garante que o pedido chegue ao lugar certo, e o protocolo HTTP define as regras dessa conversa. Ao entender esse fluxo, você desmistifica a "mágica" e começa a ver a web como um sistema lógico e fascinante.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

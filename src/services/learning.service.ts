@@ -1,4 +1,8 @@
 import { Injectable, signal } from '@angular/core';
+import { n8nPaths } from './learning-paths/n8n';
+import { cssPaths } from './learning-paths/css';
+import { pythonPaths } from './learning-paths/python';
+import { iniciantePaths } from './learning-paths/iniciante';
 
 export interface LearningStep {
   type: 'tool' | 'article' | 'video';
@@ -12,112 +16,120 @@ export interface LearningPath {
   slug: string;
   title: string;
   description: string;
-  category: 'Iniciante' | 'Intermediário' | 'Avançado';
-  area: 'n8n' | 'CSS' | 'DevOps';
+  level: 'Fundamentos' | 'Básico' | 'Intermediário' | 'Avançado';
   steps: LearningStep[];
 }
 
+export interface Subcategory {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  paths: LearningPath[];
+}
+
+export interface MainCategory {
+  id: 'iniciante' | 'automacao' | 'design' | 'codigo' | 'devops';
+  name: string;
+  icon: string;
+  subcategories: Subcategory[];
+}
+
+const ALL_DATA: MainCategory[] = [
+  {
+    id: 'iniciante',
+    name: 'Jornada do Desenvolvedor',
+    icon: 'flag',
+    subcategories: [
+      {
+        id: 'fundamentos-dev',
+        name: 'Fundamentos Essenciais',
+        description:
+          'A base completa para iniciar sua jornada, da lógica de programação à publicação do seu primeiro projeto na nuvem.',
+        icon: 'foundation',
+        paths: iniciantePaths,
+      },
+    ],
+  },
+  {
+    id: 'automacao',
+    name: 'Automação',
+    icon: 'lan',
+    subcategories: [
+      {
+        id: 'n8n',
+        name: 'n8n',
+        description:
+          'Aprenda a automatizar processos e conectar aplicações com a poderosa plataforma de automação de workflows n8n.',
+        icon: 'hub',
+        paths: n8nPaths,
+      },
+      {
+        id: 'python',
+        name: 'Python',
+        description:
+          'Utilize Python para scripts de automação, manipulação de dados e integração com sistemas.',
+        icon: 'code',
+        paths: pythonPaths,
+      },
+    ],
+  },
+  {
+    id: 'design',
+    name: 'Design & UI',
+    icon: 'palette',
+    subcategories: [
+      {
+        id: 'css-avancado',
+        name: 'CSS Avançado',
+        description:
+          'Crie interfaces ricas e visualmente impressionantes com ferramentas de CSS modernas.',
+        icon: 'style',
+        paths: cssPaths,
+      },
+    ],
+  },
+  {
+    id: 'codigo',
+    name: 'Código',
+    icon: 'code',
+    subcategories: [],
+  },
+  {
+    id: 'devops',
+    name: 'DevOps',
+    icon: 'build_circle',
+    subcategories: [],
+  },
+];
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LearningService {
+  private readonly data = signal<MainCategory[]>(ALL_DATA);
 
-  private readonly paths = signal<LearningPath[]>([
-    {
-      slug: 'iniciante-em-n8n',
-      title: 'Iniciante em n8n',
-      description: 'Aprenda os conceitos fundamentais para começar a construir suas primeiras automações com n8n.',
-      category: 'Iniciante',
-      area: 'n8n',
-      steps: [
-        {
-          type: 'article',
-          title: 'O que são Webhooks?',
-          description: 'Entenda como os webhooks funcionam e por que são a espinha dorsal de muitas automações em tempo real.',
-          path: '/blog/o-que-sao-webhooks', // Assuming a blog post exists
-          icon: 'webhook'
-        },
-        {
-          type: 'tool',
-          title: 'Prática: Testador de Webhook',
-          description: 'Receba e inspecione payloads de webhooks para entender sua estrutura e dados.',
-          path: '/tools/webhook-tester',
-          icon: 'construction'
-        },
-        {
-          type: 'article',
-          title: 'Entendendo Expressões CRON',
-          description: 'Aprenda a agendar workflows para rodar em horários específicos usando a sintaxe CRON.',
-          path: '/blog/entendendo-expressoes-cron', // Assuming a blog post exists
-          icon: 'article'
-        },
-        {
-          type: 'tool',
-          title: 'Prática: Gerador de CRON',
-          description: 'Crie expressões CRON complexas de forma visual e intuitiva para agendar suas automações.',
-          path: '/tools/gerador-cron',
-          icon: 'construction'
-        },
-        {
-          type: 'tool',
-          title: 'Prática: Simulador de Expressão n8n',
-          description: 'Teste e depure expressões do n8n em um ambiente seguro antes de usá-las em seus workflows.',
-          path: '/tools/n8n-expression-simulator',
-          icon: 'construction'
-        }
-      ]
-    },
-    {
-      slug: 'dominando-css-para-ui',
-      title: 'Dominando CSS para UI de Automação',
-      description: 'Aprenda a criar interfaces visualmente atraentes para seus dashboards e ferramentas internas.',
-      category: 'Intermediário',
-      area: 'CSS',
-      steps: [
-        {
-          type: 'tool',
-          title: 'Criando Fundos Atraentes: Gerador de Gradiente',
-          description: 'Dê vida aos seus backgrounds com gradientes lineares e radiais customizáveis.',
-          path: '/tools/gerador-gradiente-css',
-          icon: 'palette'
-        },
-        {
-          type: 'tool',
-          title: 'Profundidade e Hierarquia: Gerador de Box Shadow',
-          description: 'Use sombras em múltiplas camadas para criar uma sensação de profundidade e destacar elementos.',
-          path: '/tools/gerador-box-shadow',
-          icon: 'palette'
-        },
-        {
-          type: 'tool',
-          title: 'Layouts Criativos: Gerador de Clip-Path',
-          description: 'Quebre a monotonia dos retângulos e crie formas únicas para seus elementos e imagens.',
-          path: '/tools/gerador-clip-path',
-          icon: 'palette'
-        },
-        {
-          type: 'tool',
-          title: 'Organização Estrutural: Construtor de Grid CSS',
-          description: 'Projete layouts complexos e responsivos com o poder do CSS Grid.',
-          path: '/tools/construtor-grid-css',
-          icon: 'palette'
-        },
-        {
-          type: 'tool',
-          title: 'Toques Finais: Gerador de Animação CSS',
-          description: 'Adicione micro-interações e animações para uma experiência de usuário mais fluida e agradável.',
-          path: '/tools/gerador-animacao-css',
-          icon: 'palette'
-        }
-      ]
-    }
-  ]);
-
-  getLearningPaths() {
-    return this.paths.asReadonly();
+  getLearningData() {
+    return this.data.asReadonly();
   }
 
-  getPathBySlug(slug: string) {
-    return this.paths().find(p => p.slug === slug);
+  getPathBySlug(
+    slug: string
+  ):
+    | { path: LearningPath; subcategory: Subcategory; mainCategory: MainCategory }
+    | undefined {
+    for (const mainCat of this.data()) {
+      for (const subCat of mainCat.subcategories) {
+        const foundPath = subCat.paths.find((p) => p.slug === slug);
+        if (foundPath) {
+          return {
+            path: foundPath,
+            subcategory: subCat,
+            mainCategory: mainCat,
+          };
+        }
+      }
+    }
+    return undefined;
   }
 }

@@ -1,0 +1,31 @@
+:host ::ng-deep .step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100px;
+}
+
+:host ::ng-deep .step .icon {
+  font-size: 2.5rem; /* 40px */
+  color: #58a6ff; /* blue-accent */
+  margin-bottom: 0.5rem;
+}
+
+:host ::ng-deep .step .label {
+  font-size: 0.75rem; /* 12px */
+  color: #8b949e; /* gray-400 */
+}
+
+:host ::ng-deep .arrow {
+  font-size: 1.5rem;
+  color: #484f58; /* gray-600 */
+  align-self: center;
+}
+
+/* On smaller screens, make the flow vertical */
+@media (max-width: 768px) {
+  :host ::ng-deep .arrow {
+    transform: rotate(90deg);
+    margin: 0.5rem 0;
+  }
+}

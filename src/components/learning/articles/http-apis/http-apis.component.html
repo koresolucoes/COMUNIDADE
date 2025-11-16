@@ -1,0 +1,112 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-logica-web" class="hover:text-blue-accent hover:underline">Fundamentos da Lógica e da Web</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">A Linguagem da Web: HTTP e APIs</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda como a web se comunica através de requisições HTTP e o que são APIs (Interfaces de Programação de Aplicativos).</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      No artigo anterior, vimos que a internet funciona como uma conversa entre um cliente (seu navegador) e um servidor. Agora, vamos aprender o "idioma" dessa conversa: o <strong>HTTP</strong>, e como o cliente sabe quais "pedidos" pode fazer ao servidor, através de uma <strong>API</strong>.
+    </p>
+
+    <!-- 1. HTTP -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O que é HTTP? O Garçom Digital</h2>
+      <p>
+        Continuando nossa analogia do restaurante, o <strong>HTTP (HyperText Transfer Protocol)</strong> é o garçom. Ele é o protocolo, o conjunto de regras que define como os pedidos (requisições) e as entregas (respostas) devem ser formatados para que o cliente e a cozinha se entendam perfeitamente.
+      </p>
+      <p>Toda comunicação HTTP tem dois lados:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+        <li><strong>Requisição (Request):</strong> O cliente pedindo algo ao servidor.</li>
+        <li><strong>Resposta (Response):</strong> O servidor entregando o que foi pedido (ou explicando por que não pôde).</li>
+      </ul>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Verbos do HTTP: O Que Você Quer Fazer?</h2>
+      <p>
+        Uma requisição HTTP sempre vem com um "verbo" que indica a intenção do pedido. Os 4 principais são:
+      </p>
+       <div class="space-y-4">
+        <div class="p-4 bg-gray-800 border-l-4 border-blue-accent">
+          <code class="text-blue-300 font-bold">GET</code>
+          <p class="text-sm text-gray-400 mt-1">"Me traga algo." É usado para <strong>ler</strong> ou <strong>buscar</strong> dados. Quando você acessa um site, seu navegador faz uma requisição GET.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-green-accent">
+          <code class="text-green-300 font-bold">POST</code>
+          <p class="text-sm text-gray-400 mt-1">"Anote este novo pedido." É usado para <strong>criar</strong> um novo dado. Quando você envia um formulário de cadastro, está fazendo um POST.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-yellow-400">
+          <code class="text-yellow-300 font-bold">PUT / PATCH</code>
+          <p class="text-sm text-gray-400 mt-1">"Corrija meu pedido." É usado para <strong>atualizar</strong> um dado existente. PUT substitui o dado inteiro, enquanto PATCH atualiza apenas uma parte.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-red-400">
+          <code class="text-red-300 font-bold">DELETE</code>
+          <p class="text-sm text-gray-400 mt-1">"Cancele meu pedido." É usado para <strong>remover</strong> um dado.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+        <h2 class="text-2xl font-semibold text-white">Códigos de Status: A Resposta do Garçom</h2>
+        <p>
+            Depois de fazer um pedido, o garçom sempre te dá uma resposta. No mundo HTTP, essa resposta vem na forma de um número de 3 dígitos chamado <strong>Código de Status</strong>. Os mais comuns são:
+        </p>
+        <ul class="list-disc list-inside text-gray-400 space-y-2">
+            <li><strong class="text-green-accent">200 OK:</strong> "Pedido recebido e entregue com sucesso!"</li>
+            <li><strong class="text-blue-accent">301 Moved Permanently:</strong> "O que você pediu mudou de lugar. Vá para este novo endereço."</li>
+            <li><strong class="text-yellow-400">404 Not Found:</strong> "Procurei por todo lado, mas não encontrei o que você pediu."</li>
+            <li><strong class="text-red-400">500 Internal Server Error:</strong> "Deu um problema na cozinha! Não consegui preparar seu pedido."</li>
+        </ul>
+    </div>
+
+    <!-- 2. APIs -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O que é uma API? O Cardápio do Restaurante</h2>
+      <p>
+        Ok, você sabe como pedir (HTTP), mas <em>o que</em> você pode pedir? Você não pode chegar em uma pizzaria e pedir sushi. Você precisa de um cardápio.
+      </p>
+      <p>
+        Uma <strong>API (Application Programming Interface)</strong> é o cardápio digital do servidor. Ela é um "contrato" que define exatamente quais requisições um servidor aceita, que informações você precisa enviar e o que você receberá de volta.
+      </p>
+      <p>
+        Uma <strong>API REST</strong> é o tipo mais comum na web. Ela define "endpoints" (os pratos do cardápio) que combinam um verbo HTTP com um caminho (URL).
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Cardápio de uma API de Tarefas</h4>
+        <ul class="!list-none !pl-0 space-y-2 text-sm font-mono">
+          <li><code class="text-green-accent">GET /tasks</code> &rarr; <span class="text-gray-400">"Me traga a lista de todas as tarefas."</span></li>
+          <li><code class="text-green-accent">GET /tasks/123</code> &rarr; <span class="text-gray-400">"Me traga os detalhes da tarefa com ID 123."</span></li>
+          <li><code class="text-blue-accent">POST /tasks</code> &rarr; <span class="text-gray-400">"Crie uma nova tarefa com os dados que estou enviando."</span></li>
+          <li><code class="text-red-400">DELETE /tasks/123</code> &rarr; <span class="text-gray-400">"Apague a tarefa com ID 123."</span></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Conversa e Cardápio</h3>
+      <p>
+        Lembre-se sempre da analogia:
+      </p>
+      <ul class="!list-none !pl-0 space-y-2">
+          <li><strong class="text-white">HTTP</strong> é o <strong>idioma</strong> e as <strong>regras da conversa</strong> (o garçom).</li>
+          <li>A <strong class="text-white">API</strong> é o <strong>cardápio</strong> que lista tudo o que você pode pedir.</li>
+      </ul>
+      <p>
+        Com esses dois conceitos, você tem a base para entender como praticamente todos os sistemas na internet trocam informações, a base para qualquer automação ou integração.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

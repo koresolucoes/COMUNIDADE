@@ -1,0 +1,96 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ferramentas-essenciais-dev" class="hover:text-blue-accent hover:underline">Ferramentas Essenciais do Desenvolvedor</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Introdução ao Docker: Isolando Aplicações</h1>
+    <p class="mt-4 text-lg text-gray-400">Descubra como o Docker empacota aplicações em contêineres, garantindo que elas rodem de forma consistente em qualquer lugar.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Fim do "Mas na Minha Máquina Funciona!"</h2>
+      <p>
+        Todo desenvolvedor já ouviu (ou disse) essa frase. Um programa funciona perfeitamente no seu computador, mas quebra no do colega ou no servidor de produção. Isso acontece porque os ambientes são diferentes: versões de bibliotecas, configurações do sistema, etc.
+      </p>
+      <p>
+        O <strong>Docker</strong> resolve esse problema com uma ideia genial: em vez de enviar apenas o seu código, você envia uma "marmita" completa e lacrada que contém seu código E todo o ambiente que ele precisa para rodar. Essa "marmita" é chamada de <strong>Contêiner</strong>.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os 3 Conceitos Fundamentais do Docker</h2>
+      <p>Para entender o Docker, você precisa conhecer três peças-chave:</p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">1. Imagem: A Receita da Marmita</h4>
+          <p class="text-sm text-gray-400 mt-1">Uma <strong>Imagem</strong> é um pacote, um modelo somente leitura que contém tudo o que sua aplicação precisa: o código, as bibliotecas, as ferramentas e o ambiente de execução (como Node.js ou Python). É a receita completa e imutável da sua "marmita".</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">2. Contêiner: A Marmita Pronta para Uso</h4>
+          <p class="text-sm text-gray-400 mt-1">Um <strong>Contêiner</strong> é uma instância em execução de uma imagem. É a "marmita" real, criada a partir da receita. Você pode criar, iniciar, parar, mover e deletar contêineres. Cada contêiner é isolado dos outros e do sistema hospedeiro, garantindo que não haja conflitos.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">3. Dockerfile: O Passo a Passo da Receita</h4>
+          <p class="text-sm text-gray-400 mt-1">Um <strong>Dockerfile</strong> é um arquivo de texto simples onde você escreve as instruções para construir uma imagem. É literalmente o passo a passo da receita da sua marmita. Você diz: "Comece com uma base de Node.js, copie meus arquivos para dentro, instale as dependências e, quando iniciar, execute este comando."</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Exemplo: A Receita de um `Dockerfile` Simples</h2>
+      <p>Vamos ver como seria um `Dockerfile` para uma aplicação web simples em Node.js.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Dockerfile para Node.js</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-dockerfile"># 1. Comece com uma imagem base que já tem o Node.js
+FROM node:18-alpine
+
+# 2. Crie uma pasta dentro da imagem para colocar seu código
+WORKDIR /app
+
+# 3. Copie o package.json (lista de dependências) para a imagem
+COPY package*.json ./
+
+# 4. Instale as dependências listadas no package.json
+RUN npm install
+
+# 5. Copie o resto do código da sua aplicação para a imagem
+COPY . .
+
+# 6. Exponha a porta que sua aplicação usa
+EXPOSE 3000
+
+# 7. Defina o comando para iniciar sua aplicação quando o contêiner rodar
+CMD [ "node", "server.js" ]
+</code></pre>
+        <p class="text-xs text-gray-400 mt-3">Com este arquivo, o comando <code>docker build .</code> criaria uma Imagem pronta para ser distribuída e executada em qualquer lugar.</p>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Por que o Docker é Indispensável?</h2>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Consistência:</strong> Garante que o ambiente de desenvolvimento, teste e produção sejam idênticos.</li>
+        <li><strong>Isolamento:</strong> Uma aplicação e suas dependências não interferem com outras. Você pode ter projetos com versões conflitantes do Python ou Node.js rodando lado a lado, sem problemas.</li>
+        <li><strong>Portabilidade:</strong> Um contêiner criado no seu Mac rodará da mesma forma em um servidor Linux na nuvem.</li>
+        <li><strong>Microserviços:</strong> É a tecnologia fundamental que permite dividir uma grande aplicação monolítica em serviços menores e independentes que se comunicam entre si.</li>
+      </ul>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Empacote e Distribua com Confiança</h3>
+      <p>
+        Docker não é apenas uma ferramenta, é uma mudança na forma como pensamos sobre o desenvolvimento e a implantação de software. Ao empacotar suas aplicações em contêineres, você ganha consistência e portabilidade, eliminando uma das maiores fontes de frustração no ciclo de desenvolvimento.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ferramentas-essenciais-dev" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

@@ -1,0 +1,106 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ferramentas-essenciais-dev" class="hover:text-blue-accent hover:underline">Ferramentas Essenciais do Desenvolvedor</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Regex Básico: Encontrando Padrões em Texto</h1>
+    <p class="mt-4 text-lg text-gray-400">Uma introdução às Expressões Regulares (Regex) para encontrar, validar e extrair informações de textos.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O que é Regex? O "Ctrl+F" com Superpoderes</h2>
+      <p>
+        Você já usou a função "Localizar" (Ctrl+F) em um documento para encontrar uma palavra específica. É útil, mas limitado. E se você quisesse encontrar "todos os endereços de e-mail" ou "todos os números de telefone" em um texto?
+      </p>
+      <p>
+        Uma <strong>Expressão Regular (Regex)</strong> é exatamente isso: uma sequência de caracteres que define um <strong>padrão de busca</strong>. Em vez de procurar por um texto exato, você descreve o <em>formato</em> do texto que deseja encontrar. É uma das ferramentas mais poderosas no arsenal de um desenvolvedor para manipulação de texto.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Por que Regex é Tão Útil?</h2>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Validação de Dados:</strong> Verificar se um e-mail, CPF ou CEP inserido por um usuário tem um formato válido.</li>
+        <li><strong>Extração de Dados:</strong> Capturar informações específicas de um grande volume de texto, como extrair URLs de um arquivo de log.</li>
+        <li><strong>Busca e Substituição:</strong> Encontrar todas as ocorrências de um padrão e substituí-las por outra coisa.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Blocos de Construção do Regex</h2>
+      <p>Uma expressão regular é construída combinando caracteres normais com "metacaracteres" que têm um significado especial.</p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800 border-l-4 border-gray-700">
+          <h4 class="font-semibold text-gray-200">Caracteres Literais</h4>
+          <p class="text-sm text-gray-400 mt-1">A maioria dos caracteres representa a si mesma. A regex <code>gato</code> encontrará exatamente a palavra "gato".</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-blue-accent">
+          <h4 class="font-semibold text-gray-200">Classes de Caracteres (Atalhos)</h4>
+          <ul class="!list-none !pl-0 space-y-2 text-sm mt-2">
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">\d</code> - Corresponde a qualquer dígito numérico (0-9).</li>
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">\w</code> - Corresponde a qualquer caractere de "palavra" (letras a-z, A-Z, números 0-9 e o underscore _).</li>
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">\s</code> - Corresponde a qualquer caractere de espaço em branco (espaço, tab, nova linha).</li>
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">.</code> (ponto) - Um curinga que corresponde a qualquer caractere, exceto nova linha.</li>
+          </ul>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-green-accent">
+          <h4 class="font-semibold text-gray-200">Quantificadores: Quantas Vezes?</h4>
+          <p class="text-sm text-gray-400 mt-1">Eles são colocados após um caractere ou grupo para especificar quantas vezes ele deve aparecer.</p>
+           <ul class="!list-none !pl-0 space-y-2 text-sm mt-2">
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">*</code> - Zero ou mais vezes. <code>a*</code> corresponde a "", "a", "aa", "aaa", etc.</li>
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">+</code> - Uma ou mais vezes. <code>a+</code> corresponde a "a", "aa", mas não a "".</li>
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">?</code> - Zero ou uma vez (torna o item opcional).</li>
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">{{ '{' }}n{{ '}' }}</code> - Exatamente `n` vezes. <code>\d{{ '{' }}3{{ '}' }}</code> corresponde a exatamente 3 dígitos.</li>
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">{{ '{' }}n,m{{ '}' }}</code> - De `n` a `m` vezes. <code>\d{{ '{' }}2,4{{ '}' }}</code> corresponde a 2, 3 ou 4 dígitos.</li>
+          </ul>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-yellow-400">
+          <h4 class="font-semibold text-gray-200">Âncoras: Onde na Linha?</h4>
+          <p class="text-sm text-gray-400 mt-1">Âncoras não correspondem a caracteres, mas a posições.</p>
+           <ul class="!list-none !pl-0 space-y-2 text-sm mt-2">
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">^</code> - Corresponde ao início da string.</li>
+            <li><code class="bg-gray-700 p-1 rounded font-mono text-cyan-300">$</code> - Corresponde ao final da string.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Exemplo Prático: Encontrando Códigos de Pedido</h2>
+      <p>Imagine que você tem um texto com vários códigos de pedido no formato <code>P-12345</code>. Como criar uma regex para encontrar todos eles?</p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+          <li>Começa com a letra 'P' literal: <code>P</code></li>
+          <li>Seguida por um hífen literal: <code>P-</code></li>
+          <li>Seguida por um ou mais dígitos. Usamos o atalho <code>\d</code> e o quantificador <code>+</code>: <code>P-\d+</code></li>
+      </ol>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Regex Final</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-regex">P-\d+</code></pre>
+        <p class="text-xs text-gray-400 mt-3">Esta simples expressão encontrará "P-12345", "P-987", "P-1" em qualquer texto, mas não encontrará "A-123" ou "P-ABC".</p>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Uma Ferramenta de Precisão</h3>
+      <p>
+        Regex pode parecer intimidador no início, mas aprender o básico já desbloqueia um enorme potencial para manipulação de texto. A chave é começar simples e adicionar complexidade aos poucos. Nenhuma ferramenta é mais eficiente para encontrar agulhas em um palheiro de texto.
+      </p>
+      <div class="mt-4">
+        <a routerLink="/tools/testador-regex" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
+          <span class="material-icons-outlined">construction</span>
+          Praticar agora no Testador de Regex
+        </a>
+      </div>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ferramentas-essenciais-dev" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

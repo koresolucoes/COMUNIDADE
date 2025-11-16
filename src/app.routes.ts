@@ -41,6 +41,27 @@ import { CssFilterGeneratorComponent } from './components/tools/css-filter-gener
 import { CssAnimationGeneratorComponent } from './components/tools/css-animation-generator/css-animation-generator.component';
 import { LearningIndexComponent } from './components/learning/learning-index/learning-index.component';
 import { LearningPathComponent } from './components/learning/learning-path/learning-path.component';
+import { OQueEProgramacaoComponent } from './components/learning/articles/o-que-e-programacao/o-que-e-programacao.component';
+import { LogicaDeProgramacaoComponent } from './components/learning/articles/logica-de-programacao/logica-de-programacao.component';
+import { TiposDeDadosComponent } from './components/learning/articles/tipos-de-dados/tipos-de-dados.component';
+import { IntroducaoPseudocodigoComponent } from './components/learning/articles/introducao-pseudocodigo/introducao-pseudocodigo.component';
+import { ComoInternetFuncionaComponent } from './components/learning/articles/como-internet-funciona/como-internet-funciona.component';
+import { HttpApisComponent } from './components/learning/articles/http-apis/http-apis.component';
+import { EntendendoJsonComponent } from './components/learning/articles/entendendo-json/entendendo-json.component';
+import { OQueSaoWebhooksComponent } from './components/learning/articles/o-que-sao-webhooks/o-que-sao-webhooks.component';
+import { IdeConsoleComponent } from './components/learning/articles/ide-console/ide-console.component';
+import { GitGithubComponent } from './components/learning/articles/git-github/git-github.component';
+import { OQueEIdeComponent } from './components/learning/articles/o-que-e-ide/o-que-e-ide.component';
+import { GerenciadoresPacotesNpmComponent } from './components/learning/articles/gerenciadores-pacotes-npm/gerenciadores-pacotes-npm.component';
+import { IntroducaoDockerComponent } from './components/learning/articles/introducao-docker/introducao-docker.component';
+import { VolumesDockerComponent } from './components/learning/articles/volumes-docker/volumes-docker.component';
+import { RedesDockerComponent } from './components/learning/articles/redes-docker/redes-docker.component';
+import { RegexBasicoComponent } from './components/learning/articles/regex-basico/regex-basico.component';
+import { HelloWorldNodejsComponent } from './components/learning/articles/hello-world-nodejs/hello-world-nodejs.component';
+import { OQueEBancoDeDadosComponent } from './components/learning/articles/o-que-e-banco-de-dados/o-que-e-banco-de-dados.component';
+import { ConectandoAppBancoDadosComponent } from './components/learning/articles/conectando-app-banco-dados/conectando-app-banco-dados.component';
+import { ConstruindoApiRestCrudComponent } from './components/learning/articles/construindo-api-rest-crud/construindo-api-rest-crud.component';
+import { OQueEJwtComponent } from './components/learning/articles/o-que-e-jwt/o-que-e-jwt.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -55,6 +76,33 @@ export const APP_ROUTES: Routes = [
   { path: 'templates/:id', component: TemplateDetailComponent },
   { path: 'learning', component: LearningIndexComponent },
   { path: 'learning/:slug', component: LearningPathComponent },
+  
+  // Jornada do Desenvolvedor
+  { path: 'learning/article/o-que-e-programacao', component: OQueEProgramacaoComponent },
+  { path: 'learning/article/logica-de-programacao', component: LogicaDeProgramacaoComponent },
+  { path: 'learning/article/tipos-de-dados', component: TiposDeDadosComponent },
+  { path: 'learning/article/introducao-pseudocodigo', component: IntroducaoPseudocodigoComponent },
+  { path: 'learning/article/como-internet-funciona', component: ComoInternetFuncionaComponent },
+  { path: 'learning/article/http-apis', component: HttpApisComponent },
+  { path: 'learning/article/entendendo-json', component: EntendendoJsonComponent },
+  { path: 'learning/article/o-que-sao-webhooks', component: OQueSaoWebhooksComponent },
+  { path: 'learning/article/ide-console', component: IdeConsoleComponent },
+  { path: 'learning/article/git-github', component: GitGithubComponent },
+  { path: 'learning/article/o-que-e-ide', component: OQueEIdeComponent },
+  { path: 'learning/article/gerenciadores-pacotes-npm', component: GerenciadoresPacotesNpmComponent },
+  { path: 'learning/article/introducao-docker', component: IntroducaoDockerComponent },
+  { path: 'learning/article/volumes-docker', component: VolumesDockerComponent },
+  { path: 'learning/article/redes-docker', component: RedesDockerComponent },
+  { path: 'learning/article/regex-basico', component: RegexBasicoComponent },
+  { path: 'learning/article/hello-world-nodejs', component: HelloWorldNodejsComponent },
+  { path: 'learning/article/o-que-e-banco-de-dados', component: OQueEBancoDeDadosComponent },
+  { path: 'learning/article/conectando-app-banco-dados', component: ConectandoAppBancoDadosComponent },
+  { path: 'learning/article/construindo-primeira-api-rest', component: ConstruindoApiRestCrudComponent },
+  { path: 'learning/article/o-que-e-jwt', component: OQueEJwtComponent },
+  { path: 'learning/article/dockerizando-app-nodejs', component: PlaceholderComponent, data: { title: 'Dockerizando sua Aplicação Node.js', message: 'Este artigo está sendo escrito e estará disponível em breve.' } },
+  { path: 'learning/article/o-que-e-vps', component: PlaceholderComponent, data: { title: 'O que é uma VPS? Seu Servidor na Nuvem', message: 'Este artigo está sendo escrito e estará disponível em breve.' } },
+  { path: 'learning/article/publicando-app-vps', component: PlaceholderComponent, data: { title: 'Publicando sua Aplicação Docker em uma VPS', message: 'Este artigo está sendo escrito e estará disponível em breve.' } },
+  
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },
   { path: 'tools/gerador-gradiente-css', component: CssGradientGeneratorComponent },

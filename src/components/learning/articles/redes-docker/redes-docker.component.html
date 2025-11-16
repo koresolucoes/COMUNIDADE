@@ -1,0 +1,102 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ferramentas-essenciais-dev" class="hover:text-blue-accent hover:underline">Ferramentas Essenciais do Desenvolvedor</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Redes Docker: Conectando Contêineres</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda como contêineres diferentes, como sua aplicação e seu banco de dados, podem se comunicar de forma segura.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: Contêineres são Ilhas Isoladas</h2>
+      <p>
+        Uma das maiores vantagens do Docker é o isolamento: cada contêiner tem seu próprio ambiente, sem interferir nos outros. Mas isso cria uma nova pergunta: se sua aplicação (em um contêiner) precisa se conectar a um banco de dados (em outro contêiner), como eles conversam se são ilhas isoladas?
+      </p>
+      <p>
+        Expor as portas de todos os seus serviços para o mundo exterior (usando a seção <code>ports</code>) é perigoso e desnecessário, especialmente para um banco de dados. A solução é criar uma ponte entre essas ilhas.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Solução: A Analogia dos Ramais Internos (Redes)</h2>
+      <p>
+        Pense em um grande escritório com vários departamentos (Finanças, Vendas, TI). Cada departamento é uma sala isolada (um contêiner). Para que o departamento de Vendas converse com o de Finanças, eles não gritam pela janela para a rua. Eles usam o <strong>sistema de telefonia interna da empresa</strong>. Eles simplesmente discam o ramal "Finanças" e a conexão é feita de forma privada e segura.
+      </p>
+      <p>
+        Uma <strong>Rede Docker</strong> é esse sistema de telefonia interna. É uma rede virtual privada onde você pode conectar múltiplos contêineres, permitindo que eles se comuniquem uns com os outros usando os nomes dos serviços como se fossem "ramais".
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como Funciona no Docker Compose</h2>
+      <p>
+        Assim como os volumes, configurar redes no <code>docker-compose.yml</code> é muito simples. Você define as redes que quer criar e depois "conecta" cada serviço à rede apropriada.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Conectando n8n ao PostgreSQL</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml">version: '3.7'
+
+services:
+  n8n:
+    image: n8nio/n8n
+    environment:
+      # A mágica acontece aqui! Em vez de um IP, usamos o NOME do serviço.
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_USER=n8n
+      - DB_POSTGRESDB_PASSWORD=mysecretpassword
+    ports:
+      - "5678:5678"
+    networks:
+      # Conectamos o n8n à rede interna
+      - internal-network
+
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=n8n
+      - POSTGRES_PASSWORD=mysecretpassword
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      # O banco de dados SÓ existe na rede interna.
+      - internal-network
+      # Note que não há seção 'ports' aqui! O banco fica protegido.
+
+# Aqui declaramos a rede que os serviços usarão para conversar.
+networks:
+  internal-network:
+
+volumes:
+  postgres-data:
+</code></pre>
+        <p class="text-xs text-gray-400 mt-3">O Docker cria uma "ponte" entre os contêineres <code>n8n</code> e <code>postgres</code>. Dentro dessa rede, o Docker tem um DNS interno que faz com que o nome "postgres" seja resolvido para o endereço IP interno correto do contêiner do banco de dados.</p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Benefícios das Redes Docker</h2>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Segurança:</strong> Você só expõe para o mundo exterior (com <code>ports</code>) os serviços que realmente precisam ser acessados de fora, como seu servidor web. O banco de dados e outros serviços de backend ficam protegidos na rede interna.</li>
+        <li><strong>Resolução de Nomes Automática:</strong> Chega de se preocupar com endereços IP que mudam. Você se conecta aos serviços usando seus nomes, o que torna sua configuração muito mais limpa e portável.</li>
+        <li><strong>Organização:</strong> Você pode criar múltiplas redes para segmentar sua aplicação. Por exemplo, uma rede <code>frontend</code> para seus servidores web e uma <code>backend</code> para bancos de dados e serviços internos.</li>
+      </ul>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: A Cola da Sua Aplicação</h3>
+      <p>
+        Se os contêineres são os tijolos e os volumes são as fundações que guardam os dados, as <strong>redes são a argamassa</strong> que une tudo. Elas são o componente essencial que transforma uma coleção de serviços isolados em uma aplicação coesa e funcional, garantindo uma comunicação segura e simplificada.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ferramentas-essenciais-dev" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

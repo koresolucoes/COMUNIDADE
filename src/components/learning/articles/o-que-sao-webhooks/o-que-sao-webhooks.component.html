@@ -1,0 +1,107 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-logica-web" class="hover:text-blue-accent hover:underline">Fundamentos da Lógica e da Web</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O que são Webhooks? A Web em Tempo Real</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda como os webhooks permitem que sistemas notifiquem uns aos outros sobre eventos, a base da automação moderna.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: Como Saber se Algo Aconteceu?</h2>
+      <p>
+        Imagine que você fez uma compra online. Você quer saber quando sua encomenda for enviada. Você tem duas opções:
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>A Abordagem Ineficiente (Polling):</strong> Você pode entrar no site dos correios a cada 30 minutos e perguntar: "Minha encomenda já foi enviada? E agora? E agora?". Isso é chamado de <strong>Polling</strong>. Funciona, mas gasta seu tempo e os recursos do servidor dos correios com muitas perguntas desnecessárias.</li>
+        <li><strong>A Abordagem Inteligente (Webhook):</strong> Você pode cadastrar seu número de celular e, no momento exato em que a encomenda for enviada, o sistema dos correios te envia uma mensagem: "Sua encomenda saiu para entrega!". Isso é um <strong>Webhook</strong>.</li>
+      </ol>
+      <p>
+        <strong>Webhooks são notificações automáticas enviadas de um sistema para outro quando um evento específico ocorre.</strong> Eles são a base da automação em tempo real.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Polling vs. Webhooks: O Diagrama</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <h4 class="font-semibold text-white mb-2">Polling</h4>
+          <p class="text-sm text-gray-400">Você pergunta repetidamente.</p>
+          <div class="mt-4 space-y-2">
+            <p class="text-blue-accent">Você &rarr; Servidor: "Aconteceu?"</p>
+            <p class="text-gray-500">Servidor &rarr; Você: "Não."</p>
+            <p class="text-blue-accent">Você &rarr; Servidor: "Aconteceu?"</p>
+            <p class="text-gray-500">Servidor &rarr; Você: "Não."</p>
+            <p class="text-blue-accent">Você &rarr; Servidor: "Aconteceu?"</p>
+            <p class="text-green-accent">Servidor &rarr; Você: "Sim, aqui estão os dados!"</p>
+          </div>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <h4 class="font-semibold text-white mb-2">Webhook</h4>
+          <p class="text-sm text-gray-400">O servidor te avisa quando acontece.</p>
+           <div class="mt-4 space-y-2">
+             <p class="text-blue-accent">Você &rarr; Servidor: "Me avise neste endereço quando algo acontecer."</p>
+             <p class="text-gray-500">(...tempo passa...)</p>
+             <p class="text-green-accent">Servidor &rarr; Você: "Aconteceu! Aqui estão os dados."</p>
+             <p class="text-gray-500 opacity-0">.</p>
+             <p class="text-gray-500 opacity-0">.</p>
+             <p class="text-gray-500 opacity-0">.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como Funciona na Prática?</h2>
+      <p>O processo é simples:</p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>Você fornece uma URL:</strong> No sistema de origem (ex: uma plataforma de pagamentos), você cadastra uma URL especial. Essa URL pertence ao seu sistema de destino (ex: seu workflow no n8n). Essa URL é chamada de "Endpoint de Webhook".</li>
+        <li><strong>Um evento ocorre:</strong> Alguém faz uma compra na plataforma de pagamentos.</li>
+        <li><strong>O sistema de origem envia uma notificação:</strong> A plataforma de pagamentos automaticamente faz uma requisição <strong>HTTP POST</strong> para a URL que você cadastrou.</li>
+        <li><strong>A requisição contém os dados:</strong> O corpo (body) dessa requisição contém um <strong>payload</strong>, geralmente em formato JSON, com todos os detalhes do evento (quem comprou, o valor, o produto, etc.).</li>
+        <li><strong>Seu sistema reage:</strong> Seu workflow no n8n é acionado, recebe os dados do pagamento e pode, por exemplo, enviar um e-mail de confirmação e adicionar o cliente a uma planilha.</li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Anatomia de um Payload de Webhook</h2>
+      <p>O "payload" é a carga de dados que o webhook entrega. É um JSON que descreve o evento. Não existe um padrão universal, mas a estrutura geralmente inclui o tipo de evento e os dados associados.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Payload de um webhook de "nova venda"</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-json">{{ '{' }}
+  "event_type": "venda.criada",
+  "timestamp": "2024-07-30T10:00:00Z",
+  "data": {{ '{' }}
+    "id_venda": "vnd_12345abc",
+    "valor_total": 99.90,
+    "moeda": "BRL",
+    "cliente": {{ '{' }}
+      "nome": "Maria Souza",
+      "email": "maria.souza@email.com"
+    {{ '}' }},
+    "itens": [
+      {{ '{' }} "produto_id": "prod_xyz", "quantidade": 1 {{ '}' }}
+    ]
+  {{ '}' }}
+{{ '}' }}</code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: A Base da Automação Event-Driven</h3>
+      <p>
+        Webhooks transformam a maneira como os sistemas interagem, saindo de um modelo de "perguntas constantes" para um de "notificações inteligentes". Eles são eficientes, rápidos e a tecnologia por trás de quase toda automação moderna, permitindo que suas ferramentas reajam a eventos no momento exato em que eles acontecem.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

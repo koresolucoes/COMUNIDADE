@@ -1,0 +1,152 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ferramentas-essenciais-dev" class="hover:text-blue-accent hover:underline">Ferramentas Essenciais do Desenvolvedor</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O Terminal: Seu Canivete Suíço</h1>
+    <p class="mt-4 text-lg text-gray-400">Perca o medo da tela preta. Aprenda comandos básicos para navegar em pastas, criar arquivos e instalar programas.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O que é o Terminal?</h2>
+      <p>
+        Imagine que, em vez de clicar em ícones e pastas, você pudesse simplesmente ter uma conversa direta com seu computador, dizendo exatamente o que fazer. Isso é o terminal!
+      </p>
+      <p>
+        O <strong>Terminal</strong> (também chamado de Console, Shell ou Linha de Comando) é uma interface de texto que permite que você execute programas e gerencie seu sistema operacional através de comandos. É a "sala de máquinas" do seu computador, oferecendo uma forma mais rápida e poderosa de realizar tarefas.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Por que um Desenvolvedor Usa o Terminal?</h2>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Velocidade:</strong> Criar uma estrutura de pastas complexa com o mouse leva tempo. No terminal, é questão de segundos.</li>
+        <li><strong>Poder:</strong> Muitas ferramentas essenciais para desenvolvedores (como Git, Docker, NPM) são projetadas para serem usadas principalmente através da linha de comando.</li>
+        <li><strong>Automação:</strong> Você pode encadear múltiplos comandos para criar scripts que automatizam tarefas repetitivas.</li>
+        <li><strong>Acesso Remoto:</strong> É a principal forma de se conectar e gerenciar servidores na nuvem (VPS).</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Bússola: Comandos Essenciais de Navegação</h2>
+      <p>A primeira coisa a aprender é como se localizar e se mover pelo sistema de arquivos.</p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">pwd</code> (Print Working Directory)
+          <p class="text-sm text-gray-400 mt-1">Pergunta: "Onde eu estou agora?". Mostra o caminho completo da pasta atual.</p>
+          <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash">$ pwd
+/home/usuario/documentos</code></pre>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">ls</code> (List)
+          <p class="text-sm text-gray-400 mt-1">Pergunta: "O que há nesta pasta?". Lista todos os arquivos e subpastas.</p>
+           <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash">$ ls
+minha-pasta/  outro-arquivo.txt  documento.pdf</code></pre>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">cd</code> (Change Directory)
+          <p class="text-sm text-gray-400 mt-1">"Me leve para outra pasta."</p>
+           <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash"># Entrar em uma pasta
+$ cd minha-pasta/
+
+# Voltar uma pasta (para a pasta "pai")
+$ cd ..
+
+# Voltar para sua pasta "home" (seu diretório principal)
+$ cd ~</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">As Ferramentas: Manipulando Arquivos e Pastas</h2>
+      <p>Agora que você sabe se mover, vamos aprender a criar, mover, copiar e apagar coisas.</p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">mkdir</code> (Make Directory)
+          <p class="text-sm text-gray-400 mt-1">"Crie uma nova pasta aqui."</p>
+          <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash">$ mkdir novo-projeto</code></pre>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">touch</code>
+          <p class="text-sm text-gray-400 mt-1">"Crie um novo arquivo vazio."</p>
+          <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash">$ touch README.md</code></pre>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">mv</code> (Move)
+          <p class="text-sm text-gray-400 mt-1">Serve para mover um arquivo ou para renomeá-lo.</p>
+          <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash"># Renomeando um arquivo
+$ mv antigo-nome.txt novo-nome.txt
+
+# Movendo um arquivo para dentro de uma pasta
+$ mv novo-nome.txt novo-projeto/</code></pre>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">rm</code> (Remove)
+          <p class="text-sm text-gray-400 mt-1">"Apague este arquivo."</p>
+          <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-bash"># Apagando um arquivo
+$ rm arquivo_para_deletar.txt
+
+# Apagando uma pasta e TUDO que há dentro dela
+$ rm -r nome_da_pasta/</code></pre>
+          <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs flex items-start gap-3">
+            <span class="material-icons-outlined text-yellow-300 mt-0.5">warning</span>
+            <div>
+              <strong class="font-semibold">Cuidado Extremo:</strong> O comando <code>rm</code> é permanente. Não há "lixeira". Um comando como <code>rm -rf /</code> (NÃO EXECUTE ISSO!) pode apagar seu sistema operacional inteiro. Use com respeito e atenção.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Juntando Tudo: Exemplo Prático</h2>
+      <p>Vamos criar a estrutura de pastas para um pequeno site usando apenas o terminal.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Criando um Projeto Web</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-bash"># 1. Cria a pasta principal do projeto
+$ mkdir meu-website
+
+# 2. Entra na pasta que acabamos de criar
+$ cd meu-website
+
+# 3. Cria as subpastas para CSS, JavaScript e Imagens, tudo de uma vez
+$ mkdir css js img
+
+# 4. Cria os arquivos iniciais vazios
+$ touch index.html css/style.css js/script.js
+
+# 5. Lista tudo para ver o resultado (o -R lista de forma recursiva)
+$ ls -R
+.:
+css/  img/  index.html  js/
+
+./css:
+style.css
+
+./img:
+
+./js:
+script.js
+</code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Seu Novo Superpoder</h3>
+      <p>
+        O terminal não é assustador; é uma ferramenta de produtividade. Com esses poucos comandos, você já pode navegar e organizar seus projetos como um profissional. Quanto mais você usar, mais natural se tornará.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ferramentas-essenciais-dev" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

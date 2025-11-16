@@ -1,0 +1,171 @@
+
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-logica-web" class="hover:text-blue-accent hover:underline">Fundamentos da Lógica e da Web</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Tipos de Dados Essenciais e Estruturas</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda os blocos de construção da informação: de textos e números a listas e dicionários.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      Se variáveis são "caixas" para guardar informações, os <strong>tipos de dados</strong> definem que tipo de coisa podemos guardar em cada caixa. O computador precisa saber se está lidando com um texto, um número ou uma decisão para poder realizar as operações corretas.
+    </p>
+
+    <!-- 1. Strings -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. Strings: A Magia do Texto</h2>
+      <p>
+        Uma <strong>String</strong> é simplesmente um pedaço de texto. Pode ser uma letra, uma palavra, uma frase ou um livro inteiro. Pense nela como um colar de contas, onde cada conta é um caractere. Para dizer ao computador que algo é um texto, nós o envolvemos em aspas (simples <code>'</code> ou duplas <code>"</code>).
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Trabalhando com texto</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">primeiro_nome = "João"
+ultimo_nome = "Silva"
+
+# Podemos "somar" strings para juntá-las (concatenação)
+nome_completo = primeiro_nome + " " + ultimo_nome
+
+print(nome_completo)  # Mostra "João Silva" na tela</code></pre>
+      </div>
+    </div>
+
+    <!-- 2. Numbers -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Numbers: O Poder dos Cálculos</h2>
+      <p>
+        Números são usados para... bem, números! Eles são a base de toda a matemática que um computador faz. Existem dois tipos principais:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+        <li><strong>Integers (Inteiros):</strong> Números inteiros, sem casas decimais. Ex: <code>10</code>, <code>-5</code>, <code>0</code>.</li>
+        <li><strong>Floats (Ponto Flutuante):</strong> Números com casas decimais. Ex: <code>9.99</code>, <code>-0.5</code>, <code>3.14</code>.</li>
+      </ul>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Operações matemáticas</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">quantidade = 5       # Um Integer
+preco_unitario = 9.99  # Um Float
+
+total = quantidade * preco_unitario
+
+print(total)  # Mostra 49.95 na tela</code></pre>
+      </div>
+       <div class="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs flex items-start gap-3">
+          <span class="material-icons-outlined text-blue-300 mt-0.5">tips_and_updates</span>
+          <div>
+            <strong class="font-semibold">Importante:</strong> Você não pode fazer contas com uma string! <code>"5" + "5"</code> resulta na string <code>"55"</code>, não no número <code>10</code>. O computador trata texto e números de formas muito diferentes.
+          </div>
+      </div>
+    </div>
+
+    <!-- 3. Booleans -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Booleanos: As Chaves da Decisão</h2>
+      <p>
+        Um <strong>Booleano</strong> é o tipo de dado mais simples de todos. Ele só pode ter dois valores: <code>True</code> (Verdadeiro) ou <code>False</code> (Falso). Pense nele como um interruptor de luz: está ligado ou desligado. Não há meio-termo.
+      </p>
+      <p>
+        Booleanos são o coração das condicionais (<code>if/else</code>), pois eles são o resultado de qualquer comparação que você faça.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: O resultado de uma pergunta</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">idade = 20
+e_maior_de_idade = idade >= 18  # A pergunta "20 é maior ou igual a 18?"
+
+print(e_maior_de_idade) # Mostra "True" na tela
+
+tem_estoque = False # Podemos definir o valor diretamente
+
+if e_maior_de_idade:
+  print("Acesso permitido.")</code></pre>
+      </div>
+    </div>
+
+    <!-- 4. Advanced Structures -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+        <h2 class="text-2xl font-semibold text-white !mt-0">4. Estruturas de Dados: Caixas que Guardam Caixas</h2>
+        <p>
+          Além dos tipos básicos, podemos criar estruturas mais complexas para agrupar informações relacionadas.
+        </p>
+        
+        <h3 class="text-xl font-bold text-white mt-6">Arrays (ou Listas)</h3>
+        <p>
+          Um <strong>Array</strong> (ou Lista) é uma coleção ordenada de itens. Imagine uma estante com várias gavetas numeradas. Você pode guardar um item em cada gaveta e acessá-lo pelo número da gaveta (o "índice").
+        </p>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+          <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Uma lista de compras</h4>
+          <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">lista_de_compras = ["Maçãs", "Leite", "Pão"]
+  
+# Acessamos o primeiro item (índice 0)
+print(lista_de_compras[0]) # Mostra "Maçãs"
+  
+# Podemos adicionar mais itens
+lista_de_compras.append("Café")</code></pre>
+        </div>
+
+        <h3 class="text-xl font-bold text-white mt-8">Dicionários (ou Objetos)</h3>
+        <p>
+          Um <strong>Dicionário</strong> (ou Objeto) é uma coleção de pares "chave-valor". Em vez de usar um número como índice, você usa uma "chave" (uma string) para acessar um "valor". É como uma agenda de contatos: você procura pelo nome (chave) para encontrar o número de telefone (valor).
+        </p>
+         <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+          <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Descrevendo uma pessoa</h4>
+          <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">pessoa = {{ '{' }}
+  "nome": "Carlos",
+  "idade": 42,
+  "profissao": "Engenheiro"
+{{ '}' }}
+
+# Acessamos o valor usando a chave
+print(pessoa["profissao"]) # Mostra "Engenheiro"</code></pre>
+        </div>
+
+        <h3 class="text-xl font-bold text-white mt-8">E o Char?</h3>
+        <p>
+          Em algumas linguagens mais antigas, um <strong>Char</strong> era um tipo de dado especial para um único caractere (como <code>'A'</code>). Em linguagens modernas como Python e JavaScript, um `char` é simplesmente uma <strong>String</strong> com apenas um caractere. A ideia de um caractere individual ainda é importante, mas não é mais um tipo de dado separado.
+        </p>
+    </div>
+
+    <!-- Putting It All Together -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Juntando Tudo: Um Exemplo Prático</h2>
+      <p>Vamos usar todos os tipos de dados que aprendemos para descrever um produto de forma mais completa.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Descrevendo um Produto Complexo</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">produto = {{ '{' }}
+  "nome": "Smartphone Pro X",      # String
+  "preco": 3999.90,                  # Number (Float)
+  "em_estoque": True,                # Boolean
+  "tags": ["tecnologia", "celular"], # Array (lista de Strings)
+  "especificacoes": {{ '{' }}                # Dicionário (Objeto)
+    "tela": "6.7 polegadas",
+    "ram": "8GB"
+  {{ '}' }}
+{{ '}' }}
+
+# Agora podemos acessar informações específicas
+print("O " + produto["nome"] + " custa R$ " + str(produto["preco"]))
+print("RAM: " + produto["especificacoes"]["ram"])
+
+if produto["em_estoque"]:
+  print("Compre agora!")</code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: A Base da Informação</h3>
+      <p>
+        Strings, Números e Booleanos são os "átomos", enquanto Arrays e Dicionários são as "moléculas" que usamos para construir informações complexas. Dominar essas estruturas é fundamental para representar qualquer dado do mundo real dentro de um programa.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+
+  </article>
+</div>

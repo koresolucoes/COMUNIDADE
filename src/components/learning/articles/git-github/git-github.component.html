@@ -1,0 +1,116 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ferramentas-essenciais-dev" class="hover:text-blue-accent hover:underline">Ferramentas Essenciais do Desenvolvedor</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Git & GitHub: Versionando e Colaborando</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda por que o Git é essencial. Aprenda a salvar "fotos" do seu código, voltar no tempo e colaborar com outros devs.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia do "Save Game"</h2>
+      <p>
+        Imagine que você está jogando um videogame difícil. Antes de uma parte desafiadora, você salva o seu progresso. Se algo der errado, você pode simplesmente carregar aquele "save" e tentar de novo, sem perder tudo o que fez antes.
+      </p>
+      <p>
+        O <strong>Controle de Versão</strong> é o "save game" para o seu código. Ele permite que você tire "fotos" (snapshots) do seu projeto em diferentes momentos. Se você introduzir um bug ou decidir que uma nova funcionalidade não ficou boa, pode facilmente "voltar no tempo" para uma versão anterior que funcionava.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Git vs. GitHub: A Ferramenta e a Nuvem</h2>
+      <p>
+        É muito importante não confundir os dois. Eles trabalham juntos, mas são coisas diferentes.
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">Git: A Ferramenta no Seu Computador</h4>
+          <p class="text-sm text-gray-400 mt-2">É o programa que você instala na sua máquina. O Git é o responsável por <strong>tirar as "fotos" (commits)</strong> do seu código e gerenciar todo o histórico de versões localmente.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">GitHub: A "Nuvem" para o Seu Código</h4>
+          <p class="text-sm text-gray-400 mt-2">É um site (um serviço na nuvem) onde você <strong>armazena seus projetos Git</strong>. O GitHub é como um "Google Drive" para o seu código, permitindo que você guarde um backup online e, mais importante, colabore com outros desenvolvedores.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O Fluxo de Trabalho Essencial do Git</h2>
+      <p>O processo de salvar uma "foto" do seu código envolve três passos principais, que acontecem no seu computador:</p>
+      
+      <div class="p-6 bg-gray-800 border-l-4 border-blue-accent rounded-r-lg my-6">
+        <div class="flex flex-col md:flex-row items-center justify-around text-center space-y-4 md:space-y-0">
+            <div class="step">
+                <span class="material-icons-outlined text-3xl mb-2">edit</span>
+                <p class="font-semibold">1. Modificar</p>
+                <p class="text-xs text-gray-400">Você edita seus arquivos.</p>
+            </div>
+            <span class="text-2xl text-gray-600">&rarr;</span>
+            <div class="step">
+                <span class="material-icons-outlined text-3xl mb-2">add_shopping_cart</span>
+                <p class="font-semibold">2. Preparar (`git add`)</p>
+                <p class="text-xs text-gray-400">Você escolhe quais mudanças quer salvar.</p>
+            </div>
+            <span class="text-2xl text-gray-600">&rarr;</span>
+            <div class="step">
+                <span class="material-icons-outlined text-3xl mb-2">camera_alt</span>
+                <p class="font-semibold">3. Salvar (`git commit`)</p>
+                <p class="text-xs text-gray-400">Você tira a "foto" com uma descrição.</p>
+            </div>
+        </div>
+      </div>
+
+      <h3 class="!mt-8">Comandos para o Fluxo Essencial</h3>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">git init</code>
+          <p class="text-sm text-gray-400 mt-1">"Comece a rastrear esta pasta." Usado uma única vez para transformar uma pasta normal em um "repositório" Git.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">git add .</code>
+          <p class="text-sm text-gray-400 mt-1">"Adicione todas as minhas mudanças à área de preparação." A área de preparação (staging area) é como um rascunho do que você vai salvar na sua "foto". O ponto `.` significa "todos os arquivos nesta pasta".</p>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">git commit -m "Sua mensagem descritiva"</code>
+          <p class="text-sm text-gray-400 mt-1">"Tire a foto (commit) com esta mensagem." A mensagem é crucial! Ela deve explicar brevemente o que você mudou. Ex: "Adiciona botão de login" ou "Corrige bug no cálculo de impostos".</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Colaborando com o GitHub</h2>
+      <p>Depois de salvar suas "fotos" localmente, você as envia para o GitHub para que outros possam vê-las ou para ter um backup.</p>
+       <div class="space-y-4">
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">git push</code>
+          <p class="text-sm text-gray-400 mt-1">"Envie meus commits (fotos) para o GitHub." Isso atualiza o repositório online com suas mudanças locais.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+          <code class="text-blue-300 font-bold">git pull</code>
+          <p class="text-sm text-gray-400 mt-1">"Baixe os commits mais recentes do GitHub." Se um colega de equipe enviou mudanças, você usa este comando para atualizar seu projeto local com o trabalho dele.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">O Workflow do Dia a Dia</h3>
+      <p>Para a maioria dos desenvolvedores, o ciclo diário é:</p>
+      <ol class="!list-none !pl-0 space-y-2">
+        <li><strong>Antes de começar:</strong> <code class="bg-gray-800 px-1 py-0.5 rounded">git pull</code> para pegar as últimas atualizações.</li>
+        <li><strong>Trabalhar no código:</strong> Faça suas alterações.</li>
+        <li><strong>Ao terminar uma tarefa:</strong> <code class="bg-gray-800 px-1 py-0.5 rounded">git add .</code>, depois <code class="bg-gray-800 px-1 py-0.5 rounded">git commit -m "mensagem"</code>, e finalmente <code class="bg-gray-800 px-1 py-0.5 rounded">git push</code>.</li>
+      </ol>
+      <p class="mt-2">Repita. Esse ciclo garante que seu trabalho esteja sempre salvo, versionado e sincronizado com sua equipe.</p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ferramentas-essenciais-dev" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

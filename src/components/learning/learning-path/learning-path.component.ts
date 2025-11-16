@@ -1,9 +1,9 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { from, of } from 'rxjs';
-import { LearningService, LearningPath } from '../../../services/learning.service';
+import { LearningService } from '../../../services/learning.service';
 
 @Component({
   selector: 'app-learning-path',
@@ -16,7 +16,7 @@ export class LearningPathComponent {
   private route: ActivatedRoute = inject(ActivatedRoute);
   private learningService = inject(LearningService);
 
-  path = toSignal(
+  pathData = toSignal(
     this.route.paramMap.pipe(
       map(params => params.get('slug')),
       switchMap(slug => {
@@ -27,4 +27,6 @@ export class LearningPathComponent {
       })
     )
   );
+
+  path = computed(() => this.pathData()?.path);
 }

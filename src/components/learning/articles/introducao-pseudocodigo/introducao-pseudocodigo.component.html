@@ -1,0 +1,118 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-logica-web" class="hover:text-blue-accent hover:underline">Fundamentos da Lógica e da Web</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Introdução ao Pseudocódigo</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a planejar a lógica de um programa em uma linguagem simples e legível antes de partir para o código real.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Que é Pseudocódigo? A Planta Baixa do Programa</h2>
+      <p>
+        Imagine construir uma casa. Você não começa a empilhar tijolos aleatoriamente. Primeiro, um arquiteto desenha uma <strong>planta baixa</strong>: um plano detalhado que mostra onde cada parede, porta e janela vai ficar. A planta não é a casa, mas é o guia essencial para construí-la corretamente.
+      </p>
+      <p>
+        <strong>Pseudocódigo é a planta baixa do seu código.</strong> É uma forma de escrever a lógica e os passos de um programa usando uma linguagem simples, parecida com o português, mas estruturada como um programa de verdade. Não é uma linguagem de programação real; nenhum computador pode executá-lo. Seu único propósito é ajudar <em>você</em>, o programador, a pensar e planejar.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Por Que Perder Tempo com Isso?</h2>
+      <p>
+        Escrever pseudocódigo antes do código real pode parecer um passo extra, mas economiza muito tempo e dor de cabeça. Os principais benefícios são:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Foco na Lógica:</strong> Você se concentra em <em>o que</em> o programa deve fazer, não em <em>como</em> escrever (a sintaxe com pontos, vírgulas e parênteses).</li>
+        <li><strong>Independente da Linguagem:</strong> Um bom pseudocódigo pode ser facilmente "traduzido" para Python, JavaScript, ou qualquer outra linguagem.</li>
+        <li><strong>Encontrar Erros Cedo:</strong> É muito mais fácil encontrar um erro de lógica em um plano simples do que em centenas de linhas de código complexo.</li>
+        <li><strong>Comunicação:</strong> É uma ótima maneira de explicar a lógica do seu programa para outros desenvolvedores (ou até para não-desenvolvedores).</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os "Comandos" Básicos do Pseudocódigo</h2>
+      <p>Não há regras rígidas, mas geralmente usamos algumas palavras-chave para manter a estrutura organizada. As mais comuns são:</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg text-sm">
+        <ul class="!list-none !pl-0 space-y-3">
+            <li><code>INICIO</code> / <code>FIM</code>: Para marcar o começo e o fim do programa.</li>
+            <li><code>ESCREVA "texto"</code>: Para mostrar uma mensagem na tela.</li>
+            <li><code>LEIA nome_da_variavel</code>: Para pedir uma informação ao usuário e guardá-la em uma variável.</li>
+            <li><code>VARIAVEL nome = valor</code>: Para criar uma variável e atribuir um valor.</li>
+            <li><code>SE (condição) ENTAO ... SENAO ... FIMSE</code>: Para tomar decisões.</li>
+            <li><code>PARA cada item EM lista ... FIMPARA</code>: Para repetir uma ação para cada item de uma coleção.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Exemplo Prático: O Filtro de Festa em Pseudocódigo</h2>
+      <p>Lembra do nosso exemplo de verificar quem pode entrar na festa? Vamos primeiro planejar a solução usando pseudocódigo.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Planta Baixa (Pseudocódigo)</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-plain">INICIO
+  VARIAVEL convidados = [
+    {{ '{' }}nome: "Ana", idade: 25{{ '}' }},
+    {{ '{' }}nome: "Bruno", idade: 17{{ '}' }},
+    {{ '{' }}nome: "Carla", idade: 30{{ '}' }}
+  ]
+
+  PARA cada convidado EM convidados
+    SE (convidado.idade >= 18) ENTAO
+      ESCREVA convidado.nome + " pode entrar."
+    SENAO
+      ESCREVA convidado.nome + " não pode entrar."
+    FIMSE
+  FIMPARA
+FIM
+</code></pre>
+        <p class="text-xs text-gray-400 mt-3">Percebe como é fácil ler e entender a lógica? Não há preocupação com sintaxe, apenas com os passos a serem seguidos.</p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Do Pseudocódigo para o Código Real</h2>
+      <p>Agora, a "tradução" para uma linguagem real como Python fica muito mais direta. Compare o plano com a execução:</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+            <h4 class="text-sm font-semibold text-gray-300 mb-2">Pseudocódigo (O Plano)</h4>
+            <pre class="!bg-gray-900 !p-3 !my-0 text-xs"><code class="language-plain">PARA cada convidado EM convidados
+  SE (convidado.idade >= 18) ENTAO
+    ESCREVA convidado.nome + " pode entrar."
+  SENAO
+    ESCREVA convidado.nome + " não pode entrar."
+  FIMSE
+FIMPARA
+</code></pre>
+        </div>
+         <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+            <h4 class="text-sm font-semibold text-gray-300 mb-2">Código Python (A Execução)</h4>
+            <pre class="!bg-gray-900 !p-3 !my-0 text-xs"><code class="language-python">for convidado in convidados:
+  if convidado["idade"] >= 18:
+    print(convidado["nome"] + " pode entrar.")
+  else:
+    print(convidado["nome"] + " não pode entrar.")
+</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Pense Primeiro, Codifique Depois</h3>
+      <p>
+        Pseudocódigo é uma ferramenta de pensamento. Ele te força a organizar suas ideias e a construir uma solução lógica antes de se preocupar com os detalhes técnicos de uma linguagem de programação. Adotar esse hábito fará de você um programador mais rápido, eficiente e organizado.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+
+  </article>
+</div>

@@ -1,0 +1,94 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/do-codigo-a-nuvem" class="hover:text-blue-accent hover:underline">Do Código à Nuvem</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Autenticação: O que é um JWT?</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda como os JSON Web Tokens (JWT) são usados para proteger APIs e garantir que apenas usuários autorizados acessem os dados.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: Nossa API é uma Festa de Portas Abertas</h2>
+      <p>
+        Atualmente, qualquer pessoa que saiba o endereço da nossa API de tarefas (<code>http://localhost:3000/tarefas</code>) pode criar, listar, atualizar e deletar tarefas. Isso é um grande problema de segurança! Precisamos de um "segurança" na porta para controlar quem entra.
+      </p>
+      <p>
+        É aqui que entram dois conceitos importantes:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+          <li><strong>Autenticação:</strong> O processo de verificar <strong>quem você é</strong> (geralmente com um usuário e senha).</li>
+          <li><strong>Autorização:</strong> O processo de verificar <strong>o que você tem permissão para fazer</strong> depois de autenticado.</li>
+      </ul>
+      <p>Um <strong>JWT (JSON Web Token)</strong> é uma das maneiras mais modernas e populares de lidar com a autenticação em APIs.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Analogia do Crachá VIP</h2>
+      <p>
+        Imagine que sua API é uma festa exclusiva.
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>O Login:</strong> Você chega na entrada (endpoint <code>/login</code>) e apresenta seus documentos (usuário e senha) ao segurança.</li>
+        <li><strong>A Verificação:</strong> O segurança confere seu nome na lista de convidados.</li>
+        <li><strong>O JWT (O Crachá):</strong> Se seu nome está na lista, o segurança te entrega um <strong>crachá VIP</strong>. Este crachá contém seu nome, seu nível de acesso (VIP) e uma data de validade. O mais importante: ele tem um selo de autenticidade que só o organizador da festa sabe fazer, tornando-o impossível de falsificar.</li>
+        <li><strong>Acessando a Festa:</strong> Agora, para acessar qualquer área da festa (qualquer endpoint da API), você não precisa mais mostrar seus documentos. Você simplesmente mostra o crachá. O segurança de cada área verifica o selo, vê que não está vencido e te deixa passar.</li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Anatomia de um JWT: As Três Partes</h2>
+      <p>
+        Um JWT real é apenas uma longa string de texto, dividida em três partes separadas por pontos: <code>xxxxx.yyyyy.zzzzz</code>.
+      </p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800 border-l-4 border-pink-400">
+          <h4 class="font-semibold text-pink-300">1. Header (Cabeçalho)</h4>
+          <p class="text-sm text-gray-400 mt-1">Diz o "tipo" do crachá. Geralmente informa que é um token do tipo JWT e qual algoritmo foi usado para criar o selo de autenticidade (a assinatura). É codificado em Base64Url.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-cyan-300">
+          <h4 class="font-semibold text-cyan-200">2. Payload (Carga Útil)</h4>
+          <p class="text-sm text-gray-400 mt-1">As informações do crachá. Contém os "claims" (informações) sobre o usuário, como o ID do usuário (<code>sub</code>), o nome e, crucialmente, uma data de expiração (<code>exp</code>). Também é codificado em Base64Url.</p>
+          <p class="text-xs text-yellow-400 mt-2"><strong>Atenção:</strong> O Payload é legível por qualquer um! Nunca coloque informações sensíveis (como senhas) aqui. Ele serve para carregar dados, não para escondê-los.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-red-400">
+          <h4 class="font-semibold text-red-300">3. Signature (Assinatura)</h4>
+          <p class="text-sm text-gray-400 mt-1">O selo de autenticidade. Esta é a parte que garante a segurança. O servidor pega o Header, o Payload e uma <strong>chave secreta</strong> (que só ele conhece), e usa o algoritmo para criar uma assinatura única. Se alguém tentar alterar o Header ou o Payload, a assinatura não vai mais corresponder, e o token será invalidado.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O Fluxo de Autenticação na Prática</h2>
+      <ol class="list-decimal list-inside text-gray-400 space-y-3">
+          <li><strong>Login:</strong> O cliente envia um <code>POST</code> para <code>/api/login</code> com o email e a senha do usuário.</li>
+          <li><strong>Geração do Token:</strong> O servidor verifica as credenciais. Se estiverem corretas, ele cria um JWT (Header + Payload) e o assina com sua chave secreta, gerando a Signature. O servidor então devolve o token completo para o cliente.</li>
+          <li><strong>Armazenamento:</strong> O cliente (navegador) armazena o JWT de forma segura (geralmente em <code>localStorage</code>).</li>
+          <li><strong>Requisições Autenticadas:</strong> Para cada requisição futura a uma rota protegida (como <code>GET /tarefas</code>), o cliente adiciona um cabeçalho HTTP: <code>Authorization: Bearer &lt;seu_jwt_aqui&gt;</code>.</li>
+          <li><strong>Verificação no Servidor:</strong> O servidor recebe a requisição, extrai o token do cabeçalho, e verifica a assinatura usando sua chave secreta. Se a assinatura for válida e o token não tiver expirado, ele confia nas informações do Payload (como o ID do usuário) e processa a requisição. Caso contrário, retorna um erro <code>401 Unauthorized</code>.</li>
+      </ol>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Segurança "Stateless"</h3>
+      <p>
+        A grande vantagem do JWT é que ele é <strong>stateless</strong> (sem estado). O servidor não precisa guardar uma lista de quem está logado. Toda a informação necessária para verificar a sessão do usuário está contida no próprio token. Isso torna as APIs muito mais escaláveis e fáceis de gerenciar.
+      </p>
+       <div class="mt-4">
+        <a routerLink="/tools/jwt-decoder" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
+          <span class="material-icons-outlined">construction</span>
+          Prática: Inspecionar um JWT
+        </a>
+      </div>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/do-codigo-a-nuvem" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

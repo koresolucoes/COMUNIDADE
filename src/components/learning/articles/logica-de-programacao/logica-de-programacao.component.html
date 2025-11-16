@@ -1,0 +1,130 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-logica-web" class="hover:text-blue-accent hover:underline">Fundamentos da Lógica e da Web</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Lógica de Programação: Variáveis, Condicionais e Loops</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda os três pilares da lógica: como armazenar informações (variáveis), tomar decisões (condicionais) e repetir tarefas (loops).</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>Se a programação é como escrever uma receita, a lógica de programação é a gramática que nos permite criar instruções claras e sem ambiguidades. Vamos explorar os três blocos de construção fundamentais de qualquer programa.</p>
+
+    <!-- 1. Variáveis -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. Variáveis: Caixas para Guardar Coisas</h2>
+      <p>
+        Um programa precisa lidar com informações: o nome de um usuário, a idade de alguém, o preço de um produto. Uma <strong>variável</strong> é como uma caixa com uma etiqueta. Você dá um nome à caixa (a etiqueta) e guarda algo dentro dela.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Guardando informações</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Criamos uma "caixa" chamada 'nome' e guardamos o texto "Ana" dentro dela.
+nome = "Ana"
+
+# Criamos outra "caixa" chamada 'idade' e guardamos o número 30.
+idade = 30
+
+# Agora podemos usar as etiquetas para ver o que há dentro.
+print(nome)   # Mostra "Ana" na tela
+print(idade)  # Mostra 30 na tela</code></pre>
+      </div>
+       <div class="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs flex items-start gap-3">
+          <span class="material-icons-outlined text-blue-300 mt-0.5">tips_and_updates</span>
+          <div>
+            <strong class="font-semibold">Dica:</strong> Dê nomes claros e descritivos às suas variáveis. Use <code>preco_produto</code> em vez de <code>p</code>. Isso torna seu código muito mais fácil de entender no futuro!
+          </div>
+      </div>
+    </div>
+
+    <!-- 2. Condicionais -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Condicionais: Encruzilhadas no Caminho</h2>
+      <p>
+        Programas não são apenas uma lista reta de tarefas; eles precisam tomar decisões. <strong>Condicionais</strong> (geralmente usando <code>if</code>, <code>else</code> - "se", "senão") são como encruzilhadas na sua receita. "<strong>Se</strong> uma condição for verdadeira, siga por este caminho. <strong>Senão</strong>, siga por aquele outro."
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Verificando a idade para entrar em uma festa</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">idade = 20
+
+# A condição é "idade >= 18" (idade é maior ou igual a 18?)
+if idade >= 18:
+  print("Pode entrar na festa!")  # Este caminho é seguido se a condição for verdadeira.
+else:
+  print("Desculpe, entrada permitida apenas para maiores de 18.") # Este, se for falsa.</code></pre>
+      </div>
+    </div>
+
+    <!-- 3. Loops -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Loops: Repetindo Tarefas Automaticamente</h2>
+      <p>
+        Imagine que você precisa escrever "Olá!" na tela 5 vezes. Você poderia escrever <code>print("Olá!")</code> 5 vezes, mas e se fossem 1000 vezes? <strong>Loops</strong> (ou laços de repetição) resolvem isso. Eles executam um bloco de código repetidamente, até que uma condição de parada seja atingida.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Contando de 1 a 5</h4>
+        <p class="text-xs text-gray-400 mb-2">Este código diz: "Para cada número no intervalo de 1 a 5, mostre esse número na tela."</p>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">for numero in range(1, 6):  # O 6 não é incluído, então vai de 1 a 5
+  print(numero)
+
+# Saída na tela:
+# 1
+# 2
+# 3
+# 4
+# 5</code></pre>
+      </div>
+       <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs flex items-start gap-3">
+          <span class="material-icons-outlined text-yellow-300 mt-0.5">warning</span>
+          <div>
+            <strong class="font-semibold">Cuidado:</strong> Loops infinitos! Se a condição de parada de um loop nunca for atingida, o programa ficará preso, executando o mesmo código para sempre e travando.
+          </div>
+      </div>
+    </div>
+
+    <!-- Putting It All Together -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Juntando Tudo: Um Exemplo Prático</h2>
+      <p>Vamos combinar os três conceitos para resolver um problema simples: verificar uma lista de convidados e imprimir quem pode entrar na festa.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Filtro de Festa</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># 1. VARIÁVEIS: Armazenamos a lista de convidados em uma variável
+convidados = [
+  {{ '{' }} "nome": "Ana", "idade": 25 {{ '}' }},
+  {{ '{' }} "nome": "Bruno", "idade": 17 {{ '}' }},
+  {{ '{' }} "nome": "Carla", "idade": 30 {{ '}' }}
+]
+
+# 2. LOOP: Passamos por cada convidado na lista, um de cada vez
+for convidado in convidados:
+
+  # 3. CONDICIONAL: Verificamos a idade de cada convidado
+  if convidado["idade"] >= 18:
+    print(convidado["nome"] + " pode entrar.")
+  else:
+    print(convidado["nome"] + " não pode entrar.")
+
+# Saída na tela:
+# Ana pode entrar.
+# Bruno não pode entrar.
+# Carla pode entrar.</code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Os Blocos de Construção</h3>
+      <p>
+        Parabéns! Você acabou de aprender os três pilares que sustentam toda a programação. Não importa quão complexo um software pareça, no fundo, ele é apenas uma combinação sofisticada de <strong>variáveis</strong> para guardar dados, <strong>condicionais</strong> para tomar decisões e <strong>loops</strong> para executar repetições.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+
+  </article>
+</div>

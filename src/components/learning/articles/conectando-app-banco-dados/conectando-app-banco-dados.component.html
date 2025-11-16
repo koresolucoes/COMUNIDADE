@@ -1,0 +1,102 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/do-codigo-a-nuvem" class="hover:text-blue-accent hover:underline">Do Código à Nuvem</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Conectando sua Aplicação a um Banco de Dados</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda os conceitos e o passo a passo para fazer sua aplicação Node.js se comunicar com um banco de dados PostgreSQL.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      Nosso servidor "Hello World" é um ótimo começo, mas aplicações reais precisam armazenar e recuperar dados. Agora, vamos dar o próximo passo crucial: conectar nosso servidor Node.js a um banco de dados PostgreSQL.
+    </p>
+
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. A Ferramenta: `node-postgres` (pg)</h2>
+      <p>
+        Para que o Node.js possa "conversar" com um banco de dados PostgreSQL, precisamos de um tradutor. No mundo Node.js, esse tradutor é uma biblioteca. A mais popular e robusta para PostgreSQL é a <strong>node-postgres</strong>, que instalamos com o nome de pacote <code>pg</code>.
+      </p>
+      <p>
+        Primeiro, no terminal, dentro da pasta do seu projeto (<code>meu-primeiro-servidor</code>), instale o pacote:
+      </p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash" [textContent]="npmInstallPg"></code></pre>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Configuração: Guardando os Segredos</h2>
+      <p>
+        Nunca coloque senhas ou informações sensíveis diretamente no seu código! A prática correta é usar <strong>variáveis de ambiente</strong>. Vamos usar uma biblioteca chamada <code>dotenv</code> para carregar essas variáveis de um arquivo <code>.env</code>.
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-3">
+        <li>
+          <strong>Instale o `dotenv`:</strong>
+          <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash" [textContent]="dotenvInstall"></code></pre>
+        </li>
+        <li>
+          <strong>Crie um arquivo `.env`</strong> na raiz do seu projeto. É aqui que nossas "chaves secretas" vão ficar.
+          <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash" [textContent]="envFile"></code></pre>
+        </li>
+        <li>
+          <strong>IMPORTANTE: Adicione o `.env` ao seu `.gitignore`</strong> para garantir que você nunca envie suas senhas para o GitHub!
+           <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash" [textContent]="gitignoreFile"></code></pre>
+        </li>
+        <li>
+          <strong>Crie um arquivo `db.js`</strong> para centralizar nossa lógica de conexão. É uma boa prática separar as responsabilidades.
+          <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-2">
+            <h4 class="text-sm font-semibold text-gray-300 mb-2">db.js</h4>
+            <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-javascript" [textContent]="dbJsFile"></code></pre>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Integração e Teste: Usando a Conexão</h2>
+      <p>
+        Agora, vamos modificar nosso <code>index.js</code> para usar o módulo de banco de dados que criamos e adicionar uma nova rota para testar a conexão.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">index.js (Atualizado)</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-javascript" [textContent]="indexJsFinal"></code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">4. Hora do Teste!</h2>
+      <p>
+        Certifique-se de que você tem um banco de dados PostgreSQL rodando (seja localmente ou em um serviço como Supabase, Neon, etc.) e que as informações no seu arquivo <code>.env</code> estão corretas.
+      </p>
+      <p>
+        Agora, inicie seu servidor novamente:
+      </p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash">node index.js</code></pre>
+      <p>
+        Abra seu navegador e acesse <a href="http://localhost:3000/test-db" target="_blank" rel="noopener noreferrer">http://localhost:3000/test-db</a>.
+      </p>
+      <p>
+        Se tudo estiver correto, você não verá uma mensagem de erro, mas sim uma resposta em JSON com a data e hora atuais, diretamente do seu banco de dados! Algo como:
+      </p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-json" [textContent]="testDbResult"></code></pre>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: A Ponte foi Construída</h3>
+      <p>
+        Seu servidor agora tem um dos superpoderes mais importantes: a capacidade de se conectar a um banco de dados para persistir informações. Você aprendeu a gerenciar configurações de forma segura e a executar consultas.
+      </p>
+      <p>
+        Com esta base, estamos prontos para o próximo passo: construir uma API REST completa para criar, ler, atualizar e deletar dados.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/do-codigo-a-nuvem" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>
