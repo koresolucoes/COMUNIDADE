@@ -1,3 +1,5 @@
+
+
 import { Injectable, inject } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
@@ -105,6 +107,57 @@ export class UserDataService {
     
     if (error) {
       console.error('Error deleting data:', error);
+      throw error;
+    }
+  }
+
+  async getCompletedSteps(): Promise<string[]> {
+    const userId = await this.getUserId();
+    if (!userId) return [];
+
+    const { data, error } = await this.supabase
+      .from('user_learning_progress')
+      .select('step_path')
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error fetching completed steps:', error);
+      return [];
+    }
+    return data.map(item => item.step_path);
+  }
+
+  async markStepAsComplete(stepPath: string): Promise<void> {
+    const userId = await this.getUserId();
+    if (!userId) throw new Error('User not authenticated.');
+
+    const { error } = await this.supabase
+      .from('user_learning_progress')
+      .insert({
+        user_id: userId,
+        step_path: stepPath,
+      });
+
+    if (error) {
+      console.error('Error marking step as complete:', error);
+      throw error;
+    }
+  }
+
+  async unmarkStepAsComplete(stepPath: string): Promise<void> {
+    const userId = await this.getUserId();
+    if (!userId) throw new Error('User not authenticated.');
+
+    const { error } = await this.supabase
+      .from('user_learning_progress')
+      .delete()
+      .match({
+        user_id: userId,
+        step_path: stepPath,
+      });
+
+    if (error) {
+      console.error('Error unmarking step as complete:', error);
       throw error;
     }
   }

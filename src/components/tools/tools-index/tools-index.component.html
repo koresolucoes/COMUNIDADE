@@ -4,7 +4,40 @@
     <p class="mt-2 text-gray-400">Utilitários para acelerar seu fluxo de trabalho de automação.</p>
   </section>
 
-  @for(category of toolCategories; track category.name) {
+  <!-- Favorite Tools Section -->
+  @if(currentUser() && favoriteTools().length > 0) {
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-6 flex items-center gap-3">
+        <span class="material-icons-outlined text-yellow-400">star</span>
+        <span>Favoritos</span>
+      </h2>
+      <p class="text-sm text-gray-500 -mt-4 mb-6">Arraste e solte para reordenar suas ferramentas favoritas.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for(tool of favoriteTools(); track tool.link) {
+          <div 
+            class="relative block p-6 bg-gray-900 border-2 border-gray-800 rounded-lg transition-all duration-200 transform hover:-translate-y-1 hover:z-10 drop-zone"
+            [class.border-blue-accent]="isFavorite(tool.link)"
+            draggable="true"
+            (dragstart)="onDragStart($event, tool.link)"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event, tool.link)"
+            (dragend)="onDragEnd($event)">
+             <a [routerLink]="tool.link" class="absolute inset-0 z-0"></a>
+            <button 
+              (click)="toggleFavorite(tool.link)"
+              class="absolute top-3 right-3 p-1.5 text-gray-500 hover:text-yellow-400 bg-gray-800/50 rounded-full z-10">
+              <span class="material-icons-outlined text-lg">{{ isFavorite(tool.link) ? 'star' : 'star_outline' }}</span>
+            </button>
+            <h3 class="text-xl font-semibold text-white">{{ tool.name }}</h3>
+            <p class="mt-2 text-gray-400">{{ tool.description }}</p>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  @for(category of filteredToolCategories(); track category.name) {
     <section>
       <h2 class="text-2xl font-semibold text-white mb-6 flex items-center gap-3">
         <span class="material-icons-outlined text-blue-accent">{{ category.icon }}</span>
@@ -12,10 +45,21 @@
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for(tool of category.tools; track tool.name) {
-          <a [routerLink]="tool.link" class="relative block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 hover:z-10">
+          <div class="relative block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 hover:z-10">
+            <a [routerLink]="tool.link" class="absolute inset-0 z-0"></a>
+            @if(currentUser()) {
+              <button 
+                (click)="toggleFavorite(tool.link)" 
+                class="absolute top-3 right-3 p-1.5 text-gray-500 rounded-full z-10 transition-colors"
+                [class.text-yellow-400]="isFavorite(tool.link)"
+                [class.hover:text-yellow-400]="!isFavorite(tool.link)"
+                [class.hover:text-gray-400]="isFavorite(tool.link)">
+                <span class="material-icons-outlined text-lg">{{ isFavorite(tool.link) ? 'star' : 'star_outline' }}</span>
+              </button>
+            }
             <h3 class="text-xl font-semibold text-white">{{ tool.name }}</h3>
             <p class="mt-2 text-gray-400">{{ tool.description }}</p>
-          </a>
+          </div>
         }
       </div>
     </section>

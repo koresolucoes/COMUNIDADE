@@ -13,6 +13,18 @@
         <p class="mt-4 text-lg text-gray-400">{{ p.description }}</p>
       </header>
 
+      @if(authService.currentUser() && p.steps.length > 0) {
+        <div class="mb-12">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="font-semibold text-white">Seu Progresso</h3>
+            <span class="text-sm font-mono text-gray-400">{{ pathProgress().completed }} / {{ pathProgress().total }} Passos</span>
+          </div>
+          <div class="w-full bg-gray-800 rounded-full h-2.5">
+            <div class="bg-blue-accent h-2.5 rounded-full transition-all duration-300" [style.width.%]="pathProgress().percentage"></div>
+          </div>
+        </div>
+      }
+
       @if (p.steps.length > 0) {
         <div class="relative pl-8">
           <!-- Vertical line for the timeline -->
@@ -23,19 +35,34 @@
               <div class="relative">
                 <!-- Timeline Circle -->
                 <div class="absolute -left-8 top-1.5 w-4 h-4 rounded-full flex items-center justify-center bg-gray-800">
-                  <div class="w-2 h-2 rounded-full bg-blue-accent"></div>
+                  @if(isStepCompleted(step.path)) {
+                     <div class="w-3 h-3 rounded-full bg-green-accent"></div>
+                  } @else {
+                     <div class="w-2 h-2 rounded-full bg-blue-accent"></div>
+                  }
                 </div>
 
-                <div class="bg-gray-900 border border-gray-800 rounded-lg p-6">
-                  <span class="text-xs font-semibold uppercase tracking-wider text-blue-accent">Passo {{ i + 1 }}</span>
-                  <h2 class="text-xl font-bold text-white mt-2">{{ step.title }}</h2>
-                  <p class="mt-3 text-gray-400 text-sm leading-relaxed">{{ step.description }}</p>
-                  <a [routerLink]="step.path" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded-md font-semibold hover:bg-gray-700 hover:text-white transition-colors">
-                    <span class="material-icons-outlined text-base">
-                      {{ step.icon }}
-                    </span>
-                    <span>Acessar {{ step.type === 'article' ? 'Artigo' : 'Ferramenta' }}</span>
-                  </a>
+                <div class="flex items-start gap-4">
+                   @if(authService.currentUser()) {
+                    <button (click)="toggleStepCompletion(step.path)" class="mt-8 text-gray-500 hover:text-blue-accent transition-colors" [title]="isStepCompleted(step.path) ? 'Desmarcar passo' : 'Marcar como concluído'">
+                      @if(isStepCompleted(step.path)) {
+                        <span class="material-icons-outlined text-green-accent text-3xl">check_box</span>
+                      } @else {
+                        <span class="material-icons-outlined text-3xl">check_box_outline_blank</span>
+                      }
+                    </button>
+                   }
+                  <div class="flex-1 bg-gray-900 border border-gray-800 rounded-lg p-6">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-blue-accent">Passo {{ i + 1 }}</span>
+                    <h2 class="text-xl font-bold text-white mt-2">{{ step.title }}</h2>
+                    <p class="mt-3 text-gray-400 text-sm leading-relaxed">{{ step.description }}</p>
+                    <a [routerLink]="step.path" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-200 rounded-md font-semibold hover:bg-gray-700 hover:text-white transition-colors">
+                      <span class="material-icons-outlined text-base">
+                        {{ step.icon }}
+                      </span>
+                      <span>Acessar {{ step.type === 'article' ? 'Artigo' : 'Ferramenta' }}</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             }

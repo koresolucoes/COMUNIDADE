@@ -1,0 +1,22 @@
+.drop-zone.dragging {
+  opacity: 0.5;
+  border-style: dashed;
+}
+
+.drop-zone.drag-over {
+  transform: translateY(-1px) scale(1.02);
+  border-color: #3fb950; /* green-accent */
+  box-shadow: 0 0 15px rgba(63, 185, 80, 0.3);
+}
+
+/* Ensure the star button is clickable even with the covering link */
+.relative button {
+    position: absolute;
+    z-index: 10;
+}
+
+.relative a {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}

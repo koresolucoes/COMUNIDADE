@@ -1,4 +1,5 @@
 
+
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -6,11 +7,23 @@ import { AuthService, Profile } from '../../services/auth.service';
 import { UserDataService, ToolData } from '../../services/user-data.service';
 import { ToolDataStateService } from '../../services/tool-data-state.service';
 import { DatePipe } from '@angular/common';
+import { LearningProgressService } from '../../services/learning-progress.service';
+import { LearningService, LearningPath } from '../../services/learning.service';
+import { RouterLink } from '@angular/router';
+
+interface PathWithProgress {
+  path: LearningPath;
+  progress: {
+    completed: number;
+    total: number;
+    percentage: number;
+  };
+}
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [DatePipe, ReactiveFormsModule],
+  imports: [DatePipe, ReactiveFormsModule, RouterLink],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,9 +32,9 @@ export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private userDataService = inject(UserDataService);
   private toolDataStateService = inject(ToolDataStateService);
-  // Fix: Explicitly type injected Router to resolve type error.
+  private learningProgressService = inject(LearningProgressService);
+  private learningService = inject(LearningService);
   private router: Router = inject(Router);
-  // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.
   private fb: FormBuilder = inject(FormBuilder);
 
   currentUser = this.authService.currentUser;
@@ -30,7 +43,7 @@ export class ProfileComponent implements OnInit {
   loading = signal(true);
   profileLoading = signal(false);
   allData = signal<ToolData[]>([]);
-  activeTab = signal<'profile' | 'data'>('profile');
+  activeTab = signal<'profile' | 'data' | 'learning'>('profile');
   
   avatarFile = signal<File | null>(null);
   avatarPreview = signal<string | null>(null);
@@ -81,6 +94,29 @@ export class ProfileComponent implements OnInit {
     }
     return Object.entries(groups);
   });
+  
+  pathsWithProgress = computed<PathWithProgress[]>(() => {
+    const completedSteps = this.learningProgressService.completedSteps();
+    if (completedSteps.size === 0) return [];
+    
+    const allPaths: LearningPath[] = [];
+    this.learningService.getLearningData()().forEach(mainCat => {
+        mainCat.subcategories.forEach(subCat => {
+            allPaths.push(...subCat.paths);
+        });
+    });
+
+    const pathsWithProgress: PathWithProgress[] = [];
+    for (const path of allPaths) {
+      const progress = this.learningProgressService.getPathProgress(path);
+      if (progress.completed > 0) {
+        pathsWithProgress.push({ path, progress });
+      }
+    }
+    
+    // Sort by most recently completed steps is not easy without created_at, so we sort by completion percentage
+    return pathsWithProgress.sort((a, b) => b.progress.percentage - a.progress.percentage);
+  });
 
   constructor() {
     effect(() => {
@@ -101,6 +137,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
     await this.fetchData();
+    this.learningProgressService.loadCompletedSteps();
   }
 
   private async fetchData() {

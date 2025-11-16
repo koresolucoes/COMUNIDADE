@@ -29,19 +29,26 @@
                 @if(subCat.paths.length > 0) {
                   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-9">
                     @for(path of subCat.paths; track path.slug) {
+                      @let progress = learningProgressService.getPathProgress(path);
                       <a [routerLink]="['/learning', path.slug]" class="relative block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 group hover:z-10">
+                        @if(progress.completed > 0) {
+                          <div class="absolute top-4 left-4 text-xs font-semibold flex items-center gap-1.5" [class.text-green-accent]="progress.percentage === 100" [class.text-blue-accent]="progress.percentage < 100" [title]="progress.percentage.toFixed(0) + '% Concluído'">
+                            @if(progress.percentage === 100) {
+                              <span class="material-icons-outlined">check_circle</span>
+                            } @else {
+                              <span class="material-icons-outlined">task_alt</span>
+                            }
+                            <span>{{progress.completed}} / {{progress.total}}</span>
+                          </div>
+                        }
                         <span class="absolute top-4 right-4 text-xs font-semibold px-2 py-1 rounded-full"
                           [class.bg-green-accent/20]="path.level === 'Fundamentos' || path.level === 'Básico'" [class.text-green-300]="path.level === 'Fundamentos' || path.level === 'Básico'"
                           [class.bg-yellow-500/20]="path.level === 'Intermediário'" [class.text-yellow-300]="path.level === 'Intermediário'"
                           [class.bg-red-500/20]="path.level === 'Avançado'" [class.text-red-300]="path.level === 'Avançado'">
                           {{ path.level }}
                         </span>
-                        <h4 class="text-lg font-semibold text-white group-hover:text-blue-accent transition-colors pr-16">{{ path.title }}</h4>
+                        <h4 class="text-lg font-semibold text-white group-hover:text-blue-accent transition-colors pt-8">{{ path.title }}</h4>
                         <p class="mt-2 text-sm text-gray-400">{{ path.description }}</p>
-                        <div class="mt-4 text-sm text-gray-500 flex items-center gap-2">
-                          <span class="material-icons-outlined text-base">list_alt</span>
-                          <span>{{ path.steps.length }} passos</span>
-                        </div>
                       </a>
                     }
                   </div>

@@ -8,6 +8,7 @@ export interface Profile {
   username: string;
   full_name: string;
   avatar_url: string;
+  favorite_tools?: string[];
 }
 
 @Injectable({
@@ -48,7 +49,7 @@ export class AuthService {
   async fetchProfile(userId: string) {
     const { data, error } = await this.supabase
       .from('profiles')
-      .select('*')
+      .select('id, updated_at, username, full_name, avatar_url, favorite_tools')
       .eq('id', userId)
       .single();
     
@@ -98,6 +99,29 @@ export class AuthService {
     
     await this.fetchProfile(user.id); // Re-fetch to update the signal with public URL
     return data;
+  }
+
+  async updateFavoriteTools(toolLinks: string[]): Promise<void> {
+    const user = this.currentUser();
+    if (!user) throw new Error('User not authenticated.');
+
+    const { error } = await this.supabase
+      .from('profiles')
+      .update({ favorite_tools: toolLinks, updated_at: new Date().toISOString() })
+      .eq('id', user.id);
+
+    if (error) {
+      console.error('Error updating favorite tools:', error);
+      throw error;
+    }
+
+    // Update local profile signal to reflect changes immediately
+    this.currentUserProfile.update(profile => {
+      if (profile) {
+        return { ...profile, favorite_tools: toolLinks };
+      }
+      return null;
+    });
   }
 
   async uploadAvatar(file: File): Promise<string> {

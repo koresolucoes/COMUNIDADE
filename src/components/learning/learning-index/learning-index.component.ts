@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LearningService } from '../../../services/learning.service';
+import { LearningProgressService } from '../../../services/learning-progress.service';
 
 @Component({
   selector: 'app-learning-index',
@@ -9,7 +10,12 @@ import { LearningService } from '../../../services/learning.service';
   templateUrl: './learning-index.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LearningIndexComponent {
+export class LearningIndexComponent implements OnInit {
   private learningService = inject(LearningService);
+  public learningProgressService = inject(LearningProgressService);
   mainCategories = this.learningService.getLearningData();
+
+  ngOnInit(): void {
+    this.learningProgressService.loadCompletedSteps();
+  }
 }
