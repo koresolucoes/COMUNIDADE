@@ -71,6 +71,9 @@ export class AuthService {
   signInWithGoogle() {
     return this.supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: {
+        redirectTo: 'https://comunidade.koresolucoes.com.br',
+      },
     });
   }
 
