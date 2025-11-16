@@ -8,12 +8,122 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Fazendo Requisições HTTP com a biblioteca Requests</h1>
     <p class="mt-4 text-lg text-gray-400">Aprenda a usar a biblioteca `requests`, o padrão de fato em Python para interagir com APIs REST.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O que é a biblioteca `requests`?</h2>
+      <p>
+        No mundo da web, os programas "conversam" através do protocolo HTTP. A biblioteca <code>requests</code> é uma ferramenta em Python que torna essa conversa incrivelmente simples e legível. Ela abstrai toda a complexidade de criar requisições HTTP, permitindo que você se concentre no que importa: buscar ou enviar dados.
+      </p>
+      <p>
+        Ela é tão popular que seu slogan é "HTTP para Humanos".
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Instalação</h2>
+      <p>
+        Se você estiver usando um ambiente local, instale a biblioteca via terminal com o `pip`. Em ambientes como o Google Colab, ela geralmente já vem instalada.
+      </p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash">pip install requests</code></pre>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. A Requisição Mais Comum: `GET`</h2>
+      <p>
+        Uma requisição <code>GET</code> é usada para <strong>buscar</strong> dados de um servidor. É o que seu navegador faz quando você acessa um site.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Buscando um "to-do" de uma API de teste</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import requests
+
+# A URL do recurso que queremos buscar
+url = "https://jsonplaceholder.typicode.com/todos/1"
+
+# Fazemos a requisição GET
+response = requests.get(url)
+
+# O objeto 'response' contém todas as informações da resposta do servidor
+
+# 1. Verificamos se a requisição foi bem-sucedida (código 200 OK)
+print(f"Status Code: {{'{'}}response.status_code{{'}'}}")
+
+# 2. Convertendo a resposta JSON em um dicionário Python
+dados = response.json()
+print(f"Dados recebidos: {{'{'}}dados{{'}'}}")
+
+# 3. Agora podemos usar os dados como um dicionário normal
+print(f"Título da tarefa: {{'{'}}dados['title']{{'}'}}")</code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Enviando Dados: A Requisição `POST`</h2>
+      <p>Uma requisição <code>POST</code> é usada para <strong>criar</strong> um novo recurso no servidor. Para isso, precisamos enviar os dados no corpo (body) da requisição.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Criando um novo "post"</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import requests
+
+url = "https://jsonplaceholder.typicode.com/posts"
+
+# Os dados que queremos enviar, em formato de dicionário Python
+novo_post = {{ '{' }}
+    "title": "Meu novo post",
+    "body": "Este é o conteúdo do post.",
+    "userId": 1
+{{ '}' }}
+
+# Fazemos a requisição POST, passando os dados no parâmetro 'json'
+# A biblioteca 'requests' converte nosso dicionário para JSON automaticamente
+response = requests.post(url, json=novo_post)
+
+print(f"Status Code: {{'{'}}response.status_code{{'}'}}") # Deve ser 201 (Created)
+print(f"Resposta da API: {{'{'}}response.json(){{'}'}}") # A API retorna o objeto criado com um ID</code></pre>
+       </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Parâmetros Adicionais: `params` e `headers`</h2>
+      <p>Muitas APIs requerem informações extras, como filtros na URL (query parameters) ou chaves de autenticação (headers).</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Filtrando posts por usuário e enviando headers</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import requests
+
+url = "https://jsonplaceholder.typicode.com/posts"
+
+# Parâmetros de query para filtrar os resultados (será convertido para ?userId=1)
+parametros = {{ '{' }} "userId": 1 {{ '}' }}
+
+# Cabeçalhos customizados (muito usado para chaves de API)
+cabecalhos = {{ '{' }}
+    "Content-Type": "application/json",
+    "X-Api-Key": "SUA_CHAVE_DE_API_SECRETA_AQUI"
+{{ '}' }}
+
+# A requisição combina a URL, os parâmetros e os cabeçalhos
+response = requests.get(url, params=parametros, headers=cabecalhos)
+
+print(f"URL final da requisição: {{'{'}}response.url{{'}'}}")
+print(f"Total de posts encontrados: {{'{'}}len(response.json()){{'}'}}")</code></pre>
+       </div>
+    </div>
+    
+     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
+      <p>
+        Use o que aprendeu para explorar uma API pública. A <a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">PokéAPI</a> é ótima para isso.
+      </p>
+      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
+        <li>No Google Colab, importe a biblioteca `requests`.</li>
+        <li>Faça uma requisição <code>GET</code> para a URL <code>https://pokeapi.co/api/v2/pokemon/pikachu</code>.</li>
+        <li>Imprima o status code da resposta.</li>
+        <li>Converta a resposta para JSON e imprima o nome e o ID do Pokémon.</li>
+      </ol>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-coleta-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
-        <span class="material-icons-outlined">arrow_back</span>
-        Voltar para a Trilha
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Web Scraping com BeautifulSoup
       </a>
     </div>
   </article>

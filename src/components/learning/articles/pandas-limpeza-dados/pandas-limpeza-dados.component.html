@@ -8,12 +8,108 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Limpeza de Dados: Valores Nulos e Duplicados</h1>
     <p class="mt-4 text-lg text-gray-400">Aprenda os passos essenciais de qualquer análise de dados: como encontrar e tratar dados faltantes ou duplicados.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">"Garbage In, Garbage Out"</h2>
+      <p>
+        Este é um ditado famoso na ciência de dados que significa "Lixo entra, Lixo sai". Não importa quão sofisticada seja sua análise, se os dados de entrada forem sujos, incorretos ou incompletos, seus resultados não serão confiáveis.
+      </p>
+      <p>
+        A <strong>limpeza de dados</strong> é talvez a etapa mais importante (e muitas vezes a mais demorada) do trabalho com dados. O Pandas nos fornece um arsenal de ferramentas para deixar nossos dados brilhando.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. Lidando com Valores Ausentes (`NaN`)</h2>
+      <p>
+        Valores ausentes (representados no Pandas como <code>NaN</code> - Not a Number) são muito comuns. Uma idade não preenchida, uma medição que falhou, etc.
+      </p>
+      
+      <h3 class="text-xl font-bold text-white mt-6">Encontrando Valores Ausentes</h3>
+      <p>O primeiro passo é saber onde eles estão. O método <code>.isnull().sum()</code> é perfeito para isso.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
+url = 'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv'
+df = pd.read_csv(url)
+
+# Contando quantos valores nulos existem em cada coluna
+print(df.isnull().sum())</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Saída (parcial):</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-plain">...
+Age            177
+Cabin          687
+Embarked         2
+...</code></pre>
+         <p class="text-xs text-gray-400 mt-2">Vemos que a coluna 'Age' tem 177 valores ausentes, enquanto 'Cabin' tem 687!</p>
+      </div>
+
+      <h3 class="text-xl font-bold text-white mt-6">Tratando Valores Ausentes</h3>
+      <p>Temos duas estratégias principais:</p>
+      <ul class="list-disc list-inside text-gray-400">
+          <li><strong>Remover:</strong> Se tivermos muitos dados, podemos simplesmente remover as linhas (ou colunas) com valores ausentes usando <code>.dropna()</code>.</li>
+          <li><strong>Preencher:</strong> Uma abordagem melhor é preencher os valores ausentes com um valor lógico, como a média, a mediana, a moda (valor mais comum) ou um valor fixo, usando <code>.fillna()</code>.</li>
+      </ul>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Preenchendo a idade com a média</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Calcula a idade média dos passageiros (ignorando os NaN)
+idade_media = df['Age'].mean()
+print(f"Idade média: {{'{'}}idade_media:.2f{{'}'}}")
+
+# Preenche todos os valores nulos na coluna 'Age' com a média
+df['Age'].fillna(idade_media, inplace=True)
+
+# Verificando novamente:
+print(df.isnull().sum()) # Agora a coluna 'Age' terá 0 valores nulos</code></pre>
+          <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
+          <code>inplace=True</code> modifica o DataFrame original diretamente. Sem ele, a operação retornaria um novo DataFrame modificado, e você precisaria fazer <code>df['Age'] = df['Age'].fillna(...)</code>.
+          </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Lidando com Dados Duplicados</h2>
+      <p>Registros duplicados podem distorcer análises, como contar o mesmo cliente duas vezes. O Pandas facilita a localização e remoção.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Encontrando e removendo duplicatas</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Para criar um exemplo, vamos adicionar uma linha duplicada
+# df_duplicado = pd.concat([df, df.head(1)])
+
+# Contando quantas linhas são duplicatas exatas
+# print(df_duplicado.duplicated().sum()) # Saída: 1
+
+# Removendo as linhas duplicadas
+# df_limpo = df_duplicado.drop_duplicates()
+
+# print(df_limpo.shape) # O número de linhas será o original novamente</code></pre>
+       </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Corrigindo Tipos de Dados</h2>
+      <p>Às vezes, uma coluna que deveria ser numérica é lida como texto ('object' no Pandas). Podemos corrigir isso com o método <code>.astype()</code>.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># A coluna Pclass (classe do passageiro) é numérica, mas podemos tratá-la como uma categoria
+df['Pclass'] = df['Pclass'].astype('category')
+
+# Se uma coluna 'preco' fosse lida como "R$ 19,99", teríamos que primeiro
+# remover "R$ " e trocar a vírgula por ponto, para depois converter para float.
+# df['preco_float'] = df['preco'].str.replace('R$ ', '').str.replace(',', '.').astype(float)
+
+print(df.info()) # Agora 'Pclass' aparecerá como 'category'</code></pre>
+      </div>
+    </div>
+    
+     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Um Prato Limpo para a Análise</h4>
+      <p>
+        A limpeza de dados é um passo crítico que garante a qualidade e a confiabilidade das suas conclusões. Saber como lidar com valores ausentes, duplicatas e tipos de dados incorretos com o Pandas é uma habilidade fundamental para qualquer pessoa que trabalhe com dados.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-manipulacao-dados-pandas" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
-        <span class="material-icons-outlined">arrow_back</span>
-        Voltar para a Trilha
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Agrupamento e Agregação
       </a>
     </div>
   </article>

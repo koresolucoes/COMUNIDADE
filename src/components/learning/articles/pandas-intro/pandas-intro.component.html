@@ -8,12 +8,92 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Introdução ao Pandas: Series e DataFrames</h1>
     <p class="mt-4 text-lg text-gray-400">Conheça as duas estruturas de dados fundamentais do Pandas e como elas representam dados tabulares.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O que é Pandas? O "Excel" do Python</h2>
+      <p>
+        <strong>Pandas</strong> é a biblioteca mais importante para ciência e análise de dados em Python. Pense nela como um "Excel com superpoderes" que você controla através de código. Ela permite carregar, manipular, limpar, analisar e visualizar dados tabulares de forma eficiente.
+      </p>
+      <p>O nome "Pandas" vem de "Panel Data" (Dados em Painel), um termo de econometria para conjuntos de dados multidimensionais.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Instalação e Importação</h2>
+      <p>Se você ainda não tem o Pandas, instale-o com o pip. A convenção da comunidade é importar a biblioteca com o apelido <code>pd</code>.</p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash">pip install pandas</code></pre>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-python">import pandas as pd</code></pre>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. A Coluna: `Series`</h2>
+      <p>A primeira estrutura de dados fundamental do Pandas é a <strong>`Series`</strong>. Ela representa uma única coluna de dados, como uma coluna em uma planilha. É um array unidimensional com rótulos (chamados de <strong>índice</strong>).</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Criando uma `Series` de nomes</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
+
+nomes = ["Ana", "Bruno", "Carla"]
+serie_nomes = pd.Series(nomes)
+
+print(serie_nomes)</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Saída:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-plain">0      Ana
+1    Bruno
+2    Carla
+dtype: object</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Note que o Pandas adicionou automaticamente um índice numérico (0, 1, 2) à esquerda.</p>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. A Tabela: `DataFrame`</h2>
+      <p>A estrutura de dados mais importante e mais usada é o <strong>`DataFrame`</strong>. Ele representa uma tabela de dados bidimensional, com linhas e colunas, exatamente como uma planilha. Cada coluna de um `DataFrame` é uma `Series`.</p>
+      <p>A forma mais comum de criar um `DataFrame` do zero é a partir de um dicionário Python, onde as chaves são os nomes das colunas e os valores são as listas de dados.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Criando um `DataFrame` de usuários</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
+
+dados = {{ '{' }}
+    "nome": ["Ana", "Bruno", "Carla"],
+    "idade": [28, 35, 22],
+    "cidade": ["São Paulo", "Rio de Janeiro", "Belo Horizonte"]
+{{ '}' }}
+
+df = pd.DataFrame(dados)
+
+print(df)</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Saída:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-plain">    nome  idade          cidade
+0    Ana     28       São Paulo
+1  Bruno     35  Rio de Janeiro
+2  Carla     22  Belo Horizonte</code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Inspecionando seu DataFrame</h2>
+      <p>Depois de carregar ou criar um `DataFrame`, as primeiras coisas que você vai querer fazer são inspecioná-lo para entender seus dados.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Comandos essenciais de inspeção</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Mostra as 5 primeiras linhas do DataFrame
+print(df.head())
+
+# Mostra informações sobre o DataFrame, incluindo tipos de dados e valores nulos
+print(df.info())
+
+# Gera estatísticas descritivas para as colunas numéricas (contagem, média, desvio padrão, etc.)
+print(df.describe())</code></pre>
+       </div>
+    </div>
+
+     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
+      <p>No seu notebook, crie um `DataFrame` para representar uma pequena lista de produtos. Ele deve ter as colunas "produto" (string), "preco" (float) e "estoque" (int). Depois, use <code>.info()</code> e <code>.describe()</code> para inspecioná-lo.</p>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-manipulacao-dados-pandas" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
-        <span class="material-icons-outlined">arrow_back</span>
-        Voltar para a Trilha
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Lendo e Escrevendo Dados
       </a>
     </div>
   </article>

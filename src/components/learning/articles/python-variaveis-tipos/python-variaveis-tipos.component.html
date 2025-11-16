@@ -5,15 +5,97 @@
       <span class="material-icons-outlined text-base">chevron_right</span>
       <a routerLink="/learning/python-fundamentos-dados" class="hover:text-blue-accent hover:underline">Fundamentos de Python para Dados</a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Variáveis e Tipos de Dados Primitivos em Python</h1>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Variáveis e Tipos de Dados Primitivos</h1>
     <p class="mt-4 text-lg text-gray-400">Domine os tipos de dados básicos: strings para texto, int e float para números, e booleanos para lógica.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O que são Variáveis? Caixas com Etiquetas</h2>
+      <p>
+        Um programa precisa lidar com informações. Uma <strong>variável</strong> é como uma caixa com uma etiqueta, onde você pode guardar um dado. A "etiqueta" é o nome da variável, e o conteúdo é o valor que ela armazena. Em Python, criar uma variável é tão simples quanto dar um nome e atribuir um valor com o sinal de igual (<code>=</code>).
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. Strings (`str`): O Mundo do Texto</h2>
+      <p>Uma <strong>String</strong> (ou `str`) é usada para armazenar texto. Você pode criá-la usando aspas simples (<code>'</code>) ou duplas (<code>"</code>).</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Manipulando texto</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">primeiro_nome = "Maria"
+profissao = 'Engenheira de Dados'
+
+# Podemos "somar" strings para juntá-las (concatenação)
+apresentacao = "Nome: " + primeiro_nome + ", Profissão: " + profissao
+print(apresentacao)
+
+# Strings têm "métodos" úteis, como deixar tudo em maiúsculo
+print(profissao.upper())  # Saída: ENGENHEIRA DE DADOS</code></pre>
+      </div>
+
+      <h3 class="text-xl font-bold text-white mt-6">f-strings: A Forma Moderna de Formatar Texto</h3>
+      <p>Juntar strings com `+` pode ser confuso. As <strong>f-strings</strong> (strings formatadas) são a maneira mais limpa e legível de incluir variáveis dentro de um texto.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Comece a string com a letra 'f' e coloque as variáveis entre chaves {{ '{' }}{{ '}' }}
+resumo = f"{{'{'}}primeiro_nome{{'}'}} é uma {{'{'}}profissao{{'}'}}."
+print(resumo)  # Saída: Maria é uma Engenheira de Dados.</code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Números (`int` e `float`): A Base dos Cálculos</h2>
+      <p>Python tem dois tipos numéricos principais:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+        <li><strong>Inteiros (`int`):</strong> Números inteiros, sem casas decimais (ex: <code>10</code>, <code>-50</code>).</li>
+        <li><strong>Ponto Flutuante (`float`):</strong> Números com casas decimais (ex: <code>19.99</code>, <code>3.14</code>).</li>
+      </ul>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Operações matemáticas</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">ano_nascimento = 1990
+altura = 1.75
+
+idade = 2024 - ano_nascimento
+imc = 70 / (altura * altura)  # O resultado da divisão é sempre um float
+
+print(f"Idade: {{'{'}}idade{{'}'}} anos")
+print(f"IMC: {{'{'}}imc{{'}'}}")</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Booleanos (`bool`): O Coração da Lógica</h2>
+      <p>Um <strong>Booleano</strong> (`bool`) representa um de dois valores: <code>True</code> (Verdadeiro) ou <code>False</code> (Falso). Eles são o resultado de comparações e a base para a tomada de decisões em condicionais.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Comparações</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">idade = 25
+tem_ingresso = True
+
+pode_entrar = idade >= 18 and tem_ingresso
+
+print(f"Pode entrar na festa? {{'{'}}pode_entrar{{'}'}}")  # Saída: Pode entrar na festa? True
+
+# Operadores de comparação comuns: == (igual), != (diferente), >, <, >=, <=
+saldo = 100
+compra_aprovada = saldo > 50
+print(f"Compra aprovada? {{'{'}}compra_aprovada{{'}'}}") # Saída: Compra aprovada? True</code></pre>
+       </div>
+    </div>
+    
+     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
+      <p>
+        Abra seu notebook no <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">Google Colab</a> e experimente!
+      </p>
+      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
+        <li>Crie variáveis com seu nome e ano de nascimento.</li>
+        <li>Use uma f-string para imprimir uma frase como "Meu nome é [nome] e eu tenho [idade] anos." (você terá que calcular a idade!).</li>
+        <li>Verifique o tipo de cada variável usando a função <code>type()</code>. Ex: <code>print(type(seu_nome))</code>. O que ela mostra para cada uma?</li>
+      </ol>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-fundamentos-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
-        <span class="material-icons-outlined">arrow_back</span>
-        Voltar para a Trilha
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Listas e Dicionários
       </a>
     </div>
   </article>

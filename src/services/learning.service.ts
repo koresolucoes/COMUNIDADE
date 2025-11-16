@@ -81,10 +81,27 @@ const pythonManipulacaoPandasPath: LearningPath = {
   steps: pythonManipulacaoPandasSteps,
 };
 
+const pythonMachineLearningSteps: LearningStep[] = [
+    { type: 'article', title: 'O que é Machine Learning?', description: 'Entenda os conceitos fundamentais de Machine Learning e a diferença entre aprendizado supervisionado e não-supervisionado.', path: '/learning/article/sklearn-o-que-e-ml', icon: 'psychology' },
+    { type: 'article', title: 'Seu Primeiro Modelo Preditivo com Scikit-learn', description: 'Treine seu primeiro modelo de regressão para prever valores numéricos e entenda o ciclo de `fit` e `predict`.', path: '/learning/article/sklearn-primeiro-modelo', icon: 'model_training' },
+    { type: 'article', title: 'Avaliando a Performance do seu Modelo', description: 'Aprenda a usar métricas como Acurácia e Erro Quadrático Médio para saber se seu modelo está performando bem.', path: '/learning/article/sklearn-metricas', icon: 'monitoring' },
+    { type: 'article', title: 'Preparando Dados: Feature Engineering', description: 'Descubra como transformar dados brutos, incluindo texto e categorias, em um formato que os modelos de Machine Learning entendam.', path: '/learning/article/sklearn-feature-engineering', icon: 'engineering' },
+    { type: 'article', title: 'Construindo um Pipeline Completo', description: 'Junte todos os passos, desde a leitura dos dados até a previsão final, em um pipeline reutilizável e organizado.', path: '/learning/article/sklearn-pipeline', icon: 'account_tree' },
+];
+
+const pythonMachineLearningPath: LearningPath = {
+  slug: 'python-machine-learning-sklearn',
+  title: '4. Introdução ao Machine Learning com Scikit-learn',
+  description: 'Dê seus primeiros passos em Machine Learning. Aprenda a treinar modelos preditivos com a biblioteca `scikit-learn`.',
+  level: 'Intermediário',
+  steps: pythonMachineLearningSteps,
+};
+
 const pythonDataAutomationPaths: LearningPath[] = [
     pythonFundamentosDadosPath,
     pythonColetaDadosPath,
-    pythonManipulacaoPandasPath
+    pythonManipulacaoPandasPath,
+    pythonMachineLearningPath,
 ];
 
 const ALL_DATA: MainCategory[] = [

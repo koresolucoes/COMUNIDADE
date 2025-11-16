@@ -8,9 +8,91 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Agrupamento e Agregação de Dados (groupby)</h1>
     <p class="mt-4 text-lg text-gray-400">Descubra o poder do `groupby` para sumarizar dados, calculando médias, somas e contagens por categoria.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Poder de Sumarizar: "Split-Apply-Combine"</h2>
+      <p>
+        Uma das tarefas mais comuns na análise de dados é responder a perguntas como: "Qual a média de idade por classe de passageiro?" ou "Qual foi o total de vendas por cidade?". Essas perguntas exigem que a gente agrupe nossos dados por uma categoria e depois aplique uma operação matemática a cada grupo.
+      </p>
+      <p>
+        Este processo é conhecido como <strong>Split-Apply-Combine</strong> (Dividir-Aplicar-Combinar), e o Pandas o torna incrivelmente fácil com o método <code>.groupby()</code>.
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-1">
+          <li><strong>Split (Dividir):</strong> O Pandas divide o DataFrame em grupos menores com base nos valores de uma coluna (ex: um grupo para Pclass=1, outro para Pclass=2, etc.).</li>
+          <li><strong>Apply (Aplicar):</strong> Uma função (como `mean()` para média, `sum()` para soma, `count()` para contagem) é aplicada a cada grupo individualmente.</li>
+          <li><strong>Combine (Combinar):</strong> Os resultados de cada grupo são combinados em um novo DataFrame.</li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. O Método `.groupby()` em Ação</h2>
+      <p>
+        Vamos usar nosso DataFrame do Titanic para responder à pergunta: "Qual foi a tarifa média (`Fare`) paga por passageiros de cada sexo (`Sex`)?"
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Tarifa média por sexo</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
+url = 'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv'
+df = pd.read_csv(url)
+
+# 1. Agrupamos o DataFrame pela coluna 'Sex'
+# 2. Selecionamos a coluna que queremos analisar ('Fare')
+# 3. Aplicamos a função de agregação (média)
+tarifa_media_por_sexo = df.groupby('Sex')['Fare'].mean()
+
+print(tarifa_media_por_sexo)</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Saída:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-plain">Sex
+female    44.479818
+male      25.523893
+Name: Fare, dtype: float64</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Com uma única linha de código, descobrimos que, em média, as mulheres pagaram uma tarifa mais alta.</p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Agrupando por Múltiplas Colunas</h2>
+      <p>Você pode agrupar por mais de uma coluna, criando sub-grupos. Basta passar uma lista de nomes de colunas para o <code>.groupby()</code>.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Taxa de sobrevivência por classe e sexo</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Agrupando por 'Pclass' e depois por 'Sex'
+# A média da coluna 'Survived' nos dá a taxa de sobrevivência (pois 1=sobreviveu, 0=não)
+taxa_sobrevivencia = df.groupby(['Pclass', 'Sex'])['Survived'].mean()
+
+print(taxa_sobrevivencia)</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Saída:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-plain">Pclass  Sex
+1       female    0.968085
+        male      0.368852
+2       female    0.921053
+        male      0.157407
+3       female    0.500000
+        male      0.135447
+Name: Survived, dtype: float64</code></pre>
+         <p class="text-xs text-gray-400 mt-2">A análise fica muito mais rica: vemos que mulheres da 1ª classe tiveram quase 97% de chance de sobreviver, enquanto homens da 3ª classe tiveram apenas 13.5%.</p>
+       </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Múltiplas Agregações com `.agg()`</h2>
+      <p>E se quisermos calcular a média E a soma para a mesma coluna? O método <code>.agg()</code> (de "aggregate") nos permite fazer isso.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Múltiplas estatísticas da tarifa por classe</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Passamos uma lista de funções de agregação para o .agg()
+estatisticas_tarifa = df.groupby('Pclass')['Fare'].agg(['mean', 'sum', 'min', 'max', 'count'])
+
+print(estatisticas_tarifa)</code></pre>
+       </div>
+    </div>
+    
+     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Da Planilha à Percepção</h4>
+      <p>
+        O <code>.groupby()</code> é o coração da análise exploratória de dados no Pandas. É a ferramenta que transforma uma tabela gigante e "burra" em resumos inteligentes que revelam padrões e insights. Ao combinar <code>.groupby()</code> com as funções de agregação, você pode começar a responder perguntas complexas sobre seus dados com apenas algumas linhas de código.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-manipulacao-dados-pandas" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
         <span class="material-icons-outlined">arrow_back</span>
         Voltar para a Trilha

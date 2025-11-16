@@ -8,9 +8,116 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Lendo e Escrevendo Arquivos</h1>
     <p class="mt-4 text-lg text-gray-400">Aprenda a interagir com o sistema de arquivos para ler e escrever dados em formatos como texto, CSV e JSON.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <p>
+      Muitas tarefas de automação e análise de dados começam com a necessidade de ler dados de um arquivo ou terminam com a necessidade de salvar resultados em um. Python torna essas operações muito diretas.
+    </p>
+
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. A Forma Segura de Abrir Arquivos: `with open()`</h2>
+      <p>
+        A melhor prática para trabalhar com arquivos em Python é usar a instrução <code>with open(...)</code>. Ela garante que o arquivo seja fechado automaticamente, mesmo que ocorram erros durante o processamento.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Lendo um arquivo de texto</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Suponha que temos um arquivo 'notas.txt' com o conteúdo "Olá, mundo!"
+try:
+    with open('notas.txt', 'r') as f:  # 'r' significa modo de leitura (read)
+        conteudo = f.read()
+        print(conteudo)
+except FileNotFoundError:
+    print("O arquivo 'notas.txt' não foi encontrado.")
+
+# Saída: Olá, mundo!</code></pre>
+      </div>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Escrevendo em um arquivo de texto</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># O modo 'w' (write) sobrescreve o arquivo se ele existir, ou o cria se não existir.
+with open('saida.txt', 'w') as f:
+    f.write("Esta é a primeira linha.\n")
+    f.write("Esta é a segunda linha.")
+
+# O modo 'a' (append) adiciona ao final do arquivo sem apagar o conteúdo.
+with open('saida.txt', 'a') as f:
+    f.write("\nEsta é a terceira linha, adicionada depois.")</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Trabalhando com JSON</h2>
+      <p>JSON é o formato padrão para troca de dados em APIs. O módulo nativo <code>json</code> do Python torna muito fácil converter dados entre o formato JSON (texto) e dicionários/listas Python.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Lendo um arquivo JSON</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import json
+
+# Suponha que 'usuario.json' contém: {{ '{' }} "nome": "Bia", "id": 101 {{ '}' }}
+try:
+    with open('usuario.json', 'r') as f:
+        dados_usuario = json.load(f) # json.load() lê de um arquivo
+        print(f"Nome do usuário: {{'{'}}dados_usuario['nome']{{'}'}}")
+except FileNotFoundError:
+    print("Arquivo 'usuario.json' não encontrado.")
+
+# Saída: Nome do usuário: Bia</code></pre>
+      </div>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Escrevendo um arquivo JSON</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import json
+
+novo_produto = {{ '{' }}
+    "id": 202,
+    "nome": "Notebook Pro",
+    "em_estoque": True,
+    "tags": ["eletronicos", "computador"]
+{{ '}' }}
+
+with open('produto.json', 'w') as f:
+    # json.dump() escreve um objeto Python em um arquivo no formato JSON
+    # indent=2 formata o arquivo para ser legível por humanos
+    json.dump(novo_produto, f, indent=2)</code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Trabalhando com CSV</h2>
+      <p>CSV (Comma-Separated Values) é um formato de planilha muito comum. O módulo <code>csv</code> do Python é ideal para lê-lo de forma estruturada.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Lendo um arquivo CSV</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import csv
+
+# Suponha que 'dados.csv' contém:
+# nome,cidade
+# Carlos,Recife
+# Daniela,Manaus
+try:
+    with open('dados.csv', 'r', newline='') as f:
+        # DictReader trata cada linha como um dicionário, usando o cabeçalho como chaves
+        leitor = csv.DictReader(f)
+        for linha in leitor:
+            print(f"{{'{'}}linha['nome']{{'}'}} mora em {{'{'}}linha['cidade']{{'}'}}.")
+except FileNotFoundError:
+    print("Arquivo 'dados.csv' não encontrado.")
+
+# Saída:
+# Carlos mora em Recife.
+# Daniela mora em Manaus.</code></pre>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
+      <p>
+        Manipular arquivos no Google Colab é um pouco diferente, mas muito útil. Você pode criar arquivos diretamente na interface.
+      </p>
+      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
+        <li>No <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">Google Colab</a>, clique no ícone de pasta na barra lateral esquerda.</li>
+        <li>Clique com o botão direito na área de arquivos e selecione "Novo arquivo".</li>
+        <li>Nomeie o arquivo como <code>meu_json.json</code> e cole nele um JSON simples, como <code>{{ '{' }} "mensagem": "Teste com sucesso!" {{ '}' }}</code>.</li>
+        <li>Em uma célula de código, use o código Python que aprendemos para ler <code>meu_json.json</code> e imprimir o valor da chave "mensagem".</li>
+      </ol>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-fundamentos-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
         <span class="material-icons-outlined">arrow_back</span>
         Voltar para a Trilha

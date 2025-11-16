@@ -8,9 +8,90 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Introdução ao Web Scraping com BeautifulSoup</h1>
     <p class="mt-4 text-lg text-gray-400">Descubra como extrair informações de páginas HTML quando uma API não está disponível.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O que é Web Scraping e Quando Usá-lo?</h2>
+      <p>
+        <strong>Web Scraping</strong> (ou "raspagem de dados") é a técnica de extrair dados de websites de forma automatizada. É o seu plano B. O ideal é sempre usar uma API oficial, que fornece dados de forma estruturada e confiável. Mas e se o site que você quer extrair dados (um e-commerce, um portal de notícias) não oferece uma API?
+      </p>
+      <p>
+        Nesses casos, o web scraping permite que seu código "finja" ser um navegador, baixe o conteúdo HTML da página e depois o analise para encontrar e extrair as informações que você precisa.
+      </p>
+       <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs flex items-start gap-3">
+          <span class="material-icons-outlined text-yellow-300 mt-0.5">warning</span>
+          <div>
+            <strong class="font-semibold">Ética e Legalidade:</strong> Sempre verifique o arquivo <code>robots.txt</code> de um site (ex: <code>google.com/robots.txt</code>) para ver as regras de automação. Não sobrecarregue os servidores com muitas requisições rápidas e nunca use scraping para atividades ilegais.
+          </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">As Ferramentas: `requests` e `BeautifulSoup`</h2>
+      <p>Para fazer web scraping, combinamos duas bibliotecas:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+          <li><strong>`requests`:</strong> Que já conhecemos. Usaremos para baixar o código-fonte HTML da página.</li>
+          <li><strong>`BeautifulSoup`:</strong> Uma biblioteca fantástica para "navegar" e pesquisar dentro do HTML. Ela transforma o texto HTML bruto em um objeto Python que podemos explorar.</li>
+      </ul>
+      <p>Instale a `BeautifulSoup` (a biblioteca se chama `beautifulsoup4`):</p>
+      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash">pip install beautifulsoup4</code></pre>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O Processo de Scraping em 4 Passos</h2>
+      <p>Vamos usar o site <a href="http://books.toscrape.com/" target="_blank" rel="noopener noreferrer">books.toscrape.com</a>, um site feito para praticar scraping, como nosso alvo.</p>
+      
+      <h3 class="text-xl font-bold text-white mt-6">Passo 1: Inspecionar o Alvo</h3>
+      <p>
+        Abra o site no seu navegador. Clique com o botão direito sobre o título de um livro e selecione "Inspecionar". As Ferramentas de Desenvolvedor abrirão, mostrando o código HTML. Você verá algo como:
+      </p>
+      <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-html">&lt;h3&gt;&lt;a href="..." title="A Light in the Attic"&gt;A Light in the ...&lt;/a&gt;&lt;/h3&gt;</code></pre>
+      <p>
+        Observe que o título está dentro de uma tag <code>&lt;a&gt;</code>, que por sua vez está dentro de uma <code>&lt;h3&gt;</code>. Essa estrutura é a chave.
+      </p>
+
+      <h3 class="text-xl font-bold text-white mt-6">Passos 2, 3 e 4: Código em Ação</h3>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Extraindo títulos de livros</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import requests
+from bs4 import BeautifulSoup
+
+url = "http://books.toscrape.com/"
+
+# PASSO 2: Baixar o HTML
+response = requests.get(url)
+html_content = response.text
+
+# PASSO 3: "Alimentar" o BeautifulSoup com o HTML
+soup = BeautifulSoup(html_content, 'html.parser')
+
+# PASSO 4: Encontrar os elementos e extrair os dados
+# Usamos 'find_all' para encontrar todas as tags &lt;h3&gt;
+# Em seguida, iteramos sobre cada &lt;h3&gt; encontrado
+titulos = []
+for h3_tag in soup.find_all('h3'):
+    # Dentro de cada &lt;h3&gt;, encontramos a tag &lt;a&gt; e pegamos seu atributo 'title'
+    titulo_livro = h3_tag.find('a')['title']
+    titulos.append(titulo_livro)
+
+# Imprime os 5 primeiros títulos encontrados
+for titulo in titulos[:5]:
+    print(titulo)</code></pre>
+      </div>
+    </div>
+    
+     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
+      <p>
+        Agora, um desafio. O site <a href="http://quotes.toscrape.com/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">quotes.toscrape.com</a> é outro playground para scraping.
+      </p>
+      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
+        <li>Use o que aprendeu para fazer o scraping de todas as citações da primeira página.</li>
+        <li><strong>Dica:</strong> Inspecione o elemento. Você verá que cada citação está dentro de uma tag <code>&lt;span&gt;</code> com a classe (<code>class_</code>) <code>"text"</code>.</li>
+        <li>Tente usar <code>soup.find_all('span', class_='text')</code> e, para cada item encontrado, extraia o texto com <code>.text</code>.</li>
+      </ol>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-coleta-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
         <span class="material-icons-outlined">arrow_back</span>
         Voltar para a Trilha

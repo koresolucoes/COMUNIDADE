@@ -103,6 +103,13 @@ import { PandasSelecaoFiltragemComponent } from './components/learning/articles/
 import { PandasLimpezaDadosComponent } from './components/learning/articles/pandas-limpeza-dados/pandas-limpeza-dados.component';
 import { PandasAgrupamentoComponent } from './components/learning/articles/pandas-agrupamento/pandas-agrupamento.component';
 
+// Scikit-learn Articles
+import { SklearnOQueEMlComponent } from './components/learning/articles/sklearn-o-que-e-ml/sklearn-o-que-e-ml.component';
+import { SklearnPrimeiroModeloComponent } from './components/learning/articles/sklearn-primeiro-modelo/sklearn-primeiro-modelo.component';
+import { SklearnMetricasComponent } from './components/learning/articles/sklearn-metricas/sklearn-metricas.component';
+import { SklearnFeatureEngineeringComponent } from './components/learning/articles/sklearn-feature-engineering/sklearn-feature-engineering.component';
+import { SklearnPipelineComponent } from './components/learning/articles/sklearn-pipeline/sklearn-pipeline.component';
+
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -188,6 +195,13 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/pandas-selecao-filtragem', component: PandasSelecaoFiltragemComponent },
   { path: 'learning/article/pandas-limpeza-dados', component: PandasLimpezaDadosComponent },
   { path: 'learning/article/pandas-agrupamento', component: PandasAgrupamentoComponent },
+
+  // Scikit-learn
+  { path: 'learning/article/sklearn-o-que-e-ml', component: SklearnOQueEMlComponent },
+  { path: 'learning/article/sklearn-primeiro-modelo', component: SklearnPrimeiroModeloComponent },
+  { path: 'learning/article/sklearn-metricas', component: SklearnMetricasComponent },
+  { path: 'learning/article/sklearn-feature-engineering', component: SklearnFeatureEngineeringComponent },
+  { path: 'learning/article/sklearn-pipeline', component: SklearnPipelineComponent },
 
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },

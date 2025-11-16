@@ -8,12 +8,101 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Seleção e Filtragem de Dados (loc, iloc)</h1>
     <p class="mt-4 text-lg text-gray-400">Domine as técnicas para selecionar linhas e colunas específicas do seu DataFrame com base em rótulos e posições.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <p>
+      Depois de carregar seus dados em um DataFrame, a próxima tarefa é quase sempre a mesma: selecionar as partes que lhe interessam. O Pandas oferece uma sintaxe poderosa e flexível para "fatiar e picar" seus dados de qualquer maneira que você precisar.
+    </p>
+
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. Selecionando Colunas</h2>
+      <p>A forma mais básica de seleção é pegar uma ou mais colunas inteiras.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Selecionando colunas do DataFrame do Titanic</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
+url = 'https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv'
+df = pd.read_csv(url)
+
+# Selecionando uma única coluna (o resultado é uma Series)
+coluna_idade = df['Age']
+print(coluna_idade.head())
+
+# Selecionando múltiplas colunas (o resultado é um novo DataFrame)
+# Note o uso de colchetes duplos [[]]
+dados_sobrevivencia = df[['Survived', 'Pclass', 'Sex', 'Age']]
+print(dados_sobrevivencia.head())</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Filtrando Linhas: A Magia da Indexação Booleana</h2>
+      <p>
+        Esta é a técnica mais poderosa e comum para selecionar linhas. A ideia é criar uma "máscara" booleana (uma Series de <code>True</code>/<code>False</code>) baseada em uma condição e usá-la para filtrar o DataFrame.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Encontrando passageiros da primeira classe</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># 1. A condição cria uma Series de True/False
+condicao = df['Pclass'] == 1
+# print(condicao.head())
+# Saída: 0 False, 1 True, 2 False, 3 True, 4 False ...
+
+# 2. Usamos a condição para filtrar o DataFrame original
+primeira_classe = df[condicao]
+# Ou, mais comumente, fazemos tudo em uma linha:
+primeira_classe = df[df['Pclass'] == 1]
+
+print(primeira_classe.head())</code></pre>
+      </div>
+      
+      <h3 class="text-xl font-bold text-white mt-6">Combinando Múltiplas Condições</h3>
+      <p>Você pode combinar condições usando <code>&</code> (E) e <code>|</code> (OU). <strong>É crucial envolver cada condição individual em parênteses!</strong></p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Mulheres da primeira classe que sobreviveram</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">mulheres_sobreviventes_1a_classe = df[
+    (df['Sex'] == 'female') & 
+    (df['Pclass'] == 1) & 
+    (df['Survived'] == 1)
+]
+print(mulheres_sobreviventes_1a_classe.head())</code></pre>
+       </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Seleção Precisa com `.loc` e `.iloc`</h2>
+      <p>Para selecionar linhas e colunas ao mesmo tempo, o Pandas oferece dois métodos principais:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+        <li><strong>`.loc` (Location):</strong> Seleciona por <strong>rótulos</strong> (nomes dos índices e colunas).</li>
+        <li><strong>`.iloc` (Integer Location):</strong> Seleciona por <strong>posição numérica</strong> (índice inteiro).</li>
+      </ul>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Usando `.loc` e `.iloc`</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># .loc: Seleciona as linhas com índice de 0 a 4 e as colunas 'Name' e 'Age'
+print(df.loc[0:4, ['Name', 'Age']])
+
+# .iloc: Seleciona as 5 primeiras linhas (índices 0 a 4) e as 4 primeiras colunas (índices 0 a 3)
+print(df.iloc[0:5, 0:4])
+
+# Combinando com a filtragem booleana
+# Pega todas as linhas onde a idade é maior que 60 e mostra apenas as colunas 'Name', 'Age' e 'Survived'
+idosos = df.loc[df['Age'] > 60, ['Name', 'Age', 'Survived']]
+print(idosos.head())</code></pre>
+       </div>
+    </div>
+    
+     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
+      <p>
+        Usando o `DataFrame` do Titanic, tente responder às seguintes perguntas com uma única linha de código:
+      </p>
+      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
+        <li>Quantos homens com menos de 18 anos estavam a bordo? (Dica: filtre e use <code>.shape</code> ou <code>len()</code>).</li>
+        <li>Selecione o nome e a tarifa (`Fare`) de todos os passageiros que embarcaram em Southampton (`Embarked == 'S'`).</li>
+      </ol>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-manipulacao-dados-pandas" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
-        <span class="material-icons-outlined">arrow_back</span>
-        Voltar para a Trilha
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Limpeza de Dados
       </a>
     </div>
   </article>
