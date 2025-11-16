@@ -1,5 +1,5 @@
 // This is a Vercel serverless function for the Node.js runtime
-import tls from 'node:tls';
+import https from 'node:https';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default (req: VercelRequest, res: VercelResponse) => {
@@ -20,21 +20,17 @@ export default (req: VercelRequest, res: VercelResponse) => {
 
   return new Promise<void>((resolve) => {
     const options = {
-      host: domain,
+      hostname: domain,
       port: 443,
+      method: 'GET',
       servername: domain, // Crucial for SNI
       rejectUnauthorized: false, // We want the cert even if it's invalid
     };
 
-    const socket = tls.connect(options, () => {
-      if (!socket.authorized) {
-        if (socket.authorizationError) {
-          console.warn(`SSL Authorization Error for ${domain}: ${socket.authorizationError}`);
-        }
-      }
-
-      const cert = socket.getPeerCertificate(true);
-      socket.end();
+    const request = https.request(options, (response) => {
+      // The socket is a TLSSocket
+      const cert = (response.socket as any).getPeerCertificate(true);
+      response.socket.end(); // We have the cert, no need to continue the request
 
       if (!cert || Object.keys(cert).length === 0) {
         writeError(404, `Nenhum certificado SSL encontrado para ${domain}. O site pode não usar HTTPS ou o servidor não está respondendo na porta 443.`);
@@ -85,7 +81,7 @@ export default (req: VercelRequest, res: VercelResponse) => {
       resolve();
     });
 
-    socket.on('error', (err: any) => {
+    request.on('error', (err: any) => {
       let message = 'Falha ao conectar ao host. Verifique o nome do domínio.';
       if (err.code === 'ENOTFOUND') {
           message = `Domínio "${domain}" não encontrado. Verifique se digitou corretamente.`;
@@ -93,16 +89,20 @@ export default (req: VercelRequest, res: VercelResponse) => {
           message = `A conexão foi recusada. O servidor pode estar offline ou a porta 443 está fechada.`;
       } else if (err.code === 'ETIMEDOUT') {
           message = 'A conexão expirou. O servidor demorou muito para responder.';
+      } else if (err.message?.includes('certificate has expired')) {
+          message = 'O certificado do domínio expirou.';
       }
-      socket.destroy();
+      request.destroy();
       writeError(500, message);
       resolve();
     });
     
-    socket.setTimeout(8000, () => {
-        socket.destroy();
+    request.setTimeout(8000, () => {
+        request.destroy();
         writeError(504, 'A conexão expirou (timeout). O servidor pode estar offline ou bloqueando conexões.');
         resolve();
     });
+
+    request.end(); // Send the request
   });
 };
