@@ -1,53 +1,31 @@
-.grid-preview-wrapper {
-  position: relative;
-  min-height: 400px;
-}
-
-.grid-canvas {
-  position: absolute;
-  inset: 0.5rem; /* Corresponds to p-2 */
-  display: grid;
-}
-
-.grid-cell {
-  @apply border-2 border-dashed border-gray-800 rounded-md flex items-center justify-center text-gray-700 cursor-pointer transition-colors duration-200;
-  z-index: 1;
-}
-
-.grid-cell:hover {
-  @apply bg-gray-800/50 border-gray-700 text-gray-500;
+.grid-preview-container {
+  height: 100%;
+  width: 100%;
+  background-color: #0d1117; /* gray-950 */
 }
 
 .grid-item {
-  @apply border border-black/20 rounded-md p-2 text-white font-bold text-lg select-none flex items-center justify-center;
-  position: relative;
-  touch-action: none; /* Prevent scrolling on touch devices */
-  z-index: 10;
-  color: rgba(255, 255, 255, 0.75);
+  background-color: rgba(88, 166, 255, 0.2); /* blue-accent/20 */
+  border: 1px dashed rgba(88, 166, 255, 0.4); /* blue-accent/40 */
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c9d1d9; /* gray-300 */
+  font-size: 1.5rem;
+  font-weight: bold;
+  min-height: 40px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 
-.item-id {
-  @apply font-mono text-3xl;
+.grid-item:hover {
+  background-color: rgba(88, 166, 255, 0.3);
+  border-color: rgba(88, 166, 255, 0.6);
 }
 
-.remove-btn {
-  @apply absolute top-0 right-0 w-6 h-6 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/20 rounded-full transition-colors z-20;
-}
-
-.remove-btn .material-icons-outlined {
-  font-size: 16px;
-}
-
-.resize-handle {
-  @apply absolute bottom-0 right-0 w-4 h-4 bg-white/80 cursor-se-resize z-20;
-  clip-path: polygon(100% 0, 0 100%, 100% 100%);
-}
-
-.resize-preview {
-  @apply bg-blue-accent/20 border-2 border-dashed border-blue-accent/70 rounded-md pointer-events-none;
-  z-index: 5;
-}
-
-.code-output {
-  @apply bg-gray-800 border border-gray-700 rounded-md p-4 text-cyan-300 font-mono text-sm overflow-x-auto min-h-[150px];
+.grid-item.selected {
+  background-color: rgba(88, 166, 255, 0.4);
+  border: 2px solid #58a6ff; /* blue-accent */
+  color: white;
 }

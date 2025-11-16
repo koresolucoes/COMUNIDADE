@@ -1,88 +1,102 @@
-<div class="space-y-6">
+<div class="space-y-8">
   <div>
     <h1 class="text-3xl md:text-4xl font-bold text-white">Construtor de Grid CSS</h1>
-    <p class="mt-2 text-gray-400">Desenhe layouts de grid visualmente e gere o código CSS e HTML correspondente.</p>
-  </div>
-  <!-- Top Controls -->
-  <div class="flex flex-wrap items-center gap-x-6 gap-y-4 p-4 bg-gray-900 border border-gray-800 rounded-lg">
-    <div class="flex items-center gap-2">
-      <label for="cols" class="text-sm font-medium text-gray-400">Colunas:</label>
-      <input id="cols" type="number" min="2" max="24" [ngModel]="cols()" (ngModelChange)="cols.set(+$event)" class="w-20 bg-gray-800 border-gray-700 text-white rounded-md p-2 text-center focus:ring-blue-accent focus:border-blue-accent">
-    </div>
-    <div class="flex items-center gap-2">
-      <label for="rows" class="text-sm font-medium text-gray-400">Linhas:</label>
-      <input id="rows" type="number" min="2" max="24" [ngModel]="rows()" (ngModelChange)="rows.set(+$event)" class="w-20 bg-gray-800 border-gray-700 text-white rounded-md p-2 text-center focus:ring-blue-accent focus:border-blue-accent">
-    </div>
-    <div class="flex items-center gap-2">
-      <label for="gap" class="text-sm font-medium text-gray-400">Gap (px):</label>
-      <input id="gap" type="number" min="0" max="50" [ngModel]="gap()" (ngModelChange)="gap.set(+$event)" class="w-20 bg-gray-800 border-gray-700 text-white rounded-md p-2 text-center focus:ring-blue-accent focus:border-blue-accent">
-    </div>
-    <div class="flex-grow"></div>
-    <button (click)="loadHolyGrail()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center gap-2 text-sm">
-      <span class="material-icons-outlined text-base">dashboard</span>
-      Exemplo "Holy Grail"
-    </button>
-    <button (click)="resetGrid()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-md font-semibold hover:bg-red-600/30 transition-colors flex items-center gap-2 text-sm">
-      <span class="material-icons-outlined text-base">refresh</span>
-      Resetar
-    </button>
+    <p class="mt-2 text-gray-400">Desenhe layouts de grid visualmente e gere o código CSS correspondente.</p>
   </div>
 
-  <!-- Interactive Grid Preview Wrapper -->
-  <div #gridContainer class="grid-preview-wrapper flex-grow w-full bg-gray-900 border border-gray-800 rounded-lg p-2 select-none">
-    <!-- Background Canvas (for clicking) -->
-    <div 
-        class="grid-canvas"
-        [style.grid-template-columns]="'repeat(' + cols() + ', 1fr)'"
-        [style.grid-template-rows]="'repeat(' + rows() + ', 1fr)'"
-        [style.gap.px]="gap()">
-      @for(_ of cellArray(); track $index) {
-        <div class="grid-cell" (click)="addItem($index)">
-            <span class="material-icons-outlined">add</span>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Controls Column -->
+    <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6">
+      <h2 class="text-xl font-semibold text-white">Configurações da Grade</h2>
+      
+      <!-- Grid Dimensions -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="columns" class="block text-sm font-medium text-gray-400 mb-2">Colunas</label>
+          <input id="columns" type="number" min="1" [ngModel]="columns()" (ngModelChange)="updateColumns($any($event))" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
         </div>
-      }
+        <div>
+          <label for="rows" class="block text-sm font-medium text-gray-400 mb-2">Linhas</label>
+          <input id="rows" type="number" min="1" [ngModel]="rows()" (ngModelChange)="updateRows($any($event))" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+        </div>
+      </div>
+
+      <!-- Gaps -->
+       <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label for="column-gap" class="block text-sm font-medium text-gray-400 mb-2">Espaço entre Colunas (px)</label>
+          <input id="column-gap" type="number" min="0" [ngModel]="columnGap()" (ngModelChange)="columnGap.set(+$event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+        </div>
+        <div>
+          <label for="row-gap" class="block text-sm font-medium text-gray-400 mb-2">Espaço entre Linhas (px)</label>
+          <input id="row-gap" type="number" min="0" [ngModel]="rowGap()" (ngModelChange)="rowGap.set(+$event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2">
+        </div>
+      </div>
+
+      <!-- Column & Row Sizing -->
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2">Tamanhos das Colunas (grid-template-columns)</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+            @for(col of columnValues(); track trackByIndex($index)) {
+              <input type="text" [ngModel]="col" (ngModelChange)="updateColumnValue($index, $event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm font-mono">
+            }
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-400 mb-2">Tamanhos das Linhas (grid-template-rows)</label>
+           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+            @for(row of rowValues(); track trackByIndex($index)) {
+              <input type="text" [ngModel]="row" (ngModelChange)="updateRowValue($index, $event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm font-mono">
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Item Control -->
+      <div>
+        <label class="block text-sm font-medium text-gray-400 mb-2">Itens da Grade</label>
+        <div class="flex items-center gap-4">
+          <button (click)="addItem()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">+</button>
+          <span class="text-white font-mono">{{ itemCount() }} Itens</span>
+          <button (click)="removeItem()" [disabled]="itemCount() === 0" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">-</button>
+        </div>
+      </div>
     </div>
 
-    <!-- Foreground Canvas (for rendering items) -->
-    <div 
-        class="grid-canvas"
-        [style.grid-template-columns]="'repeat(' + cols() + ', 1fr)'"
-        [style.grid-template-rows]="'repeat(' + rows() + ', 1fr)'"
-        [style.gap.px]="gap()">
-      @for(item of items(); track item.id) {
-        <div class="grid-item" 
-            [style.grid-column]="item.colStart + ' / ' + item.colEnd" 
-            [style.grid-row]="item.rowStart + ' / ' + item.rowEnd"
-            [style.background-color]="item.color"
-            >
-          <span class="item-id">{{ item.id }}</span>
-          <button (click)="removeItem(item.id)" class="remove-btn">
-            <span class="material-icons-outlined">close</span>
-          </button>
-          <div class="resize-handle" (mousedown)="onResizeStart($event, item)"></div>
+    <!-- Preview & Code Column -->
+    <div class="space-y-6">
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[400px]">
+        <div class="grid-preview-container" [style.display]="gridContainerStyle()['display']" [style.grid-template-columns]="gridContainerStyle()['grid-template-columns']" [style.grid-template-rows]="gridContainerStyle()['grid-template-rows']" [style.column-gap]="gridContainerStyle()['column-gap']" [style.row-gap]="gridContainerStyle()['row-gap']">
+          @for(item of items(); track item) {
+            <div class="grid-item" (click)="selectItem(item)" [class.selected]="selectedItemIndex() === item">
+              {{ item + 1 }}
+            </div>
+          }
         </div>
-      }
-
-      <!-- Resize Preview (Ghost) Element -->
-      @if (resizeState().active && resizeState().itemInitialState && previewSpan(); as span) {
-        <div class="resize-preview" [style.grid-column]="resizeState().itemInitialState!.colStart + ' / ' + span.colEnd" [style.grid-row]="resizeState().itemInitialState!.rowStart + ' / ' + span.rowEnd">
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+          <h3 class="text-lg font-semibold text-white mb-3">CSS do Contêiner</h3>
+          <div class="relative">
+            <pre class="w-full bg-gray-800 rounded-md p-4 text-cyan-300 font-mono text-xs overflow-x-auto"><code>{{ gridContainerCssText() }}</code></pre>
+            <button (click)="copyCss('container')" class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs">
+              {{ containerCopyText() }}
+            </button>
+          </div>
         </div>
-      }
+         <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+          <h3 class="text-lg font-semibold text-white mb-3">CSS do Item #{{ (selectedItemIndex() ?? -1) + 1 }}</h3>
+          <div class="relative">
+            <pre class="w-full bg-gray-800 rounded-md p-4 text-pink-400 font-mono text-xs overflow-x-auto"><code>{{ selectedItemCssText() }}</code></pre>
+            <button (click)="copyCss('item')" [disabled]="selectedItemIndex() === null" class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs disabled:opacity-50">
+              {{ itemCopyText() }}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-
-  <!-- Code Output -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="flex flex-col">
-      <h3 class="text-lg font-semibold text-white mb-2">HTML Gerado</h3>
-      <pre class="code-output flex-grow"><code>{{ htmlCode() }}</code></pre>
-    </div>
-     <div class="flex flex-col">
-      <h3 class="text-lg font-semibold text-white mb-2">CSS Gerado</h3>
-      <pre class="code-output flex-grow"><code>{{ cssCode() }}</code></pre>
-    </div>
-  </div>
-
-  <app-tool-info-section [sections]="infoSections()"></app-tool-info-section>
+  <app-tool-info-section [sections]="infoSections"></app-tool-info-section>
 </div>

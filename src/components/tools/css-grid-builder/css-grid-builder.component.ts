@@ -1,22 +1,7 @@
-import { Component, ChangeDetectionStrategy, signal, computed, ElementRef, viewChild, HostListener } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToolInfoSectionComponent, InfoSection } from '../../shared/tool-info-section/tool-info-section.component';
-
-interface GridItem {
-  id: number;
-  colStart: number;
-  rowStart: number;
-  colEnd: number;
-  rowEnd: number;
-  color: string;
-}
-
-interface ResizeState {
-  active: boolean;
-  itemId: number | null;
-  itemInitialState: GridItem | null;
-}
 
 @Component({
   selector: 'app-css-grid-builder',
@@ -27,215 +12,174 @@ interface ResizeState {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CssGridBuilderComponent {
-  gridContainer = viewChild<ElementRef<HTMLDivElement>>('gridContainer');
+  // --- Grid Settings ---
+  columns = signal(4);
+  rows = signal(3);
+  columnGap = signal(16);
+  rowGap = signal(16);
   
-  cols = signal(12);
-  rows = signal(8);
-  gap = signal(10);
+  columnValues = signal<string[]>(Array(4).fill('1fr'));
+  rowValues = signal<string[]>(Array(3).fill('auto'));
 
-  items = signal<GridItem[]>([]);
+  // --- Grid Items ---
+  itemCount = signal(12);
+  selectedItemIndex = signal<number | null>(0);
 
-  private resizeState = signal<ResizeState>({
-    active: false,
-    itemId: null,
-    itemInitialState: null,
+  // --- UI State ---
+  containerCopyText = signal('Copiar CSS do Contêiner');
+  itemCopyText = signal('Copiar CSS do Item');
+
+  // --- Computed CSS ---
+  gridContainerStyle = computed(() => {
+    const style: { [key: string]: string } = {
+      'display': 'grid',
+      'grid-template-columns': this.columnValues().join(' '),
+      'grid-template-rows': this.rowValues().join(' '),
+      'column-gap': `${this.columnGap()}px`,
+      'row-gap': `${this.rowGap()}px`,
+      'height': '100%',
+      'width': '100%',
+    };
+    return style;
   });
 
-  previewSpan = signal<{ colEnd: number; rowEnd: number } | null>(null);
-
-  private colors = [
-    '#3b82f6', '#10b981', '#f97316', '#ec4899', 
-    '#8b5cf6', '#ef4444', '#f59e0b', '#06b6d4'
-  ];
+  gridContainerCssText = computed(() => {
+    const style = this.gridContainerStyle();
+    return `
+.grid-container {
+  display: ${style['display']};
+  grid-template-columns: ${style['grid-template-columns']};
+  grid-template-rows: ${style['grid-template-rows']};
+  column-gap: ${style['column-gap']};
+  row-gap: ${style['row-gap']};
+}
+    `.trim();
+  });
   
-  cellArray = computed(() => {
-    return Array.from({ length: this.cols() * this.rows() });
+  selectedItemCssText = computed(() => {
+    const index = this.selectedItemIndex();
+    if (index === null) {
+      return '.grid-item {\n  /* Clique em um item para ver seu CSS */\n}';
+    }
+    // Simple placeholder, could be extended to allow user to span items
+    return `
+.grid-item-${index + 1} {
+  /* grid-column: auto / auto; */
+  /* grid-row: auto / auto; */
+}
+    `.trim();
   });
+  
+  items = computed(() => Array.from({ length: this.itemCount() }, (_, i) => i));
 
-  cssCode = computed(() => {
-    if (this.items().length === 0) {
-      return `.parent {\n  display: grid;\n  grid-template-columns: repeat(${this.cols()}, 1fr);\n  grid-template-rows: repeat(${this.rows()}, 1fr);\n  gap: ${this.gap()}px;\n}`;
-    }
-    let css = `.parent {\n  display: grid;\n  grid-template-columns: repeat(${this.cols()}, 1fr);\n  grid-template-rows: repeat(${this.rows()}, 1fr);\n  gap: ${this.gap()}px;\n}\n\n`;
-    for (const item of this.items()) {
-      css += `.item-${item.id} {\n  grid-column: ${item.colStart} / ${item.colEnd};\n  grid-row: ${item.rowStart} / ${item.rowEnd};\n}\n\n`;
-    }
-    return css.trim();
-  });
+  infoSections: InfoSection[] = [];
 
-  htmlCode = computed(() => {
-    if (this.items().length === 0) {
-      return '<div class="parent">\n  <!-- Seus itens aqui -->\n</div>';
-    }
-    let html = '<div class="parent">\n';
-    for (const item of this.items()) {
-      html += `  <div class="item-${item.id}">${item.id}</div>\n`;
-    }
-    html += '</div>';
-    return html;
-  });
-
-  infoSections = computed<InfoSection[]>(() => [
+  constructor() {
+    this.infoSections = [
     {
-      title: 'O que é o Construtor de Grid Interativo?',
+      title: 'Introdução e Valor da Ferramenta',
       content: `
-        <p>Esta é uma ferramenta totalmente visual e interativa para prototipar layouts com <strong>CSS Grid</strong>. Em vez de escrever código, você pode "desenhar" seu grid clicando para adicionar itens e arrastando para redimensioná-los. O código HTML e CSS correspondente é gerado em tempo real, pronto para ser copiado.</p>
-        <h4>Características Principais ⚡️</h4>
+        <h4>O que é o Construtor de Grid CSS?</h4>
+        <p>Esta é uma ferramenta interativa para projetar layouts de grade (CSS Grid) visualmente. Permite que você defina colunas, linhas, espaçamentos e veja o resultado em tempo real, gerando o código CSS correspondente para o contêiner e seus itens.</p>
+        
+        <h4>Por que usar CSS Grid?</h4>
+        <p>CSS Grid é o sistema de layout mais poderoso em CSS. É ideal para layouts de página bidimensionais (colunas e linhas ao mesmo tempo), oferecendo um controle que era impossível com hacks antigos de float ou mesmo com Flexbox para layouts complexos.</p>
         <ul>
-            <li><strong>Criação Visual:</strong> Clique em qualquer célula vazia (+) para adicionar um novo item ao grid.</li>
-            <li><strong>Redimensionamento por Arraste:</strong> Clique e arraste a alça no canto de um item para expandi-lo por múltiplas colunas e linhas.</li>
-            <li><strong>Geração de Código Instantânea:</strong> O HTML e o CSS são atualizados a cada ação, refletindo exatamente o seu layout visual.</li>
-            <li><strong>Controle da Estrutura:</strong> Defina facilmente o número de colunas, linhas e o espaçamento (gap) da sua grade.</li>
+            <li>Crie layouts complexos e responsivos com menos código.</li>
+            <li>Alinhe itens em duas dimensões simultaneamente.</li>
+            <li>Controle preciso sobre o posicionamento e o dimensionamento dos elementos.</li>
         </ul>
       `
     },
     {
-      title: 'Guia de Uso Rápido',
-      content: `
-        <ol>
-          <li><strong>Defina a Grade:</strong> Use os seletores no topo para configurar o número de <strong>colunas</strong> e <strong>linhas</strong> da sua área de trabalho.</li>
-          <li><strong>Adicione um Item:</strong> Clique em qualquer célula com um ícone de <strong>+</strong>. Um novo item de grid aparecerá naquela posição.</li>
-          <li><strong>Redimensione o Item:</strong> Cada item possui uma alça no canto inferior direito. Clique e arraste esta alça sobre as células vizinhas para expandir o item. A pré-visualização mostrará a área que ele ocupará.</li>
-          <li><strong>Remova um Item:</strong> Clique no ícone de <strong>X</strong> no canto superior direito de qualquer item para removê-lo.</li>
-          <li><strong>Copie o Código:</strong> O código nas caixas de "HTML Gerado" e "CSS Gerado" está sempre sincronizado com sua pré-visualização.</li>
-        </ol>
-      `
-    },
-    {
-      title: 'Perguntas Frequentes (FAQ)',
-      content: `
-        <h4>Por que o CSS usa <code>grid-column: start / end</code>?</h4>
-        <p>A ferramenta gera o código usando a sintaxe de linha de início e fim (ex: <code>grid-column: 1 / 3;</code>) porque é a forma mais explícita e robusta de definir o posicionamento de um item no grid. Isso evita ambiguidades e garante que o layout seja exatamente como o visualizado, sendo fácil de entender e manter.</p>
-
-        <h4>Posso criar layouts complexos?</h4>
-        <p>Sim! A ferramenta foi projetada para permitir a criação de qualquer layout de grid 2D, desde simples galerias até layouts de página complexos. A sobreposição de itens não é suportada diretamente pela UI para manter a simplicidade, mas você pode ajustar o CSS gerado manualmente se precisar.</p>
-        
-        <h4>Como a ferramenta lida com responsividade?</h4>
-        <p>O CSS gerado usa unidades <code>fr</code> (fração), que são inerentemente flexíveis. Para designs responsivos mais avançados, você pode usar o código gerado como ponto de partida dentro de suas media queries (ex: <code>@media (max-width: 768px) { ... }</code>) para redefinir o posicionamento dos itens em telas menores.</p>
-      `
+        title: 'Guia de Uso e Unidades Comuns',
+        content: `
+            <h4>Como Usar o Construtor</h4>
+            <ol>
+                <li><strong>Defina a Estrutura:</strong> Ajuste o número de colunas e linhas.</li>
+                <li><strong>Configure os Espaçamentos:</strong> Defina os valores de <code>column-gap</code> e <code>row-gap</code>.</li>
+                <li><strong>Dimensione as Trilhas:</strong> Insira os valores para cada coluna e linha nos campos de texto. Use unidades como <code>fr</code>, <code>px</code>, <code>%</code>, ou <code>auto</code>.</li>
+                <li><strong>Visualize:</strong> Adicione ou remova itens para ver como eles se encaixam na grade. Clique em um item para "selecioná-lo".</li>
+                <li><strong>Copie o Código:</strong> Use os botões para copiar o CSS gerado para o contêiner da grade e para os itens.</li>
+            </ol>
+            <h4>Unidades Comuns do Grid</h4>
+            <ul>
+                <li><code>fr</code> (fração): Uma unidade flexível que representa uma fração do espaço livre no contêiner. <code>1fr 1fr 2fr</code> divide o espaço em 4 partes e dá 1 para as duas primeiras colunas e 2 para a terceira.</li>
+                <li><code>px</code>, <code>rem</code>: Unidades de comprimento fixo.</li>
+                <li><code>%</code>: Uma porcentagem do tamanho do contêiner da grade.</li>
+                <li><code>auto</code>: O tamanho é determinado pelo conteúdo do item da grade ou pelo tamanho do próprio item.</li>
+                <li><code>minmax(min, max)</code>: Define um intervalo de tamanho, garantindo que a trilha nunca seja menor que <code>min</code> ou maior que <code>max</code>. Ex: <code>minmax(100px, 1fr)</code>.</li>
+            </ul>
+        `
     }
-  ]);
-
-  getColRowFromIndex(index: number): { col: number; row: number } {
-    const col = (index % this.cols()) + 1;
-    const row = Math.floor(index / this.cols()) + 1;
-    return { col, row };
+    ];
   }
-  
-  addItem(index: number) {
-    const { col, row } = this.getColRowFromIndex(index);
-    
-    // Check if the cell is already occupied
-    for (const item of this.items()) {
-      if (
-        row >= item.rowStart && row < item.rowEnd &&
-        col >= item.colStart && col < item.colEnd
-      ) {
-        return; 
-      }
+
+  updateColumns(count: number | null): void {
+    const newCount = count || 1;
+    if (isNaN(newCount) || newCount < 1) return;
+    this.columns.set(newCount);
+    this.columnValues.update(values => this.adjustArray(values, newCount, '1fr'));
+  }
+
+  updateRows(count: number | null): void {
+    const newCount = count || 1;
+    if (isNaN(newCount) || newCount < 1) return;
+    this.rows.set(newCount);
+    this.rowValues.update(values => this.adjustArray(values, newCount, 'auto'));
+  }
+
+  private adjustArray(arr: string[], count: number, fillValue: string): string[] {
+    const newArr = [...arr];
+    const diff = count - newArr.length;
+    if (diff > 0) {
+      for (let i = 0; i < diff; i++) newArr.push(fillValue);
+    } else if (diff < 0) {
+      newArr.length = count;
     }
-    
-    const existingIds = this.items().map(item => item.id).sort((a, b) => a - b);
-    let newId = 1;
-    for (const id of existingIds) {
-      if (id === newId) {
-        newId++;
-      } else {
-        break;
-      }
-    }
-
-    const colorIndex = (newId - 1) % this.colors.length;
-    const newColor = this.colors[colorIndex];
-
-    this.items.update(items => [
-      ...items,
-      { id: newId, colStart: col, rowStart: row, colEnd: col + 1, rowEnd: row + 1, color: newColor }
-    ]);
+    return newArr;
   }
 
-  removeItem(id: number) {
-    this.items.update(items => items.filter(item => item.id !== id));
-  }
-  
-  resetGrid() {
-    this.items.set([]);
-  }
-
-  loadHolyGrail() {
-    this.cols.set(5);
-    this.rows.set(4);
-    this.gap.set(10);
-    this.items.set([
-        { id: 1, colStart: 1, rowStart: 1, colEnd: 6, rowEnd: 2, color: this.colors[0] }, // Header
-        { id: 2, colStart: 1, rowStart: 2, colEnd: 2, rowEnd: 4, color: this.colors[1] }, // Nav
-        { id: 3, colStart: 2, rowStart: 2, colEnd: 5, rowEnd: 4, color: this.colors[2] }, // Main
-        { id: 4, colStart: 5, rowStart: 2, colEnd: 6, rowEnd: 4, color: this.colors[3] }, // Aside
-        { id: 5, colStart: 1, rowStart: 4, colEnd: 6, rowEnd: 5, color: this.colors[4] }, // Footer
-    ]);
-  }
-  
-  onResizeStart(event: MouseEvent, item: GridItem) {
-    event.preventDefault();
-    this.resizeState.set({
-      active: true,
-      itemId: item.id,
-      itemInitialState: { ...item }
+  updateColumnValue(index: number, value: string): void {
+    this.columnValues.update(values => {
+      const newValues = [...values];
+      newValues[index] = value;
+      return newValues;
     });
   }
 
-  @HostListener('window:mousemove', ['$event'])
-  onGridMouseMove(event: MouseEvent) {
-    if (!this.resizeState().active) return;
-
-    const currentCell = this.getCellFromEvent(event);
-    const initialState = this.resizeState().itemInitialState;
-    if (!currentCell || !initialState) return;
-
-    // cell col/row are 0-indexed, grid lines are 1-indexed
-    // colEnd/rowEnd are exclusive
-    const colEnd = Math.max(initialState.colStart + 1, currentCell.col + 2);
-    const rowEnd = Math.max(initialState.rowStart + 1, currentCell.row + 2);
-
-    this.previewSpan.set({ colEnd, rowEnd });
+  updateRowValue(index: number, value: string): void {
+    this.rowValues.update(values => {
+      const newValues = [...values];
+      newValues[index] = value;
+      return newValues;
+    });
   }
 
-  @HostListener('window:mouseup', ['$event'])
-  onGridMouseUp(event: MouseEvent) {
-    if (!this.resizeState().active) return;
-
-    const finalSpan = this.previewSpan();
-    const itemId = this.resizeState().itemId;
-
-    if (finalSpan && itemId !== null) {
-      this.items.update(items =>
-        items.map(item =>
-          item.id === itemId
-            ? { ...item, colEnd: finalSpan.colEnd, rowEnd: finalSpan.rowEnd }
-            : item
-        )
-      );
-    }
-    
-    this.resizeState.set({ active: false, itemId: null, itemInitialState: null });
-    this.previewSpan.set(null);
+  addItem(): void {
+    this.itemCount.update(c => c + 1);
   }
 
-  private getCellFromEvent(event: MouseEvent): { col: number; row: number } | null {
-    const container = this.gridContainer()?.nativeElement;
-    if (!container) return null;
+  removeItem(): void {
+    this.itemCount.update(c => Math.max(0, c - 1));
+  }
 
-    const rect = container.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+  selectItem(index: number): void {
+    this.selectedItemIndex.set(index);
+  }
+  
+  trackByIndex(index: number): number {
+    return index;
+  }
 
-    const col = Math.floor(x / (rect.width / this.cols()));
-    const row = Math.floor(y / (rect.height / this.rows()));
+  copyCss(type: 'container' | 'item'): void {
+    const textToCopy = type === 'container' ? this.gridContainerCssText() : this.selectedItemCssText();
+    const signalToUpdate = type === 'container' ? this.containerCopyText : this.itemCopyText;
+    const originalText = type === 'container' ? 'Copiar CSS do Contêiner' : 'Copiar CSS do Item';
 
-    if (col < 0 || col >= this.cols() || row < 0 || row >= this.rows()) {
-        return null;
-    }
-
-    return { col, row };
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      signalToUpdate.set('Copiado!');
+      setTimeout(() => signalToUpdate.set(originalText), 2000);
+    });
   }
 }
