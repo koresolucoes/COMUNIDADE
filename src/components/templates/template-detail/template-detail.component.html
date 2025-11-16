@@ -11,6 +11,14 @@
             <span class="text-sm font-medium bg-blue-accent/20 text-blue-300 px-2.5 py-1 rounded-full capitalize">{{ t.category }}</span>
           </div>
           <div class="h-[75vh] w-full bg-gray-900 border border-gray-800 rounded-lg overflow-auto relative">
+            <!-- Aviso sobre a pré-visualização -->
+            <div class="absolute top-2 left-2 z-20 p-2 bg-yellow-900/50 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs flex items-start gap-2 max-w-sm">
+              <span class="material-icons-outlined text-yellow-400 mt-0.5 text-base">info</span>
+              <span>
+                <strong>Aviso:</strong> Esta é uma pré-visualização gerada em HTML e serve apenas como guia visual. Para uma representação fiel e para testar, recomendamos importar e visualizar o workflow diretamente no n8n.
+              </span>
+            </div>
+            
             @if(visualGraph(); as graph) {
               <div class="relative" [style.width.px]="graph.width" [style.height.px]="graph.height">
                 <!-- SVG for Connectors -->
@@ -30,27 +38,44 @@
 
                 <!-- Nodes -->
                 @for(node of graph.nodes; track node.id) {
-                  <div class="absolute" [style.left.px]="node.x" [style.top.px]="node.y" [style.width.px]="node.width" [style.height.px]="node.height">
-                    <div class="n8n-node-card">
-                      <div class="n8n-node-header" [style.background-color]="node.color">
-                        <span class="material-icons-outlined">{{ node.icon }}</span>
-                        <span class="n8n-node-type-name">{{ node.friendlyName }}</span>
-                      </div>
-                      <div class="n8n-node-body">
-                        <span class="n8n-node-label" [title]="node.name">{{ node.name }}</span>
-                        @if(node.parameters.length > 0) {
-                          <div class="n8n-node-parameters">
-                            @for(param of node.parameters; track param.key) {
-                              <div class="parameter-item">
-                                <span class="parameter-key">{{ param.key }}:</span>
-                                <span class="parameter-value" [title]="param.value">{{ param.value }}</span>
-                              </div>
-                            }
-                          </div>
-                        }
+                  @if (node.isStickyNote) {
+                    <div 
+                      class="absolute sticky-note z-0" 
+                      [style.left.px]="node.x" 
+                      [style.top.px]="node.y" 
+                      [style.width.px]="node.width" 
+                      [style.height.px]="node.height"
+                      [class.sticky-note-color-3]="node.noteColor === 3"
+                      [class.sticky-note-color-4]="node.noteColor === 4"
+                      [class.sticky-note-color-5]="node.noteColor === 5"
+                      [class.sticky-note-color-6]="node.noteColor === 6"
+                      [class.sticky-note-color-7]="node.noteColor === 7"
+                      >
+                        {{ node.content }}
+                    </div>
+                  } @else {
+                    <div class="absolute z-10" [style.left.px]="node.x" [style.top.px]="node.y" [style.width.px]="node.width" [style.height.px]="node.height">
+                      <div class="n8n-node-card">
+                        <div class="n8n-node-header" [style.background-color]="node.color">
+                          <span class="material-icons-outlined">{{ node.icon }}</span>
+                          <span class="n8n-node-type-name">{{ node.friendlyName }}</span>
+                        </div>
+                        <div class="n8n-node-body">
+                          <span class="n8n-node-label" [title]="node.name">{{ node.name }}</span>
+                          @if(node.parameters && node.parameters.length > 0) {
+                            <div class="n8n-node-parameters">
+                              @for(param of node.parameters; track param.key) {
+                                <div class="parameter-item">
+                                  <span class="parameter-key">{{ param.key }}:</span>
+                                  <span class="parameter-value" [title]="param.value">{{ param.value }}</span>
+                                </div>
+                              }
+                            </div>
+                          }
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  }
                 }
               </div>
             } @else if (workflowData()) {

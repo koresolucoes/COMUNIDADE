@@ -82,3 +82,42 @@
   font-family: 'Inter', sans-serif;
   font-weight: 500;
 }
+
+.sticky-note {
+  border: 1px solid;
+  padding: 12px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow: hidden;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px 0 rgba(0,0,0,0.15);
+}
+
+/* Color mappings based on n8n UI */
+.sticky-note.sticky-note-color-3 { /* Green */
+  background-color: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.4);
+  color: #a5d6a7;
+}
+.sticky-note.sticky-note-color-4 { /* Yellow */
+  background-color: rgba(255, 193, 7, 0.1);
+  border-color: rgba(255, 193, 7, 0.4);
+  color: #ffca28;
+}
+.sticky-note.sticky-note-color-5 { /* Purple */
+  background-color: rgba(156, 39, 176, 0.1);
+  border-color: rgba(156, 39, 176, 0.4);
+  color: #ce93d8;
+}
+.sticky-note.sticky-note-color-6 { /* Blue */
+  background-color: rgba(33, 150, 243, 0.1);
+  border-color: rgba(33, 150, 243, 0.4);
+  color: #90caf9;
+}
+.sticky-note.sticky-note-color-7 { /* Grey */
+  background-color: rgba(96, 125, 139, 0.15);
+  border-color: rgba(96, 125, 139, 0.4);
+  color: #b0bec5;
+}

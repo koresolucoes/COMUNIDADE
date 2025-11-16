@@ -12,7 +12,7 @@
       </h2>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         @for(tool of category.tools; track tool.name) {
-          <a [routerLink]="tool.link" class="block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1">
+          <a [routerLink]="tool.link" class="relative block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 hover:z-10">
             <h3 class="text-xl font-semibold text-white">{{ tool.name }}</h3>
             <p class="mt-2 text-gray-400">{{ tool.description }}</p>
           </a>

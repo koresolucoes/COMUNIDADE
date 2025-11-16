@@ -9,23 +9,25 @@ import { FormsModule } from '@angular/forms';
 import { N8nApiService } from '../../../services/n8n/n8n-api.service';
 import { AuthService } from '../../../services/auth.service';
 
-export interface TimelineNode {
+export interface VisualNode {
   id: string;
-  name: string;
-  type: string;
-  friendlyName: string;
-  icon: string;
-  color: string;
-  parameters: { key: string; value: any }[];
-}
-
-// New interfaces for the visual graph
-export interface VisualNode extends TimelineNode {
   x: number;
   y: number;
   width: number;
   height: number;
+  isStickyNote: boolean;
+  // For regular nodes
+  name?: string;
+  type?: string;
+  friendlyName?: string;
+  icon?: string;
+  color?: string;
+  parameters?: { key: string; value: any }[];
+  // For sticky notes
+  content?: string;
+  noteColor?: number;
 }
+
 
 export interface VisualEdge {
   id: string;
@@ -78,12 +80,24 @@ export class TemplateDetailComponent {
     set: { color: '#f59e0b', icon: 'functions' },
     code: { color: '#4b5563', icon: 'code' },
     webhook: { color: '#db2777', icon: 'webhook' },
+    formTrigger: { color: '#db2777', icon: 'edit_note' },
     merge: { color: '#0d9488', icon: 'merge_type' },
     switch: { color: '#a855f7', icon: 'switch_right' },
     note: { color: '#ca8a04', icon: 'note' },
     googleSheets: { color: '#0f9d58', icon: 'table_chart' },
     discord: { color: '#5865f2', icon: 'forum' },
     cron: { color: '#6366f1', icon: 'schedule' },
+    agent: { color: '#8b5cf6', icon: 'smart_toy' },
+    lmChatOpenAi: { color: '#10b981', icon: 'chat' },
+    lmChatGoogleGemini: { color: '#fbbf24', icon: 'chat' },
+    outputParserStructured: { color: '#6366f1', icon: 'data_object' },
+    toolSerpApi: { color: '#ef4444', icon: 'travel_explore' },
+    aggregate: { color: '#f97316', icon: 'calculate' },
+    openAi: { color: '#10b981', icon: 'psychology_alt' },
+    gmail: { color: '#dc2626', icon: 'mail' },
+    twitter: { color: '#3b82f6', icon: 'chat_bubble' },
+    facebookGraphApi: { color: '#3b82f6', icon: 'facebook' },
+    linkedIn: { color: '#0ea5e9', icon: 'work' },
     default: { color: '#374151', icon: 'settings' },
   };
 
@@ -122,203 +136,152 @@ export class TemplateDetailComponent {
     }
 
     // Constants for layout
+    const PADDING = 60;
     const NODE_WIDTH = 250;
     const NODE_HEADER_HEIGHT = 34;
     const NODE_BODY_MIN_HEIGHT = 28;
     const NODE_PARAM_HEIGHT = 18;
-    const HORIZONTAL_SPACING = 150;
-    const VERTICAL_SPACING = 40;
-    const PADDING = 20;
+    const SCALE_X = 1.4;
+    const SCALE_Y = 1.4;
 
-    // --- 1. Build Graph Structure ---
+    let minX = Infinity;
+    let minY = Infinity;
+
+    // 1. First pass to find boundaries
+    for (const node of workflow.nodes) {
+      if (!node.position) continue;
+      minX = Math.min(minX, node.position[0]);
+      minY = Math.min(minY, node.position[1]);
+    }
+
+    // Scale the min values
+    minX *= SCALE_X;
+    minY *= SCALE_Y;
+
+    // 2. Calculate offset to push everything into the positive padded space
+    const offsetX = minX < PADDING ? PADDING - minX : 0;
+    const offsetY = minY < PADDING ? PADDING - minY : 0;
+
+
+    const visualNodesMap = new Map<string, VisualNode>();
+    let finalMaxX = 0;
+    let finalMaxY = 0;
+
+    // 3. Create Visual Nodes using positions from JSON, now with offset
+    for (const node of workflow.nodes) {
+      if (!node.position) continue;
+      const x = node.position[0] * SCALE_X + offsetX;
+      const y = node.position[1] * SCALE_Y + offsetY;
+      let visualNode: VisualNode;
+
+      if (node.type === 'n8n-nodes-base.stickyNote') {
+        const width = node.parameters.width || 200;
+        const height = node.parameters.height || 100;
+        visualNode = {
+          id: node.id,
+          x, y, width, height,
+          isStickyNote: true,
+          content: node.parameters.content,
+          noteColor: node.parameters.color,
+        };
+      } else {
+        const nodeTypeKey = this.getNodeType(node.type);
+        const style = this.nodeStyleMap[nodeTypeKey] || this.nodeStyleMap['default'];
+        const parameters = this.getNodeParameters(node);
+        const bodyHeight = Math.max(NODE_BODY_MIN_HEIGHT, parameters.length * NODE_PARAM_HEIGHT + 12);
+        const width = NODE_WIDTH;
+        const height = NODE_HEADER_HEIGHT + bodyHeight;
+
+        visualNode = {
+          id: node.id, x, y, width, height,
+          isStickyNote: false,
+          name: node.name,
+          type: node.type,
+          friendlyName: this.getFriendlyNodeName(node.type),
+          icon: style.icon,
+          color: style.color,
+          parameters,
+        };
+      }
+      visualNodesMap.set(node.id, visualNode);
+      finalMaxX = Math.max(finalMaxX, visualNode.x + visualNode.width);
+      finalMaxY = Math.max(finalMaxY, visualNode.y + visualNode.height);
+    }
+
+    // --- Create Adjacency list for edges ---
     const n8nNodeNameToNodeId = new Map<string, string>();
-    const nodeMap = new Map<string, any>();
-    workflow.nodes.forEach((node: any) => {
-      n8nNodeNameToNodeId.set(node.name, node.id);
-      nodeMap.set(node.id, node);
-    });
+    workflow.nodes.forEach((node: any) => n8nNodeNameToNodeId.set(node.name, node.id));
 
     const adj = new Map<string, { targetId: string; outputIndex: number; outputName: string }[]>();
-    const revAdj = new Map<string, string[]>();
-    workflow.nodes.forEach((node: any) => {
-      adj.set(node.id, []);
-      revAdj.set(node.id, []);
-    });
+    workflow.nodes.forEach((node: any) => adj.set(node.id, []));
 
     for (const sourceNodeName in workflow.connections) {
-        const sourceNodeId = n8nNodeNameToNodeId.get(sourceNodeName);
-        if (!sourceNodeId) continue;
-        const outputs = workflow.connections[sourceNodeName];
-        for (const outputName in outputs) {
-            const connectionsByIndex = outputs[outputName];
-            connectionsByIndex.forEach((connectionGroup: any[], outputIndex: number) => {
-                connectionGroup.forEach(connection => {
-                    const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
-                    if (targetNodeId) {
-                        adj.get(sourceNodeId)?.push({ targetId: targetNodeId, outputIndex, outputName });
-                        if (!revAdj.get(targetNodeId)?.includes(sourceNodeId)) {
-                            revAdj.get(targetNodeId)?.push(sourceNodeId);
-                        }
-                    }
-                });
-            });
-        }
-    }
-
-    // --- 2. Calculate Node Levels (Columns) using a topological sort approach ---
-    const nodeLevels = new Map<string, number>();
-    const queue: string[] = [];
-    workflow.nodes.forEach((node: any) => {
-      if (!revAdj.get(node.id)?.length) {
-        queue.push(node.id);
-        nodeLevels.set(node.id, 0);
+      const sourceNodeId = n8nNodeNameToNodeId.get(sourceNodeName);
+      if (!sourceNodeId) continue;
+      const outputs = workflow.connections[sourceNodeName];
+      for (const outputName in outputs) {
+        const connectionsByIndex = outputs[outputName];
+        connectionsByIndex.forEach((connectionGroup: any[], outputIndex: number) => {
+          connectionGroup.forEach(connection => {
+            const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
+            if (targetNodeId) {
+              adj.get(sourceNodeId)?.push({ targetId: targetNodeId, outputIndex, outputName });
+            }
+          });
+        });
       }
-    });
-
-    let head = 0;
-    while(head < queue.length) {
-        const u = queue[head++];
-        (adj.get(u) || []).forEach(({ targetId }) => {
-            const v = targetId;
-            const newLevel = (nodeLevels.get(u) || 0) + 1;
-            const currentLevel = nodeLevels.get(v) || -1;
-            if (newLevel > currentLevel) {
-              nodeLevels.set(v, newLevel);
-            }
-            if (!queue.includes(v) && head < workflow.nodes.length * 2) {
-                queue.push(v);
-            }
-        });
-    }
-
-    // --- 3. Create Visual Nodes and Position them ---
-    const columns: VisualNode[][] = [];
-    let maxGraphHeight = 0;
-    const visualNodes = new Map<string, VisualNode>();
-
-    workflow.nodes.forEach((node: any) => {
-      const level = nodeLevels.get(node.id) ?? 0;
-      if (!columns[level]) columns[level] = [];
-      
-      const nodeTypeKey = this.getNodeType(node.type);
-      const style = this.nodeStyleMap[nodeTypeKey] || this.nodeStyleMap['default'];
-      const parameters = this.getNodeParameters(node);
-      const bodyHeight = Math.max(NODE_BODY_MIN_HEIGHT, parameters.length * NODE_PARAM_HEIGHT + 12);
-      
-      const visualNode: VisualNode = {
-        id: node.id,
-        name: node.name,
-        type: node.type,
-        friendlyName: this.getFriendlyNodeName(node.type),
-        icon: style.icon,
-        color: style.color,
-        parameters,
-        width: NODE_WIDTH,
-        height: NODE_HEADER_HEIGHT + bodyHeight,
-        x: PADDING + level * (NODE_WIDTH + HORIZONTAL_SPACING),
-        y: 0, // Will be set next
-      };
-      columns[level].push(visualNode);
-      visualNodes.set(node.id, visualNode);
-    });
-    
-    for (let i = 0; i < columns.length; i++) {
-        const column = columns[i];
-        if (i > 0) {
-            column.sort((a, b) => {
-                const getAvgParentY = (nodeId: string): number => {
-                    const parents = revAdj.get(nodeId) || [];
-                    if (parents.length === 0) return 0;
-                    const sumY = parents.reduce((sum, parentId) => {
-                        const parentNode = visualNodes.get(parentId);
-                        return sum + (parentNode ? (parentNode.y + parentNode.height / 2) : 0);
-                    }, 0);
-                    return sumY / parents.length;
-                };
-                return getAvgParentY(a.id) - getAvgParentY(b.id);
-            });
-        }
-        let currentY = PADDING;
-        column.forEach(node => {
-            node.y = currentY;
-            currentY += node.height + VERTICAL_SPACING;
-        });
-        if (currentY > maxGraphHeight) {
-            maxGraphHeight = currentY;
-        }
     }
     
-    columns.forEach(column => {
-        if (column.length > 0) {
-            const lastNode = column[column.length - 1];
-            const columnHeight = lastNode.y + lastNode.height;
-            const offset = (maxGraphHeight - columnHeight) / 2;
-            if (offset > 0) {
-                column.forEach(node => node.y += offset);
-            }
-        }
-    });
-
-    // --- 4. Create Visual Edges ---
+    // --- Create Visual Edges ---
     const edges: VisualEdge[] = [];
     for (const [sourceId, targets] of adj.entries()) {
-      const sourceNode = visualNodes.get(sourceId);
-      if (!sourceNode) continue;
-      
-      const sourceNodeData = nodeMap.get(sourceId);
-      const hasMultipleOutputs = targets.length > 1;
+      const sourceNode = visualNodesMap.get(sourceId);
+      const sourceNodeData = workflow.nodes.find((n: any) => n.id === sourceId);
+      if (!sourceNode || sourceNode.isStickyNote || targets.length === 0) continue;
 
       for (const { targetId, outputIndex } of targets) {
-        const targetNode = visualNodes.get(targetId);
-        if (targetNode) {
-          let y1 = sourceNode.y + sourceNode.height / 2;
-          if (hasMultipleOutputs && targets.length > 1) {
-              const spread = Math.min(sourceNode.height / 2.5, (targets.length -1) * 15);
-              const totalOutputs = Math.max(...targets.map(t => t.outputIndex)) + 1;
-              const step = spread / (totalOutputs > 1 ? totalOutputs - 1 : 1);
-              const offset = (outputIndex - (totalOutputs - 1) / 2) * step;
-              y1 = (sourceNode.y + sourceNode.height / 2) + offset;
-          }
+        const targetNode = visualNodesMap.get(targetId);
+        if (!targetNode || targetNode.isStickyNote) continue;
 
-          const x1 = sourceNode.x + sourceNode.width;
-          const x2 = targetNode.x;
-          const y2 = targetNode.y + targetNode.height / 2;
-          const c1x = x1 + HORIZONTAL_SPACING / 2;
-          const c2x = x2 - HORIZONTAL_SPACING / 2;
-          const path = `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
-
-          let label: string | undefined;
-          if (sourceNodeData.type === 'n8n-nodes-base.if') {
-            label = outputIndex === 0 ? 'true' : 'false';
-          } else if (sourceNodeData.type === 'n8n-nodes-base.switch') {
-            label = `Output ${outputIndex}`;
-          }
-          
-          const labelX = x1 + HORIZONTAL_SPACING * 0.25;
-          const labelY = y1 + (y2 - y1) * 0.25 - 5;
-
-          edges.push({
-            id: `${sourceId}-${targetId}-${outputIndex}`,
-            sourceId,
-            targetId,
-            path,
-            label,
-            labelX,
-            labelY
-          });
+        let y1 = sourceNode.y + sourceNode.height / 2;
+        if (targets.length > 1) {
+          const spread = Math.min(sourceNode.height / 2.5, (targets.length - 1) * 15);
+          const totalOutputs = Math.max(...targets.map(t => t.outputIndex)) + 1;
+          const step = totalOutputs > 1 ? spread / (totalOutputs - 1) : 1;
+          const offset = (outputIndex - (totalOutputs - 1) / 2) * step;
+          y1 = (sourceNode.y + sourceNode.height / 2) + offset;
         }
+
+        const x1 = sourceNode.x + sourceNode.width;
+        const x2 = targetNode.x;
+        const y2 = targetNode.y + targetNode.height / 2;
+        const hDistance = Math.max(60, x2 - x1);
+        const c1x = x1 + hDistance / 2;
+        const c2x = x2 - hDistance / 2;
+        const path = `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
+
+        let label: string | undefined;
+        if (sourceNodeData.type === 'n8n-nodes-base.if') {
+          label = outputIndex === 0 ? 'true' : 'false';
+        } else if (sourceNodeData.type === 'n8n-nodes-base.switch') {
+          label = `Output ${outputIndex}`;
+        }
+        
+        const labelX = x1 + hDistance * 0.25;
+        const labelY = y1 + (y2 - y1) * 0.25 - 5;
+        
+        edges.push({ id: `${sourceId}-${targetId}-${outputIndex}`, sourceId, targetId, path, label, labelX, labelY });
       }
     }
 
-    const graphWidth = PADDING * 2 + columns.length * NODE_WIDTH + (columns.length - 1) * HORIZONTAL_SPACING;
-    
     return {
-      nodes: Array.from(visualNodes.values()),
-      edges: edges,
-      width: Math.max(graphWidth, 600),
-      height: maxGraphHeight,
+      nodes: Array.from(visualNodesMap.values()),
+      edges,
+      width: finalMaxX + PADDING,
+      height: finalMaxY + PADDING,
     };
   });
+
   constructor() {
     effect(() => {
       const t = this.template();
@@ -333,25 +296,51 @@ export class TemplateDetailComponent {
     if (!params) return [];
 
     try {
+      const MAX_VALUE_LENGTH = 50;
+      const truncate = (val: any) => {
+        if (typeof val !== 'string') return val;
+        return val.length > MAX_VALUE_LENGTH ? val.substring(0, MAX_VALUE_LENGTH) + '...' : val;
+      }
+
       switch (node.type) {
         case 'n8n-nodes-base.if':
           return (params.conditions?.values || []).map((cond: any, i: number) => ({
             key: `Condição ${i + 1}`,
-            value: `${cond.firstValue || ''} ${cond.operation || ''} ${cond.secondValue || ''}`,
+            value: truncate(`${cond.firstValue || ''} ${cond.operation || ''} ${cond.secondValue || ''}`),
           }));
         case 'n8n-nodes-base.httpRequest':
           return [
             { key: 'Method', value: params.method },
-            { key: 'URL', value: params.url },
+            { key: 'URL', value: truncate(params.url) },
           ].filter(p => p.value);
         case 'n8n-nodes-base.set':
-          return (params.values?.values || []).map((v: any) => ({
+          return (params.assignments?.assignments || []).map((v: any) => ({
             key: v.name,
-            value: v.value,
+            value: truncate(v.value),
           }));
         case 'n8n-nodes-base.webhook':
           return [{ key: 'Path', value: params.path }];
+        case 'n8n-nodes-base.formTrigger':
+          return [{key: 'Title', value: truncate(params.formTitle)}]
+        case '@n8n/n8n-nodes-langchain.agent':
+            return [{ key: 'Prompt', value: truncate(params.text)}];
+        case '@n8n/n8n-nodes-langchain.lmChatOpenAi':
+        case '@n8n/n8n-nodes-langchain.lmChatGoogleGemini':
+            const model = params.model?.value || params.model || 'default';
+            return [{key: 'Model', value: truncate(model)}];
+        case 'n8n-nodes-base.gmail':
+            return [{key: 'To', value: truncate(params.sendTo)}, {key: 'Subject', value: truncate(params.subject)}];
+        case 'n8n-nodes-base.twitter':
+            return [{key: 'Text', value: truncate(params.text)}];
+        case 'n8n-nodes-base.merge':
+            return [{key: 'Mode', value: params.mode}, {key: 'Combine By', value: params.combineBy}];
+        case 'n8n-nodes-base.aggregate':
+            return [{key: 'Aggregate', value: params.aggregate}];
+        case '@n8n/n8n-nodes-langchain.openAi':
+            return [{key: 'Resource', value: params.resource}, {key: 'Prompt', value: truncate(params.prompt)}];
         default:
+          if(params.operation) return [{key: 'Operation', value: params.operation}];
+          if(params.resource) return [{key: 'Resource', value: params.resource}];
           return [];
       }
     } catch(e) {
@@ -362,8 +351,9 @@ export class TemplateDetailComponent {
 
   private getNodeType(n8nType: string): string {
     if (!n8nType) return 'default';
-    const parts = n8nType.split('.');
-    const type = parts[parts.length - 1];
+    // Handles 'n8n-nodes-base.if' -> 'if'
+    // Handles '@n8n/n8n-nodes-langchain.agent' -> 'agent'
+    const type = n8nType.split('.').pop() || '';
     return this.nodeStyleMap[type] ? type : 'default';
   }
   

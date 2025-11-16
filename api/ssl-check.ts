@@ -3,7 +3,8 @@ import tls from 'node:tls';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default (req: VercelRequest, res: VercelResponse) => {
-  const { domain } = req.query;
+  const url = new URL(req.url || '', `http://${req.headers.host}`);
+  const domain = url.searchParams.get('domain');
 
   const writeError = (statusCode: number, message: string) => {
     res.status(statusCode).setHeader('Content-Type', 'application/json').end(JSON.stringify({ error: message }));
