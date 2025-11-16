@@ -59,6 +59,13 @@
             Anterior
           </button>
           
+          @if (pages().length > 0 && pages()[0] > 1) {
+            <button (click)="goToPage(1)" class="w-10 h-10 rounded-md bg-gray-800 text-gray-300 hover:bg-gray-700">
+              1
+            </button>
+            <span class="text-gray-600 px-1">...</span>
+          }
+
           @for(page of pages(); track page) {
             <button 
               (click)="goToPage(page)"
@@ -69,6 +76,13 @@
               [class.text-gray-300]="currentPage() !== page"
               [class.hover:bg-gray-700]="currentPage() !== page">
               {{ page }}
+            </button>
+          }
+
+          @if (pages().length > 0 && pages()[pages().length - 1] < totalPages()) {
+            <span class="text-gray-600 px-1">...</span>
+            <button (click)="goToPage(totalPages())" class="w-10 h-10 rounded-md bg-gray-800 text-gray-300 hover:bg-gray-700">
+              {{ totalPages() }}
             </button>
           }
           

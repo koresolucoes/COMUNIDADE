@@ -42,7 +42,28 @@ export class TemplateListComponent implements OnInit {
   });
 
   pages = computed(() => {
-    return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
+    const total = this.totalPages();
+    const current = this.currentPage();
+    const maxPagesToShow = 10;
+    const halfPages = Math.floor(maxPagesToShow / 2);
+
+    if (total <= maxPagesToShow) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    let startPage = Math.max(1, current - halfPages);
+    let endPage = startPage + maxPagesToShow - 1;
+
+    if (endPage > total) {
+      endPage = total;
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+
+    const pagesArray: number[] = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pagesArray.push(i);
+    }
+    return pagesArray;
   });
 
   ngOnInit() {
