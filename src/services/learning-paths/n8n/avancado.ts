@@ -36,6 +36,13 @@ const steps: LearningStep[] = [
     path: '/learning/article/n8n-cicd',
     icon: 'rocket_launch',
   },
+  {
+    type: 'article',
+    title: 'Estendendo a Plataforma: Criando Seus Próprios Nós',
+    description: 'O passo final para o domínio: aprenda a desenvolver seus próprios nós para integrar com APIs customizadas ou encapsular lógicas de negócio complexas.',
+    path: '/learning/article/n8n-custom-nodes',
+    icon: 'extension',
+  },
 ];
 
 export const n8nAvancadoPath: LearningPath = {

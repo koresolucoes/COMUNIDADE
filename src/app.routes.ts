@@ -87,6 +87,7 @@ import { N8nSubworkflowsVsCodeComponent } from './components/learning/articles/n
 import { N8nStaticDataComponent } from './components/learning/articles/n8n-static-data/n8n-static-data.component';
 import { N8nGitVersioningComponent } from './components/learning/articles/n8n-git-versioning/n8n-git-versioning.component';
 import { N8nCicdComponent } from './components/learning/articles/n8n-cicd/n8n-cicd.component';
+import { N8nCustomNodesComponent } from './components/learning/articles/n8n-custom-nodes/n8n-custom-nodes.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -157,6 +158,7 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/n8n-static-data', component: N8nStaticDataComponent },
   { path: 'learning/article/n8n-git-versioning', component: N8nGitVersioningComponent },
   { path: 'learning/article/n8n-cicd', component: N8nCicdComponent },
+  { path: 'learning/article/n8n-custom-nodes', component: N8nCustomNodesComponent },
   
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },

@@ -1,0 +1,82 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-avancado" class="hover:text-blue-accent hover:underline">n8n Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Estendendo a Plataforma: Criando Seus Próprios Nós</h1>
+    <p class="mt-4 text-lg text-gray-400">O passo final para o domínio: aprenda a desenvolver seus próprios nós para integrar com APIs customizadas ou encapsular lógicas de negócio complexas.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O "Everest" do n8n: Por que Criar um Nó?</h2>
+      <p>
+        O n8n já possui centenas de nós, e o nó HTTP Request pode se conectar a quase qualquer API. Então, por que alguém precisaria criar um nó customizado?
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>APIs Internas ou Específicas:</strong> Sua empresa pode ter uma API interna que não é pública. Criar um nó para ela abstrai a complexidade e permite que outros membros da equipe a usem visualmente.</li>
+        <li><strong>Lógica de Negócio Complexa:</strong> Se você tem uma sequência de 10 nós que sempre usa para "Calcular Frete", você pode encapsular toda essa lógica em um único nó "Calcular Frete", tornando seus workflows muito mais limpos.</li>
+        <li><strong>Melhorar a Experiência do Usuário (UX):</strong> Um nó customizado pode oferecer menus dropdown dinâmicos, validação de campos e uma experiência muito mais amigável do que um nó HTTP Request genérico.</li>
+        <li><strong>Compartilhar com a Comunidade:</strong> Você pode publicar seu nó e contribuir para o ecossistema n8n.</li>
+      </ul>
+      <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
+          <strong class="font-semibold">Pré-requisitos:</strong> Este é um tópico avançado que exige familiaridade com <strong class="text-white">Node.js</strong>, <strong class="text-white">NPM</strong>, <strong class="text-white">TypeScript</strong> e <strong class="text-white">Git</strong>.
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. O Ambiente de Desenvolvimento: `n8n-nodes-starter`</h2>
+      <p>
+        A equipe do n8n mantém um repositório template no GitHub que serve como ponto de partida perfeito. Ele já vem com toda a estrutura e configuração necessárias.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Configurando o Projeto</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-bash" [textContent]="cloneSnippet"></code></pre>
+       </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. A Anatomia de um Nó</h2>
+      <p>
+        Dentro da pasta <code>nodes/</code>, você encontrará um arquivo de exemplo. Um nó no n8n é uma classe TypeScript que implementa a interface <code>INodeType</code>. Ela tem duas partes principais:
+      </p>
+      <ul class="list-disc list-inside text-gray-400">
+        <li><code>description</code>: Um objeto que define a aparência e os parâmetros do nó na interface do n8n.</li>
+        <li><code>execute()</code>: O método que contém a lógica do nó. É aqui que a mágica acontece.</li>
+      </ul>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo de um Nó Básico (<code>MyCustomNode.node.ts</code>)</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-typescript" [textContent]="anatomySnippet"></code></pre>
+       </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Testando seu Nó Localmente</h2>
+      <p>
+        Para ver seu nó em ação, você não precisa publicá-lo. Você pode "linkar" seu projeto de desenvolvimento diretamente com sua instalação local do n8n.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Passos para Teste Local</h4>
+        <p class="text-xs text-gray-400 mb-2">Execute estes comandos no terminal. O último comando iniciará sua instância do n8n, e seu novo nó deverá aparecer no painel de nós.</p>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-bash" [textContent]="testingSnippet"></code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: De Usuário a Criador</h3>
+      <p>
+        Criar seus próprios nós é o passo definitivo para se tornar um especialista em n8n. Embora exija conhecimento de programação, ele abre um universo de possibilidades, permitindo que você adapte e estenda a plataforma para atender exatamente às suas necessidades.
+      </p>
+      <p>Para um guia mais aprofundado, a <a href="https://docs.n8n.io/nodes/creating-nodes/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">documentação oficial do n8n</a> é o melhor recurso.</p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-avancado" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha "n8n Avançado"
+      </a>
+    </div>
+  </article>
+</div>
