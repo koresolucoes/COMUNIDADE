@@ -84,6 +84,11 @@ export class ToolsIndexComponent {
           description: 'Veja os registros DNS (A, CNAME, MX, TXT) de qualquer domínio.',
           link: '/tools/verificador-dns'
         },
+        {
+          name: 'Verificador de Certificado SSL',
+          description: 'Inspecione os detalhes do certificado SSL/TLS de um domínio.',
+          link: '/tools/verificador-ssl'
+        },
         { 
           name: 'Testador de Webhook', 
           description: 'Receba e inspecione payloads de webhooks em tempo real.',

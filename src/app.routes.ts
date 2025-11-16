@@ -19,6 +19,7 @@ import { WebhookTesterComponent } from './components/tools/webhook-tester/webhoo
 import { MyIpComponent } from './components/tools/my-ip/my-ip.component';
 import { RestClientComponent } from './components/tools/rest-client/rest-client.component';
 import { DnsCheckerComponent } from './components/tools/dns-checker/dns-checker.component';
+import { SslCheckerComponent } from './components/tools/ssl-checker/ssl-checker.component';
 import { DiffCheckerComponent } from './components/tools/diff-checker/diff-checker.component';
 import { DockerComposeGeneratorComponent } from './components/tools/docker-compose-generator/docker-compose-generator.component';
 import { BlogListComponent } from './components/blog/blog-list/blog-list.component';
@@ -61,6 +62,7 @@ export const APP_ROUTES: Routes = [
   { path: 'tools/meu-ip', component: MyIpComponent },
   { path: 'tools/cliente-rest', component: RestClientComponent },
   { path: 'tools/verificador-dns', component: DnsCheckerComponent },
+  { path: 'tools/verificador-ssl', component: SslCheckerComponent },
   { path: 'tools/comparador-texto', component: DiffCheckerComponent },
   { path: 'tools/docker-compose-generator', component: DockerComposeGeneratorComponent },
   { path: 'tools/gerenciador-n8n', component: N8nManagerComponent },

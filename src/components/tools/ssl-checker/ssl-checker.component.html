@@ -1,0 +1,123 @@
+<div class="space-y-8 max-w-4xl mx-auto">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Verificador de Certificado SSL</h1>
+    <p class="mt-2 text-gray-400">Verifique os detalhes do certificado SSL/TLS de qualquer domínio.</p>
+  </div>
+
+  <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+    <div class="flex flex-col md:flex-row items-center gap-2">
+      <input 
+        type="text" 
+        [ngModel]="domain()"
+        (ngModelChange)="domain.set($event)"
+        (keydown.enter)="checkSsl()"
+        class="flex-1 w-full md:w-auto bg-gray-800 border-gray-700 text-white rounded-md p-2.5 focus:ring-blue-accent focus:border-blue-accent font-mono" 
+        placeholder="example.com">
+      <button (click)="checkSsl()" [disabled]="loading() || !domain()" class="w-full md:w-auto px-6 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+        @if(loading()) {
+          <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Verificando</span>
+        } @else {
+          <span class="material-icons-outlined text-base">security</span>
+          <span>Verificar SSL</span>
+        }
+      </button>
+    </div>
+  </div>
+
+  <div class="min-h-[20rem] flex flex-col">
+    @if(loading()) {
+      <div class="flex-grow flex items-center justify-center text-gray-400">
+        <p>Conectando ao servidor e obtendo o certificado...</p>
+      </div>
+    } @else if(error()) {
+      <div class="flex-grow flex items-center justify-center text-red-400 p-4 bg-red-900/30 border border-red-500/50 rounded-lg">
+        {{ error() }}
+      </div>
+    } @else if(!results()) {
+       <div class="flex-grow flex items-center justify-center text-gray-500">
+        <p>Os detalhes do certificado aparecerão aqui.</p>
+      </div>
+    } @else {
+      @if (results(); as res) {
+        <div class="space-y-6">
+          <!-- Status Summary -->
+          <div class="p-4 rounded-lg border" 
+               [class.bg-green-900/30]="status() === 'valid'" [class.border-green-500/50]="status() === 'valid'" [class.text-green-300]="status() === 'valid'"
+               [class.bg-yellow-900/30]="status() === 'expiring'" [class.border-yellow-500/50]="status() === 'expiring'" [class.text-yellow-300]="status() === 'expiring'"
+               [class.bg-red-900/30]="status() === 'expired'" [class.border-red-500/50]="status() === 'expired'" [class.text-red-300]="status() === 'expired'">
+            @switch (status()) {
+              @case('valid') { 
+                <p class="font-semibold">Certificado válido! Expira em {{ daysRemaining() }} dias.</p>
+              }
+              @case('expiring') {
+                <p class="font-semibold">Atenção: O certificado expira em {{ daysRemaining() }} dias.</p>
+              }
+              @case('expired') {
+                <p class="font-semibold">Certificado expirado há {{ Math.abs(daysRemaining() ?? 0) }} dias.</p>
+              }
+            }
+            <div class="w-full bg-gray-700/50 rounded-full h-2 mt-2">
+              <div class="h-2 rounded-full" 
+                   [class.bg-green-500]="status() === 'valid'"
+                   [class.bg-yellow-500]="status() === 'expiring'"
+                   [class.bg-red-500]="status() === 'expired'"
+                   [style.width.%]="validityPercentage()"></div>
+            </div>
+          </div>
+          
+          <!-- Main Details -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 space-y-3">
+              <h3 class="text-lg font-semibold text-white">Assunto (Subject)</h3>
+              @for(entry of objectEntries(res.subject); track entry[0]) {
+                <div class="text-sm">
+                  <span class="text-gray-400 font-medium w-16 inline-block">{{ entry[0] }}</span>
+                  <span class="text-gray-200">{{ entry[1] }}</span>
+                </div>
+              }
+            </div>
+             <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 space-y-3">
+              <h3 class="text-lg font-semibold text-white">Emissor (Issuer)</h3>
+               @for(entry of objectEntries(res.issuer); track entry[0]) {
+                <div class="text-sm">
+                  <span class="text-gray-400 font-medium w-16 inline-block">{{ entry[0] }}</span>
+                  <span class="text-gray-200">{{ entry[1] }}</span>
+                </div>
+              }
+            </div>
+          </div>
+          
+           <!-- Validity -->
+          <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-white mb-3">Validade</h3>
+            <div class="flex flex-col sm:flex-row justify-between gap-4 text-sm">
+                <div>
+                  <span class="text-gray-400">Emitido em: </span>
+                  <span class="text-gray-200 font-mono">{{ res.valid_from | date:'dd/MM/yyyy HH:mm:ss Z' }}</span>
+                </div>
+                 <div>
+                  <span class="text-gray-400">Válido até: </span>
+                  <span class="text-gray-200 font-mono">{{ res.valid_to | date:'dd/MM/yyyy HH:mm:ss Z' }}</span>
+                </div>
+            </div>
+          </div>
+
+          <!-- SANs -->
+          <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+            <h3 class="text-lg font-semibold text-white mb-3">Nomes Alternativos (SANs)</h3>
+            <div class="flex flex-wrap gap-2">
+              @for(san of sanList; track san) {
+                <span class="bg-gray-800 text-gray-300 text-sm font-mono px-2 py-1 rounded">{{ san }}</span>
+              }
+            </div>
+          </div>
+
+        </div>
+      }
+    }
+  </div>
+</div>

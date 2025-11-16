@@ -62,6 +62,7 @@ export class CommandPaletteComponent implements OnInit {
     { name: 'Qual é o meu IP?', section: 'Ferramentas', action: () => this.navigate('/tools/meu-ip'), icon: 'location_on' },
     { name: 'Cliente REST', section: 'Ferramentas', action: () => this.navigate('/tools/cliente-rest'), icon: 'http' },
     { name: 'Verificador de DNS', section: 'Ferramentas', action: () => this.navigate('/tools/verificador-dns'), icon: 'dns' },
+    { name: 'Verificador de SSL', section: 'Ferramentas', action: () => this.navigate('/tools/verificador-ssl'), icon: 'security' },
     { name: 'Testador de Webhook', section: 'Ferramentas', action: () => this.navigate('/tools/webhook-tester'), icon: 'webhook' },
   ];
 

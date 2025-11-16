@@ -55,6 +55,7 @@ export class SidebarComponent {
         { path: '/tools/meu-ip', label: 'Qual é o meu IP?' },
         { path: '/tools/cliente-rest', label: 'Cliente REST' },
         { path: '/tools/verificador-dns', label: 'Verificador de DNS' },
+        { path: '/tools/verificador-ssl', label: 'Verificador de SSL' },
         { path: '/tools/webhook-tester', label: 'Testador Webhook' },
         { isCategory: true, label: 'Automação & DevOps' },
         { path: '/tools/gerador-cron', label: 'Gerador CRON' },
