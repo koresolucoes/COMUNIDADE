@@ -1,5 +1,3 @@
-
-
 import { Injectable, signal, effect } from '@angular/core';
 import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
@@ -72,6 +70,16 @@ export class AuthService {
 
   signUp(email: string, password: string) {
     return this.supabase.auth.signUp({ email, password });
+  }
+
+  resetPasswordForEmail(email: string) {
+    return this.supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: 'https://comunidade.koresolucoes.com.br/#/login',
+    });
+  }
+
+  updateUserEmail(newEmail: string) {
+    return this.supabase.auth.updateUser({ email: newEmail });
   }
 
   signOut() {

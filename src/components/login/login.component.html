@@ -2,104 +2,134 @@
   <div class="w-full max-w-md space-y-8">
     <div>
       <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-white">
-        @if(mode() === 'login') {
-          Faça login em sua conta
-        } @else {
-          Crie sua conta
+        @switch (mode()) {
+          @case ('login') { Faça login em sua conta }
+          @case ('signup') { Crie sua conta }
+          @case ('forgotPassword') { Redefinir sua senha }
         }
       </h2>
     </div>
     <div class="bg-gray-900 p-8 border border-gray-800 rounded-lg">
-      @if(mode() === 'login') {
-        <form class="space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <div class="rounded-md shadow-sm">
-            <div class="mb-4">
-              <label for="email-address" class="sr-only">Email</label>
-              <input id="email-address" name="email" type="email" formControlName="email" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Endereço de email">
+      @if (successMessage()) {
+        <div class="bg-green-900/50 border border-green-500/50 text-green-300 p-3 rounded-md text-sm mb-6">
+          {{ successMessage() }}
+        </div>
+      }
+      
+      @switch (mode()) {
+        @case ('login') {
+          <form class="space-y-6" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="rounded-md shadow-sm">
+              <div class="mb-4">
+                <label for="email-address" class="sr-only">Email</label>
+                <input id="email-address" name="email" type="email" formControlName="email" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Endereço de email">
+              </div>
+              <div>
+                <label for="password" class="sr-only">Senha</label>
+                <input id="password" name="password" type="password" formControlName="password" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Senha">
+              </div>
             </div>
+
             <div>
-              <label for="password" class="sr-only">Senha</label>
-              <input id="password" name="password" type="password" formControlName="password" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Senha">
+              <button type="submit" [disabled]="loading() || loginForm.invalid" class="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-accent py-2 px-4 text-sm font-medium text-white hover:bg-blue-accent/90 focus:outline-none focus:ring-2 focus:ring-blue-accent focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
+                @if (loading()) {
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Entrando...
+                } @else {
+                  Entrar
+                }
+              </button>
             </div>
-          </div>
-
-          @if (errorMessage()) {
-            <div class="bg-red-900/50 border border-red-500/50 text-red-300 p-3 rounded-md text-sm">
-              {{ errorMessage() }}
-            </div>
-          }
-           @if (successMessage()) {
-            <div class="bg-green-900/50 border border-green-500/50 text-green-300 p-3 rounded-md text-sm">
-              {{ successMessage() }}
-            </div>
-          }
-
-          <div>
-            <button type="submit" [disabled]="loading() || loginForm.invalid" class="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-accent py-2 px-4 text-sm font-medium text-white hover:bg-blue-accent/90 focus:outline-none focus:ring-2 focus:ring-blue-accent focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
-              @if (loading()) {
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Entrando...
-              } @else {
-                Entrar
-              }
+          </form>
+           <div class="text-sm text-center mt-4">
+            <button (click)="setMode('forgotPassword')" class="font-medium text-gray-400 hover:text-blue-accent">
+              Esqueci minha senha
             </button>
           </div>
-        </form>
-      } @else {
-        <form class="space-y-6" [formGroup]="signupForm" (ngSubmit)="onSignup()">
-          <div class="rounded-md shadow-sm">
-            <div class="mb-4">
-              <label for="signup-email" class="sr-only">Email</label>
-              <input id="signup-email" type="email" formControlName="email" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Endereço de email">
+        }
+        @case ('signup') {
+          <form class="space-y-6" [formGroup]="signupForm" (ngSubmit)="onSignup()">
+            <div class="rounded-md shadow-sm">
+              <div class="mb-4">
+                <label for="signup-email" class="sr-only">Email</label>
+                <input id="signup-email" type="email" formControlName="email" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Endereço de email">
+              </div>
+              <div class="mb-4">
+                <label for="signup-password" class="sr-only">Senha</label>
+                <input id="signup-password" type="password" formControlName="password" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Senha (mín. 6 caracteres)">
+              </div>
+              <div>
+                <label for="confirm-password" class="sr-only">Confirmar Senha</label>
+                <input id="confirm-password" type="password" formControlName="confirmPassword" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Confirmar Senha">
+              </div>
             </div>
-            <div class="mb-4">
-              <label for="signup-password" class="sr-only">Senha</label>
-              <input id="signup-password" type="password" formControlName="password" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Senha (mín. 6 caracteres)">
+            
+            @if(signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmPassword')?.touched) {
+                <div class="text-red-400 text-xs">As senhas não coincidem.</div>
+            }
+
+            <div>
+              <button type="submit" [disabled]="loading() || signupForm.invalid" class="group relative flex w-full justify-center rounded-md border border-transparent bg-green-accent py-2 px-4 text-sm font-medium text-white hover:bg-green-accent/90 focus:outline-none focus:ring-2 focus:ring-green-accent focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
+                @if (loading()) {
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Cadastrando...
+                } @else {
+                  Cadastrar
+                }
+              </button>
+            </div>
+          </form>
+        }
+        @case ('forgotPassword') {
+          <form class="space-y-6" [formGroup]="forgotPasswordForm" (ngSubmit)="onForgotPassword()">
+            <p class="text-sm text-gray-400">Digite seu e-mail e enviaremos um link para redefinir sua senha.</p>
+            <div>
+              <label for="forgot-email" class="sr-only">Email</label>
+              <input id="forgot-email" name="email" type="email" formControlName="email" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Endereço de email">
             </div>
             <div>
-              <label for="confirm-password" class="sr-only">Confirmar Senha</label>
-              <input id="confirm-password" type="password" formControlName="confirmPassword" required class="relative block w-full appearance-none rounded-md border border-gray-700 bg-gray-800 px-3 py-2 text-white placeholder-gray-500 focus:z-10 focus:border-blue-accent focus:outline-none focus:ring-blue-accent sm:text-sm" placeholder="Confirmar Senha">
+              <button type="submit" [disabled]="loading() || forgotPasswordForm.invalid" class="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-accent py-2 px-4 text-sm font-medium text-white hover:bg-blue-accent/90 focus:outline-none focus:ring-2 focus:ring-blue-accent focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
+                 @if (loading()) {
+                  <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Enviando...
+                } @else {
+                  Enviar Link de Redefinição
+                }
+              </button>
             </div>
-          </div>
-          
-          @if(signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmPassword')?.touched) {
-              <div class="text-red-400 text-xs">As senhas não coincidem.</div>
-          }
-          @if (errorMessage()) {
-            <div class="bg-red-900/50 border border-red-500/50 text-red-300 p-3 rounded-md text-sm">
-              {{ errorMessage() }}
-            </div>
-          }
+          </form>
+        }
+      }
 
-          <div>
-            <button type="submit" [disabled]="loading() || signupForm.invalid" class="group relative flex w-full justify-center rounded-md border border-transparent bg-green-accent py-2 px-4 text-sm font-medium text-white hover:bg-green-accent/90 focus:outline-none focus:ring-2 focus:ring-green-accent focus:ring-offset-2 focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed">
-              @if (loading()) {
-                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Cadastrando...
-              } @else {
-                Cadastrar
-              }
-            </button>
-          </div>
-        </form>
+      @if (errorMessage()) {
+        <div class="bg-red-900/50 border border-red-500/50 text-red-300 p-3 rounded-md text-sm mt-4">
+          {{ errorMessage() }}
+        </div>
       }
 
       <div class="text-sm text-center mt-6">
-        @if(mode() === 'login') {
+        @if (mode() === 'login') {
           <span class="text-gray-400">Não tem uma conta?</span>
-          <button (click)="toggleMode()" class="font-medium text-blue-accent hover:text-blue-accent/90">
+          <button (click)="setMode('signup')" class="font-medium text-blue-accent hover:text-blue-accent/90">
             Cadastre-se
           </button>
-        } @else {
+        } @else if (mode() === 'signup') {
           <span class="text-gray-400">Já tem uma conta?</span>
-          <button (click)="toggleMode()" class="font-medium text-blue-accent hover:text-blue-accent/90">
+          <button (click)="setMode('login')" class="font-medium text-blue-accent hover:text-blue-accent/90">
             Faça login
+          </button>
+        } @else if (mode() === 'forgotPassword') {
+          <button (click)="setMode('login')" class="font-medium text-blue-accent hover:text-blue-accent/90">
+            Voltar para o Login
           </button>
         }
       </div>

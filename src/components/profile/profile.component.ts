@@ -1,5 +1,3 @@
-
-
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -43,15 +41,20 @@ export class ProfileComponent implements OnInit {
   loading = signal(true);
   profileLoading = signal(false);
   allData = signal<ToolData[]>([]);
-  activeTab = signal<'profile' | 'data' | 'learning'>('profile');
+  activeTab = signal<'profile' | 'data' | 'learning' | 'account'>('profile');
   
   avatarFile = signal<File | null>(null);
   avatarPreview = signal<string | null>(null);
   profileMessage = signal<{type: 'success' | 'error', text: string} | null>(null);
+  emailMessage = signal<{type: 'success' | 'error', text: string} | null>(null);
 
   profileForm = this.fb.group({
     username: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9_]+$/), Validators.minLength(3)]],
     full_name: [''],
+  });
+
+  changeEmailForm = this.fb.group({
+    newEmail: ['', [Validators.required, Validators.email]],
   });
 
   toolIdToNameMap: Record<string, string> = {
@@ -221,6 +224,34 @@ export class ProfileComponent implements OnInit {
     } catch (e) {
       const message = e instanceof Error ? e.message : 'Falha ao atualizar o perfil.';
       this.profileMessage.set({ type: 'error', text: message });
+    } finally {
+      this.profileLoading.set(false);
+    }
+  }
+
+  async updateEmail() {
+    this.changeEmailForm.markAllAsTouched();
+    if (this.changeEmailForm.invalid) {
+      return;
+    }
+
+    this.profileLoading.set(true);
+    this.emailMessage.set(null);
+    
+    const { newEmail } = this.changeEmailForm.value;
+
+    try {
+      const { error } = await this.authService.updateUserEmail(newEmail!);
+      if (error) throw error;
+
+      this.emailMessage.set({
+        type: 'success',
+        text: 'Um e-mail de confirmação foi enviado para seu endereço antigo e para o novo. Por favor, siga as instruções para concluir a alteração.'
+      });
+      this.changeEmailForm.reset();
+    } catch (e) {
+      const message = e instanceof Error ? e.message : 'Falha ao iniciar a alteração de e-mail.';
+      this.emailMessage.set({ type: 'error', text: message });
     } finally {
       this.profileLoading.set(false);
     }

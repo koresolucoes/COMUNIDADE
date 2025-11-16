@@ -1,6 +1,3 @@
-
-
-
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -30,7 +27,7 @@ export class LoginComponent implements OnInit {
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
   currentUser = this.authService.currentUser;
-  mode = signal<'login' | 'signup'>('login');
+  mode = signal<'login' | 'signup' | 'forgotPassword'>('login');
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -43,18 +40,23 @@ export class LoginComponent implements OnInit {
     confirmPassword: ['', [Validators.required]]
   }, { validators: passwordMatchValidator });
 
+  forgotPasswordForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+  });
+
   ngOnInit() {
     if (this.currentUser()) {
       this.router.navigate(['/']);
     }
   }
 
-  toggleMode() {
-    this.mode.update(m => m === 'login' ? 'signup' : 'login');
+  setMode(newMode: 'login' | 'signup' | 'forgotPassword') {
+    this.mode.set(newMode);
     this.errorMessage.set(null);
     this.successMessage.set(null);
     this.loginForm.reset();
     this.signupForm.reset();
+    this.forgotPasswordForm.reset();
   }
 
   async onSubmit() {
@@ -96,6 +98,28 @@ export class LoginComponent implements OnInit {
     } else {
       this.successMessage.set('Cadastro realizado! Verifique seu e-mail para confirmar sua conta.');
       this.signupForm.reset();
+      this.mode.set('login');
+    }
+    this.loading.set(false);
+  }
+
+  async onForgotPassword() {
+    if (this.forgotPasswordForm.invalid) {
+      return;
+    }
+
+    this.loading.set(true);
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+
+    const { email } = this.forgotPasswordForm.value;
+
+    const { error } = await this.authService.resetPasswordForEmail(email!);
+
+    if (error) {
+      this.errorMessage.set(error.message);
+    } else {
+      this.successMessage.set('Se um usuário com este e-mail existir, um link para redefinição de senha foi enviado.');
       this.mode.set('login');
     }
     this.loading.set(false);
