@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, signal, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-qr-code-generator',
@@ -9,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./qr-code-generator.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QrCodeGeneratorComponent implements OnInit {
+export class QrCodeGeneratorComponent {
   // --- State ---
   text = signal('https://kore.solutions');
   size = signal(300);
@@ -20,12 +21,7 @@ export class QrCodeGeneratorComponent implements OnInit {
   qrCodeDataUrl = signal('');
   generationError = signal<string | null>(null);
 
-  ngOnInit() {
-    // Attempt to generate on init, with retries to wait for the library.
-    this.generateQrCode();
-  }
-
-  private _performGeneration() {
+  async generateQrCode() {
     const textToEncode = this.text();
     if (!textToEncode.trim()) {
       this.qrCodeDataUrl.set('');
@@ -33,7 +29,7 @@ export class QrCodeGeneratorComponent implements OnInit {
       return;
     }
 
-    const options = {
+    const options: QRCode.QRCodeToDataURLOptions = {
       width: this.size(),
       errorCorrectionLevel: this.errorCorrectionLevel(),
       color: {
@@ -43,29 +39,14 @@ export class QrCodeGeneratorComponent implements OnInit {
       margin: 2,
     };
 
-    (window as any).QRCode.toDataURL(textToEncode, options, (error: any, url: string) => {
-      if (error) {
-        console.error('QR Code generation error:', error);
-        this.qrCodeDataUrl.set('');
-        this.generationError.set('Não foi possível gerar o QR Code. Tente um texto mais curto ou um nível de correção de erro menor.');
-      } else {
-        this.qrCodeDataUrl.set(url);
-        this.generationError.set(null);
-      }
-    });
-  }
-
-  generateQrCode(retryCount = 5) {
-    // Check if the QRCode library is available on the window object.
-    if (typeof (window as any).QRCode !== 'undefined') {
-      this._performGeneration();
-    } else if (retryCount > 0) {
-      // If not available, wait and retry.
-      setTimeout(() => this.generateQrCode(retryCount - 1), 200);
-    } else {
-      // If it's still not available after retries, show an error.
-      this.generationError.set('Erro: A biblioteca de geração de QR Code não carregou.');
-      console.error('QRCode library failed to load after several retries.');
+    try {
+      const url = await QRCode.toDataURL(textToEncode, options);
+      this.qrCodeDataUrl.set(url);
+      this.generationError.set(null);
+    } catch (error) {
+      console.error('QR Code generation error:', error);
+      this.qrCodeDataUrl.set('');
+      this.generationError.set('Não foi possível gerar o QR Code. Tente um texto mais curto ou um nível de correção de erro menor.');
     }
   }
   
