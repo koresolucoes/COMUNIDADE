@@ -43,6 +43,13 @@ export class SidebarComponent {
       label: 'Ferramentas', 
       icon: 'construction',
       children: [
+        { isCategory: true, label: 'CSS & Layout' },
+        { path: '/tools/gerador-box-shadow', label: 'Gerador de Box Shadow' },
+        { path: '/tools/gerador-gradiente-css', label: 'Gerador de Gradiente' },
+        { path: '/tools/gerador-clip-path', label: 'Gerador de Clip-Path' },
+        { path: '/tools/construtor-grid-css', label: 'Construtor de Grid' },
+        { path: '/tools/gerador-filtros-css', label: 'Gerador de Filtros' },
+        { path: '/tools/gerador-animacao-css', label: 'Gerador de Animação' },
         { isCategory: true, label: 'Codificadores & Decodificadores' },
         { path: '/tools/url-codec', label: 'Codec de URL' },
         { path: '/tools/base64-codec', label: 'Codec Base64' },

@@ -24,6 +24,42 @@ interface ToolCategory {
 export class ToolsIndexComponent {
   toolCategories: ToolCategory[] = [
     {
+      name: 'CSS & Layout',
+      icon: 'palette',
+      tools: [
+        {
+          name: 'Gerador de Box Shadow',
+          description: 'Crie sombras complexas (múltiplas camadas, inset) com uma interface visual.',
+          link: '/tools/gerador-box-shadow'
+        },
+        {
+          name: 'Gerador de Gradiente CSS',
+          description: 'Crie gradientes lineares ou radiais e copie o código CSS final.',
+          link: '/tools/gerador-gradiente-css'
+        },
+        {
+          name: 'Gerador de Clip-Path',
+          description: 'Crie formas de mascaramento (círculo, polígono) visualmente.',
+          link: '/tools/gerador-clip-path'
+        },
+        {
+          name: 'Construtor de Grid CSS',
+          description: 'Desenhe layouts de grid visualmente e gere o código CSS correspondente.',
+          link: '/tools/construtor-grid-css'
+        },
+        {
+          name: 'Gerador de Filtros CSS',
+          description: 'Aplique e combine filtros (blur, brilho, contraste) em uma imagem de exemplo.',
+          link: '/tools/gerador-filtros-css'
+        },
+        {
+          name: 'Gerador de Animação CSS',
+          description: 'Use animações pré-construídas e copie os @keyframes e a classe CSS.',
+          link: '/tools/gerador-animacao-css'
+        }
+      ]
+    },
+    {
       name: 'Codificadores & Decodificadores',
       icon: 'code',
       tools: [

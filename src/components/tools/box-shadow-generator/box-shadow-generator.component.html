@@ -1,0 +1,117 @@
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Gerador de Box Shadow</h1>
+    <p class="mt-2 text-gray-400">Crie sombras complexas (múltiplas camadas, inset) com uma interface visual.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Controls Column -->
+    <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6">
+      <h2 class="text-xl font-semibold text-white">Configurações da Sombra</h2>
+      
+      <!-- Layer Management -->
+      <div class="space-y-2">
+        <label class="block text-sm font-medium text-gray-400 mb-2">Camadas</label>
+        @for(layer of layers(); track layer.id) {
+          <div 
+            class="flex items-center justify-between p-2 rounded-md cursor-pointer transition-colors"
+            [class.bg-blue-accent/20]="activeLayerId() === layer.id"
+            [class.hover:bg-gray-800]="activeLayerId() !== layer.id"
+            (click)="selectLayer(layer.id)">
+            <div class="flex items-center gap-3">
+              <div class="w-5 h-5 rounded border border-gray-600" [style.background-color]="layer.color" [style.opacity]="layer.opacity"></div>
+              <span class="text-sm text-gray-300">
+                {{ layer.offsetX }}px {{ layer.offsetY }}px {{ layer.blurRadius }}px {{ layer.spreadRadius }}px {{ layer.inset ? 'inset' : '' }}
+              </span>
+            </div>
+            @if(layers().length > 1) {
+              <button (click)="$event.stopPropagation(); removeLayer(layer.id)" class="p-1 text-gray-500 hover:text-red-400 rounded-full hover:bg-gray-700">
+                <span class="material-icons-outlined text-base">close</span>
+              </button>
+            }
+          </div>
+        }
+        <button (click)="addLayer()" class="w-full mt-2 px-4 py-2 bg-gray-700/50 border border-dashed border-gray-600 text-gray-300 rounded-md font-semibold hover:bg-gray-700 hover:border-gray-500 transition-colors flex items-center justify-center gap-2 text-sm">
+          <span class="material-icons-outlined">add</span>
+          Adicionar Camada
+        </button>
+      </div>
+
+      <!-- Layer Editor -->
+      @if(activeLayer(); as layer) {
+        <div class="space-y-4 pt-4 border-t border-gray-800">
+          <!-- Shift X -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm font-medium">
+              <label for="offsetX" class="text-gray-300">Deslocamento Horizontal</label>
+              <span class="text-white font-mono text-base">{{ layer.offsetX }}px</span>
+            </div>
+            <input id="offsetX" type="range" min="-100" max="100" [ngModel]="layer.offsetX" (ngModelChange)="updateLayer('offsetX', +$event)" class="w-full slider-thumb">
+          </div>
+          <!-- Shift Y -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm font-medium">
+              <label for="offsetY" class="text-gray-300">Deslocamento Vertical</label>
+              <span class="text-white font-mono text-base">{{ layer.offsetY }}px</span>
+            </div>
+            <input id="offsetY" type="range" min="-100" max="100" [ngModel]="layer.offsetY" (ngModelChange)="updateLayer('offsetY', +$event)" class="w-full slider-thumb">
+          </div>
+          <!-- Blur -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm font-medium">
+              <label for="blurRadius" class="text-gray-300">Blur (Desfoque)</label>
+              <span class="text-white font-mono text-base">{{ layer.blurRadius }}px</span>
+            </div>
+            <input id="blurRadius" type="range" min="0" max="100" [ngModel]="layer.blurRadius" (ngModelChange)="updateLayer('blurRadius', +$event)" class="w-full slider-thumb">
+          </div>
+          <!-- Spread -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-sm font-medium">
+              <label for="spreadRadius" class="text-gray-300">Spread (Espalhamento)</label>
+              <span class="text-white font-mono text-base">{{ layer.spreadRadius }}px</span>
+            </div>
+            <input id="spreadRadius" type="range" min="-50" max="50" [ngModel]="layer.spreadRadius" (ngModelChange)="updateLayer('spreadRadius', +$event)" class="w-full slider-thumb">
+          </div>
+          <!-- Color & Opacity -->
+          <div class="grid grid-cols-2 gap-4">
+            <div class="space-y-2">
+              <label for="color" class="block text-sm font-medium text-gray-300">Cor</label>
+              <div class="color-picker-wrapper">
+                <input id="color" type="color" class="color-picker" [ngModel]="layer.color" (ngModelChange)="updateLayer('color', $event)">
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label for="opacity" class="text-gray-300 text-sm font-medium">Opacidade ({{ (layer.opacity * 100).toFixed(0) }}%)</label>
+              <input id="opacity" type="range" min="0" max="1" step="0.01" [ngModel]="layer.opacity" (ngModelChange)="updateLayer('opacity', +$event)" class="w-full slider-thumb">
+            </div>
+          </div>
+          <!-- Inset -->
+          <div>
+            <label class="flex items-center p-3 bg-gray-800 rounded-md cursor-pointer hover:bg-gray-700/50">
+              <input type="checkbox" class="h-5 w-5 rounded bg-gray-700 border-gray-600 text-blue-accent focus:ring-blue-accent" [checked]="layer.inset" (change)="updateLayer('inset', $any($event.target).checked)">
+              <span class="ml-3 text-sm text-white">Sombra Interna (inset)</span>
+            </label>
+          </div>
+        </div>
+      } @else {
+        <p class="text-center text-gray-500 py-8">Adicione uma camada para começar.</p>
+      }
+    </div>
+
+    <!-- Preview Column -->
+    <div class="space-y-6">
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[300px] flex items-center justify-center checkerboard" [style.background-color]="previewBackgroundColor()">
+        <div class="w-48 h-48 rounded-lg transition-all" [style.background-color]="previewElementColor()" [style.box-shadow]="boxShadowCss()"></div>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+        <h3 class="text-lg font-semibold text-white mb-3">Código CSS</h3>
+        <div class="relative">
+          <pre class="w-full bg-gray-800 rounded-md p-4 text-cyan-300 font-mono text-sm overflow-x-auto"><code>box-shadow: {{ boxShadowCss() }};</code></pre>
+          <button (click)="copyCss()" class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs">
+            {{ copyButtonText() }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

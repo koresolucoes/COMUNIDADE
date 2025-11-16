@@ -1,0 +1,100 @@
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Gerador de Gradiente CSS</h1>
+    <p class="mt-2 text-gray-400">Crie gradientes lineares ou radiais complexos e copie o código CSS final.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Controls Column -->
+    <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6">
+      <h2 class="text-xl font-semibold text-white">Configurações do Gradiente</h2>
+      
+      <!-- Gradient Type -->
+      <div class="flex items-center gap-2 p-1 bg-gray-800 rounded-md">
+        <button (click)="gradientType.set('linear')" class="flex-1 py-1.5 text-sm rounded-sm transition-colors text-white font-semibold" [class.bg-blue-accent]="gradientType() === 'linear'">Linear</button>
+        <button (click)="gradientType.set('radial')" class="flex-1 py-1.5 text-sm rounded-sm transition-colors text-white font-semibold" [class.bg-blue-accent]="gradientType() === 'radial'">Radial</button>
+      </div>
+
+      <!-- Type-specific Controls -->
+      @if(gradientType() === 'linear') {
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm font-medium">
+            <label for="linearAngle" class="text-gray-300">Ângulo</label>
+            <span class="text-white font-mono text-base">{{ linearAngle() }}°</span>
+          </div>
+          <input id="linearAngle" type="range" min="0" max="360" [ngModel]="linearAngle()" (ngModelChange)="linearAngle.set(+$event)" class="w-full slider-thumb">
+        </div>
+      } @else {
+        <div class="grid grid-cols-2 gap-4">
+          <div class="space-y-2">
+            <label class="block text-sm font-medium text-gray-300 mb-1">Forma</label>
+            <div class="flex items-center gap-2 p-1 bg-gray-800 rounded-md">
+              <button (click)="radialShape.set('ellipse')" class="flex-1 py-1 text-xs rounded-sm transition-colors text-white" [class.bg-blue-accent/80]="radialShape() === 'ellipse'">Elipse</button>
+              <button (click)="radialShape.set('circle')" class="flex-1 py-1 text-xs rounded-sm transition-colors text-white" [class.bg-blue-accent/80]="radialShape() === 'circle'">Círculo</button>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Color Stops -->
+      <div class="space-y-4 pt-4 border-t border-gray-800">
+        <label class="block text-sm font-medium text-gray-400">Paradas de Cor (Color Stops)</label>
+        <div class="relative h-8 w-full rounded cursor-pointer" [style.background]="gradientPreviewCss()" (click)="addStop($event)">
+          @for(stop of colorStops(); track stop.id) {
+            <div 
+              class="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 cursor-pointer"
+              [style.left.%]="stop.position"
+              [style.background-color]="stop.color"
+              [class.border-white]="activeStopId() === stop.id"
+              [class.border-gray-400]="activeStopId() !== stop.id"
+              (click)="$event.stopPropagation(); selectStop(stop.id)">
+            </div>
+          }
+        </div>
+        
+        <!-- Active Stop Editor -->
+        @if(activeStop(); as stop) {
+          <div class="bg-gray-800/50 p-4 rounded-md space-y-4">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-semibold text-white">Editar Parada de Cor</h4>
+              <button (click)="removeStop(stop.id)" [disabled]="colorStops().length <= 2" class="p-1 text-gray-500 hover:text-red-400 rounded-full hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
+                <span class="material-icons-outlined text-base">delete</span>
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-2">
+                <label [for]="'color-' + stop.id" class="block text-xs font-medium text-gray-300">Cor</label>
+                <div class="color-picker-wrapper">
+                  <input [id]="'color-' + stop.id" type="color" class="color-picker" [ngModel]="stop.color" (ngModelChange)="updateActiveStop('color', $event)">
+                </div>
+              </div>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center text-xs font-medium">
+                  <label [for]="'position-' + stop.id" class="text-gray-300">Posição</label>
+                  <span class="text-white font-mono">{{ stop.position }}%</span>
+                </div>
+                <input [id]="'position-' + stop.id" type="range" min="0" max="100" [ngModel]="stop.position" (ngModelChange)="updateActiveStop('position', +$event)" class="w-full slider-thumb">
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    
+    <!-- Preview Column -->
+    <div class="space-y-6">
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[300px] checkerboard">
+        <div class="w-full h-64 rounded-lg" [style.background-image]="generatedCss()"></div>
+      </div>
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
+        <h3 class="text-lg font-semibold text-white mb-3">Código CSS</h3>
+        <div class="relative">
+          <pre class="w-full bg-gray-800 rounded-md p-4 text-cyan-300 font-mono text-sm overflow-x-auto"><code>background-image: {{ generatedCss() }};</code></pre>
+          <button (click)="copyCss()" class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs">
+            {{ copyButtonText() }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

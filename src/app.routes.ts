@@ -33,6 +33,8 @@ import { ForumNewTopicComponent } from './components/forum/forum-new-topic/forum
 import { ForumTopicComponent } from './components/forum/forum-topic/forum-topic.component';
 import { TemplateListComponent } from './components/templates/template-list/template-list.component';
 import { TemplateDetailComponent } from './components/templates/template-detail/template-detail.component';
+import { BoxShadowGeneratorComponent } from './components/tools/box-shadow-generator/box-shadow-generator.component';
+import { CssGradientGeneratorComponent } from './components/tools/css-gradient-generator/css-gradient-generator.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -46,6 +48,12 @@ export const APP_ROUTES: Routes = [
   { path: 'templates', component: TemplateListComponent },
   { path: 'templates/:id', component: TemplateDetailComponent },
   { path: 'tools', component: ToolsIndexComponent },
+  { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },
+  { path: 'tools/gerador-gradiente-css', component: CssGradientGeneratorComponent },
+  { path: 'tools/gerador-clip-path', component: PlaceholderComponent, data: { title: 'Gerador de Clip-Path' } },
+  { path: 'tools/construtor-grid-css', component: PlaceholderComponent, data: { title: 'Construtor de Grid CSS' } },
+  { path: 'tools/gerador-filtros-css', component: PlaceholderComponent, data: { title: 'Gerador de Filtros CSS' } },
+  { path: 'tools/gerador-animacao-css', component: PlaceholderComponent, data: { title: 'Gerador de Animação CSS' } },
   { path: 'tools/gerador-cron', component: CronGeneratorComponent },
   { path: 'tools/formatador-json', component: JsonFormatterComponent },
   { path: 'tools/url-codec', component: UrlCodecComponent },
