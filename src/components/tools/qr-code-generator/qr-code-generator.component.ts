@@ -23,19 +23,17 @@ export class QrCodeGeneratorComponent {
 
   constructor() {
     afterNextRender(() => {
+      // By creating the effect inside afterNextRender, we guarantee
+      // that the qrCanvas view child is available for the first run and
+      // all subsequent updates.
+      effect(() => {
         this.generateQrCode();
-    });
-
-    effect(() => {
-        this.generateQrCode();
+      });
     });
   }
 
   generateQrCode() {
     const canvas = this.qrCanvas().nativeElement;
-    if (!canvas) {
-      return;
-    }
 
     const options = {
       width: this.size(),
