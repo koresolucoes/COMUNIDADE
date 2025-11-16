@@ -32,6 +32,9 @@ export interface VisualEdge {
   sourceId: string;
   targetId: string;
   path: string; // SVG path 'd' attribute
+  label?: string;
+  labelX: number;
+  labelY: number;
 }
 
 export interface VisualGraph {
@@ -135,7 +138,7 @@ export class TemplateDetailComponent {
       nodeMap.set(node.id, node);
     });
 
-    const adj = new Map<string, string[]>();
+    const adj = new Map<string, { targetId: string; outputIndex: number; outputName: string }[]>();
     const revAdj = new Map<string, string[]>();
     workflow.nodes.forEach((node: any) => {
       adj.set(node.id, []);
@@ -143,21 +146,26 @@ export class TemplateDetailComponent {
     });
 
     for (const sourceNodeName in workflow.connections) {
-      const sourceNodeId = n8nNodeNameToNodeId.get(sourceNodeName);
-      if (!sourceNodeId) continue;
-      const outputs = workflow.connections[sourceNodeName];
-      for (const outputName in outputs) {
-        for (const connection of outputs[outputName]) {
-          const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
-          if (targetNodeId) {
-            adj.get(sourceNodeId)?.push(targetNodeId);
-            revAdj.get(targetNodeId)?.push(sourceNodeId);
-          }
+        const sourceNodeId = n8nNodeNameToNodeId.get(sourceNodeName);
+        if (!sourceNodeId) continue;
+        const outputs = workflow.connections[sourceNodeName];
+        for (const outputName in outputs) {
+            const connectionsByIndex = outputs[outputName];
+            connectionsByIndex.forEach((connectionGroup: any[], outputIndex: number) => {
+                connectionGroup.forEach(connection => {
+                    const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
+                    if (targetNodeId) {
+                        adj.get(sourceNodeId)?.push({ targetId: targetNodeId, outputIndex, outputName });
+                        if (!revAdj.get(targetNodeId)?.includes(sourceNodeId)) {
+                            revAdj.get(targetNodeId)?.push(sourceNodeId);
+                        }
+                    }
+                });
+            });
         }
-      }
     }
 
-    // --- 2. Calculate Node Levels (Columns) ---
+    // --- 2. Calculate Node Levels (Columns) using a topological sort approach ---
     const nodeLevels = new Map<string, number>();
     const queue: string[] = [];
     workflow.nodes.forEach((node: any) => {
@@ -170,13 +178,13 @@ export class TemplateDetailComponent {
     let head = 0;
     while(head < queue.length) {
         const u = queue[head++];
-        (adj.get(u) || []).forEach(v => {
+        (adj.get(u) || []).forEach(({ targetId }) => {
+            const v = targetId;
             const newLevel = (nodeLevels.get(u) || 0) + 1;
             const currentLevel = nodeLevels.get(v) || -1;
             if (newLevel > currentLevel) {
               nodeLevels.set(v, newLevel);
             }
-            // Simple cycle detection / break
             if (!queue.includes(v) && head < workflow.nodes.length * 2) {
                 queue.push(v);
             }
@@ -214,35 +222,89 @@ export class TemplateDetailComponent {
       visualNodes.set(node.id, visualNode);
     });
     
-    columns.forEach(column => {
+    for (let i = 0; i < columns.length; i++) {
+        const column = columns[i];
+        if (i > 0) {
+            column.sort((a, b) => {
+                const getAvgParentY = (nodeId: string): number => {
+                    const parents = revAdj.get(nodeId) || [];
+                    if (parents.length === 0) return 0;
+                    const sumY = parents.reduce((sum, parentId) => {
+                        const parentNode = visualNodes.get(parentId);
+                        return sum + (parentNode ? (parentNode.y + parentNode.height / 2) : 0);
+                    }, 0);
+                    return sumY / parents.length;
+                };
+                return getAvgParentY(a.id) - getAvgParentY(b.id);
+            });
+        }
         let currentY = PADDING;
         column.forEach(node => {
             node.y = currentY;
             currentY += node.height + VERTICAL_SPACING;
         });
-        maxGraphHeight = Math.max(maxGraphHeight, currentY);
+        if (currentY > maxGraphHeight) {
+            maxGraphHeight = currentY;
+        }
+    }
+    
+    columns.forEach(column => {
+        if (column.length > 0) {
+            const lastNode = column[column.length - 1];
+            const columnHeight = lastNode.y + lastNode.height;
+            const offset = (maxGraphHeight - columnHeight) / 2;
+            if (offset > 0) {
+                column.forEach(node => node.y += offset);
+            }
+        }
     });
 
     // --- 4. Create Visual Edges ---
     const edges: VisualEdge[] = [];
     for (const [sourceId, targets] of adj.entries()) {
-      for (const targetId of targets) {
-        const sourceNode = visualNodes.get(sourceId);
+      const sourceNode = visualNodes.get(sourceId);
+      if (!sourceNode) continue;
+      
+      const sourceNodeData = nodeMap.get(sourceId);
+      const hasMultipleOutputs = targets.length > 1;
+
+      for (const { targetId, outputIndex } of targets) {
         const targetNode = visualNodes.get(targetId);
-        if (sourceNode && targetNode) {
+        if (targetNode) {
+          let y1 = sourceNode.y + sourceNode.height / 2;
+          if (hasMultipleOutputs && targets.length > 1) {
+              const spread = Math.min(sourceNode.height / 2.5, (targets.length -1) * 15);
+              const totalOutputs = Math.max(...targets.map(t => t.outputIndex)) + 1;
+              const step = spread / (totalOutputs > 1 ? totalOutputs - 1 : 1);
+              const offset = (outputIndex - (totalOutputs - 1) / 2) * step;
+              y1 = (sourceNode.y + sourceNode.height / 2) + offset;
+          }
+
           const x1 = sourceNode.x + sourceNode.width;
-          const y1 = sourceNode.y + sourceNode.height / 2;
           const x2 = targetNode.x;
           const y2 = targetNode.y + targetNode.height / 2;
           const c1x = x1 + HORIZONTAL_SPACING / 2;
           const c2x = x2 - HORIZONTAL_SPACING / 2;
           const path = `M ${x1} ${y1} C ${c1x} ${y1}, ${c2x} ${y2}, ${x2} ${y2}`;
 
+          let label: string | undefined;
+          if (sourceNodeData.type === 'n8n-nodes-base.if') {
+            label = outputIndex === 0 ? 'true' : 'false';
+          } else if (sourceNodeData.type === 'n8n-nodes-base.switch') {
+            label = `Output ${outputIndex}`;
+          }
+          
+          const labelX = x1 + HORIZONTAL_SPACING * 0.25;
+          const labelY = y1 + (y2 - y1) * 0.25 - 5;
+
           edges.push({
-            id: `${sourceId}-${targetId}`,
+            id: `${sourceId}-${targetId}-${outputIndex}`,
             sourceId,
             targetId,
-            path
+            path,
+            label,
+            labelX,
+            labelY
           });
         }
       }

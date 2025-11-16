@@ -70,26 +70,15 @@
 }
 
 .connector-path {
-  stroke: #484f58; /* gray-600 */
-  stroke-width: 2;
+  stroke: #8b949e; /* gray-400 */
+  stroke-width: 1.5;
   fill: none;
+  marker-end: url(#arrowhead);
 }
 
-.node-port {
-    width: 10px;
-    height: 10px;
-    background-color: #161b22; /* gray-900 */
-    border: 2px solid #484f58; /* gray-600 */
-    border-radius: 50%;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.node-port.in {
-    left: -6px;
-}
-
-.node-port.out {
-    right: -6px;
+.connector-label {
+  fill: #9ca3af;
+  font-size: 11px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
 }
