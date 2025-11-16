@@ -1,0 +1,73 @@
+
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-fundamentos" class="hover:text-blue-accent hover:underline">Fundamentos do n8n</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O que é um "Nó" (Node)?</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda os blocos de construção de qualquer workflow: os Nós. Aprenda a diferença crucial entre um nó de Gatilho e um nó de Ação.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia dos Blocos de Construção</h2>
+      <p>
+        Se um workflow no n8n é um fluxograma, então os <strong>Nós (Nodes)</strong> são os blocos individuais que compõem esse fluxograma. Cada nó representa uma única unidade de trabalho, uma ação específica ou um ponto de partida.
+      </p>
+      <p>
+        Você constrói sua automação arrastando esses blocos para o Canvas e conectando-os para definir a ordem em que as ações devem acontecer.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Anatomia de um Nó</h2>
+      <p>
+        Visualmente, um nó é uma caixa que representa uma aplicação ou uma função. Ele tem pontos de entrada (à esquerda) e pontos de saída (à direita) para conectar com outros nós.
+      </p>
+      <div class="my-6 flex justify-center">
+        <img ngSrc="https://i.imgur.com/h5rbv6f.png" alt="Anatomia de um nó do n8n" width="511" height="239" class="rounded-lg border border-gray-700">
+      </div>
+      <p>Quando você seleciona um nó, o <strong>Painel de Parâmetros</strong> se abre, permitindo que você configure exatamente o que aquele nó deve fazer.</p>
+      <div class="my-6 flex justify-center">
+        <img ngSrc="https://i.imgur.com/Nm1M9tG.png" alt="Painel de parâmetros de um nó" width="820" height="885" class="rounded-lg border border-gray-700">
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Dois Tipos Fundamentais de Nós</h2>
+      <p>Todos os nós no n8n se encaixam em duas categorias principais, e entender essa diferença é crucial.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200 flex items-center gap-2"><span class="material-icons-outlined text-pink-400">bolt</span>Nós de Gatilho (Triggers)</h4>
+          <p class="text-sm text-gray-400 mt-2">
+            Um nó de gatilho é <strong>sempre o primeiro nó de um workflow</strong>. Ele é o ponto de partida, o evento que "dispara" a automação. Um workflow só pode ter <strong>um</strong> gatilho ativo por vez.
+          </p>
+          <p class="text-xs text-gray-500 mt-2">Exemplos: <strong>Webhook</strong> (começa quando recebe uma notificação), <strong>Cron</strong> (começa em um horário agendado), <strong>Form Trigger</strong> (começa quando um formulário é enviado).</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200 flex items-center gap-2"><span class="material-icons-outlined text-blue-400">play_arrow</span>Nós de Ação (Regular Nodes)</h4>
+          <p class="text-sm text-gray-400 mt-2">
+            Estes são todos os outros nós. Eles executam uma tarefa: buscar dados, enviar dados, manipular informações, tomar decisões, etc. Eles sempre vêm <strong>depois</strong> de um gatilho ou de outro nó de ação.
+          </p>
+           <p class="text-xs text-gray-500 mt-2">Exemplos: <strong>HTTP Request</strong> (conecta a uma API), <strong>Google Sheets</strong> (lê ou escreve em uma planilha), <strong>Set</strong> (cria ou modifica dados), <strong>IF</strong> (toma uma decisão).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: O Coração da Automação</h3>
+      <p>
+        Entender que todo workflow começa com um <strong>Gatilho</strong> e é seguido por uma ou mais <strong>Ações</strong> é a base para pensar em automações no n8n. Os nós são as peças do quebra-cabeça; saber como e quando usar cada tipo é o que permite construir fluxos de trabalho poderosos.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-fundamentos" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Construindo seu Primeiro Workflow
+      </a>
+    </div>
+  </article>
+</div>

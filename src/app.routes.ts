@@ -1,3 +1,5 @@
+
+
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { ToolsIndexComponent } from './components/tools/tools-index/tools-index.component';
@@ -65,6 +67,11 @@ import { OQueEJwtComponent } from './components/learning/articles/o-que-e-jwt/o-
 import { DockerizandoAppNodejsComponent } from './components/learning/articles/dockerizando-app-nodejs/dockerizando-app-nodejs.component';
 import { OQueEVpsComponent } from './components/learning/articles/o-que-e-vps/o-que-e-vps.component';
 import { PublicandoAppVpsComponent } from './components/learning/articles/publicando-app-vps/publicando-app-vps.component';
+import { EntendendoExpressoesCronComponent } from './components/learning/articles/entendendo-expressoes-cron/entendendo-expressoes-cron.component';
+import { OQueEN8nComponent } from './components/learning/articles/o-que-e-n8n/o-que-e-n8n.component';
+import { ConhecendoInterfaceN8nComponent } from './components/learning/articles/conhecendo-interface-n8n/conhecendo-interface-n8n.component';
+import { OQueENoN8nComponent } from './components/learning/articles/o-que-e-no-n8n/o-que-e-no-n8n.component';
+import { PrimeiroWorkflowN8nComponent } from './components/learning/articles/primeiro-workflow-n8n/primeiro-workflow-n8n.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -105,6 +112,13 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/dockerizando-app-nodejs', component: DockerizandoAppNodejsComponent },
   { path: 'learning/article/o-que-e-vps', component: OQueEVpsComponent },
   { path: 'learning/article/publicando-app-vps', component: PublicandoAppVpsComponent },
+
+  // Fundamentos n8n
+  { path: 'learning/article/entendendo-expressoes-cron', component: EntendendoExpressoesCronComponent },
+  { path: 'learning/article/o-que-e-n8n', component: OQueEN8nComponent },
+  { path: 'learning/article/conhecendo-interface-n8n', component: ConhecendoInterfaceN8nComponent },
+  { path: 'learning/article/o-que-e-no-n8n', component: OQueENoN8nComponent },
+  { path: 'learning/article/primeiro-workflow-n8n', component: PrimeiroWorkflowN8nComponent },
   
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },

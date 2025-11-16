@@ -1,0 +1,67 @@
+
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-fundamentos" class="hover:text-blue-accent hover:underline">Fundamentos do n8n</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Conhecendo a Interface (O Canvas)</h1>
+    <p class="mt-4 text-lg text-gray-400">Faça um tour pela interface do n8n: aprenda sobre o Canvas, o painel de nós e os botões essenciais de execução e salvamento.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      Ao abrir o n8n para criar um novo workflow, você é apresentado à sua principal área de trabalho. Vamos desvendar seus componentes para que você se sinta em casa.
+    </p>
+
+    <div class="p-4 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Mapa da Mina: A Interface Principal</h2>
+      <p>
+        A imagem abaixo destaca as 5 áreas mais importantes da interface do editor de workflows.
+      </p>
+      <div class="my-6">
+        <img ngSrc="https://i.imgur.com/JTKDhU1.png" alt="Interface principal do n8n com áreas numeradas" width="1683" height="923" class="rounded-lg border border-gray-700">
+      </div>
+      <ol class="list-decimal list-inside text-gray-300 space-y-4">
+        <li>
+          <strong>O Canvas:</strong> Esta é a sua tela em branco, sua área de trabalho principal. É aqui que você vai arrastar e conectar os nós para construir o seu fluxograma de automação.
+        </li>
+        <li>
+          <strong>Painel de Nós:</strong> A sua caixa de ferramentas. Aqui você pode pesquisar por qualquer nó (ex: "Google Sheets", "HTTP Request") e arrastá-lo para o Canvas.
+        </li>
+        <li>
+          <strong>Controles do Workflow:</strong> Aqui ficam os botões vitais para gerenciar seu workflow.
+            <ul class="list-disc list-inside text-sm text-gray-400 mt-2 pl-6">
+                <li><strong>Nome do Workflow:</strong> Clique para renomear seu fluxo para algo descritivo.</li>
+                <li><strong>Save:</strong> Salva o progresso do seu trabalho.</li>
+                <li><strong>Interruptor Ativo/Inativo:</strong> Liga ou desliga seu workflow. Um workflow inativo não será executado, mesmo que seu gatilho seja acionado.</li>
+            </ul>
+        </li>
+        <li>
+          <strong>Controles de Execução:</strong> Estes botões são usados para testar seu workflow enquanto você o constrói.
+            <ul class="list-disc list-inside text-sm text-gray-400 mt-2 pl-6">
+                <li><strong>Execute Workflow:</strong> Inicia uma execução de teste de todo o workflow, começando pelo nó de gatilho.</li>
+            </ul>
+        </li>
+        <li>
+          <strong>Painel de Configurações (Nó/Workflow):</strong> Quando você seleciona um nó no Canvas, este painel aparece à direita, mostrando todos os parâmetros e configurações daquele nó específico. Se nenhum nó estiver selecionado, ele mostra as configurações gerais do workflow.
+        </li>
+      </ol>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Sua Nova Oficina</h3>
+      <p>
+        A interface do n8n foi projetada para ser intuitiva. O fluxo de trabalho é simples: encontre um nó no painel esquerdo, arraste-o para o Canvas, clique nele para abrir suas configurações no painel direito, conecte-o a outros nós e use os botões de execução para testar. Com esta visão geral, você está pronto para entender a peça mais importante de todas: o nó.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-fundamentos" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: O que é um "Nó"?
+      </a>
+    </div>
+  </article>
+</div>

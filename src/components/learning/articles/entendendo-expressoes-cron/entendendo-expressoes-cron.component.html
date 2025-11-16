@@ -1,0 +1,102 @@
+
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/n8n-fundamentos" class="hover:text-blue-accent hover:underline">Fundamentos do n8n</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Entendendo Expressões CRON</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a agendar workflows para rodar em horários específicos usando a sintaxe CRON.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia do Despertador Programável</h2>
+      <p>
+        Imagine que você tem um despertador. Você pode programá-lo para tocar "às 7:00 da manhã". Isso é um agendamento simples. Mas e se você quisesse que ele tocasse "a cada 15 minutos, apenas durante o horário comercial, de segunda a sexta"?
+      </p>
+      <p>
+        Uma <strong>Expressão CRON</strong> é exatamente isso: um "despertador" ultra programável para o seu servidor ou workflow. É uma string de texto que define um cronograma de execução para uma tarefa, permitindo agendamentos muito precisos e complexos. É a principal forma de acionar automações baseadas em tempo.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Anatomia de uma Expressão CRON</h2>
+      <p>
+        Uma expressão CRON padrão consiste em <strong>cinco campos</strong>, separados por espaços. Cada campo representa uma unidade de tempo. A ordem é fundamental.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg text-center">
+        <pre class="!bg-transparent !p-0 font-mono text-lg tracking-wider"><code class="language-bash">*    *    *    *    *
+┬    ┬    ┬    ┬    ┬
+│    │    │    │    │
+│    │    │    │    └─── Dia da semana (0 - 7) (Dom e Sáb são 0 ou 7)
+│    │    │    └──────── Mês (1 - 12)
+│    │    └───────────── Dia do mês (1 - 31)
+│    └────────────────── Hora (0 - 23)
+└─────────────────────── Minuto (0 - 59)
+</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Caracteres Especiais (Superpoderes)</h2>
+      <p>O poder do CRON vem de alguns caracteres especiais que você pode usar em qualquer um dos cinco campos:</p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200"><code>*</code> (Asterisco) - O Curinga "Qualquer"</h4>
+          <p class="text-sm text-gray-400 mt-1">Significa "qualquer valor" ou "sempre". Se o campo do minuto for <code>*</code>, a tarefa rodará a cada minuto.</p>
+          <pre class="!bg-gray-900 !p-2 !my-2 text-xs"><code class="language-bash">* * * * *   # Roda a cada minuto de cada hora de cada dia...</code></pre>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200"><code>,</code> (Vírgula) - O Separador de Lista</h4>
+          <p class="text-sm text-gray-400 mt-1">Permite especificar múltiplos valores. Por exemplo, rodar às 8h, 12h e 18h.</p>
+          <pre class="!bg-gray-900 !p-2 !my-2 text-xs"><code class="language-bash">0 8,12,18 * * * # Roda às 8:00, 12:00 e 18:00 todos os dias.</code></pre>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200"><code>-</code> (Hífen) - O Definidor de Intervalo</h4>
+          <p class="text-sm text-gray-400 mt-1">Define um intervalo de valores. Por exemplo, de segunda a sexta.</p>
+          <pre class="!bg-gray-900 !p-2 !my-2 text-xs"><code class="language-bash">0 9 * * 1-5  # Roda às 9:00 de segunda a sexta.</code></pre>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200"><code>*/</code> (Barra) - O "Passo"</h4>
+          <p class="text-sm text-gray-400 mt-1">Define incrementos. <code>*/15</code> no campo dos minutos significa "a cada 15 minutos".</p>
+          <pre class="!bg-gray-900 !p-2 !my-2 text-xs"><code class="language-bash">*/15 * * * *  # Roda nos minutos 0, 15, 30 e 45 de cada hora.</code></pre>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Usando CRON no n8n</h2>
+      <p>
+        No n8n, o agendamento é feito pelo nó <strong>Cron</strong>. Ele é um nó de gatilho (trigger), o que significa que ele sempre inicia um workflow.
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li>Adicione um nó <strong>Cron</strong> ao seu workflow.</li>
+        <li>No painel de parâmetros do nó, você pode usar os menus visuais para criar agendamentos comuns (a cada hora, a cada dia, etc.).</li>
+        <li>Para agendamentos complexos, mude o <strong>Mode</strong> para <strong>Custom</strong>.</li>
+        <li>No campo <strong>Cron Expression</strong>, insira a sua expressão de cinco campos. O n8n mostrará uma tradução em texto do que a expressão significa, ajudando a validar sua lógica.</li>
+      </ol>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Automação no Piloto Automático</h3>
+      <p>
+        Dominar as expressões CRON é um superpoder para qualquer automatizador. Elas permitem que você agende relatórios diários, verificações de sistemas a cada minuto, limpezas de banco de dados semanais e muito mais, tudo sem intervenção manual.
+      </p>
+      <div class="mt-4">
+        <a routerLink="/tools/gerador-cron" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
+          <span class="material-icons-outlined">construction</span>
+          Praticar agora no Gerador de CRON
+        </a>
+      </div>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/n8n-fundamentos" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>
