@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { ToolInfoSectionComponent, InfoSection } from '../../shared/tool-info-section/tool-info-section.component';
 
 interface ColorStop {
   id: number;
@@ -14,7 +15,7 @@ type RadialShape = 'ellipse' | 'circle';
 @Component({
   selector: 'app-css-gradient-generator',
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, ToolInfoSectionComponent],
   templateUrl: './css-gradient-generator.component.html',
   styleUrls: ['./css-gradient-generator.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -39,6 +40,97 @@ export class CssGradientGeneratorComponent {
 
   // --- UI State ---
   copyButtonText = signal('Copiar CSS');
+
+  infoSections: InfoSection[] = [
+    {
+      title: 'Introdução e Valor da Ferramenta',
+      content: `
+        <h4>O que é o Gerador de Gradiente CSS?</h4>
+        <p>Esta é uma ferramenta visual que simplifica a criação de gradientes CSS. Você pode adicionar, remover e modificar "paradas de cor" (color stops), alternar entre gradientes lineares e radiais, e ajustar seus parâmetros para criar transições de cores suaves e complexas. O código CSS é gerado automaticamente.</p>
+        
+        <h4>Por que usar gradientes?</h4>
+        <p>Gradientes são uma alternativa poderosa a cores sólidas e imagens de fundo. Eles podem ser usados para:</p>
+        <ul>
+          <li>Adicionar profundidade e apelo visual a botões, cards e seções.</li>
+          <li>Criar fundos de página dinâmicos e modernos.</li>
+          <li>Implementar sobreposições de cores em imagens para melhorar a legibilidade do texto.</li>
+          <li>Construir elementos de UI, como gráficos e barras de progresso.</li>
+        </ul>
+
+        <h4>Características ⚡️</h4>
+        <ul>
+          <li><strong>Tipos de Gradiente:</strong> Suporte para gradientes lineares e radiais.</li>
+          <li><strong>Editor Visual de Cores:</strong> Adicione, mova e delete paradas de cor diretamente em uma barra de visualização.</li>
+          <li><strong>Controles Detalhados:</strong> Ajuste o ângulo do gradiente linear ou a posição e forma do gradiente radial.</li>
+          <li><strong>Cores Ilimitadas:</strong> Use quantas paradas de cor forem necessárias para seu design.</li>
+          <li><strong>Geração de Código Instantânea:</strong> Copie o CSS pronto para usar com um clique.</li>
+        </ul>
+      `
+    },
+    {
+      title: 'Guia de Uso e Exemplos',
+      content: `
+        <h4>Como Usar o Gerador de Gradiente</h4>
+        <ol>
+          <li><strong>Escolha o Tipo:</strong> Selecione entre 'Linear' ou 'Radial'.</li>
+          <li><strong>Ajuste os Parâmetros:</strong>
+              <ul>
+                <li><strong>Linear:</strong> Use o slider de 'Ângulo' para definir a direção do gradiente. 0deg é de baixo para cima, 90deg é da esquerda para a direita.</li>
+                <li><strong>Radial:</strong> Escolha a forma ('Elipse' ou 'Círculo') e ajuste a posição do centro do gradiente.</li>
+              </ul>
+          </li>
+          <li><strong>Manipule as Cores:</strong>
+            <ul>
+                <li><strong>Adicionar:</strong> Clique em qualquer lugar na barra de visualização de gradiente para adicionar uma nova parada de cor.</li>
+                <li><strong>Selecionar:</strong> Clique em um dos círculos na barra para selecionar uma parada de cor e editar suas propriedades abaixo.</li>
+                <li><strong>Remover:</strong> Selecione uma parada de cor e clique no botão de lixeira.</li>
+                <li><strong>Editar:</strong> Com uma parada selecionada, use o seletor de cores e o slider de 'Posição' para ajustá-la.</li>
+            </ul>
+          </li>
+          <li><strong>Copiar o Código:</strong> Clique em "Copiar CSS" para obter a propriedade <code>background-image</code>.</li>
+        </ol>
+
+        <h4>Exemplos Práticos</h4>
+        <p><strong>Fundo Suave para uma Seção:</strong></p>
+        <pre><code>.hero-section {
+  background-image: linear-gradient(120deg, #1d2b40, #0d1117);
+}</code></pre>
+        <p><strong>Botão Chamativo:</strong></p>
+        <pre><code>.call-to-action-button {
+  background-image: linear-gradient(to right, #58a6ff, #3b82f6);
+  color: white;
+  border: none;
+}</code></pre>
+      `
+    },
+    {
+      title: 'Melhores Práticas e Contexto Técnico',
+      content: `
+        <h4>Melhores Práticas para Gradientes</h4>
+        <ul>
+          <li><strong>Transições Sutis:</strong> Para um look profissional, use cores que não contrastem de forma agressiva. Gradientes entre tons da mesma cor ou cores análogas funcionam bem.</li>
+          <li><strong>Acessibilidade:</strong> Se houver texto sobre o gradiente, certifique-se de que o contraste seja suficiente em todas as partes do gradiente para garantir a legibilidade.</li>
+          <li><strong>Use como Sobreposição:</strong> Um gradiente de preto para transparente sobre uma imagem pode escurecer uma parte dela, tornando o texto branco mais legível.</li>
+        </ul>
+        
+        <h4>Desempenho e Compatibilidade</h4>
+        <p>Gradientes CSS são altamente performáticos, pois são renderizados nativamente pelo navegador e não requerem o download de uma imagem. A compatibilidade é excelente nos navegadores modernos. Para compatibilidade máxima com navegadores mais antigos, pode ser necessário usar prefixos (<code>-webkit-</code>, <code>-moz-</code>), mas para a maioria dos projetos atuais, isso não é mais uma preocupação.</p>
+      `
+    },
+    {
+      title: 'Perguntas Frequentes (FAQ)',
+      content: `
+        <h4>O que é uma "parada de cor" (color stop)?</h4>
+        <p>É um ponto ao longo do gradiente onde uma cor específica é definida. O navegador então calcula a transição suave entre essas paradas. Cada parada tem uma cor e uma posição (de 0% a 100%).</p>
+
+        <h4>Posso usar cores com transparência (RGBA)?</h4>
+        <p>Sim! Os seletores de cor nativos do navegador geralmente permitem que você defina um valor alfa (transparência). A sintaxe CSS suporta totalmente cores <code>rgba()</code>, o que é ótimo para criar efeitos de sobreposição.</p>
+
+        <h4>O que são gradientes repetidos (repeating gradients)?</h4>
+        <p>São gradientes que se repetem para preencher o fundo. Esta ferramenta não os gera diretamente, mas você pode criar o efeito adicionando <code>repeating-</code> antes da função no seu CSS, por exemplo: <code>repeating-linear-gradient(...)</code>. Isso é útil para criar padrões como listras.</p>
+      `
+    }
+  ];
 
   // --- Computed Properties ---
   activeStop = computed(() => {

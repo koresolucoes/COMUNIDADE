@@ -76,8 +76,13 @@
     <div class="space-y-6">
       <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[250px] flex flex-col items-center justify-center">
         <div 
-          #previewBox
-          class="preview-box">
+          class="preview-box"
+          [style.animation-name]="activeAnimationName()"
+          [style.animation-duration]="duration() + 's'"
+          [style.animation-delay]="delay() + 's'"
+          [style.animation-iteration-count]="iterationCount()"
+          [style.animation-direction]="direction()"
+          [style.animation-timing-function]="timingFunction()">
         </div>
         <button (click)="replayAnimation()" class="mt-8 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center gap-2 text-sm">
           <span class="material-icons-outlined">replay</span>
@@ -108,4 +113,6 @@
       </div>
     </div>
   </div>
+
+  <app-tool-info-section [sections]="infoSections"></app-tool-info-section>
 </div>
