@@ -32,11 +32,11 @@
         @for(template of paginatedTemplates(); track template.id) {
           <a [routerLink]="['/templates', template.id]" class="flex flex-col p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 group">
             <div class="flex-grow">
-              <div class="flex justify-between items-center mb-3">
-                  <span class="text-xs font-medium bg-blue-accent/20 text-blue-300 px-2 py-1 rounded-full capitalize">{{ template.category }}</span>
+              <h3 class="text-xl font-semibold text-white group-hover:text-blue-accent mb-3">{{ template.title }}</h3>
+              <div class="flex items-start gap-3">
+                  <span class="flex-shrink-0 text-xs font-medium bg-blue-accent/20 text-blue-300 px-2 py-1 rounded-full capitalize">{{ template.category }}</span>
+                  <p class="text-sm text-gray-400 h-20 overflow-hidden">{{ template.description }}</p>
               </div>
-              <h3 class="text-xl font-semibold text-white group-hover:text-blue-accent">{{ template.title }}</h3>
-              <p class="mt-2 text-sm text-gray-400 h-20 overflow-hidden text-ellipsis">{{ template.description }}</p>
             </div>
             @if(template.tags && template.tags.length > 0) {
               <div class="mt-4 flex flex-wrap gap-2">

@@ -67,7 +67,7 @@ export class TemplateService {
   async getTemplates(): Promise<Omit<Template, 'workflow_json'>[]> {
     const { data, error } = await this.supabase
       .from('templates')
-      .select('id, user_id, title, description, tags, category, published_at, created_at, updated_at, author:profiles(id, username, full_name, avatar_url)')
+      .select('id, user_id, title, description, tags, category, published_at, created_at, updated_at')
       .order('published_at', { ascending: false });
 
     if (error) {
@@ -78,17 +78,20 @@ export class TemplateService {
     if (!data) {
       return [];
     }
+    
+    const userIds = [...new Set(data.map(t => t.user_id))].filter((id): id is string => !!id);
+    const profiles = await this.getUserProfiles(userIds);
 
     return data.map((template: any) => ({
       ...template,
-      author: Array.isArray(template.author) ? template.author[0] : template.author,
+      author: profiles[template.user_id],
     }));
   }
 
   async getTemplateById(id: string): Promise<Template | null> {
     const { data, error } = await this.supabase
       .from('templates')
-      .select('*, author:profiles(id, username, full_name, avatar_url)')
+      .select('*')
       .eq('id', id)
       .single();
 
@@ -97,8 +100,9 @@ export class TemplateService {
       throw error;
     }
     
-    if (data && Array.isArray((data as any).author)) {
-      (data as any).author = (data as any).author[0];
+    if (data && data.user_id) {
+        const profiles = await this.getUserProfiles([data.user_id]);
+        (data as any).author = profiles[data.user_id];
     }
     
     return data;

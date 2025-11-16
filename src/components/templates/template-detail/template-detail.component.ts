@@ -114,6 +114,17 @@ export class TemplateDetailComponent {
     this.editor.zoom_max = 1.6;
     this.editor.zoom_min = 0.2;
 
+    // Enable panning with left-click on the background
+    container.addEventListener('mousedown', (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // 0 = Left mouse button
+      if (e.button === 0 && (target.classList.contains('drawflow') || target.classList.contains('drawflow-precanvas'))) {
+        this.editor.panning = true;
+        this.editor.mouse_x = e.clientX;
+        this.editor.mouse_y = e.clientY;
+      }
+    });
+
     this.n8nToDrawflow(workflowData);
     this.centerWorkflow(workflowData.nodes, container);
   }
