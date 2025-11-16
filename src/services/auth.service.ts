@@ -1,4 +1,5 @@
 
+
 import { Injectable, signal, effect } from '@angular/core';
 import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
@@ -69,14 +70,8 @@ export class AuthService {
     return this.supabase.auth.signInWithPassword({ email, password });
   }
 
-  signInWithGoogle() {
-    return this.supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: 'https://comunidade.koresolucoes.com.br',
-        skipBrowserRedirect: true,
-      },
-    });
+  signUp(email: string, password: string) {
+    return this.supabase.auth.signUp({ email, password });
   }
 
   signOut() {

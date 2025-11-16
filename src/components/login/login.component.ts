@@ -1,9 +1,16 @@
 
 
+
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+
+export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const password = control.get('password');
+  const confirmPassword = control.get('confirmPassword');
+  return password && confirmPassword && password.value !== confirmPassword.value ? { passwordMismatch: true } : null;
+};
 
 @Component({
   selector: 'app-login',
@@ -21,17 +28,33 @@ export class LoginComponent implements OnInit {
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
+  successMessage = signal<string | null>(null);
   currentUser = this.authService.currentUser;
+  mode = signal<'login' | 'signup'>('login');
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
 
+  signupForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    confirmPassword: ['', [Validators.required]]
+  }, { validators: passwordMatchValidator });
+
   ngOnInit() {
     if (this.currentUser()) {
       this.router.navigate(['/']);
     }
+  }
+
+  toggleMode() {
+    this.mode.update(m => m === 'login' ? 'signup' : 'login');
+    this.errorMessage.set(null);
+    this.successMessage.set(null);
+    this.loginForm.reset();
+    this.signupForm.reset();
   }
 
   async onSubmit() {
@@ -41,6 +64,7 @@ export class LoginComponent implements OnInit {
     
     this.loading.set(true);
     this.errorMessage.set(null);
+    this.successMessage.set(null);
 
     const { email, password } = this.loginForm.value;
 
@@ -54,20 +78,26 @@ export class LoginComponent implements OnInit {
     this.loading.set(false);
   }
 
-  async onGoogleLogin() {
+  async onSignup() {
+    if (this.signupForm.invalid) {
+      return;
+    }
+    
     this.loading.set(true);
     this.errorMessage.set(null);
-    const { data, error } = await this.authService.signInWithGoogle();
+    this.successMessage.set(null);
+
+    const { email, password } = this.signupForm.value;
+
+    const { error } = await this.authService.signUp(email!, password!);
+
     if (error) {
       this.errorMessage.set(error.message);
-      this.loading.set(false);
-    } else if (data?.url) {
-      // Manually trigger a top-level redirect to break out of the iframe
-      window.top!.location.href = data.url;
     } else {
-      // Fallback for an unexpected response
-      this.errorMessage.set('Não foi possível obter a URL de login do Google.');
-      this.loading.set(false);
+      this.successMessage.set('Cadastro realizado! Verifique seu e-mail para confirmar sua conta.');
+      this.signupForm.reset();
+      this.mode.set('login');
     }
+    this.loading.set(false);
   }
 }
