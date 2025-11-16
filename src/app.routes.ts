@@ -89,6 +89,21 @@ import { N8nGitVersioningComponent } from './components/learning/articles/n8n-gi
 import { N8nCicdComponent } from './components/learning/articles/n8n-cicd/n8n-cicd.component';
 import { N8nCustomNodesComponent } from './components/learning/articles/n8n-custom-nodes/n8n-custom-nodes.component';
 
+// Python Learning Path Articles
+import { PythonIntroAmbienteComponent } from './components/learning/articles/python-intro-ambiente/python-intro-ambiente.component';
+import { PythonVariaveisTiposComponent } from './components/learning/articles/python-variaveis-tipos/python-variaveis-tipos.component';
+import { PythonListasDicionariosComponent } from './components/learning/articles/python-listas-dicionarios/python-listas-dicionarios.component';
+import { PythonFuncoesComponent } from './components/learning/articles/python-funcoes/python-funcoes.component';
+import { PythonArquivosComponent } from './components/learning/articles/python-arquivos/python-arquivos.component';
+import { PythonRequestsComponent } from './components/learning/articles/python-requests/python-requests.component';
+import { PythonWebScrapingComponent } from './components/learning/articles/python-web-scraping/python-web-scraping.component';
+import { PandasIntroComponent } from './components/learning/articles/pandas-intro/pandas-intro.component';
+import { PandasLeituraEscritaComponent } from './components/learning/articles/pandas-leitura-escrita/pandas-leitura-escrita.component';
+import { PandasSelecaoFiltragemComponent } from './components/learning/articles/pandas-selecao-filtragem/pandas-selecao-filtragem.component';
+import { PandasLimpezaDadosComponent } from './components/learning/articles/pandas-limpeza-dados/pandas-limpeza-dados.component';
+import { PandasAgrupamentoComponent } from './components/learning/articles/pandas-agrupamento/pandas-agrupamento.component';
+
+
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'profile', component: ProfileComponent },
@@ -160,6 +175,20 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/n8n-cicd', component: N8nCicdComponent },
   { path: 'learning/article/n8n-custom-nodes', component: N8nCustomNodesComponent },
   
+  // Python para Automação de Dados
+  { path: 'learning/article/python-intro-ambiente', component: PythonIntroAmbienteComponent },
+  { path: 'learning/article/python-variaveis-tipos', component: PythonVariaveisTiposComponent },
+  { path: 'learning/article/python-listas-dicionarios', component: PythonListasDicionariosComponent },
+  { path: 'learning/article/python-funcoes', component: PythonFuncoesComponent },
+  { path: 'learning/article/python-arquivos', component: PythonArquivosComponent },
+  { path: 'learning/article/python-requests', component: PythonRequestsComponent },
+  { path: 'learning/article/python-web-scraping', component: PythonWebScrapingComponent },
+  { path: 'learning/article/pandas-intro', component: PandasIntroComponent },
+  { path: 'learning/article/pandas-leitura-escrita', component: PandasLeituraEscritaComponent },
+  { path: 'learning/article/pandas-selecao-filtragem', component: PandasSelecaoFiltragemComponent },
+  { path: 'learning/article/pandas-limpeza-dados', component: PandasLimpezaDadosComponent },
+  { path: 'learning/article/pandas-agrupamento', component: PandasAgrupamentoComponent },
+
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },
   { path: 'tools/gerador-gradiente-css', component: CssGradientGeneratorComponent },
