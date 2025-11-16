@@ -48,6 +48,9 @@ export class TemplateDetailComponent {
     merge: { color: '#0d9488', icon: 'merge_type' },
     switch: { color: '#a855f7', icon: 'switch_right' },
     note: { color: '#ca8a04', icon: 'note' },
+    googleSheets: { color: '#0f9d58', icon: 'table_chart' },
+    discord: { color: '#5865f2', icon: 'forum' },
+    cron: { color: '#6366f1', icon: 'schedule' },
     default: { color: '#374151', icon: 'settings' },
   };
 
@@ -107,23 +110,41 @@ export class TemplateDetailComponent {
     return this.nodeStyleMap[type] ? type : 'default';
   }
   
+  private getFriendlyNodeName(n8nType: string): string {
+    if (!n8nType) return 'Node';
+    const type = n8nType.split('.').pop() || 'Node';
+    // Converts camelCase or PascalCase to Title Case
+    return type.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()).trim();
+  }
+  
+  private escapeHtml(str: string): string {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   private initializeDrawflow(container: HTMLElement, workflowData: any) {
     this.editor = new Drawflow(container);
     this.editor.start();
-    this.editor.editor_mode = 'edit';
+    this.editor.editor_mode = 'view';
     this.editor.zoom_max = 1.6;
     this.editor.zoom_min = 0.2;
+    this.editor.reroute = true;
+    this.editor.curvature = 0.5;
 
     // Enable panning with left-click on the background
     container.addEventListener('mousedown', (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       // 0 = Left mouse button
-      if (e.button === 0 && (target.classList.contains('drawflow') || target.classList.contains('drawflow-precanvas'))) {
+      if (e.button === 0 && (target.classList.contains('drawflow') || target.classList.contains('parent-drawflow') || target.classList.contains('drawflow-precanvas'))) {
         this.editor.panning = true;
-        this.editor.mouse_x = e.clientX;
-        this.editor.mouse_y = e.clientY;
       }
     });
+    container.addEventListener('mouseup', () => { this.editor.panning = false; });
+    container.addEventListener('mouseleave', () => { this.editor.panning = false; });
 
     this.n8nToDrawflow(workflowData);
     this.centerWorkflow(workflowData.nodes, container);
@@ -132,8 +153,8 @@ export class TemplateDetailComponent {
   private centerWorkflow(nodes: any[], container: HTMLElement) {
     if (!this.editor || !nodes || nodes.length === 0) return;
 
-    const NODE_WIDTH = 200;
-    const NODE_HEIGHT = 50;
+    const NODE_WIDTH = 250;
+    const NODE_HEIGHT = 60;
 
     const xCoords = nodes.map(n => n.position[0]);
     const yCoords = nodes.map(n => n.position[1]);
@@ -155,7 +176,7 @@ export class TemplateDetailComponent {
     this.editor.canvas_x = (containerWidth / 2) / zoom - (minX + contentWidth / 2);
     this.editor.canvas_y = (containerHeight / 2) / zoom - (minY + contentHeight / 2);
     
-    this.editor.zoom_refresh();
+    this.editor.update();
   }
 
   private n8nToDrawflow(workflow: any) {
@@ -170,22 +191,28 @@ export class TemplateDetailComponent {
     const n8nNodeNameToNodeId = new Map<string, string>();
 
     for (const node of workflow.nodes) {
-      const nodeType = this.getNodeType(node.type);
-      const style = this.nodeStyleMap[nodeType] || this.nodeStyleMap['default'];
+      const nodeTypeKey = this.getNodeType(node.type);
+      const nodeTypeName = this.getFriendlyNodeName(node.type);
+      const style = this.nodeStyleMap[nodeTypeKey] || this.nodeStyleMap['default'];
 
       const nodeHtml = `
-        <div class="drawflow-node-content" style="background-color: ${style.color}">
-          <span class="material-icons-outlined">${style.icon}</span>
-          <span class="node-label">${node.name}</span>
+        <div class="n8n-node-wrapper">
+          <div class="n8n-node-header" style="background-color: ${style.color}">
+            <span class="material-icons-outlined">${style.icon}</span>
+            <span class="n8n-node-type-name">${nodeTypeName}</span>
+          </div>
+          <div class="n8n-node-body">
+            <span class="n8n-node-label">${this.escapeHtml(node.name)}</span>
+          </div>
         </div>
       `;
 
-      const outputs = nodeType === 'if' ? 2 : 1;
+      const outputs = nodeTypeKey === 'if' ? 2 : (nodeTypeKey === 'switch' ? (node.parameters.rules.values.length + 1) : 1);
       
       const drawflowId = this.editor.addNode(
         node.name, 1, outputs,
         node.position[0], node.position[1],
-        '', {}, nodeHtml, false
+        'n8n-node', {}, nodeHtml, false
       );
 
       n8nNodeIdToDrawflowId.set(node.id, String(drawflowId));
@@ -203,22 +230,27 @@ export class TemplateDetailComponent {
       for (const outputName in outputs) {
         const connectionGroups = outputs[outputName];
         if (Array.isArray(connectionGroups)) {
-          for (const connections of connectionGroups) {
-            if (Array.isArray(connections)) {
-              for (const connection of connections) {
-                const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
-                if (targetNodeId) {
-                  const drawflowTargetId = n8nNodeIdToDrawflowId.get(targetNodeId);
-                  if (drawflowTargetId) {
-                    let sourceOutput = 'output_1';
-                    if (outputName.toLowerCase() === 'false') {
-                      sourceOutput = 'output_2';
-                    }
-                    this.editor.addConnection(drawflowSourceId, drawflowTargetId, sourceOutput, 'input_1');
+          for (const connection of connectionGroups) {
+             const targetNodeId = n8nNodeNameToNodeId.get(connection.node);
+              if (targetNodeId) {
+                const drawflowTargetId = n8nNodeIdToDrawflowId.get(targetNodeId);
+                if (drawflowTargetId) {
+                  let sourceOutput = 'output_1'; // Default output
+                  const sourceNode = workflow.nodes.find((n:any) => n.id === sourceNodeId);
+
+                  if (sourceNode && this.getNodeType(sourceNode.type) === 'if') {
+                     sourceOutput = outputName.toLowerCase() === 'true' ? 'output_1' : 'output_2';
+                  } else if (sourceNode && this.getNodeType(sourceNode.type) === 'switch') {
+                     // In n8n, switch outputIndex starts at 0. 'output_1' is the first rule.
+                     const outputIndex = parseInt(outputName, 10);
+                     if (!isNaN(outputIndex)) {
+                       sourceOutput = `output_${outputIndex + 1}`;
+                     }
                   }
+                  
+                  this.editor.addConnection(drawflowSourceId, drawflowTargetId, sourceOutput, 'input_1');
                 }
               }
-            }
           }
         }
       }
