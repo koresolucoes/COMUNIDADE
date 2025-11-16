@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, signal, effect, inject } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { HeaderComponent } from './components/shared/header/header.component';
@@ -19,7 +20,8 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
   private authService = inject(AuthService);
-  private router = inject(Router);
+  // Fix: Explicitly type injected Router to resolve type error.
+  private router: Router = inject(Router);
   
   currentUser = this.authService.currentUser;
   currentUserProfile = this.authService.currentUserProfile;

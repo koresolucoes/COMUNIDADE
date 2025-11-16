@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, signal, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -14,7 +15,8 @@ import { AuthService } from '../../../services/auth.service';
 export class ForumNewTopicComponent implements OnInit {
   private forumService = inject(ForumService);
   private authService = inject(AuthService);
-  private router = inject(Router);
+  // Fix: Explicitly type injected Router to resolve type error.
+  private router: Router = inject(Router);
   // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.
   private fb: FormBuilder = inject(FormBuilder);
   

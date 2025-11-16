@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, inject, signal, OnInit, computed, effect } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,7 +19,8 @@ export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private userDataService = inject(UserDataService);
   private toolDataStateService = inject(ToolDataStateService);
-  private router = inject(Router);
+  // Fix: Explicitly type injected Router to resolve type error.
+  private router: Router = inject(Router);
   // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.
   private fb: FormBuilder = inject(FormBuilder);
 

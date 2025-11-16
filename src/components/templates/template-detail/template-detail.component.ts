@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TemplateService, Template, TemplateComment } from '../../../services/template.service';
@@ -56,7 +57,8 @@ export interface VisualGraph {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TemplateDetailComponent {
-  private route = inject(ActivatedRoute);
+  // Fix: Explicitly type injected ActivatedRoute to resolve type errors.
+  private route: ActivatedRoute = inject(ActivatedRoute);
   private templateService = inject(TemplateService);
   public n8nApiService = inject(N8nApiService);
   public authService = inject(AuthService);

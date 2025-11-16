@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, signal, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -17,8 +18,9 @@ import { AuthService } from '../../../services/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForumTopicComponent {
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  // Fix: Explicitly type injected services to resolve type errors.
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
   private forumService = inject(ForumService);
   public authService = inject(AuthService);
   // Fix: Explicitly typed the injected FormBuilder to resolve a type inference issue.

@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, output, signal, computed, effect, viewChild, ElementRef, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
@@ -28,7 +29,8 @@ export class CommandPaletteComponent implements OnInit {
   query = signal('');
   activeIndex = signal(0);
   
-  private router = inject(Router);
+  // Fix: Explicitly type injected Router to resolve type error.
+  private router: Router = inject(Router);
   private blogService = inject(BlogService);
   private templateService = inject(TemplateService);
   private forumService = inject(ForumService);

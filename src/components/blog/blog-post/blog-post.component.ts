@@ -1,3 +1,4 @@
+
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
@@ -16,7 +17,8 @@ import { DatePipe } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlogPostComponent {
-  private route = inject(ActivatedRoute);
+  // Fix: Explicitly type injected ActivatedRoute to resolve type error.
+  private route: ActivatedRoute = inject(ActivatedRoute);
   blogService = inject(BlogService);
 
   post = toSignal(
