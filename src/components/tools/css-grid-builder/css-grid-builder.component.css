@@ -10,27 +10,28 @@
 }
 
 .grid-cell {
-  @apply bg-gray-800 rounded-md flex items-center justify-center text-gray-600 cursor-pointer transition-colors duration-200;
+  @apply border-2 border-dashed border-gray-800 rounded-md flex items-center justify-center text-gray-700 cursor-pointer transition-colors duration-200;
   z-index: 1;
 }
 
 .grid-cell:hover {
-  @apply bg-gray-700 text-gray-400;
+  @apply bg-gray-800/50 border-gray-700 text-gray-500;
 }
 
 .grid-item {
-  @apply bg-gray-700 border border-gray-600 rounded-md p-2 text-gray-200 font-bold text-lg select-none;
+  @apply border border-black/20 rounded-md p-2 text-white font-bold text-lg select-none flex items-center justify-center;
   position: relative;
   touch-action: none; /* Prevent scrolling on touch devices */
   z-index: 10;
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .item-id {
-  @apply absolute top-1 left-2 text-xs font-mono text-gray-400;
+  @apply font-mono text-3xl;
 }
 
 .remove-btn {
-  @apply absolute top-0 right-0 w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white hover:bg-black/20 rounded-full transition-colors z-20;
+  @apply absolute top-0 right-0 w-6 h-6 flex items-center justify-center text-white/70 hover:text-white hover:bg-black/20 rounded-full transition-colors z-20;
 }
 
 .remove-btn .material-icons-outlined {
@@ -38,7 +39,7 @@
 }
 
 .resize-handle {
-  @apply absolute bottom-0 right-0 w-4 h-4 bg-blue-accent cursor-se-resize z-20;
+  @apply absolute bottom-0 right-0 w-4 h-4 bg-white/80 cursor-se-resize z-20;
   clip-path: polygon(100% 0, 0 100%, 100% 100%);
 }
 

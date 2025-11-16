@@ -18,7 +18,11 @@
       <input id="gap" type="number" min="0" max="50" [ngModel]="gap()" (ngModelChange)="gap.set(+$event)" class="w-20 bg-gray-800 border-gray-700 text-white rounded-md p-2 text-center focus:ring-blue-accent focus:border-blue-accent">
     </div>
     <div class="flex-grow"></div>
-    <button (click)="resetGrid()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-md font-semibold hover:bg-red-600/30 transition-colors flex items-center gap-2">
+    <button (click)="loadHolyGrail()" class="px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center gap-2 text-sm">
+      <span class="material-icons-outlined text-base">dashboard</span>
+      Exemplo "Holy Grail"
+    </button>
+    <button (click)="resetGrid()" class="px-4 py-2 bg-red-600/20 text-red-400 rounded-md font-semibold hover:bg-red-600/30 transition-colors flex items-center gap-2 text-sm">
       <span class="material-icons-outlined text-base">refresh</span>
       Resetar
     </button>
@@ -46,7 +50,11 @@
         [style.grid-template-rows]="'repeat(' + rows() + ', 1fr)'"
         [style.gap.px]="gap()">
       @for(item of items(); track item.id) {
-        <div class="grid-item" [style.grid-column]="item.colStart + ' / ' + item.colEnd" [style.grid-row]="item.rowStart + ' / ' + item.rowEnd">
+        <div class="grid-item" 
+            [style.grid-column]="item.colStart + ' / ' + item.colEnd" 
+            [style.grid-row]="item.rowStart + ' / ' + item.rowEnd"
+            [style.background-color]="item.color"
+            >
           <span class="item-id">{{ item.id }}</span>
           <button (click)="removeItem(item.id)" class="remove-btn">
             <span class="material-icons-outlined">close</span>

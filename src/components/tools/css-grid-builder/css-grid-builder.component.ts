@@ -9,6 +9,7 @@ interface GridItem {
   rowStart: number;
   colEnd: number;
   rowEnd: number;
+  color: string;
 }
 
 interface ResizeState {
@@ -28,9 +29,9 @@ interface ResizeState {
 export class CssGridBuilderComponent {
   gridContainer = viewChild<ElementRef<HTMLDivElement>>('gridContainer');
   
-  cols = signal(6);
-  rows = signal(4);
-  gap = signal(8);
+  cols = signal(12);
+  rows = signal(8);
+  gap = signal(10);
 
   items = signal<GridItem[]>([]);
 
@@ -41,12 +42,20 @@ export class CssGridBuilderComponent {
   });
 
   previewSpan = signal<{ colEnd: number; rowEnd: number } | null>(null);
+
+  private colors = [
+    '#3b82f6', '#10b981', '#f97316', '#ec4899', 
+    '#8b5cf6', '#ef4444', '#f59e0b', '#06b6d4'
+  ];
   
   cellArray = computed(() => {
     return Array.from({ length: this.cols() * this.rows() });
   });
 
   cssCode = computed(() => {
+    if (this.items().length === 0) {
+      return `.parent {\n  display: grid;\n  grid-template-columns: repeat(${this.cols()}, 1fr);\n  grid-template-rows: repeat(${this.rows()}, 1fr);\n  gap: ${this.gap()}px;\n}`;
+    }
     let css = `.parent {\n  display: grid;\n  grid-template-columns: repeat(${this.cols()}, 1fr);\n  grid-template-rows: repeat(${this.rows()}, 1fr);\n  gap: ${this.gap()}px;\n}\n\n`;
     for (const item of this.items()) {
       css += `.item-${item.id} {\n  grid-column: ${item.colStart} / ${item.colEnd};\n  grid-row: ${item.rowStart} / ${item.rowEnd};\n}\n\n`;
@@ -55,6 +64,9 @@ export class CssGridBuilderComponent {
   });
 
   htmlCode = computed(() => {
+    if (this.items().length === 0) {
+      return '<div class="parent">\n  <!-- Seus itens aqui -->\n</div>';
+    }
     let html = '<div class="parent">\n';
     for (const item of this.items()) {
       html += `  <div class="item-${item.id}">${item.id}</div>\n`;
@@ -133,9 +145,12 @@ export class CssGridBuilderComponent {
       }
     }
 
+    const colorIndex = (newId - 1) % this.colors.length;
+    const newColor = this.colors[colorIndex];
+
     this.items.update(items => [
       ...items,
-      { id: newId, colStart: col, rowStart: row, colEnd: col + 1, rowEnd: row + 1 }
+      { id: newId, colStart: col, rowStart: row, colEnd: col + 1, rowEnd: row + 1, color: newColor }
     ]);
   }
 
@@ -145,6 +160,19 @@ export class CssGridBuilderComponent {
   
   resetGrid() {
     this.items.set([]);
+  }
+
+  loadHolyGrail() {
+    this.cols.set(5);
+    this.rows.set(4);
+    this.gap.set(10);
+    this.items.set([
+        { id: 1, colStart: 1, rowStart: 1, colEnd: 6, rowEnd: 2, color: this.colors[0] }, // Header
+        { id: 2, colStart: 1, rowStart: 2, colEnd: 2, rowEnd: 4, color: this.colors[1] }, // Nav
+        { id: 3, colStart: 2, rowStart: 2, colEnd: 5, rowEnd: 4, color: this.colors[2] }, // Main
+        { id: 4, colStart: 5, rowStart: 2, colEnd: 6, rowEnd: 4, color: this.colors[3] }, // Aside
+        { id: 5, colStart: 1, rowStart: 4, colEnd: 6, rowEnd: 5, color: this.colors[4] }, // Footer
+    ]);
   }
   
   onResizeStart(event: MouseEvent, item: GridItem) {
