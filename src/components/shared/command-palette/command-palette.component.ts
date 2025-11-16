@@ -56,6 +56,7 @@ export class CommandPaletteComponent implements OnInit {
     { name: 'Conversor de Timestamp', section: 'Ferramentas', action: () => this.navigate('/tools/timestamp-converter'), icon: 'update' },
     { name: 'Conversor de Dados', section: 'Ferramentas', action: () => this.navigate('/tools/data-converter'), icon: 'swap_horiz' },
     { name: 'Comparador de Texto', section: 'Ferramentas', action: () => this.navigate('/tools/comparador-texto'), icon: 'difference' },
+    { name: 'Gerador de QR Code', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-qr-code'), icon: 'qr_code_2' },
     { name: 'Gerador de Hash', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-hash'), icon: 'fingerprint' },
     { name: 'Gerador de Senhas', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-senha'), icon: 'key' },
     { name: 'Gerador de UUID', section: 'Ferramentas', action: () => this.navigate('/tools/gerador-uuid'), icon: 'tag' },

@@ -156,6 +156,11 @@ export class ToolsIndexComponent {
           description: 'Compare dois blocos de texto ou código e destaque as diferenças.',
           link: '/tools/comparador-texto'
         },
+        {
+          name: 'Gerador de QR Code',
+          description: 'Crie QR codes a partir de texto ou URLs com opções de personalização.',
+          link: '/tools/gerador-qr-code'
+        },
       ]
     }
   ];

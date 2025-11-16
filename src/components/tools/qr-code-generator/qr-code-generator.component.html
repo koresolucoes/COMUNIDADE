@@ -1,0 +1,103 @@
+<div class="space-y-8">
+  <div>
+    <h1 class="text-3xl md:text-4xl font-bold text-white">Gerador de QR Code</h1>
+    <p class="mt-2 text-gray-400">Crie QR codes a partir de texto ou URLs com opções de personalização.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Left Column: Controls -->
+    <div class="space-y-6">
+      <!-- Input Text -->
+      <div>
+        <label for="qr-text" class="block text-sm font-medium text-gray-400 mb-2">Conteúdo do QR Code</label>
+        <textarea 
+          id="qr-text"
+          rows="6"
+          class="w-full bg-gray-800 border border-gray-700 font-mono text-gray-300 rounded-md p-4 focus:ring-blue-accent focus:border-blue-accent resize-y"
+          placeholder="Digite o texto ou URL para gerar o QR Code"
+          [ngModel]="text()"
+          (ngModelChange)="text.set($event)"
+          spellcheck="false">
+        </textarea>
+      </div>
+      
+      <!-- Options -->
+      <div class="p-4 bg-gray-900 border border-gray-800 rounded-lg space-y-4">
+        <h3 class="text-lg font-semibold text-white">Opções de Personalização</h3>
+        
+        <!-- Size Slider -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center text-sm font-medium">
+            <label for="size" class="text-gray-300">Tamanho</label>
+            <span class="text-white font-mono text-base">{{ size() }}px</span>
+          </div>
+          <input 
+            id="size"
+            type="range" 
+            min="100" 
+            max="1000"
+            step="10"
+            [value]="size()"
+            (input)="onSizeChange($event)"
+            class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider-thumb">
+        </div>
+
+        <!-- Error Correction -->
+        <div>
+          <label for="error-correction" class="block text-sm font-medium text-gray-300 mb-2">Nível de Correção de Erro</label>
+          <select 
+            id="error-correction" 
+            class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm"
+            [ngModel]="errorCorrectionLevel()" 
+            (ngModelChange)="errorCorrectionLevel.set($event)">
+            <option value="L">Baixo (~7% de correção)</option>
+            <option value="M">Médio (~15% de correção)</option>
+            <option value="Q">Quartil (~25% de correção)</option>
+            <option value="H">Alto (~30% de correção)</option>
+          </select>
+        </div>
+        
+        <!-- Colors -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="dark-color" class="block text-sm font-medium text-gray-300 mb-2">Cor (Escura)</label>
+            <div class="color-picker-wrapper">
+              <input 
+                id="dark-color" 
+                type="color" 
+                class="color-picker"
+                [ngModel]="darkColor()" 
+                (ngModelChange)="darkColor.set($event)">
+            </div>
+          </div>
+          <div>
+            <label for="light-color" class="block text-sm font-medium text-gray-300 mb-2">Cor (Fundo)</label>
+             <div class="color-picker-wrapper">
+              <input 
+                id="light-color" 
+                type="color" 
+                class="color-picker"
+                [ngModel]="lightColor()" 
+                (ngModelChange)="lightColor.set($event)">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+    <!-- Right Column: QR Code Preview -->
+    <div class="flex flex-col items-center justify-center bg-gray-900 border border-gray-800 rounded-lg p-6">
+       <div class="bg-white p-4 rounded-lg shadow-lg">
+          <canvas #qrCanvas></canvas>
+       </div>
+       <button 
+          (click)="downloadQrCode()"
+          [disabled]="!text()"
+          class="mt-6 w-full max-w-xs px-4 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <span class="material-icons-outlined">download</span>
+          Baixar PNG
+       </button>
+    </div>
+  </div>
+</div>

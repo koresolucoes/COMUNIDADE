@@ -36,10 +36,10 @@ export class HomeComponent implements OnInit {
       description: 'Teste expressões n8n em um ambiente com dados mockados.'
     },
     {
-      path: '/tools/comparador-texto',
-      label: 'Comparador de Texto',
-      icon: 'difference',
-      description: 'Compare dois textos e destaque as diferenças (diff).'
+      path: '/tools/gerador-qr-code',
+      label: 'Gerador de QR Code',
+      icon: 'qr_code_2',
+      description: 'Crie QR codes a partir de texto ou URLs.'
     },
     {
       path: '/tools/base64-codec',

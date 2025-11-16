@@ -69,6 +69,7 @@ export class SidebarComponent {
         { path: '/tools/timestamp-converter', label: 'Conversor Timestamp' },
         { path: '/tools/data-converter', label: 'Conversor de Dados' },
         { path: '/tools/comparador-texto', label: 'Comparador de Texto' },
+        { path: '/tools/gerador-qr-code', label: 'Gerador de QR Code' },
       ]
     }
   ];

@@ -22,6 +22,7 @@ import { DnsCheckerComponent } from './components/tools/dns-checker/dns-checker.
 import { SslCheckerComponent } from './components/tools/ssl-checker/ssl-checker.component';
 import { DiffCheckerComponent } from './components/tools/diff-checker/diff-checker.component';
 import { DockerComposeGeneratorComponent } from './components/tools/docker-compose-generator/docker-compose-generator.component';
+import { QrCodeGeneratorComponent } from './components/tools/qr-code-generator/qr-code-generator.component';
 import { BlogListComponent } from './components/blog/blog-list/blog-list.component';
 import { BlogPostComponent } from './components/blog/blog-post/blog-post.component';
 import { LoginComponent } from './components/login/login.component';
@@ -65,6 +66,7 @@ export const APP_ROUTES: Routes = [
   { path: 'tools/verificador-ssl', component: SslCheckerComponent },
   { path: 'tools/comparador-texto', component: DiffCheckerComponent },
   { path: 'tools/docker-compose-generator', component: DockerComposeGeneratorComponent },
+  { path: 'tools/gerador-qr-code', component: QrCodeGeneratorComponent },
   { path: 'tools/gerenciador-n8n', component: N8nManagerComponent },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];
