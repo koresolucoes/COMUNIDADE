@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, output, signal, computed, effect, viewChild, ElementRef, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BlogService } from '../../../services/blog.service';
+import { TemplateService } from '../../../services/template.service';
 
 interface Command {
   name: string;
@@ -60,6 +61,7 @@ export class CommandPaletteComponent implements OnInit {
 
   private router = inject(Router);
   private blogService = inject(BlogService);
+  private templateService = inject(TemplateService);
 
   private readonly staticCommands: Command[] = [
     { name: 'Início', section: 'Navegação', action: () => this.navigate('/'), icon: 'home' },
@@ -89,13 +91,6 @@ export class CommandPaletteComponent implements OnInit {
     { name: 'Testador de Webhook', section: 'Ferramentas', action: () => this.navigate('/tools/webhook-tester'), icon: 'webhook' },
   ];
 
-  private readonly templateCatalog = [
-    { title: 'Sincronizar Pedidos iFood com Google Sheets', slug: 'sincronizar-pedidos-ifood-com-google-sheets' },
-    { title: 'Notificar no Discord sobre novos PRs no GitHub', slug: 'notificar-discord-novos-prs-github' },
-    { title: 'Criar Cartão no Trello para novos emails com Label', slug: 'criar-cartao-trello-novos-emails-label' },
-    { title: 'Salvar Anexos de Email no Google Drive', slug: 'salvar-anexos-email-google-drive' },
-  ];
-
   constructor() {
     effect(() => {
       this.searchInput()?.nativeElement.focus();
@@ -103,6 +98,7 @@ export class CommandPaletteComponent implements OnInit {
 
     effect(() => {
       const blogPosts = this.blogService.posts();
+      const templates = this.templateService.templates();
 
       const blogCommands: Command[] = blogPosts.map(post => ({
         name: post.title,
@@ -111,10 +107,10 @@ export class CommandPaletteComponent implements OnInit {
         icon: 'article'
       }));
       
-      const templateCommands: Command[] = this.templateCatalog.map(template => ({
+      const templateCommands: Command[] = templates.map(template => ({
         name: template.title,
         section: 'Templates n8n',
-        action: () => this.navigate('/templates'), // All go to the placeholder page for now
+        action: () => this.navigate(`/templates/${template.id}`),
         icon: 'folder_copy'
       }));
 
@@ -128,6 +124,7 @@ export class CommandPaletteComponent implements OnInit {
   
   ngOnInit(): void {
     this.blogService.loadPosts();
+    this.templateService.loadTemplates();
   }
 
   navigate(path: string) {

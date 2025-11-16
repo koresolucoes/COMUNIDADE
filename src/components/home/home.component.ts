@@ -4,6 +4,7 @@ import { CronGeneratorComponent } from '../tools/cron-generator/cron-generator.c
 import { JsonFormatterComponent } from '../tools/json-formatter/json-formatter.component';
 import { N8nExpressionSimulatorComponent } from '../tools/n8n-expression-simulator/n8n-expression-simulator.component';
 import { BlogService } from '../../services/blog.service';
+import { TemplateService } from '../../services/template.service';
 
 type FeaturedTool = 'cron' | 'json' | 'n8n';
 
@@ -21,6 +22,7 @@ type FeaturedTool = 'cron' | 'json' | 'n8n';
 })
 export class HomeComponent implements OnInit {
   private blogService = inject(BlogService);
+  private templateService = inject(TemplateService);
   
   featuredTool = signal<FeaturedTool>('cron');
 
@@ -30,16 +32,12 @@ export class HomeComponent implements OnInit {
     { id: 'n8n', name: 'Simulador n8n' },
   ];
 
-  popularTemplates = [
-    { title: 'Sincronizar Pedidos iFood com Google Sheets', apps: ['ifood', 'sheets'] },
-    { title: 'Notificar no Discord sobre novos PRs no GitHub', apps: ['discord', 'github'] },
-    { title: 'Criar Cartão no Trello para novos emails com Label', apps: ['trello', 'gmail'] },
-    { title: 'Salvar Anexos de Email no Google Drive', apps: ['gmail', 'drive'] },
-  ];
+  popularTemplates = computed(() => this.templateService.templates().slice(0, 4));
 
   recentPosts = computed(() => this.blogService.posts().slice(0, 4));
 
   ngOnInit() {
     this.blogService.loadPosts();
+    this.templateService.loadTemplates();
   }
 }

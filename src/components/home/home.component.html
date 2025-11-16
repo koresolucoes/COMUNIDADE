@@ -54,17 +54,19 @@
       <section>
         <h2 class="text-2xl font-semibold text-white mb-4">Templates Populares</h2>
         <div class="space-y-4">
-          @for(template of popularTemplates; track template.title) {
-            <a routerLink="/templates" class="block bg-gray-900 p-4 border border-gray-800 rounded-lg hover:border-blue-accent transition-colors">
+          @for(template of popularTemplates(); track template.id) {
+            <a [routerLink]="['/templates', template.id]" class="block bg-gray-900 p-4 border border-gray-800 rounded-lg hover:border-blue-accent transition-colors">
               <h3 class="font-medium text-white">{{template.title}}</h3>
+              @if (template.tags && template.tags.length > 0) {
               <div class="flex items-center gap-2 mt-2">
-                <span class="text-xs text-gray-400">Apps:</span>
-                <!-- In a real app, these would be dynamic icons -->
-                <div class="flex gap-2">
-                    <div class="w-5 h-5 bg-gray-700 rounded-full"></div>
-                    <div class="w-5 h-5 bg-gray-700 rounded-full"></div>
+                <span class="text-xs text-gray-400">Tags:</span>
+                <div class="flex gap-2 flex-wrap">
+                    @for(tag of template.tags.slice(0, 2); track tag) {
+                      <span class="text-xs bg-gray-700 text-gray-300 px-2 py-0.5 rounded-full">{{tag}}</span>
+                    }
                 </div>
               </div>
+              }
             </a>
           }
         </div>

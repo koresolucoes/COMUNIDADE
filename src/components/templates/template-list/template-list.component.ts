@@ -12,15 +12,19 @@ import { TemplateService, Template } from '../../../services/template.service';
 export class TemplateListComponent implements OnInit {
   private templateService = inject(TemplateService);
 
-  allTemplates = signal<Omit<Template, 'workflow_json'>[]>([]);
-  loading = signal(true);
+  allTemplates = this.templateService.templates;
+  loading = this.templateService.loading;
   error = signal<string | null>(null);
 
   // Filter and Pagination state
-  categories = signal<string[]>([]);
   selectedCategory = signal<string>('all');
   currentPage = signal(1);
   itemsPerPage = signal(9);
+
+  categories = computed(() => {
+    const templates = this.allTemplates();
+    return [...new Set(templates.map(t => t.category).filter(Boolean))].sort();
+  });
 
   // Computed properties for display
   filteredTemplates = computed(() => {
@@ -67,24 +71,9 @@ export class TemplateListComponent implements OnInit {
   });
 
   ngOnInit() {
-    this.loadTemplates();
-  }
-
-  async loadTemplates() {
-    this.loading.set(true);
-    this.error.set(null);
-    try {
-      const templates = await this.templateService.getTemplates();
-      this.allTemplates.set(templates);
-
-      const uniqueCategories = [...new Set(templates.map(t => t.category).filter(Boolean))].sort();
-      this.categories.set(uniqueCategories);
-      
-    } catch (e) {
-      this.error.set(e instanceof Error ? e.message : 'Falha ao carregar os templates.');
-    } finally {
-      this.loading.set(false);
-    }
+    this.templateService.loadTemplates().catch(e => {
+        this.error.set(e instanceof Error ? e.message : 'Falha ao carregar os templates.');
+    });
   }
   
   selectCategory(category: string) {

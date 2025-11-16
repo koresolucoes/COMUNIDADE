@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
 import { Profile, AuthService } from './auth.service';
@@ -32,6 +32,12 @@ export interface TemplateComment {
 export class TemplateService {
   private supabase: SupabaseClient;
   private authService = inject(AuthService);
+  
+  private _templates = signal<Omit<Template, 'workflow_json'>[]>([]);
+  private _loading = signal(false);
+
+  readonly templates = this._templates.asReadonly();
+  readonly loading = this._loading.asReadonly();
 
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
@@ -63,29 +69,39 @@ export class TemplateService {
     }
     return profiles;
   }
-
-  async getTemplates(): Promise<Omit<Template, 'workflow_json'>[]> {
-    const { data, error } = await this.supabase
-      .from('templates')
-      .select('id, user_id, title, description, tags, category, published_at, created_at, updated_at')
-      .order('published_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching templates:', error);
-      throw error;
-    }
-
-    if (!data) {
-      return [];
+  
+  async loadTemplates(): Promise<void> {
+    if (this._templates().length > 0 || this._loading()) {
+      return; // Não recarrega se já houver dados ou estiver carregando
     }
     
-    const userIds = [...new Set(data.map(t => t.user_id))].filter((id): id is string => !!id);
-    const profiles = await this.getUserProfiles(userIds);
+    this._loading.set(true);
+    try {
+      const { data, error } = await this.supabase
+        .from('templates')
+        .select('id, user_id, title, description, tags, category, published_at, created_at, updated_at')
+        .order('published_at', { ascending: false });
 
-    return data.map((template: any) => ({
-      ...template,
-      author: profiles[template.user_id],
-    }));
+      if (error) {
+        console.error('Error fetching templates:', error);
+        throw error;
+      }
+
+      if (!data) {
+        this._templates.set([]);
+        return;
+      }
+      
+      const userIds = [...new Set(data.map(t => t.user_id))].filter((id): id is string => !!id);
+      const profiles = await this.getUserProfiles(userIds);
+
+      this._templates.set(data.map((template: any) => ({
+        ...template,
+        author: profiles[template.user_id],
+      })));
+    } finally {
+      this._loading.set(false);
+    }
   }
 
   async getTemplateById(id: string): Promise<Template | null> {
