@@ -1,0 +1,76 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-fundamentos" class="hover:text-blue-accent hover:underline">Fundamentos de DevOps: CI/CD e IaC</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O que é DevOps? Cultura, Automação e Colaboração</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda a filosofia DevOps, que une desenvolvimento e operações para entregar software mais rápido e com mais qualidade.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O "Muro da Confusão"</h2>
+      <p>
+        Tradicionalmente, no desenvolvimento de software, existiam dois times que raramente se falavam e muitas vezes tinham objetivos conflitantes:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Desenvolvedores (Devs):</strong> Focados em criar novas funcionalidades e mudar o sistema rapidamente. O sucesso é medido pela inovação.</li>
+        <li><strong>Operações (Ops):</strong> Focados em manter o sistema estável, seguro e funcionando. O sucesso é medido pela ausência de falhas. Mudanças rápidas são vistas como um risco.</li>
+      </ul>
+      <p>
+        Essa separação criava um "muro". Os Devs "jogavam" o código por cima do muro para o time de Ops implantar, e quando algo quebrava, começava o jogo de empurra. Esse atrito resultava em entregas lentas, erros em produção e muita frustração.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">DevOps: Derrubando o Muro</h2>
+      <p>
+        <strong>DevOps</strong> não é uma ferramenta ou um cargo. É uma <strong>cultura</strong>, uma filosofia que busca unir os mundos de Desenvolvimento (Dev) e Operações (Ops). O objetivo é que esses times trabalhem juntos, com as mesmas metas, para automatizar e otimizar todo o ciclo de vida da entrega de software.
+      </p>
+      <p>O foco é em <strong>Colaboração, Automação e Melhoria Contínua</strong>.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Pilares do DevOps</h2>
+      <p>A cultura DevOps se sustenta sobre um conjunto de práticas e ferramentas que formam um ciclo de vida contínuo.</p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">1. Integração Contínua (CI - Continuous Integration)</h4>
+          <p class="text-sm text-gray-400 mt-1">Sempre que um desenvolvedor envia uma alteração de código (um <code>git push</code>), um robô (servidor de CI) automaticamente compila o código, roda testes automatizados e verifica se a nova alteração não quebrou nada. Isso garante que a base de código esteja sempre em um estado saudável.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">2. Entrega Contínua (CD - Continuous Delivery)</h4>
+          <p class="text-sm text-gray-400 mt-1">É a extensão da CI. Depois que os testes passam, o robô automaticamente empacota a aplicação (ex: cria uma imagem Docker) e a deixa pronta para ser implantada em produção com um único clique.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">3. Implantação Contínua (CD - Continuous Deployment)</h4>
+          <p class="text-sm text-gray-400 mt-1">Um passo além da Entrega Contínua. Se todos os testes automatizados passarem, a nova versão é implantada em produção <strong>automaticamente</strong>, sem intervenção humana. É o ápice da automação do pipeline.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">4. Infraestrutura como Código (IaC - Infrastructure as Code)</h4>
+          <p class="text-sm text-gray-400 mt-1">Em vez de configurar servidores manualmente clicando em painéis, a infraestrutura (servidores, redes, bancos de dados) é definida em arquivos de código (como Terraform ou Docker Compose). Isso torna a criação de ambientes repetível, versionável e menos propensa a erros.</p>
+        </div>
+         <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">5. Monitoramento e Observabilidade</h4>
+          <p class="text-sm text-gray-400 mt-1">Depois que a aplicação está em produção, o ciclo não acaba. O time monitora a saúde da aplicação através de logs, métricas e tracing para identificar problemas proativamente e obter feedback para futuras melhorias.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Mais Rápido, Mais Seguro</h3>
+      <p>
+        DevOps não é sobre eliminar o time de Operações, mas sim sobre dar aos Desenvolvedores ferramentas e responsabilidades de operações, e dar ao time de Operações ferramentas e visibilidade sobre o desenvolvimento. O resultado final é a capacidade de entregar valor aos usuários de forma mais rápida, frequente e confiável.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/devops-fundamentos" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: CI/CD na Prática
+      </a>
+    </div>
+  </article>
+</div>

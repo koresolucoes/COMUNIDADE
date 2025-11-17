@@ -8,9 +8,92 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Construindo um Pipeline Completo</h1>
     <p class="mt-4 text-lg text-gray-400">Junte todos os passos, desde a leitura dos dados até a previsão final, em um pipeline reutilizável e organizado.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: Vazamento de Dados e Código Repetitivo</h2>
+      <p>
+        Até agora, nós aplicamos o pré-processamento (como o `StandardScaler`) em todo o conjunto de dados antes de dividi-lo em treino e teste. Isso introduz um erro sutil, mas perigoso, chamado <strong>vazamento de dados (data leakage)</strong>. O scaler "aprende" a média e o desvio padrão de todo o conjunto, incluindo os dados de teste que o modelo não deveria ver. Isso pode fazer com que a performance do seu modelo pareça melhor do que realmente é.
+      </p>
+      <p>
+        A forma correta é: "aprender" os parâmetros de pré-processamento (a média, as categorias do one-hot encoder) <strong>apenas</strong> com os dados de treino e depois aplicar essa mesma transformação aos dados de teste. Fazer isso manualmente é repetitivo e propenso a erros.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Solução: O `Pipeline` e o `ColumnTransformer`</h2>
+      <p>
+        O Scikit-learn oferece duas ferramentas incríveis para automatizar e organizar esse fluxo:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>`ColumnTransformer`</strong>: Permite aplicar diferentes transformações a diferentes colunas. Ex: aplicar um `OneHotEncoder` às colunas de texto e um `StandardScaler` às colunas numéricas.</li>
+        <li><strong>`Pipeline`</strong>: Encadeia múltiplos passos de processamento e um modelo final em um único objeto. Ele garante que cada passo seja treinado (<code>fit</code>) apenas nos dados de treino e aplicado (<code>transform</code>) tanto nos dados de treino quanto nos de teste.</li>
+      </ul>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Construindo o Pipeline Passo a Passo</h2>
+      <p>Vamos usar um DataFrame de exemplo com colunas numéricas e categóricas.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Pipeline completo de pré-processamento e modelagem</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+
+# 1. Dados de exemplo
+data = {{ '{' }}
+    'quartos': [3, 4, 2, 5],
+    'regiao': ['Norte', 'Sul', 'Norte', 'Leste'],
+    'preco': [300, 450, 250, 500]
+{{ '}' }}
+df = pd.DataFrame(data)
+
+X = df.drop('preco', axis=1)
+y = df['preco']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
+
+# 2. Definir os transformadores para cada tipo de coluna
+numeric_features = ['quartos']
+categorical_features = ['regiao']
+
+# O ColumnTransformer aplica o scaler nas colunas numéricas e o encoder nas categóricas
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), numeric_features),
+        ('cat', OneHotEncoder(), categorical_features)
+    ])
+
+# 3. Criar o Pipeline
+# Ele primeiro executa o pré-processador e depois treina o modelo de regressão
+pipeline = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('regressor', LinearRegression())
+])
+
+# 4. Treinar o Pipeline inteiro com um único comando .fit()!
+pipeline.fit(X_train, y_train)
+
+# 5. Fazer previsões
+predictions = pipeline.predict(X_test)
+
+# 6. Avaliar
+mse = mean_squared_error(y_test, predictions)
+print(f"MSE do Pipeline: {{'{'}}mse:.2f{{'}'}}")</code></pre>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Por que Isso é Tão Poderoso?</h3>
+      <p>
+        O Pipeline cuida de tudo para você: ele aplica <code>fit_transform</code> nos dados de treino e apenas <code>transform</code> nos dados de teste, evitando o vazamento de dados. Seu código fica mais limpo, menos propenso a erros e muito mais profissional. Usar Pipelines é a prática padrão para qualquer projeto sério de Machine Learning com Scikit-learn.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-machine-learning-sklearn" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
         <span class="material-icons-outlined">arrow_back</span>
         Voltar para a Trilha

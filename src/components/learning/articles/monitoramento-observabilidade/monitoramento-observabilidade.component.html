@@ -1,0 +1,65 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-fundamentos" class="hover:text-blue-accent hover:underline">Fundamentos de DevOps: CI/CD e IaC</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Monitoramento e Observabilidade</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda a importância de monitorar suas aplicações em produção com logs, métricas e tracing para garantir a saúde do sistema.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">"Se está em produção, está pegando fogo"</h2>
+      <p>
+        Este é um ditado comum em DevOps. Não importa quão bem você teste, problemas inesperados acontecerão em produção. A pergunta não é <em>se</em> algo vai falhar, mas <em>quando</em>, e o quão rápido você consegue detectar, entender e resolver o problema.
+      </p>
+      <p>
+        É aqui que entram dois conceitos-chave, que muitas vezes são confundidos: Monitoramento e Observabilidade.
+      </p>
+       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">Monitoramento</h4>
+          <p class="text-sm text-gray-400 mt-2">É a prática de coletar e analisar dados para <strong>responder a perguntas que você já sabe que precisa fazer</strong>. Ex: "O uso de CPU está acima de 90%?", "A latência da API está aumentando?". O monitoramento te alerta sobre problemas conhecidos.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">Observabilidade</h4>
+          <p class="text-sm text-gray-400 mt-2">É a capacidade de <strong>fazer perguntas novas e inesperadas sobre seu sistema</strong> sem precisar adicionar novo código. Ela te ajuda a entender o "porquê" por trás dos problemas. Ex: "Por que as requisições para o usuário X estão 10x mais lentas que para os outros?".</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Três Pilares da Observabilidade</h2>
+      <p>A observabilidade é construída sobre três tipos principais de dados, que juntos, pintam um quadro completo da saúde do seu sistema.</p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200 flex items-center gap-2"><span class="material-icons-outlined">description</span>1. Logs</h4>
+          <p class="text-sm text-gray-400 mt-1">São registros de eventos discretos que aconteceram em um ponto no tempo. Pense neles como um diário detalhado da sua aplicação. Logs são ótimos para entender o fluxo de uma requisição específica e depurar erros. A prática moderna é usar <strong>logs estruturados (como JSON)</strong>, que são muito mais fáceis de pesquisar e filtrar.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200 flex items-center gap-2"><span class="material-icons-outlined">timeline</span>2. Métricas</h4>
+          <p class="text-sm text-gray-400 mt-1">São medições numéricas agregadas ao longo do tempo (dados de série temporal). Elas são ideais para criar dashboards e alertas. Exemplos incluem: uso de CPU, requisições por segundo, taxa de erro, latência média. Ferramentas como o <strong>Prometheus</strong> são o padrão da indústria para coletar métricas.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200 flex items-center gap-2"><span class="material-icons-outlined">account_tree</span>3. Traces (Rastreamento Distribuído)</h4>
+          <p class="text-sm text-gray-400 mt-1">Em uma arquitetura de microserviços, uma única requisição do usuário pode passar por dezenas de serviços diferentes. Um "trace" segue a jornada completa dessa requisição, mostrando quanto tempo ela gastou em cada serviço. É a ferramenta definitiva para encontrar gargalos de performance e entender dependências complexas.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Vendo no Escuro</h3>
+      <p>
+        Monitoramento e observabilidade são os "sentidos" da sua aplicação em produção. Sem eles, você está operando às cegas. Ao coletar e analisar logs, métricas e traces, você ganha a capacidade de entender o que está acontecendo, identificar problemas antes que se tornem críticos e tomar decisões informadas para melhorar a performance e a confiabilidade do seu sistema.
+      </p>
+    </div>
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/devops-fundamentos" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>

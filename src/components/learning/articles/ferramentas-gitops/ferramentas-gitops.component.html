@@ -1,0 +1,138 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-avancado" class="hover:text-blue-accent hover:underline">DevOps Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Ferramentas de GitOps: ArgoCD e Flux</h1>
+    <p class="mt-4 text-lg text-gray-400">Conheça as duas principais ferramentas que implementam o fluxo GitOps para Kubernetes.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Como o GitOps Funciona? O Padrão "Operator"</h2>
+      <p>
+        Para que a mágica do GitOps aconteça, precisamos de um "agente" dentro do nosso cluster Kubernetes que constantemente observa nosso repositório Git e aplica as mudanças. Essas ferramentas, como ArgoCD e Flux, são implementadas usando o <strong>Padrão Operator</strong>.
+      </p>
+      <p>
+        Um Operator é um controlador especializado que roda dentro do cluster. Ele funciona em um "loop de reconciliação":
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>Observar:</strong> O Operator monitora o estado de um repositório Git.</li>
+        <li><strong>Comparar:</strong> Ele compara o estado definido nos arquivos YAML do Git com o estado atual dos recursos no cluster.</li>
+        <li><strong>Agir:</strong> Se houver uma diferença, o Operator aplica as mudanças necessárias no cluster para que ele corresponda ao que está no Git.</li>
+      </ol>
+      <p>Isso é conhecido como um modelo <strong>pull (puxar)</strong>, pois é o agente no cluster que "puxa" as configurações do Git, em vez de um sistema de CI externo "empurrar" as mudanças para o cluster.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">ArgoCD: O Painel de Controle Centralizado</h2>
+      <p>
+        ArgoCD é um dos projetos mais populares da CNCF para GitOps. Sua principal filosofia é fornecer uma <strong>visualização e gerenciamento centralizados</strong> para suas aplicações.
+      </p>
+      <h3 class="text-xl font-bold text-white mt-6">Como Funciona?</h3>
+      <p>O coração do ArgoCD é o seu CRD (Custom Resource Definition) chamado <code>Application</code>. Você define um recurso `Application` que diz ao ArgoCD:</p>
+      <ul>
+        <li>Qual repositório Git monitorar (<code>source.repoURL</code>).</li>
+        <li>Qual branch ou tag observar (<code>source.targetRevision</code>).</li>
+        <li>Qual caminho dentro do repositório contém os manifestos YAML (<code>source.path</code>).</li>
+        <li>Onde implantar (<code>destination.server</code> e <code>destination.namespace</code>).</li>
+      </ul>
+      <p>A partir daí, o ArgoCD assume o controle e mantém essa aplicação sincronizada.</p>
+
+      <h3 class="text-xl font-bold text-white mt-6">Pontos Fortes do ArgoCD</h3>
+      <ul class="list-disc list-inside text-gray-400">
+        <li><strong>Interface Gráfica (UI) Poderosa:</strong> A UI do ArgoCD é seu maior diferencial. Ela mostra visualmente a relação entre os recursos do Kubernetes, o status de sincronização, o histórico de commits e permite operações como rollback com um clique.</li>
+        <li><strong>Multi-Tenancy e Multi-Cluster:</strong> É projetado para gerenciar múltiplas aplicações em múltiplos clusters a partir de uma única interface, ideal para organizações maiores.</li>
+        <li><strong>Visualização Clara do Drift:</strong> A UI deixa muito claro quando o estado do cluster está diferente do que está no Git ("out of sync").</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Flux (ou FluxCD): A Caixa de Ferramentas Nativas do Kubernetes</h2>
+      <p>
+        Flux é o outro grande projeto de GitOps da CNCF. Sua filosofia é diferente: em vez de uma ferramenta monolítica, Flux é uma <strong>coleção de controladores especializados</strong> (um "toolkit") que trabalham juntos.
+      </p>
+      <h3 class="text-xl font-bold text-white mt-6">Como Funciona?</h3>
+      <p>Flux divide as responsabilidades em múltiplos CRDs e controladores:</p>
+      <ul>
+        <li><code>GitRepository</code> (Source Controller): Define a "fonte" de onde buscar os manifestos (um repositório Git).</li>
+        <li><code>Kustomization</code> (Kustomize Controller): Aponta para uma <code>GitRepository</code> e define qual caminho aplicar no cluster. Ele usa a ferramenta Kustomize para aplicar os YAMLs.</li>
+        <li><code>HelmRelease</code> (Helm Controller): Gerencia o ciclo de vida de releases do Helm de forma declarativa.</li>
+      </ul>
+      <p>Você compõe esses recursos para criar seu pipeline de GitOps.</p>
+
+      <h3 class="text-xl font-bold text-white mt-6">Pontos Fortes do Flux</h3>
+      <ul class="list-disc list-inside text-gray-400">
+        <li><strong>Modularidade e Composabilidade:</strong> Por ser um toolkit, você usa apenas as peças que precisa. Isso o torna leve e flexível.</li>
+        <li><strong>Sensação "Nativa" do Kubernetes:</strong> A interação com Flux é feita principalmente via <code>kubectl</code> e arquivos YAML, o que parece muito natural para quem já está acostumado com o Kubernetes.</li>
+        <li><strong>Segurança:</strong> A natureza descentralizada e a granularidade dos seus componentes podem oferecer um modelo de segurança mais restrito.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">ArgoCD vs. Flux: Qual Escolher?</h2>
+      <table class="w-full text-left border-collapse border border-gray-800">
+          <thead class="bg-gray-800">
+              <tr>
+                  <th class="p-3 border-b border-gray-700">Aspecto</th>
+                  <th class="p-3 border-b border-gray-700">ArgoCD</th>
+                  <th class="p-3 border-b border-gray-700">Flux</th>
+              </tr>
+          </thead>
+          <tbody>
+              <tr class="border-t border-gray-800">
+                  <td class="p-3 font-semibold">Filosofia</td>
+                  <td class="p-3">Centralizado, aplicação como unidade</td>
+                  <td class="p-3">Descentralizado, toolkit de controladores</td>
+              </tr>
+              <tr class="border-t border-gray-800">
+                  <td class="p-3 font-semibold">Interface Principal</td>
+                  <td class="p-3">UI Web (muito forte) e CLI</td>
+                  <td class="p-3">CLI (<code>fluxctl</code>) e YAMLs (<code>kubectl</code>)</td>
+              </tr>
+              <tr class="border-t border-gray-800">
+                  <td class="p-3 font-semibold">Curva de Aprendizado</td>
+                  <td class="p-3">Mais fácil para iniciantes, graças à UI</td>
+                  <td class="p-3">Requer um entendimento mais profundo dos conceitos do K8s</td>
+              </tr>
+              <tr class="border-t border-gray-800">
+                  <td class="p-3 font-semibold">Multi-Cluster</td>
+                  <td class="p-3">Gerenciamento centralizado nativo</td>
+                  <td class="p-3">Possível, mas requer uma configuração mais distribuída</td>
+              </tr>
+          </tbody>
+      </table>
+      <p class="mt-4">
+        <strong>Escolha ArgoCD se:</strong> Sua equipe valoriza uma interface visual forte, você precisa gerenciar muitas aplicações em múltiplos clusters de forma centralizada, e quer uma experiência mais "out-of-the-box".
+      </p>
+      <p>
+        <strong>Escolha Flux se:</strong> Sua equipe se sente confortável com a linha de comando e <code>kubectl</code>, você valoriza uma abordagem modular e mais próxima do "jeito Kubernetes de ser", e quer construir um pipeline de GitOps altamente customizado.
+      </p>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Exercício Prático</h3>
+      <p>
+        A melhor forma de entender a filosofia de cada ferramenta é ver sua documentação "Getting Started".
+      </p>
+      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
+        <li>Acesse a documentação do <a href="https://argo-cd.readthedocs.io/en/stable/getting_started/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">ArgoCD</a>. Observe como o guia foca em instalar a ferramenta e depois criar um recurso <code>Application</code>.</li>
+        <li>Acesse a documentação do <a href="https://fluxcd.io/flux/get-started/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">Flux</a>. Observe como o guia foca em usar o comando <code>flux bootstrap</code> para conectar o cluster a um repositório Git.</li>
+        <li>Compare as duas abordagens. Qual parece mais intuitiva para você?</li>
+      </ol>
+    </div>
+
+    <div class="pt-8 flex justify-between items-center">
+       <a routerLink="/learning/devops-avancado" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <a routerLink="/learning/article/seguranca-containers" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors text-sm">
+        Próximo Passo: Segurança de Contêineres
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </article>
+</div>

@@ -1,0 +1,95 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-avancado" class="hover:text-blue-accent hover:underline">DevOps Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">De Swarm para Kubernetes: Uma Introdução</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda por que o Kubernetes (K8s) se tornou o padrão para orquestração e quais problemas ele resolve.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia da Logística</h2>
+      <p>
+        No artigo sobre Docker Swarm, vimos como orquestrar contêineres em múltiplas máquinas. Pense no Swarm como gerenciar uma pequena frota de vans de entrega para uma empresa local. É simples, direto e muito eficaz para essa escala.
+      </p>
+      <p>
+        O <strong>Kubernetes (K8s)</strong>, por outro lado, é como gerenciar a logística global da Amazon ou FedEx. Ele não lida apenas com as vans (contêineres), mas também com os armazéns (nós), as rotas de entrega (redes), o rastreamento de pacotes (observabilidade), a alfândega (segurança) e o redirecionamento automático em caso de estradas bloqueadas (auto-recuperação).
+      </p>
+      <p>
+        Ambos resolvem o problema de orquestração, mas em escalas e com níveis de complexidade e poder totalmente diferentes.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Por que ir Além do Swarm?</h2>
+      <p>
+        Docker Swarm é excelente pela sua simplicidade e integração com o ecossistema Docker. No entanto, à medida que as aplicações crescem em complexidade e escala, suas limitações começam a aparecer:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Ecossistema e Comunidade:</strong> O Kubernetes se tornou o padrão da indústria. Isso significa uma comunidade massiva, mais ferramentas, mais integrações e mais profissionais qualificados.</li>
+        <li><strong>Extensibilidade:</strong> O Kubernetes pode ser estendido com "Custom Resource Definitions" (CRDs), permitindo que ele gerencie praticamente qualquer tipo de recurso, não apenas contêineres.</li>
+        <li><strong>Configuração Declarativa:</strong> Enquanto Swarm usa o simples <code>docker-compose.yml</code>, o Kubernetes usa arquivos YAML mais detalhados que descrevem o "estado desejado" do sistema de forma muito mais granular e poderosa.</li>
+        <li><strong>Networking Avançado:</strong> O modelo de rede do Kubernetes é mais complexo, mas oferece um controle muito mais fino sobre como os serviços se comunicam e são expostos.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O que é Kubernetes (K8s)? O Sistema Operacional da Nuvem</h2>
+      <p>
+        Criado pelo Google e agora mantido pela Cloud Native Computing Foundation (CNCF), o Kubernetes é uma plataforma de código aberto para <strong>automatizar a implantação, o escalonamento e o gerenciamento de aplicações em contêineres</strong>.
+      </p>
+      <p>
+        A principal filosofia do Kubernetes é <strong>declarativa</strong>. Você não diz ao Kubernetes "execute este contêiner". Você escreve um arquivo YAML dizendo: "Eu quero que o estado do meu sistema seja este: três cópias da minha API rodando, conectadas a este banco de dados e acessíveis através deste endereço". O Kubernetes então trabalha incansavelmente em um "loop de reconciliação" para garantir que a realidade corresponda ao seu estado desejado. Se um contêiner falhar, ele cria outro. Se um nó cair, ele move os contêineres para outro nó.
+      </p>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Problemas que o Kubernetes Resolve Brilhantemente</h2>
+      <ul class="list-disc list-inside text-gray-400 space-y-3">
+        <li><strong>Auto-Recuperação (Self-Healing):</strong> Monitora constantemente a saúde dos contêineres e nós, reiniciando ou substituindo automaticamente aqueles que falham.</li>
+        <li><strong>Escalonamento Automático (Auto-Scaling):</strong> Pode aumentar ou diminuir o número de réplicas de uma aplicação com base no uso de CPU ou outras métricas customizadas.</li>
+        <li><strong>Descoberta de Serviços e Balanceamento de Carga:</strong> Fornece um DNS interno para que os serviços possam se encontrar usando nomes consistentes e distribui o tráfego de rede entre as réplicas de um serviço.</li>
+        <li><strong>Implantações e Rollbacks Automatizados:</strong> Permite implantar novas versões da sua aplicação sem tempo de inatividade (rolling updates) e reverter facilmente para uma versão anterior se algo der errado.</li>
+        <li><strong>Gerenciamento de Configuração e Segredos:</strong> Oferece objetos dedicados para gerenciar configurações de aplicação e dados sensíveis (como senhas e chaves de API) de forma segura.</li>
+      </ul>
+    </div>
+
+    <div class="p-6 bg-gray-800/50 border border-gray-700 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Exercícios Práticos</h2>
+      
+      <div class="mt-6">
+        <h4 class="font-semibold text-gray-200">Exercício 1: Pensando em Microserviços</h4>
+        <p class="text-sm text-gray-400">Pense em um site de e-commerce. Se você fosse dividi-lo em microserviços (pequenos serviços independentes), quais seriam eles? Liste pelo menos 4 serviços que você criaria (Ex: Serviço de Autenticação de Usuário, Serviço de Catálogo de Produtos, etc.). Isso ajuda a entender por que um orquestrador poderoso é necessário para gerenciar todas essas partes móveis.</p>
+      </div>
+
+      <div class="mt-6">
+        <h4 class="font-semibold text-gray-200">Exercício 2: Pesquisa de Mercado</h4>
+        <p class="text-sm text-gray-400">Os grandes provedores de nuvem oferecem Kubernetes como um serviço gerenciado, o que simplifica muito a administração. Pesquise e anote o nome do serviço de Kubernetes gerenciado para os três principais provedores: Amazon Web Services (AWS), Google Cloud Platform (GCP) e Microsoft Azure.</p>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Complexidade em Troca de Poder</h3>
+      <p>
+        Não há como negar: Kubernetes tem uma curva de aprendizado íngreme. Ele introduz muitos conceitos novos. No entanto, o poder, a resiliência e a flexibilidade que ele oferece são o motivo pelo qual se tornou o padrão de fato para rodar aplicações em contêineres em escala.
+      </p>
+      <p>
+        No próximo artigo, vamos começar a desvendar essa complexidade, explorando os blocos de construção fundamentais do Kubernetes: Pods, Services e Deployments.
+      </p>
+    </div>
+
+    <div class="pt-8 flex justify-between items-center">
+       <a routerLink="/learning/devops-avancado" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <a routerLink="/learning/article/principais-conceitos-k8s" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors text-sm">
+        Próximo Passo: Pods, Services e Deployments
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </article>
+</div>

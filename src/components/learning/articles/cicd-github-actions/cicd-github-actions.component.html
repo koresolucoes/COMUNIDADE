@@ -1,0 +1,101 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-fundamentos" class="hover:text-blue-accent hover:underline">Fundamentos de DevOps: CI/CD e IaC</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">CI/CD na Prática com GitHub Actions</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a criar um pipeline de Integração e Entrega Contínua para automatizar testes e deploys a cada commit.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      Vamos colocar a teoria de CI/CD em prática. Usaremos o <strong>GitHub Actions</strong>, a ferramenta de automação integrada ao GitHub, para criar um pipeline que testa e implanta nossa aplicação Node.js dockerizada.
+    </p>
+
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Objetivo do Nosso Pipeline</h2>
+      <p>Queremos que, a cada <code>git push</code> na nossa branch principal, o GitHub Actions faça o seguinte automaticamente:</p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li>Inicie um servidor virtual (um "runner").</li>
+        <li>Faça o login no nosso Docker Hub (um registro para guardar nossas imagens Docker).</li>
+        <li>Construa a imagem Docker da nossa aplicação a partir do `Dockerfile`.</li>
+        <li>Envie (push) a nova imagem para o Docker Hub.</li>
+        <li>Conecte-se via SSH à nossa VPS.</li>
+        <li>Na VPS, execute o comando para baixar a nova imagem (<code>docker pull</code>) e reiniciar o serviço com a versão atualizada.</li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. Configurando os Segredos no GitHub</h2>
+      <p>Nunca coloque senhas ou chaves diretamente no seu código. No seu repositório do GitHub, vá em <code>Settings > Secrets and variables > Actions</code> e crie os seguintes "Repository secrets":</p>
+       <ul class="list-disc list-inside text-gray-400 text-sm space-y-1">
+        <li><code>DOCKERHUB_USERNAME</code>: Seu nome de usuário no Docker Hub.</li>
+        <li><code>DOCKERHUB_TOKEN</code>: Um token de acesso gerado no Docker Hub.</li>
+        <li><code>VPS_HOST</code>: O endereço IP da sua VPS.</li>
+        <li><code>VPS_USERNAME</code>: O usuário para conectar via SSH (geralmente <code>root</code>).</li>
+        <li><code>VPS_SSH_KEY</code>: A sua chave SSH privada para acessar a VPS sem senha.</li>
+      </ul>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Criando o Workflow do GitHub Actions</h2>
+      <p>Crie o arquivo <code>.github/workflows/deploy.yml</code> no seu projeto com o seguinte conteúdo:</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">.github/workflows/deploy.yml</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml">name: CI/CD Docker
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ '{' }}{{ '{' }} secrets.DOCKERHUB_USERNAME {{ '}' }}{{ '}' }}
+        password: ${{ '{' }}{{ '{' }} secrets.DOCKERHUB_TOKEN {{ '}' }}{{ '}' }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ '{' }}{{ '{' }} secrets.DOCKERHUB_USERNAME {{ '}' }}{{ '}' }}/minha-api-tarefas:latest
+
+    - name: Deploy to VPS
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ '{' }}{{ '{' }} secrets.VPS_HOST {{ '}' }}{{ '}' }}
+        username: ${{ '{' }}{{ '{' }} secrets.VPS_USERNAME {{ '}' }}{{ '}' }}
+        key: ${{ '{' }}{{ '{' }} secrets.VPS_SSH_KEY {{ '}' }}{{ '}' }}
+        script: |
+          cd /caminho/para/seu/projeto/na/vps
+          docker-compose pull api
+          docker-compose up -d --force-recreate api
+</code></pre>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: O Robô que Trabalha por Você</h3>
+      <p>
+        Você acabou de construir um pipeline de CI/CD! Agora, a cada <code>git push</code>, um robô irá garantir que seu código está saudável e, se estiver, irá publicá-lo automaticamente. Isso reduz drasticamente o trabalho manual, elimina erros de implantação e permite que você entregue novas funcionalidades com muito mais velocidade e confiança.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/devops-fundamentos" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Infraestrutura como Código
+      </a>
+    </div>
+  </article>
+</div>

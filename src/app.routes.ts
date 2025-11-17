@@ -110,6 +110,21 @@ import { SklearnMetricasComponent } from './components/learning/articles/sklearn
 import { SklearnFeatureEngineeringComponent } from './components/learning/articles/sklearn-feature-engineering/sklearn-feature-engineering.component';
 import { SklearnPipelineComponent } from './components/learning/articles/sklearn-pipeline/sklearn-pipeline.component';
 
+// DevOps Articles
+import { OQueEDevopsComponent } from './components/learning/articles/o-que-e-devops/o-que-e-devops.component';
+import { CicdGithubActionsComponent } from './components/learning/articles/cicd-github-actions/cicd-github-actions.component';
+import { IacComTerraformComponent } from './components/learning/articles/iac-com-terraform/iac-com-terraform.component';
+import { OrquestracaoDockerSwarmComponent } from './components/learning/articles/orquestracao-docker-swarm/orquestracao-docker-swarm.component';
+import { MonitoramentoObservabilidadeComponent } from './components/learning/articles/monitoramento-observabilidade/monitoramento-observabilidade.component';
+
+// DevOps Avançado Articles
+import { IntroKubernetesComponent } from './components/learning/articles/intro-kubernetes/intro-kubernetes.component';
+import { PrincipaisConceitosK8sComponent } from './components/learning/articles/principais-conceitos-k8s/principais-conceitos-k8s.component';
+import { OQueEGitopsComponent } from './components/learning/articles/o-que-e-gitops/o-que-e-gitops.component';
+import { FerramentasGitopsComponent } from './components/learning/articles/ferramentas-gitops/ferramentas-gitops.component';
+import { SegurancaContainersComponent } from './components/learning/articles/seguranca-containers/seguranca-containers.component';
+import { SegurancaCiCdComponent } from './components/learning/articles/seguranca-ci-cd/seguranca-ci-cd.component';
+
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -202,6 +217,21 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/sklearn-metricas', component: SklearnMetricasComponent },
   { path: 'learning/article/sklearn-feature-engineering', component: SklearnFeatureEngineeringComponent },
   { path: 'learning/article/sklearn-pipeline', component: SklearnPipelineComponent },
+
+  // DevOps
+  { path: 'learning/article/o-que-e-devops', component: OQueEDevopsComponent },
+  { path: 'learning/article/cicd-github-actions', component: CicdGithubActionsComponent },
+  { path: 'learning/article/iac-com-terraform', component: IacComTerraformComponent },
+  { path: 'learning/article/orquestracao-docker-swarm', component: OrquestracaoDockerSwarmComponent },
+  { path: 'learning/article/monitoramento-observabilidade', component: MonitoramentoObservabilidadeComponent },
+
+  // DevOps Avançado
+  { path: 'learning/article/intro-kubernetes', component: IntroKubernetesComponent },
+  { path: 'learning/article/principais-conceitos-k8s', component: PrincipaisConceitosK8sComponent },
+  { path: 'learning/article/o-que-e-gitops', component: OQueEGitopsComponent },
+  { path: 'learning/article/ferramentas-gitops', component: FerramentasGitopsComponent },
+  { path: 'learning/article/seguranca-containers', component: SegurancaContainersComponent },
+  { path: 'learning/article/seguranca-ci-cd', component: SegurancaCiCdComponent },
 
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },

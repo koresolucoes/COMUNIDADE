@@ -9,129 +9,98 @@
     <p class="mt-4 text-lg text-gray-400">Descubra o que significa "escrever código" e como os computadores entendem as instruções que damos a eles.</p>
   </header>
 
-  <article class="prose-container space-y-8">
+  <article class="prose-container space-y-10">
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
-      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia da Receita</h2>
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia da Receita de Bolo</h2>
       <p>
-        Imagine que você quer ensinar um robô a fazer um sanduíche. Você não pode simplesmente dizer "faça um sanduíche". O robô não entenderia. Você precisa dar instruções extremamente precisas e sequenciais:
+        Imagine que você tem um robô de cozinha super avançado. Você não pode simplesmente dizer "faça um bolo". Ele não tem a intuição de um chef. Para que ele execute a tarefa, você precisa fornecer uma <strong>receita</strong>, um conjunto de instruções sequenciais, precisas e sem ambiguidades:
       </p>
       <ol class="list-decimal list-inside text-gray-400 space-y-2">
-        <li>Pegue duas fatias de pão.</li>
-        <li>Passe manteiga na fatia 1.</li>
-        <li>Coloque uma fatia de queijo sobre a fatia 1.</li>
-        <li>Coloque a fatia 2 sobre a fatia 1.</li>
+        <li>Pré-aqueça o forno a 180°C.</li>
+        <li>Em uma tigela, misture 200g de farinha e 150g de açúcar.</li>
+        <li>Adicione 3 ovos e 100ml de leite.</li>
+        <li>Bata por 5 minutos.</li>
+        <li>Despeje na forma e asse por 30 minutos.</li>
       </ol>
       <p>
-        <strong>Programação é exatamente isso:</strong> é a arte de escrever uma "receita" (um conjunto de instruções) que um computador pode entender e executar para realizar uma tarefa. O computador é como o nosso robô: incrivelmente poderoso, mas muito literal. Ele só faz o que mandamos.
+        <strong>Programação é exatamente isso:</strong> é a arte de escrever uma "receita" (um **algoritmo**) em um idioma que o computador entende, para que ele possa executar uma tarefa. O computador é como nosso robô: incrivelmente rápido e preciso, mas completamente literal. Ele fará <em>exatamente</em> o que você mandar.
       </p>
     </div>
 
     <div>
       <h2 class="text-2xl font-semibold text-white">O que é "Código"?</h2>
       <p>
-        O "código" é a receita em si. É um texto que escrevemos em um arquivo, seguindo as regras de uma linguagem específica que o computador foi treinado para entender. Cada linha de código é uma instrução.
+        O "código" é a receita em si, escrita em uma <strong>linguagem de programação</strong>. É um texto que segue uma gramática (sintaxe) rigorosa. Cada linha de código é uma instrução, um passo na receita.
       </p>
       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
         <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: O famoso "Olá, Mundo!"</h4>
-        <p class="text-xs text-gray-400 mb-2">Esta é a primeira instrução que a maioria dos programadores aprende. Ela simplesmente diz ao computador para mostrar a mensagem "Olá, Mundo!" na tela.</p>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">print("Olá, Mundo!")</code></pre>
-      </div>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">As Linguagens de Programação</h2>
-      <p>
-        Assim como os humanos têm diferentes idiomas (Português, Inglês, Japonês), existem muitas linguagens de programação. Cada uma tem sua própria "gramática" (sintaxe), mas muitas compartilham os mesmos conceitos lógicos fundamentais.
-      </p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">"Olá, Mundo!" em diferentes linguagens:</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-          <div>
-            <p class="text-xs font-semibold text-gray-400">Python (popular para automação e dados)</p>
-            <pre class="!bg-gray-900 !p-3 !my-0 text-sm"><code class="language-python">print("Olá, Mundo!")</code></pre>
-          </div>
-          <div>
-            <p class="text-xs font-semibold text-gray-400">JavaScript (a linguagem da web)</p>
-            <pre class="!bg-gray-900 !p-3 !my-0 text-sm"><code class="language-js">console.log("Olá, Mundo!");</code></pre>
-          </div>
-        </div>
-        <p class="text-xs text-gray-500 mt-4">Note que o objetivo é o mesmo, mas a forma de escrever (a sintaxe) é um pouco diferente. Você não precisa aprender todas! A maioria dos desenvolvedores se especializa em algumas.</p>
+        <p class="text-xs text-gray-400 mb-2">Esta é a instrução mais básica: dizer ao computador para exibir uma mensagem na tela.</p>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Em Python, usamos a função print()
+print("Olá, Mundo da Automação!")</code></pre>
       </div>
     </div>
     
-     <div>
-      <h2 class="text-2xl font-semibold text-white">Como o Computador Entende? O "Tradutor"</h2>
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Como o Computador Entende? Compiladores e Interpretadores</h2>
       <p>
-        O código que escrevemos é feito para ser lido por humanos. Mas o processador de um computador só entende "código de máquina" (basicamente, zeros e uns). Então, como a mágica acontece? Usamos um programa especial que atua como um tradutor.
+        O código que escrevemos (código-fonte) é para humanos. O processador do computador só entende "código de máquina" (sequências de 0s e 1s). O processo de tradução é feito por programas especiais:
       </p>
-      <div class="p-6 bg-gray-800 border-l-4 border-blue-accent rounded-r-lg">
-          <div class="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
-              <div class="p-3 bg-gray-700 rounded-md">
-                  <p class="text-sm font-semibold text-white">Seu Código</p>
-                  <p class="text-xs text-gray-400">(Legível por humanos)</p>
-              </div>
-              <span class="material-icons-outlined text-blue-accent text-2xl">arrow_forward</span>
-              <div class="p-3 bg-gray-700 rounded-md">
-                  <p class="text-sm font-semibold text-white">Compilador / Interpretador</p>
-                  <p class="text-xs text-gray-400">(O Tradutor)</p>
-              </div>
-              <span class="material-icons-outlined text-blue-accent text-2xl">arrow_forward</span>
-              <div class="p-3 bg-gray-700 rounded-md">
-                  <p class="text-sm font-semibold text-white">Código de Máquina</p>
-                  <p class="text-xs text-gray-400">(Linguagem do Computador)</p>
-              </div>
-          </div>
-      </div>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Compilador:</strong> Lê seu código-fonte <em>inteiro</em> de uma vez, traduz tudo para um arquivo executável de código de máquina e só então você pode rodar esse arquivo. Pense em traduzir um livro inteiro antes de entregá-lo para alguém ler. (Ex: C++, Java).</li>
+        <li><strong>Interpretador:</strong> Lê e executa seu código-fonte <em>linha por linha</em>, em tempo real. Pense em um tradutor simultâneo em uma conversa. (Ex: Python, JavaScript).</li>
+      </ul>
     </div>
 
     <div>
-      <h2 class="text-2xl font-semibold text-white">O Que Podemos Construir com Programação?</h2>
-      <p>Praticamente tudo no mundo digital! A programação é a base para:</p>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-        <div class="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg">
-          <span class="material-icons-outlined text-blue-accent text-3xl">public</span>
-          <div>
-            <h4 class="font-semibold text-gray-200">Websites e Aplicações</h4>
-            <p class="text-sm text-gray-400">Desde blogs simples até redes sociais complexas como o Facebook.</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg">
-          <span class="material-icons-outlined text-blue-accent text-3xl">lan</span>
-          <div>
-            <h4 class="font-semibold text-gray-200">Automação de Tarefas</h4>
-            <p class="text-sm text-gray-400">Rotinas que transferem dados, enviam e-mails e conectam sistemas, como o n8n faz.</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg">
-          <span class="material-icons-outlined text-blue-accent text-3xl">sports_esports</span>
-          <div>
-            <h4 class="font-semibold text-gray-200">Jogos</h4>
-            <p class="text-sm text-gray-400">Dos jogos de celular aos grandes títulos de console, tudo é feito com código.</p>
-          </div>
-        </div>
-        <div class="flex items-start gap-3 p-4 bg-gray-800/50 rounded-lg">
-          <span class="material-icons-outlined text-blue-accent text-3xl">analytics</span>
-          <div>
-            <h4 class="font-semibold text-gray-200">Análise de Dados e IA</h4>
-            <p class="text-sm text-gray-400">Inteligências Artificiais e algoritmos que analisam grandes volumes de dados.</p>
-          </div>
-        </div>
+      <h2 class="text-2xl font-semibold text-white">Programar é Pensar de Forma Estruturada</h2>
+      <p>
+        Mais importante do que decorar a sintaxe de uma linguagem é aprender a <strong>pensar como um programador</strong>. Isso significa quebrar problemas grandes em passos menores e lógicos.
+      </p>
+      <p>
+        Antes de escrever qualquer código, pergunte-se:
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2">
+        <li><strong>Qual é o objetivo final?</strong> O que eu quero que o programa faça?</li>
+        <li><strong>Quais são as entradas?</strong> De quais informações eu preciso para começar? (Ex: os ingredientes da receita).</li>
+        <li><strong>Quais são os passos?</strong> Qual é a sequência de transformações que preciso aplicar nas entradas?</li>
+        <li><strong>Qual é a saída?</strong> O que o programa deve produzir no final? (Ex: o bolo assado).</li>
+      </ol>
+    </div>
+
+    <div class="p-6 bg-gray-800/50 border border-gray-700 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Exercícios Práticos de Lógica</h2>
+      <p>
+        Vamos treinar nosso cérebro para pensar de forma algorítmica, sem escrever uma única linha de código.
+      </p>
+      
+      <div class="mt-6">
+        <h4 class="font-semibold text-gray-200">Exercício 1: A Receita do Café</h4>
+        <p class="text-sm text-gray-400">Escreva em português, em uma lista numerada, os passos mais detalhados possíveis para fazer uma xícara de café coado. Não pule nenhuma etapa, por mais óbvia que pareça. Lembre-se, você está ensinando um robô literal.</p>
+      </div>
+
+      <div class="mt-6">
+        <h4 class="font-semibold text-gray-200">Exercício 2: E se algo der errado?</h4>
+        <p class="text-sm text-gray-400">Olhe para a sua receita de café. Pense em pelo menos duas coisas que poderiam dar errado (ex: "e se não tiver pó de café?"). Para cada problema, escreva uma instrução condicional ("SE... ENTÃO... SENÃO..."). Isso é o começo do tratamento de erros!</p>
+        <p class="text-xs text-gray-500 mt-2">Exemplo: <strong>SE</strong> a jarra de água estiver vazia, <strong>ENTÃO</strong> encha a jarra. <strong>SENÃO</strong>, continue para o próximo passo.</p>
       </div>
     </div>
     
     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Programar é Resolver Problemas</h3>
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Programar é Resolver Quebra-Cabeças</h3>
       <p>
-        No fim do dia, programar é a arte de resolver problemas. É sobre quebrar um grande desafio em passos lógicos e minúsculos que um computador pode executar. A linguagem de programação é apenas a ferramenta que usamos para escrever a solução.
+        No fim do dia, programar é a arte de resolver quebra-cabeças. É sobre decompor um desafio em peças lógicas e, em seguida, usar uma linguagem de programação como ferramenta para montar a solução. A boa notícia é que, com prática, essa forma de pensar se torna natural.
       </p>
     </div>
 
-    <div class="pt-8 text-center">
-       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+    <div class="pt-8 flex justify-between items-center">
+       <a routerLink="/learning/fundamentos-logica-web" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
         <span class="material-icons-outlined">arrow_back</span>
         Voltar para a Trilha
       </a>
+      <a routerLink="/learning/article/logica-de-programacao" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors text-sm">
+        Próximo Passo: Lógica de Programação
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
     </div>
-
   </article>
 </div>

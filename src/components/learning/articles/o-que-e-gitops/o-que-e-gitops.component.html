@@ -1,0 +1,80 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-avancado" class="hover:text-blue-accent hover:underline">DevOps Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O que é GitOps? Seu Repositório como Fonte da Verdade</h1>
+    <p class="mt-4 text-lg text-gray-400">Descubra a abordagem GitOps, onde o estado desejado da sua infraestrutura é versionado no Git e sincronizado automaticamente.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: O "Drift" de Configuração</h2>
+      <p>
+        Imagine que você configurou seu cluster Kubernetes perfeitamente. Com o tempo, mudanças acontecem: um desenvolvedor aplica uma alteração manual para um teste rápido e esquece de reverter (<code>kubectl patch ...</code>), uma atualização automática falha pela metade, etc.
+      </p>
+      <p>
+        Logo, o estado real do seu cluster ("o que está rodando") começa a se afastar do estado que você *acha* que deveria estar rodando. Esse fenômeno é chamado de <strong>configuration drift</strong> (desvio de configuração) e é uma grande fonte de bugs, falhas de segurança e dores de cabeça.
+      </p>
+      <p>
+        <strong>GitOps</strong> é uma metodologia para gerenciamento de infraestrutura e aplicações que resolve esse problema, usando o Git como a <strong>única fonte da verdade</strong> para o estado desejado do seu sistema.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Analogia da Planta Baixa</h2>
+      <p>
+        Pense no seu repositório Git como a <strong>planta baixa oficial e carimbada</strong> de um prédio. Dentro do prédio (seu cluster Kubernetes), há um <strong>inspetor de obras automatizado</strong> (um agente GitOps como ArgoCD ou Flux).
+      </p>
+      <p>
+        O trabalho do inspetor é simples: ele olha para a planta baixa no Git e para o prédio real, 24/7.
+      </p>
+      <ul class="list-disc list-inside text-gray-400">
+        <li>Se um engenheiro atualiza a planta (faz um <code>git push</code>), o inspetor vê a mudança e automaticamente comanda os robôs construtores para aplicar a alteração no prédio.</li>
+        <li>Se alguém entra no prédio e tenta construir uma parede extra que não está na planta (<code>kubectl apply -f ...</code>), o inspetor percebe a discrepância e comanda os robôs para derrubar a parede, garantindo que o prédio sempre corresponda exatamente à planta.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os 4 Princípios do GitOps</h2>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">1. Declarativo</h4>
+          <p class="text-sm text-gray-400 mt-1">Todo o sistema é descrito de forma declarativa, geralmente em arquivos YAML do Kubernetes. Você descreve <em>o que</em> quer, não <em>como</em> fazer.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">2. Versionado no Git</h4>
+          <p class="text-sm text-gray-400 mt-1">O estado desejado do sistema é versionado em um repositório Git, que serve como a única fonte da verdade. Isso nos dá um histórico completo de auditoria, a capacidade de reverter mudanças (<code>git revert</code>) e um fluxo de trabalho de aprovação via Pull Requests.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">3. Aprovado e Aplicado Automaticamente</h4>
+          <p class="text-sm text-gray-400 mt-1">Mudanças no estado desejado são aprovadas (via merge de um Pull Request) e então aplicadas automaticamente no sistema.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">4. Reconciliação Contínua</h4>
+          <p class="text-sm text-gray-400 mt-1">Agentes de software (os "inspetores") dentro do cluster garantem que o estado real corresponda ao estado desejado no Git, corrigindo qualquer desvio automaticamente.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Mais do que Automação, é Confiança</h3>
+      <p>
+        GitOps não é apenas uma forma de automatizar implantações. É uma mudança de paradigma que traz o poder e a segurança do Git para o mundo das operações. Ele cria um sistema auditável, resiliente e auto-corretivo, permitindo que as equipes implantem mais rápido e com muito mais confiança.
+      </p>
+    </div>
+
+    <div class="pt-8 flex justify-between items-center">
+       <a routerLink="/learning/devops-avancado" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <a routerLink="/learning/article/ferramentas-gitops" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors text-sm">
+        Próximo Passo: Ferramentas de GitOps
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </article>
+</div>

@@ -1,0 +1,98 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-fundamentos" class="hover:text-blue-accent hover:underline">Fundamentos de DevOps: CI/CD e IaC</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Orquestração de Contêineres com Docker Swarm</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a gerenciar múltiplos contêineres em um cluster de máquinas, garantindo alta disponibilidade e escalabilidade.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: E se o Contêiner Falhar?</h2>
+      <p>
+        Rodar um único contêiner com <code>docker run</code> é ótimo para desenvolvimento. Mas em produção, o que acontece se o contêiner travar? E se a demanda aumentar e um contêiner não for suficiente? Gerenciar isso manualmente é inviável.
+      </p>
+      <p>
+        É aqui que entram os <strong>orquestradores de contêineres</strong>. Eles são "maestros" que gerenciam um grupo de máquinas (um "cluster") e garantem que o número desejado de "réplicas" de cada serviço esteja sempre rodando e saudável.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O que é Docker Swarm?</h2>
+      <p>
+        Enquanto o Kubernetes é o orquestrador mais famoso (e complexo), o Docker vem com sua própria solução nativa, muito mais simples de começar: o <strong>Docker Swarm</strong>. Ele estende a simplicidade do Docker e do Docker Compose para um ambiente de múltiplas máquinas.
+      </p>
+      <p>
+        Em um Swarm, as máquinas (nós ou "nodes") têm dois papéis:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-1">
+        <li><strong>Managers:</strong> Os "cérebros" do cluster. Eles recebem as instruções (ex: "rode 3 cópias da minha API") e distribuem o trabalho.</li>
+        <li><strong>Workers:</strong> As máquinas que efetivamente rodam os contêineres.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Conceitos-Chave do Swarm</h2>
+       <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">1. Serviço (Service)</h4>
+          <p class="text-sm text-gray-400 mt-1">Em vez de pensar em "contêineres", no Swarm você pensa em "serviços". Um serviço é a definição de como um contêiner deve ser executado no cluster, incluindo a imagem, as portas, as redes e, o mais importante, o número de <strong>réplicas</strong>.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">2. Escalabilidade (Scaling)</h4>
+          <p class="text-sm text-gray-400 mt-1">Quer mais poder de processamento? Basta aumentar o número de réplicas do seu serviço. O Swarm se encarrega de iniciar os novos contêineres nos nós disponíveis. Ex: <code>docker service scale meu_servico=5</code>.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">3. Alta Disponibilidade (High Availability)</h4>
+          <p class="text-sm text-gray-400 mt-1">O Swarm está constantemente monitorando o estado do cluster. Se um nó fica offline ou um contêiner trava, ele automaticamente inicia uma nova réplica em um nó saudável para manter o número desejado de instâncias rodando.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">4. Balanceamento de Carga (Load Balancing)</h4>
+          <p class="text-sm text-gray-400 mt-1">O Swarm possui um balanceador de carga interno chamado "Routing Mesh". Se você tem 5 réplicas da sua API, o Swarm distribui as requisições que chegam entre as 5 de forma automática. Você não precisa de um balanceador de carga externo.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Do Docker Compose para o Docker Swarm: A Chave `deploy`</h2>
+      <p>
+        A transição do desenvolvimento local para o Swarm é incrivelmente suave. Você usa o mesmo arquivo <code>docker-compose.yml</code>, mas adiciona uma chave especial chamada <code>deploy</code> para definir as configurações específicas do Swarm, como o número de réplicas.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: docker-compose.yml com a seção `deploy`</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml">version: '3.8'
+
+services:
+  api:
+    image: minha-api:latest
+    networks:
+      - web
+    deploy:
+      replicas: 3 # << A MÁGICA ACONTECE AQUI!
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+</code></pre>
+        <p class="text-xs text-gray-400 mt-3">Em vez de usar <code>docker-compose up</code>, você implanta essa configuração como uma "Stack" no Swarm com o comando: <code>docker stack deploy -c docker-compose.yml minha_app</code>.</p>
+       </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: O Poder do Enxame</h3>
+      <p>
+        Docker Swarm é a forma mais simples e integrada de começar com orquestração. Ele transforma um grupo de máquinas em um recurso unificado, permitindo que você implante suas aplicações de forma escalável e resiliente, com a mesma simplicidade do <code>docker-compose.yml</code> que você já conhece.
+      </p>
+    </div>
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/devops-fundamentos" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Monitoramento e Observabilidade
+      </a>
+    </div>
+  </article>
+</div>

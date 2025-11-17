@@ -8,12 +8,62 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O que é Machine Learning?</h1>
     <p class="mt-4 text-lg text-gray-400">Entenda os conceitos fundamentais de Machine Learning e a diferença entre aprendizado supervisionado e não-supervisionado.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia: Ensinando uma Criança a Reconhecer Gatos</h2>
+      <p>
+        Imagine que você quer ensinar uma criança (ou um computador) a identificar um gato. Você não escreve uma lista de regras rígidas como "se tem pelos, orelhas pontudas E bigodes, então é um gato". Isso seria frágil e falharia com diferentes raças ou ângulos de foto.
+      </p>
+      <p>
+        Em vez disso, você mostra à criança centenas de fotos, dizendo: "isto é um gato", "isto não é um gato". Com o tempo, o cérebro da criança começa a reconhecer os <strong>padrões</strong> por conta própria.
+      </p>
+      <p>
+        <strong>Machine Learning (Aprendizado de Máquina)</strong> é exatamente isso: a ciência de criar algoritmos que permitem a um computador <strong>aprender padrões a partir de dados</strong>, sem ser explicitamente programado com regras para cada situação.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os Dois Principais Tipos de Aprendizado</h2>
+      <p>A maioria dos problemas de Machine Learning se encaixa em duas categorias principais:</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">1. Aprendizado Supervisionado</h4>
+          <p class="text-sm text-gray-400 mt-2">É como aprender com um professor. Você fornece ao algoritmo dados de entrada (as "características" ou "features") e as respostas corretas (os "rótulos" ou "labels"). O objetivo é que o algoritmo aprenda a mapear as entradas para as saídas.</p>
+          <p class="text-xs text-gray-500 mt-2"><strong>Exemplos:</strong> Prever o preço de uma casa (entrada: área, nº de quartos; saída: preço), ou classificar um e-mail como spam (entrada: texto do e-mail; saída: "spam" ou "não spam").</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">2. Aprendizado Não-Supervisionado</h4>
+          <p class="text-sm text-gray-400 mt-2">É como aprender por observação. Você fornece ao algoritmo apenas os dados de entrada, sem as respostas. O objetivo é que o algoritmo encontre estruturas ou padrões ocultos nos próprios dados.</p>
+           <p class="text-xs text-gray-500 mt-2"><strong>Exemplos:</strong> Agrupar clientes com comportamentos de compra semelhantes (clustering), ou detectar transações anômalas em um sistema financeiro (detecção de anomalias).</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Caixa de Ferramentas: Scikit-learn</h2>
+      <p>
+        <strong>Scikit-learn</strong> é a biblioteca de Machine Learning mais popular em Python. Ela é como um canivete suíço que fornece ferramentas simples e eficientes para praticamente todas as etapas do processo de aprendizado de máquina:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li>Algoritmos prontos para uso (Regressão, Classificação, Clustering, etc.).</li>
+        <li>Ferramentas para pré-processar e limpar dados.</li>
+        <li>Métodos para dividir dados em conjuntos de treino e teste.</li>
+        <li>Métricas para avaliar a performance do seu modelo.</li>
+      </ul>
+      <p>A beleza do Scikit-learn está na sua API consistente: todos os "estimadores" (modelos) funcionam da mesma maneira, com os métodos <code>.fit()</code> para treinar e <code>.predict()</code> para fazer previsões.</p>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Da Programação à Predição</h3>
+      <p>
+        Machine Learning é uma mudança de paradigma: em vez de programar regras, você programa um sistema para aprender as regras a partir dos dados. Nas próximas lições, vamos colocar a mão na massa com o Scikit-learn para treinar nosso primeiro modelo preditivo.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-machine-learning-sklearn" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
-        <span class="material-icons-outlined">arrow_back</span>
-        Voltar para a Trilha
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Seu Primeiro Modelo Preditivo
       </a>
     </div>
   </article>

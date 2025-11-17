@@ -8,12 +8,83 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Avaliando a Performance do seu Modelo</h1>
     <p class="mt-4 text-lg text-gray-400">Aprenda a usar métricas como Acurácia e Erro Quadrático Médio para saber se seu modelo está performando bem.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Por que Avaliar? A Prova dos Nove</h2>
+      <p>
+        No artigo anterior, treinamos um modelo e vimos que suas previsões pareciam "próximas" dos valores reais. Mas em Machine Learning, "próximo" não é suficiente. Precisamos de números objetivos — <strong>métricas</strong> — para quantificar o quão bom (ou ruim) nosso modelo realmente é.
+      </p>
+      <p>
+        Avaliar o modelo nos permite comparar diferentes algoritmos, ajustar parâmetros e, o mais importante, saber se podemos confiar nas suas previsões no mundo real.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Métricas de Regressão: Medindo o Erro</h2>
+      <p>
+        Para problemas de regressão (prever um número), nossas métricas geralmente medem o "erro" ou a distância entre a previsão e o valor real. O Scikit-learn nos oferece várias, e vamos focar em três das mais importantes.
+      </p>
+       <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">1. Erro Absoluto Médio (MAE - Mean Absolute Error)</h4>
+          <p class="text-sm text-gray-400 mt-1"><strong>O que é:</strong> A média da diferença absoluta (sem sinal de +/-) entre cada previsão e seu valor real.</p>
+          <p class="text-sm text-gray-400 mt-1"><strong>Como interpretar:</strong> "Em média, meu modelo erra por X unidades". É fácil de entender porque está na mesma unidade do que estamos prevendo (ex: dólares, anos, etc.). Um MAE menor é melhor.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">2. Erro Quadrático Médio (MSE - Mean Squared Error)</h4>
+          <p class="text-sm text-gray-400 mt-1"><strong>O que é:</strong> Similar ao MAE, mas eleva ao quadrado cada erro antes de tirar a média. A Raiz do Erro Quadrático Médio (RMSE) é simplesmente a raiz quadrada do MSE, o que a traz de volta para a unidade original.</p>
+          <p class="text-sm text-gray-400 mt-1"><strong>Como interpretar:</strong> O MSE penaliza erros grandes muito mais do que erros pequenos. Se um erro de $1000 é muito pior do que dois erros de $500, o MSE é uma boa métrica. Um MSE/RMSE menor é melhor.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">3. Coeficiente de Determinação (R²)</h4>
+          <p class="text-sm text-gray-400 mt-1"><strong>O que é:</strong> Uma métrica que vai de 0 a 1 (ou até negativa para modelos muito ruins) e representa a proporção da variância na variável alvo que é previsível a partir das features.</p>
+          <p class="text-sm text-gray-400 mt-1"><strong>Como interpretar:</strong> "Meu modelo consegue explicar X% da variação nos preços das casas". Um R² de 0.60 significa que o modelo explica 60% da variação. Um R² mais próximo de 1 é melhor.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Calculando as Métricas no Código</h2>
+      <p>Vamos continuar de onde paramos no artigo anterior e calcular essas métricas para as previsões que fizemos.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Avaliando nosso modelo de preços de casas</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Suponha que as variáveis X_train, X_test, y_train, y_test, model e predictions já existem
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import numpy as np # Usaremos numpy para a raiz quadrada
+
+# 1. Erro Absoluto Médio (MAE)
+mae = mean_absolute_error(y_test, predictions)
+print(f"MAE: {{'{'}}mae:.2f{{'}'}}")
+# Interpretação: Em média, nosso modelo erra em $53,300 (o target está em unidades de $100,000)
+
+# 2. Erro Quadrático Médio (MSE) e sua Raiz (RMSE)
+mse = mean_squared_error(y_test, predictions)
+rmse = np.sqrt(mse)
+print(f"MSE: {{'{'}}mse:.2f{{'}'}}")
+print(f"RMSE: {{'{'}}rmse:.2f{{'}'}}")
+# Interpretação: O RMSE é maior que o MAE, indicando que temos alguns erros grandes.
+
+# 3. R-quadrado (R²)
+r2 = r2_score(y_test, predictions)
+print(f"R²: {{'{'}}r2:.2f{{'}'}}")
+# Interpretação: Nosso modelo simples explica cerca de 60% da variação nos preços das casas.</code></pre>
+       </div>
+    </div>
+    
+     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Quantificando o Sucesso</h3>
+      <p>
+        Agora temos uma base objetiva para julgar nosso modelo. Um R² de 0.60 não é fantástico, mas para um modelo simples sem nenhum tratamento de dados, é um começo razoável. 
+      </p>
+      <p>
+        Nosso próximo passo será melhorar esse número. Para isso, precisamos olhar para os nossos dados de entrada e prepará-los melhor para o modelo, um processo chamado <strong>Feature Engineering</strong>.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-machine-learning-sklearn" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
-        <span class="material-icons-outlined">arrow_back</span>
-        Voltar para a Trilha
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Preparando Dados (Feature Engineering)
       </a>
     </div>
   </article>

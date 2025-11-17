@@ -1,0 +1,102 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-fundamentos" class="hover:text-blue-accent hover:underline">Fundamentos de DevOps: CI/CD e IaC</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Infraestrutura como Código (IaC) com Terraform</h1>
+    <p class="mt-4 text-lg text-gray-400">Descubra como gerenciar sua infraestrutura na nuvem (servidores, redes) de forma programática e versionada.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: A Infraestrutura Manual é Frágil</h2>
+      <p>
+        Imagine configurar um servidor na nuvem clicando em dezenas de botões em um painel web. Agora imagine fazer isso para 10 servidores. E se você precisar replicar o mesmo ambiente para testes? O processo manual é lento, propenso a erros ("ops, esqueci de marcar aquela caixinha") e impossível de auditar.
+      </p>
+      <p>
+        <strong>Infraestrutura como Código (IaC)</strong> resolve isso tratando sua infraestrutura da mesma forma que você trata o código da sua aplicação: definindo-a em arquivos de texto que podem ser versionados (com Git), revisados e automatizados.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O que é Terraform?</h2>
+      <p>
+        <strong>Terraform</strong> é a ferramenta mais popular para IaC. Criada pela HashiCorp, ela permite que você defina e provisione sua infraestrutura em provedores de nuvem (como AWS, Google Cloud, DigitalOcean) e outros serviços usando uma linguagem de configuração declarativa chamada HCL (HashiCorp Configuration Language).
+      </p>
+      <p>
+        Com o Terraform, você <strong>descreve o estado final</strong> que deseja para sua infraestrutura, e o Terraform se encarrega de descobrir como chegar lá.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">O Fluxo de Trabalho do Terraform: Write, Plan, Apply</h2>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">1. Write (Escrever)</h4>
+          <p class="text-sm text-gray-400 mt-1">Você escreve a configuração da sua infraestrutura em arquivos com a extensão <code>.tf</code>. Você descreve os "recursos" que quer criar, como servidores (VPS), bancos de dados, redes, firewalls, etc.</p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">2. Plan (Planejar)</h4>
+          <p class="text-sm text-gray-400 mt-1">Você executa o comando <code>terraform plan</code>. O Terraform lê seus arquivos, compara com o estado atual da sua infraestrutura na nuvem e cria um plano de execução. Ele te mostra exatamente o que será criado, alterado ou destruído. <strong>Esta é a etapa de segurança mais importante.</strong></p>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">3. Apply (Aplicar)</h4>
+          <p class="text-sm text-gray-400 mt-1">Após revisar e aprovar o plano, você executa <code>terraform apply</code>. O Terraform então se comunica com as APIs do seu provedor de nuvem e executa as ações planejadas para criar ou modificar a infraestrutura.</p>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Exemplo Prático: Criando uma VPS na DigitalOcean</h2>
+      <p>Vamos ver como seria um arquivo Terraform simples para criar uma VPS (chamada de "Droplet" na DigitalOcean).</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">main.tf</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-hcl">terraform {{ '{' }}
+  required_providers {{ '{' }}
+    digitalocean = {{ '{' }}
+      source  = "digitalocean/digitalocean"
+      version = "~> 2.0"
+    {{ '}' }}
+  {{ '}' }}
+{{ '}' }}
+
+# Configura o provedor com sua chave de API
+provider "digitalocean" {{ '{' }}
+  token = var.do_token
+{{ '}' }}
+
+# Define uma variável para a chave de API (para segurança)
+variable "do_token" {{ '{' }}
+  description = "DigitalOcean API token"
+  type        = string
+  sensitive   = true
+{{ '}' }}
+
+# Define o recurso que queremos criar: uma VPS
+resource "digitalocean_droplet" "web_server" {{ '{' }}
+  image    = "ubuntu-22-04-x64"
+  name     = "web-server-01"
+  region   = "nyc3"
+  size     = "s-1vcpu-1gb"
+{{ '}' }}
+</code></pre>
+        <p class="text-xs text-gray-400 mt-3">Para executar isso, você precisaria ter o Terraform instalado, sua chave de API da DigitalOcean, e então rodar <code>terraform init</code>, <code>terraform plan</code> e <code>terraform apply</code>.</p>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Construindo Nuvens com Confiança</h3>
+      <p>
+        Terraform e IaC mudam o jogo do gerenciamento de infraestrutura. Eles trazem o poder e a segurança das práticas de desenvolvimento de software para o mundo das operações, permitindo que você construa, altere e versione sua infraestrutura de forma segura e eficiente.
+      </p>
+    </div>
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/devops-fundamentos" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Orquestração de Contêineres
+      </a>
+    </div>
+  </article>
+</div>

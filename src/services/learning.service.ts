@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { n8nPaths } from './learning-paths/n8n';
 import { cssPaths } from './learning-paths/css';
 import { iniciantePaths } from './learning-paths/iniciante';
+import { devopsPaths } from './learning-paths/devops';
 
 export interface LearningStep {
   type: 'tool' | 'article' | 'video';
@@ -168,7 +169,15 @@ const ALL_DATA: MainCategory[] = [
     id: 'devops',
     name: 'DevOps',
     icon: 'build_circle',
-    subcategories: [],
+    subcategories: [
+      {
+        id: 'devops-fundamentos',
+        name: 'Cultura e Ferramentas DevOps',
+        description: 'Aprenda os princípios da cultura DevOps e domine as ferramentas essenciais para automatizar a entrega de software.',
+        icon: 'engineering',
+        paths: devopsPaths
+      }
+    ],
   },
 ];
 

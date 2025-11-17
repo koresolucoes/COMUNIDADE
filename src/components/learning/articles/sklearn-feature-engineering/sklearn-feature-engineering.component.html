@@ -8,12 +8,95 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Preparando Dados: Feature Engineering</h1>
     <p class="mt-4 text-lg text-gray-400">Descubra como transformar dados brutos, incluindo texto e categorias, em um formato que os modelos de Machine Learning entendam.</p>
   </header>
-  <article class="prose-container">
-    <p class="text-center py-16 text-gray-500">Conteúdo em breve...</p>
-     <div class="pt-8 text-center">
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Modelos só Entendem Números</h2>
+      <p>
+        Os algoritmos de Machine Learning, no fundo, são pura matemática. Eles não sabem o que "vermelho", "azul" ou "São Paulo" significa. Para que um modelo possa aprender, precisamos converter todos os nossos dados de entrada (features) em um formato numérico que ele possa entender.
+      </p>
+      <p>
+        <strong>Feature Engineering</strong> é a arte e a ciência de transformar dados brutos em "features" (características) que representem bem o problema e ajudem o modelo a fazer previsões melhores. É frequentemente a etapa que mais impacta a performance de um modelo.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. Lidando com Dados Categóricos: One-Hot Encoding</h2>
+      <p>
+        Imagine uma coluna "cor" com os valores "vermelho", "verde" e "azul". Uma abordagem ingênua seria atribuir números: vermelho=1, verde=2, azul=3. O problema é que isso cria uma relação de ordem falsa (o modelo pode pensar que azul > verde > vermelho), o que não faz sentido.
+      </p>
+      <p>
+        A solução correta é o <strong>One-Hot Encoding</strong>. Ele transforma a coluna categórica em várias colunas binárias (0 ou 1), uma para cada categoria.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo com Scikit-learn</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
+
+# DataFrame de exemplo
+data = {{ '{' }}'cor': ['vermelho', 'verde', 'azul', 'vermelho']{{ '}' }}
+df_cores = pd.DataFrame(data)
+
+# 1. Crie uma instância do encoder
+encoder = OneHotEncoder(sparse_output=False)
+
+# 2. Treine e transforme os dados
+# Usamos [[]] para selecionar a coluna como um DataFrame 2D
+encoded_data = encoder.fit_transform(df_cores[['cor']])
+
+# 3. O resultado é um array NumPy. Vamos colocá-lo em um DataFrame para visualizar
+df_encoded = pd.DataFrame(encoded_data, columns=encoder.get_feature_names_out(['cor']))
+
+print(df_encoded)</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Saída:</p>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-plain">   cor_azul  cor_verde  cor_vermelho
+0       0.0        0.0           1.0
+1       0.0        1.0           0.0
+2       1.0        0.0           0.0
+3       0.0        0.0           1.0</code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Colocando Números na Mesma Escala: Feature Scaling</h2>
+      <p>
+        Imagine que temos duas features: "idade" (valores de 0 a 100) e "salário" (valores de 1.000 a 1.000.000). O modelo pode dar um peso desproporcional ao salário simplesmente porque seus valores são muito maiores.
+      </p>
+      <p>
+        <strong>Feature Scaling</strong> coloca todas as features numéricas em uma escala semelhante para que nenhuma domine o processo de aprendizado. A técnica mais comum é a <strong>Padronização (Standardization)</strong>.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo com `StandardScaler`</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">from sklearn.preprocessing import StandardScaler
+
+# DataFrame de exemplo
+data = {{ '{' }}'idade': [25, 40, 65], 'salario': [50000, 80000, 120000]{{ '}' }}
+df_numerico = pd.DataFrame(data)
+
+# 1. Crie uma instância do scaler
+scaler = StandardScaler()
+
+# 2. Treine e transforme os dados
+scaled_data = scaler.fit_transform(df_numerico)
+
+print(scaled_data)</code></pre>
+         <p class="text-xs text-gray-400 mt-2">A saída será um array onde os valores de ambas as colunas estarão centrados em torno de 0 com um desvio padrão de 1, colocando-os em uma escala comparável.</p>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Alimentando o Modelo Corretamente</h3>
+      <p>
+        Tratar dados categóricos e escalar features numéricas são dois dos passos mais importantes do pré-processamento. Ao fazer isso, você garante que seu modelo receba os dados em um formato que ele pode entender e que nenhuma feature domine injustamente o processo de aprendizado.
+      </p>
+      <p>
+        Fazer esses passos manualmente para os conjuntos de treino e teste pode ser repetitivo e propenso a erros. No próximo artigo, aprenderemos a automatizar todo esse processo de pré-processamento e modelagem usando o <strong>Pipeline</strong> do Scikit-learn.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
        <a routerLink="/learning/python-machine-learning-sklearn" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
-        <span class="material-icons-outlined">arrow_back</span>
-        Voltar para a Trilha
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Construindo um Pipeline Completo
       </a>
     </div>
   </article>

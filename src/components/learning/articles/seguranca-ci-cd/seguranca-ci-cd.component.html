@@ -1,0 +1,84 @@
+
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-avancado" class="hover:text-blue-accent hover:underline">DevOps Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Segurança no Pipeline de CI/CD</h1>
+    <p class="mt-4 text-lg text-gray-400">Incorpore práticas de segurança (DevSecOps) diretamente no seu pipeline para detectar problemas antes do deploy.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: Segurança como um Obstáculo Final</h2>
+      <p>
+        No modelo tradicional, a segurança era uma etapa final, quase um obstáculo antes do lançamento. O time de segurança fazia uma auditoria, encontrava dezenas de problemas, e o código voltava para os desenvolvedores, atrasando todo o processo. Era um gargalo caro e frustrante.
+      </p>
+      <p>
+        <strong>DevSecOps</strong> é a resposta para esse problema. A filosofia é simples: em vez de tratar a segurança como um portão no final, nós a integramos como um "guard-rail" ao longo de todo o caminho do desenvolvimento. Trata-se de <strong>"deslocar a segurança para a esquerda" (Shift-Left Security)</strong>, encontrando e corrigindo vulnerabilidades o mais cedo possível, quando são mais fáceis e baratas de consertar.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Integrando Segurança no Pipeline de CI/CD</h2>
+      <p>
+        O pipeline de CI/CD é o lugar perfeito para automatizar verificações de segurança. A cada passo do pipeline, podemos adicionar uma etapa de verificação para obter feedback rápido.
+      </p>
+      <div class="space-y-4">
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">1. Fase de Código (Commit/Pull Request)</h4>
+          <p class="text-sm text-gray-400 mt-1">É o primeiro e mais importante ponto de verificação. Aqui, focamos em analisar o código-fonte e suas dependências.</p>
+          <ul class="list-disc list-inside text-sm text-gray-400 mt-2 pl-4 space-y-1">
+            <li><strong>SAST (Static Application Security Testing):</strong> Analisa seu código-fonte em busca de padrões de vulnerabilidade conhecidos (como injeção de SQL, senhas hardcoded) sem executar a aplicação. <strong>Ferramentas:</strong> SonarQube, Snyk Code, GitHub CodeQL.</li>
+            <li><strong>SCA (Software Composition Analysis):</strong> Escaneia suas dependências (<code>package.json</code>, <code>requirements.txt</code>) e as compara com bancos de dados de vulnerabilidades conhecidas. <strong>Ferramentas:</strong> <code>npm audit</code>, Snyk Open Source, OWASP Dependency-Check.</li>
+            <li><strong>Escaneamento de Segredos:</strong> Procura por chaves de API, senhas ou tokens que foram acidentalmente commitados no código. <strong>Ferramentas:</strong> Trivy, Gitleaks, GitGuardian.</li>
+          </ul>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">2. Fase de Build</h4>
+          <p class="text-sm text-gray-400 mt-1">Depois que o código é aprovado, ele é empacotado, geralmente em uma imagem Docker. Esta imagem é o nosso próximo ponto de verificação.</p>
+           <ul class="list-disc list-inside text-sm text-gray-400 mt-2 pl-4 space-y-1">
+            <li><strong>Escaneamento de Imagem de Contêiner:</strong> Conforme vimos no artigo anterior, ferramentas como o Trivy inspecionam cada camada da imagem Docker em busca de vulnerabilidades no sistema operacional base e nas bibliotecas instaladas.</li>
+          </ul>
+        </div>
+        <div class="p-4 bg-gray-800/50 rounded-lg">
+          <h4 class="font-semibold text-gray-200">3. Fase de Teste/Implantação</h4>
+          <p class="text-sm text-gray-400 mt-1">Com a aplicação em execução (em um ambiente de testes ou staging), podemos realizar testes que simulam ataques reais.</p>
+           <ul class="list-disc list-inside text-sm text-gray-400 mt-2 pl-4 space-y-1">
+            <li><strong>DAST (Dynamic Application Security Testing):</strong> "Ataca" a aplicação em execução para encontrar vulnerabilidades como Cross-Site Scripting (XSS) ou falhas de configuração de headers de segurança. <strong>Ferramentas:</strong> OWASP ZAP.</li>
+            <li><strong>Escaneamento de IaC:</strong> Se você usa Infraestrutura como Código (Terraform, Docker Compose), ferramentas como <code>tfsec</code> ou <code>checkov</code> podem escanear seus arquivos em busca de configurações inseguras (ex: portas abertas para o mundo, buckets de armazenamento públicos).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Exemplo Prático: Um Pipeline DevSecOps com GitHub Actions</h2>
+      <p>Vamos criar um pipeline que integra várias dessas verificações. Este workflow do GitHub Actions executa uma análise estática com CodeQL, verifica dependências com `npm audit`, e escaneia a imagem Docker final com Trivy.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">.github/workflows/security.yml</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml" [textContent]="githubActionSnippet"></code></pre>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Segurança como um Hábito, não um Evento</h3>
+      <p>
+        DevSecOps é uma mudança cultural. O objetivo não é criar barreiras, mas sim empoderar os desenvolvedores com feedback de segurança rápido e acionável. Ao integrar a segurança diretamente no pipeline, as equipes podem construir produtos mais seguros, mais rápido, tornando a segurança uma responsabilidade compartilhada por todos, desde o primeiro commit até a produção.
+      </p>
+    </div>
+
+    <div class="pt-8 flex justify-between items-center">
+       <a routerLink="/learning/devops-avancado" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <div class="px-4 py-2 bg-green-accent text-white rounded-md font-semibold flex items-center gap-2 text-sm">
+        <span class="material-icons-outlined">workspace_premium</span>
+        Trilha Concluída!
+      </div>
+    </div>
+  </article>
+</div>

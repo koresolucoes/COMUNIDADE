@@ -1,0 +1,152 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-avancado" class="hover:text-blue-accent hover:underline">DevOps Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Segurança de Contêineres (DevSecOps)</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda as melhores práticas para construir imagens Docker seguras e escanear por vulnerabilidades.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema: A "Cadeia de Suprimentos" de Software</h2>
+      <p>
+        Uma imagem Docker é construída em camadas. Ela começa com uma <strong>imagem base</strong> (como <code>node:18</code>), que é um sistema operacional completo com softwares pré-instalados. Sobre essa base, você adiciona as dependências da sua aplicação (via <code>npm install</code> ou <code>pip install</code>) e, por fim, o seu próprio código.
+      </p>
+      <p>
+        Cada uma dessas camadas é um elo na sua "cadeia de suprimentos" de software. Uma vulnerabilidade em qualquer um desses elos — seja no sistema operacional base ou em uma biblioteca de terceiros — se torna uma vulnerabilidade na sua aplicação.
+      </p>
+      <p>
+        <strong>DevSecOps</strong> é a cultura de integrar a segurança em cada passo do ciclo de vida DevOps. Para contêineres, isso significa pensar em segurança desde a criação do <code>Dockerfile</code>.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Melhores Práticas para um `Dockerfile` Seguro</h2>
+      
+      <h3 class="text-xl font-bold text-white mt-6">1. Use Imagens Base Mínimas e Oficiais</h3>
+      <p>
+        Quanto menos software houver na sua imagem, menor a "superfície de ataque".
+      </p>
+      <ul class="list-disc list-inside text-gray-400">
+          <li><strong>Evite imagens genéricas como <code>ubuntu</code>:</strong> Elas contêm milhares de pacotes desnecessários.</li>
+          <li><strong>Prefira imagens <code>alpine</code>:</strong> São versões minúsculas baseadas no Alpine Linux. Uma imagem <code>node:18</code> tem ~1GB, enquanto <code>node:18-alpine</code> tem ~100MB.</li>
+          <li><strong>Use imagens <code>distroless</code> para o estágio final:</strong> São imagens do Google que contêm apenas sua aplicação e suas dependências diretas, sem shell, gerenciador de pacotes ou qualquer outra coisa.</li>
+      </ul>
+
+      <h3 class="text-xl font-bold text-white mt-6">2. Não Rode como Root</h3>
+      <p>
+        Por padrão, os contêineres rodam com o usuário <code>root</code>, o que é um grande risco de segurança. Se um invasor explorar uma falha na sua aplicação, ele terá privilégios de administrador dentro do contêiner. A solução é criar e usar um usuário sem privilégios.
+      </p>
+      <pre class="!bg-gray-900 !p-3 !my-2"><code class="language-dockerfile">...
+# Cria um usuário e grupo específicos para a aplicação
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
+# Muda o proprietário dos arquivos da aplicação
+COPY . .
+RUN chown -R appuser:appgroup /app
+
+# Muda para o usuário sem privilégios
+USER appuser
+
+CMD [ "node", "index.js" ]</code></pre>
+
+      <h3 class="text-xl font-bold text-white mt-6">3. Use "Multi-Stage Builds"</h3>
+      <p>
+        A imagem final que vai para produção não precisa de ferramentas de compilação ou dependências de desenvolvimento (<code>devDependencies</code>). Um "multi-stage build" usa um estágio intermediário para construir a aplicação e depois copia apenas os artefatos finais para uma imagem limpa.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Exemplo Prático: Um `Dockerfile` Seguro</h2>
+      <p>Vamos juntar todos os conceitos para criar um `Dockerfile` robusto para uma aplicação Node.js.</p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Dockerfile com Multi-Stage Build</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-dockerfile"># --- Estágio 1: Builder ---
+# Usamos uma imagem completa para instalar e construir
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+# Copia os arquivos de dependência e instala TUDO (incluindo devDependencies)
+COPY package*.json ./
+RUN npm install
+
+# Copia o resto do código
+COPY . .
+
+# (Opcional) Se seu projeto tem um passo de build (ex: TypeScript, React)
+# RUN npm run build
+
+# --- Estágio 2: Production ---
+# Começamos com uma imagem limpa e minúscula
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copia apenas o package.json para instalar somente as dependências de produção
+COPY package*.json ./
+RUN npm install --omit=dev
+
+# Copia o código da aplicação do estágio 'builder'
+COPY --from=builder /app .
+
+# Cria e usa um usuário sem privilégios
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+EXPOSE 3000
+CMD [ "node", "index.js" ]
+</code></pre>
+       </div>
+    </div>
+    
+    <div>
+        <h2 class="text-2xl font-semibold text-white">Escaneamento de Vulnerabilidades</h2>
+        <p>
+            Construir uma imagem segura é o primeiro passo. O segundo é verificar continuamente se ela contém vulnerabilidades conhecidas (CVEs). Ferramentas de escaneamento como <strong>Trivy</strong>, <strong>Snyk</strong> ou <strong>Docker Scout</strong> inspecionam cada camada da sua imagem e comparam as versões dos pacotes com um banco de dados de vulnerabilidades.
+        </p>
+        <p>A melhor prática é integrar esse escaneamento diretamente no seu pipeline de CI/CD.</p>
+        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+            <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Escaneando com Trivy no GitHub Actions</h4>
+            <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml">    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: false # Não envia ainda, apenas constrói
+        tags: minha-api:latest
+        load: true # Carrega a imagem no runner local
+
+    - name: Scan image for vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'minha-api:latest'
+        format: 'table'
+        exit-code: '1' # Falha o pipeline se encontrar vulnerabilidades
+        ignore-unfixed: true
+        severity: 'CRITICAL,HIGH' # Apenas falha para vulnerabilidades críticas e altas
+</code></pre>
+        </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Segurança como Hábito</h3>
+      <p>
+        A segurança de contêineres não é um evento único, mas um processo contínuo. Ao adotar práticas de construção seguras e integrar o escaneamento de vulnerabilidades no seu pipeline, você "desloca a segurança para a esquerda" (shift-left security), encontrando e corrigindo problemas muito antes que eles cheguem à produção.
+      </p>
+    </div>
+
+    <div class="pt-8 flex justify-between items-center">
+       <a routerLink="/learning/devops-avancado" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <a routerLink="/learning/article/seguranca-ci-cd" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors text-sm">
+        Próximo Passo: Segurança no Pipeline de CI/CD
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </article>
+</div>

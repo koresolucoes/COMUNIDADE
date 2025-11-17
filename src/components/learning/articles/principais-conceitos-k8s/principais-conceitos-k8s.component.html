@@ -1,0 +1,146 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/devops-avancado" class="hover:text-blue-accent hover:underline">DevOps Avançado</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Principais Conceitos do K8s: Pods, Services e Deployments</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda sobre os blocos de construção fundamentais do Kubernetes e como eles se comparam aos conceitos do Docker Swarm.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <p>
+      No artigo anterior, comparamos o Kubernetes a uma gigante empresa de logística. Agora, vamos conhecer as peças fundamentais dessa operação: os veículos de entrega, o gerente da frota e o centro de distribuição. Estes são os três conceitos que você precisa dominar para começar a trabalhar com K8s: <strong>Pods</strong>, <strong>Deployments</strong> e <strong>Services</strong>.
+    </p>
+
+    <!-- 1. Pods -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">1. Pod: O Veículo de Entrega</h2>
+      <p>
+        No Docker, a menor unidade é um contêiner. No Kubernetes, a menor unidade que você pode criar e gerenciar é um <strong>Pod</strong>.
+      </p>
+      <p>
+        <strong>Analogia:</strong> Pense em um Pod como uma motocicleta com um sidecar. A motocicleta é o seu contêiner principal (sua aplicação). O sidecar é um contêiner auxiliar que pode fazer algo útil para a motocicleta, como coletar logs ou monitorar o desempenho. Eles estão juntos, compartilhando o mesmo "chassi" (o mesmo ambiente de rede e armazenamento).
+      </p>
+      <p>
+        Um Pod encapsula um ou mais contêineres. É a unidade atômica do Kubernetes. Todos os contêineres dentro de um mesmo Pod compartilham o mesmo endereço IP e podem se comunicar via <code>localhost</code>.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Um Pod simples em YAML</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: meu-primeiro-pod
+spec:
+  containers:
+  - name: meu-app-container
+    image: nginx:latest # Imagem a ser usada
+    ports:
+    - containerPort: 80</code></pre>
+      </div>
+       <div class="mt-4 p-3 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg text-xs">
+          <strong>Importante:</strong> Você raramente criará um Pod diretamente. Pods são "mortais" e efêmeros. Se um nó do cluster falha, o Pod morre com ele. Para garantir que sua aplicação esteja sempre no ar, usamos um controlador, o Deployment.
+      </div>
+    </div>
+
+    <!-- 2. Deployments -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Deployment: O Gerente da Frota</h2>
+      <p>
+        Você não gerencia cada veículo de entrega individualmente. Você diz ao seu <strong>Gerente de Frota</strong>: "Preciso de 3 vans idênticas fazendo entregas o tempo todo." O gerente então cria as 3 vans. Se uma delas quebrar, ele automaticamente a substitui por uma nova. Se você decidir que agora precisa de 5 vans, você avisa o gerente, e ele cuida de adicionar mais duas.
+      </p>
+      <p>
+        Um <strong>Deployment</strong> é o gerente de frota do Kubernetes. Seu trabalho é gerenciar um conjunto de Pods idênticos (réplicas) e garantir que o número desejado de réplicas esteja sempre em execução e saudável.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Um Deployment com 3 réplicas</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meu-app-deployment
+spec:
+  replicas: 3 # << O estado desejado: queremos 3 Pods
+  selector:
+    matchLabels:
+      app: meu-app
+  template: # << O modelo (template) do Pod que o Deployment deve criar
+    metadata:
+      labels:
+        app: meu-app
+    spec:
+      containers:
+      - name: meu-app-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80</code></pre>
+      </div>
+      <p class="mt-4">O Deployment cuida da <strong>auto-recuperação</strong> (self-healing) e permite <strong>atualizações sem downtime</strong> (rolling updates).</p>
+    </div>
+    
+    <!-- 3. Services -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Service: O Centro de Distribuição com Endereço Fixo</h2>
+      <p>
+        Temos 3 vans (Pods) rodando, gerenciadas pelo nosso Deployment. O problema é que cada Pod tem seu próprio endereço IP interno, e esses IPs podem mudar a qualquer momento (se um Pod falha e é substituído, ele ganha um novo IP). Como outras partes da nossa aplicação (ou usuários externos) podem encontrar e se comunicar com nossas vans de forma confiável?
+      </p>
+      <p>
+        A solução é um <strong>Service</strong>. Ele atua como um "centro de distribuição" ou um "número de telefone 0800" para seus Pods. Um Service tem um <strong>endereço IP e um nome DNS estáveis</strong> dentro do cluster. Ele monitora os Pods que correspondem a um determinado rótulo (label) e distribui o tráfego de rede (balanceamento de carga) entre eles.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Um Service que expõe nosso Deployment</h4>
+        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: meu-app-service
+spec:
+  selector:
+    app: meu-app # << Magia! Ele encontra todos os Pods com este rótulo
+  ports:
+    - protocol: TCP
+      port: 80 # A porta que o Service expõe
+      targetPort: 80 # A porta para a qual o tráfego será enviado nos Pods
+  type: LoadBalancer # Expõe o serviço externamente com um IP público</code></pre>
+        <p class="text-xs text-gray-400 mt-2">Agora, outros serviços dentro do cluster podem simplesmente se comunicar com "meu-app-service", e o Kubernetes se encarrega de rotear a requisição para um dos 3 Pods saudáveis.</p>
+       </div>
+    </div>
+    
+    <div class="p-6 bg-gray-800/50 border border-gray-700 rounded-lg">
+        <h2 class="text-2xl font-semibold text-white !mt-0">Juntando as Peças</h2>
+        <p>A relação entre esses três componentes é a base de qualquer aplicação no Kubernetes:</p>
+        <div class="text-center font-mono text-sm my-4">
+            <p class="text-white">Requisição Externa</p>
+            <p>&darr;</p>
+            <p class="text-blue-accent border border-blue-accent p-2 rounded inline-block">Service (Endereço Fixo)</p>
+            <p>|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|_________</p>
+            <p>&darr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&darr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&darr;</p>
+            <div class="flex justify-around">
+                <p class="text-green-accent border border-green-accent p-2 rounded">Pod 1</p>
+                <p class="text-green-accent border border-green-accent p-2 rounded">Pod 2</p>
+                <p class="text-green-accent border border-green-accent p-2 rounded">Pod 3</p>
+            </div>
+            <p class="text-gray-500 mt-2">(Gerenciados por um Deployment)</p>
+        </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste seu Conhecimento</h3>
+      <ol class="!list-none !pl-0 space-y-3 mt-3 text-sm">
+          <li><strong>Pergunta 1:</strong> Qual objeto do Kubernetes é responsável por garantir que, se um contêiner falhar, um novo seja criado automaticamente para substituí-lo?</li>
+          <li><strong>Pergunta 2:</strong> Você precisa que sua API seja acessível por outros serviços dentro do cluster Kubernetes, mas o endereço IP dos Pods da API muda constantemente. Qual objeto você criaria para resolver isso?</li>
+          <li><strong>Pergunta 3:</strong> Em um arquivo YAML de um Deployment, o que a seção <code>template</code> define?</li>
+      </ol>
+    </div>
+
+    <div class="pt-8 flex justify-between items-center">
+       <a routerLink="/learning/devops-avancado" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <a routerLink="/learning/article/o-que-e-gitops" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors text-sm">
+        Próximo Passo: O que é GitOps?
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </article>
+</div>
