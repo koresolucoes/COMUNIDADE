@@ -1,0 +1,101 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/css-interativo-moderno" class="hover:text-blue-accent hover:underline">CSS Interativo e Moderno</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">A Primeira Impressão: Criando Fundos Impactantes com Gradientes</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a teoria por trás dos gradientes e como usá-los para criar backgrounds modernos e vibrantes.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Por que Sair da Cor Sólida?</h2>
+      <p>
+        Fundos de cor sólida são seguros e funcionais, mas gradientes adicionam profundidade, energia e um toque profissional ao design. Eles podem guiar o olhar do usuário, criar uma atmosfera e fazer com que sua interface se destaque. Em vez de uma imagem de fundo pesada, um gradiente CSS é leve, escalável e fácil de animar.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. Gradientes Lineares: A Transição Direta</h2>
+      <p>
+        O <code>linear-gradient()</code> é o tipo mais comum. Ele cria uma transição de cores suave ao longo de uma linha reta. Sua sintaxe básica define a direção e as cores que devem ser usadas.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplos Práticos</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <div class="gradient-preview linear-example-1"></div>
+            <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: linear-gradient(to right, #58a6ff, #3fb950);</code></pre>
+          </div>
+          <div>
+            <div class="gradient-preview linear-example-2"></div>
+            <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: linear-gradient(45deg, #f857a6, #ff5858);</code></pre>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-3">
+          Você pode definir a direção com palavras-chave (<code>to right</code>, <code>to bottom left</code>) ou com um ângulo em graus (<code>45deg</code>).
+        </p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Gradientes Radiais: A Explosão de Cores</h2>
+      <p>
+        O <code>radial-gradient()</code> cria uma transição de cores que irradia a partir de um ponto central. É perfeito para criar efeitos de vinheta, focos de luz ou fundos mais orgânicos.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplos Práticos</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <div class="gradient-preview radial-example-1"></div>
+            <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: radial-gradient(circle, #ff5858, #0d1117);</code></pre>
+          </div>
+          <div>
+            <div class="gradient-preview radial-example-2"></div>
+            <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: radial-gradient(ellipse at top left, #3fb950, #58a6ff);</code></pre>
+          </div>
+        </div>
+         <p class="text-xs text-gray-400 mt-3">
+          Você pode controlar a forma (<code>circle</code> ou <code>ellipse</code>) e a posição do centro do gradiente (<code>at top left</code>, <code>at 25% 75%</code>).
+        </p>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. Paradas de Cor (Color Stops)</h2>
+      <p>
+        Para um controle mais preciso, você pode definir exatamente em que ponto da transição uma cor deve estar. Isso é feito adicionando uma porcentagem após a cor.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <div class="gradient-preview linear-example-3"></div>
+        <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: linear-gradient(to right, 
+  #58a6ff 0%,   /* O azul começa no início */
+  #3fb950 50%,  /* O verde está no meio */
+  #f59e0b 100% /* O amarelo está no fim */
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Fundos como Elemento de Design</h3>
+      <p>
+        Gradientes são uma ferramenta simples, mas extremamente eficaz para elevar o nível do seu design. Eles são performáticos, flexíveis e, quando bem utilizados, podem transformar uma interface comum em algo memorável.
+      </p>
+      <div class="mt-4">
+        <a routerLink="/tools/gerador-gradiente-css" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
+          <span class="material-icons-outlined">construction</span>
+          Pratique agora no Gerador de Gradiente
+        </a>
+      </div>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/css-interativo-moderno" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Formas com Clip-Path
+      </a>
+    </div>
+  </article>
+</div>

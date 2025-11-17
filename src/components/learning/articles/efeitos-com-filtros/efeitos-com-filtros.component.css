@@ -1,0 +1,27 @@
+.filter-example-img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  transition: filter 0.3s ease-in-out;
+}
+
+.filter-blur {
+  filter: blur(4px);
+}
+
+.filter-brightness {
+  filter: brightness(150%);
+}
+
+.filter-grayscale {
+  filter: grayscale(100%);
+}
+
+.filter-sepia {
+  filter: sepia(80%);
+}
+
+.filter-combined {
+  filter: saturate(140%) contrast(90%) sepia(40%);
+}

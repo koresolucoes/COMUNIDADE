@@ -1,0 +1,86 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/css-interativo-moderno" class="hover:text-blue-accent hover:underline">CSS Interativo e Moderno</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Efeitos Visuais com a Propriedade Filter</h1>
+    <p class="mt-4 text-lg text-gray-400">Aprenda a aplicar efeitos como desfoque, sépia e escala de cinza para manipular a aparência de imagens e elementos.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O "Photoshop" do CSS</h2>
+      <p>
+        A propriedade <code>filter</code> do CSS é como ter um conjunto de ferramentas de edição de imagem diretamente no seu navegador. Ela permite aplicar efeitos gráficos a um elemento, como desfoque, alteração de cor e contraste, de forma não destrutiva.
+      </p>
+      <p>
+        Isso é incrivelmente útil para criar efeitos de hover, ajustar imagens dinamicamente ou até mesmo para criar o popular efeito de "vidro fosco" (usando <code>backdrop-filter</code>).
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Filtros Mais Comuns</h2>
+      <p>Vamos explorar algumas das funções de filtro mais populares.</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+        <div class="text-center">
+          <img src="https://picsum.photos/id/1080/300/200" alt="Exemplo de filtro blur" class="filter-example-img filter-blur">
+          <h4 class="font-semibold text-gray-200 mt-2">Desfoque (blur)</h4>
+          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>filter: blur(5px);</code></pre>
+        </div>
+        <div class="text-center">
+          <img src="https://picsum.photos/id/1080/300/200" alt="Exemplo de filtro brightness" class="filter-example-img filter-brightness">
+          <h4 class="font-semibold text-gray-200 mt-2">Brilho (brightness)</h4>
+          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>filter: brightness(150%);</code></pre>
+        </div>
+        <div class="text-center">
+          <img src="https://picsum.photos/id/1080/300/200" alt="Exemplo de filtro grayscale" class="filter-example-img filter-grayscale">
+          <h4 class="font-semibold text-gray-200 mt-2">Escala de Cinza (grayscale)</h4>
+          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>filter: grayscale(100%);</code></pre>
+        </div>
+        <div class="text-center">
+          <img src="https://picsum.photos/id/1080/300/200" alt="Exemplo de filtro sepia" class="filter-example-img filter-sepia">
+          <h4 class="font-semibold text-gray-200 mt-2">Sépia (sepia)</h4>
+          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>filter: sepia(80%);</code></pre>
+        </div>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Combinando Filtros</h2>
+      <p>
+        O verdadeiro poder da propriedade <code>filter</code> vem da combinação de múltiplas funções. Você pode aplicar quantos filtros quiser, separados por um espaço, para criar um efeito único.
+      </p>
+       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Efeito Vintage</h4>
+        <p class="text-xs text-gray-400 mb-3">Combinando saturação, contraste e sépia para um look de foto antiga.</p>
+        <div class="flex justify-center">
+           <img src="https://picsum.photos/id/1040/400/250" alt="Exemplo de múltiplos filtros" class="filter-example-img filter-combined rounded-lg">
+        </div>
+        <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>filter: saturate(140%) contrast(90%) sepia(40%);</code></pre>
+       </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Controle Criativo no Navegador</h3>
+      <p>
+        A propriedade <code>filter</code> oferece um controle criativo imenso sobre a aparência dos seus elementos sem a necessidade de um editor de imagens. É uma ferramenta performática e animável, perfeita para adicionar polimento e interatividade às suas interfaces.
+      </p>
+      <div class="mt-4">
+        <a routerLink="/tools/gerador-filtros-css" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
+          <span class="material-icons-outlined">construction</span>
+          Experimente no Gerador de Filtros
+        </a>
+      </div>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/css-interativo-moderno" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Animações e Transições
+      </a>
+    </div>
+  </article>
+</div>

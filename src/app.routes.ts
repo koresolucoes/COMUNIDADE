@@ -131,6 +131,10 @@ import { CoresEContrasteComponent } from './components/learning/articles/cores-e
 import { TipografiaFuncionalComponent } from './components/learning/articles/tipografia-funcional/tipografia-funcional.component';
 import { LayoutsComGridFlexboxComponent } from './components/learning/articles/layouts-com-grid-flexbox/layouts-com-grid-flexbox.component';
 import { ProfundidadeComSombrasComponent } from './components/learning/articles/profundidade-com-sombras/profundidade-com-sombras.component';
+import { FundosImpactantesGradientesComponent } from './components/learning/articles/fundos-impactantes-gradientes/fundos-impactantes-gradientes.component';
+import { AnimacoesETransicoesComponent } from './components/learning/articles/animacoes-e-transicoes/animacoes-e-transicoes.component';
+import { FormasComClipPathComponent } from './components/learning/articles/formas-com-clip-path/formas-com-clip-path.component';
+import { EfeitosComFiltrosComponent } from './components/learning/articles/efeitos-com-filtros/efeitos-com-filtros.component';
 
 
 export const APP_ROUTES: Routes = [
@@ -246,10 +250,10 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/tipografia-funcional', component: TipografiaFuncionalComponent },
   { path: 'learning/article/layouts-com-grid-flexbox', component: LayoutsComGridFlexboxComponent },
   { path: 'learning/article/profundidade-com-sombras', component: ProfundidadeComSombrasComponent },
-  { path: 'learning/article/fundos-impactantes-gradientes', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre gradientes está sendo escrito.' } },
-  { path: 'learning/article/animacoes-e-transicoes', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre animações e transições está sendo escrito.' } },
-  { path: 'learning/article/formas-com-clip-path', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre clip-path está sendo escrito.' } },
-  { path: 'learning/article/efeitos-com-filtros', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre filtros CSS está sendo escrito.' } },
+  { path: 'learning/article/fundos-impactantes-gradientes', component: FundosImpactantesGradientesComponent },
+  { path: 'learning/article/animacoes-e-transicoes', component: AnimacoesETransicoesComponent },
+  { path: 'learning/article/formas-com-clip-path', component: FormasComClipPathComponent },
+  { path: 'learning/article/efeitos-com-filtros', component: EfeitosComFiltrosComponent },
   { path: 'learning/article/design-de-dashboards', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre design de dashboards está sendo escrito.' } },
   { path: 'learning/article/ux-ferramentas-internas', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre UX para ferramentas internas está sendo escrito.' } },
   { path: 'learning/article/status-pages-efetivas', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre design de status pages está sendo escrito.' } },

@@ -1,0 +1,107 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/css-interativo-moderno" class="hover:text-blue-accent hover:underline">CSS Interativo e Moderno</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Dando Vida à Interface: Animações e Transições Sutis</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda a diferença entre `transition` e `animation` e como usá-las para criar micro-interações que melhoram a UX.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Por que Animar?</h2>
+      <p>
+        Animações em uma interface não são apenas enfeites. Quando bem utilizadas, elas servem a um propósito funcional:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>Fornecem Feedback:</strong> Um botão que muda de cor ao ser clicado confirma a ação do usuário.</li>
+        <li><strong>Guiam a Atenção:</strong> Uma animação sutil pode chamar a atenção para uma notificação importante.</li>
+        <li><strong>Melhoram a Percepção de Performance:</strong> Uma transição suave faz a aplicação parecer mais rápida e fluida do que uma mudança de tela abrupta.</li>
+        <li><strong>Comunicam Mudanças de Estado:</strong> Um item que "desliza para fora" da tela ao ser deletado é mais intuitivo do que um que simplesmente desaparece.</li>
+      </ul>
+      <p>O CSS nos dá duas ferramentas principais para isso: <code>transition</code> e <code>animation</code>.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. `transition`: A Ponte entre Dois Estados</h2>
+      <p>
+        A propriedade <code>transition</code> é usada para animar a mudança de um estado para outro. É perfeita para interações simples, como o estado <code>:hover</code> (quando o mouse está sobre o elemento).
+      </p>
+      <p>Você define qual propriedade quer animar, a duração da animação e a curva de aceleração.</p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Botão com Transição no Hover</h4>
+        <p class="text-xs text-gray-400 mb-3">Passe o mouse sobre o botão para ver o efeito.</p>
+        <div class="flex justify-center">
+            <button class="transition-example-button">Passe o Mouse</button>
+        </div>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-css">.meu-botao {{ '{' }}
+  background-color: #58a6ff;
+  transform: scale(1);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+{{ '}' }}
+
+.meu-botao:hover {{ '{' }}
+  background-color: #3fb950;
+  transform: scale(1.1);
+{{ '}' }}</code></pre>
+      </div>
+    </div>
+    
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. `animation` e `@keyframes`: A Animação em Múltiplos Estágios</h2>
+      <p>
+        Enquanto <code>transition</code> é para transições simples A &rarr; B, a propriedade <code>animation</code> é para sequências de animação mais complexas com múltiplos estágios. Ela funciona em conjunto com a regra <code>@keyframes</code>, onde você define o que acontece em cada ponto da linha do tempo da animação.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Um Indicador de Carregamento Pulsante</h4>
+        <div class="flex justify-center my-4">
+            <div class="animation-example-loader"></div>
+        </div>
+        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-css">/* 1. Definimos os estágios da animação */
+@keyframes pulse {{ '{' }}
+  0% {{ '{' }}
+    transform: scale(1);
+    opacity: 1;
+  {{ '}' }}
+  50% {{ '{' }}
+    transform: scale(1.2);
+    opacity: 0.7;
+  {{ '}' }}
+  100% {{ '{' }}
+    transform: scale(1);
+    opacity: 1;
+  {{ '}' }}
+{{ '}' }}
+
+/* 2. Aplicamos a animação ao elemento */
+.loader {{ '{' }}
+  animation-name: pulse;
+  animation-duration: 2s;
+  animation-iteration-count: infinite; /* Repete para sempre */
+{{ '}' }}</code></pre>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Movimento com Propósito</h3>
+      <p>
+        Animações sutis e transições suaves são a marca de uma interface moderna e polida. Use <code>transition</code> para feedback em interações diretas (hovers, cliques) e <code>animation</code> para sequências mais elaboradas (indicadores de carregamento, alertas). Lembre-se sempre que o objetivo é melhorar a experiência do usuário, não distraí-lo.
+      </p>
+      <div class="mt-4">
+        <a routerLink="/tools/gerador-animacao-css" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
+          <span class="material-icons-outlined">construction</span>
+          Explore mais animações no Gerador
+        </a>
+      </div>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/css-interativo-moderno" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+    </div>
+  </article>
+</div>
