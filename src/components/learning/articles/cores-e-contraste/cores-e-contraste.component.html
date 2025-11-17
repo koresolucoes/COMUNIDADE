@@ -1,0 +1,85 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-design-visual-devs" class="hover:text-blue-accent hover:underline">Fundamentos do Design Visual para Devs</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O Poder das Cores e do Contraste</h1>
+    <p class="mt-4 text-lg text-gray-400">Descubra como escolher uma paleta de cores simples e garantir a acessibilidade do seu design.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Cores Comunicam Antes das Palavras</h2>
+      <p>
+        A cor é uma das ferramentas mais poderosas no design. Ela evoca emoções, cria associações e, o mais importante para nós, comunica status instantaneamente. Pense em um painel de monitoramento: você não precisa ler "ERRO CRÍTICO" para saber que algo está errado se vir um grande card vermelho piscando.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">A Regra 60-30-10 para uma Paleta Equilibrada</h2>
+      <p>
+        Escolher cores pode ser intimidante. Uma regra simples para começar é a <strong>regra 60-30-10</strong>:
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li><strong>60% Cor Dominante (Neutra):</strong> Geralmente, um fundo escuro (como o cinza-azulado deste site) ou claro. É a base onde tudo vive.</li>
+        <li><strong>30% Cor Secundária:</strong> Uma cor para elementos de suporte, como cards, barras laterais ou painéis de fundo.</li>
+        <li><strong>10% Cor de Destaque (Accent):</strong> Uma cor vibrante e contrastante usada para os elementos mais importantes que precisam de atenção: botões de ação principal, links, ícones ativos.</li>
+      </ul>
+      <p>O Kore Hub usa essa regra: o cinza escuro é o 60%, o cinza um pouco mais claro dos cards é o 30%, e o azul-accent é o 10%.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Psicologia das Cores para DevOps</h2>
+      <p>
+        Em ferramentas técnicas, a função principal da cor é comunicar status de forma rápida e inequívoca. A convenção é sua amiga aqui:
+      </p>
+       <div class="space-y-4">
+        <div class="p-4 bg-gray-800 border-l-4 border-green-accent">
+          <code class="text-green-300 font-bold">Verde</code>
+          <p class="text-sm text-gray-400 mt-1">Sucesso, online, estável, concluído.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-yellow-400">
+          <code class="text-yellow-300 font-bold">Amarelo / Laranja</code>
+          <p class="text-sm text-gray-400 mt-1">Aviso, em progresso, pendente, atenção necessária.</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-red-400">
+          <code class="text-red-300 font-bold">Vermelho</code>
+          <p class="text-sm text-gray-400 mt-1">Erro, offline, falha, perigo, ação destrutiva (ex: botão "Excluir").</p>
+        </div>
+        <div class="p-4 bg-gray-800 border-l-4 border-blue-accent">
+          <code class="text-blue-300 font-bold">Azul</code>
+          <p class="text-sm text-gray-400 mt-1">Informativo, ação primária, links, estado ativo.</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="p-6 bg-yellow-900/30 border border-yellow-700/50 text-yellow-300 rounded-lg">
+      <h2 class="text-2xl font-semibold text-yellow-200 !mt-0">Não se Esqueça do Contraste: Acessibilidade é Crucial</h2>
+      <p>
+        <strong>Contraste</strong> é a diferença de brilho entre duas cores. Um bom contraste (ex: texto branco sobre fundo preto) é fácil de ler. Um baixo contraste (ex: texto cinza claro sobre fundo branco) é difícil e cansativo.
+      </p>
+      <p>
+        Garantir um bom contraste não é apenas uma boa prática de design, é uma questão de <strong>acessibilidade</strong>. Pessoas com baixa visão ou daltonismo podem não conseguir usar sua interface se o contraste for pobre.
+      </p>
+      <p>
+        As diretrizes de acessibilidade (WCAG) recomendam um <a href="https://webaim.org/resources/contrastchecker/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-yellow-200">nível de contraste de pelo menos 4.5:1</a> para texto normal. Use uma ferramenta online de verificação de contraste para garantir que suas cores são legíveis.
+      </p>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Cores com Propósito</h3>
+      <p>
+        Você não precisa ser um artista para usar cores de forma eficaz. Pense nelas como uma ferramenta de comunicação. Use uma paleta simples e consistente, siga as convenções de cores para status e, acima de tudo, garanta que seu texto seja legível com um bom contraste.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-design-visual-devs" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Tipografia que Funciona
+      </a>
+    </div>
+  </article>
+</div>

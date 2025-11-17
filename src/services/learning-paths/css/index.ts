@@ -1,6 +1,10 @@
-import { cssFundamentosUiPath } from './fundamentos-ui';
+import { designVisualDevsPath } from './fundamentos-ui';
+import { cssInterativoPath } from './css-interativo';
+import { uiUxDevOpsPath } from './ui-ux-devops';
 import { LearningPath } from '../../learning.service';
 
 export const cssPaths: LearningPath[] = [
-  cssFundamentosUiPath,
+  designVisualDevsPath,
+  cssInterativoPath,
+  uiUxDevOpsPath,
 ];

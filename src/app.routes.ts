@@ -125,6 +125,11 @@ import { FerramentasGitopsComponent } from './components/learning/articles/ferra
 import { SegurancaContainersComponent } from './components/learning/articles/seguranca-containers/seguranca-containers.component';
 import { SegurancaCiCdComponent } from './components/learning/articles/seguranca-ci-cd/seguranca-ci-cd.component';
 
+// CSS Design Path Articles
+import { HierarquiaVisualComponent } from './components/learning/articles/hierarquia-visual/hierarquia-visual.component';
+import { CoresEContrasteComponent } from './components/learning/articles/cores-e-contraste/cores-e-contraste.component';
+import { TipografiaFuncionalComponent } from './components/learning/articles/tipografia-funcional/tipografia-funcional.component';
+
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -232,6 +237,21 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/ferramentas-gitops', component: FerramentasGitopsComponent },
   { path: 'learning/article/seguranca-containers', component: SegurancaContainersComponent },
   { path: 'learning/article/seguranca-ci-cd', component: SegurancaCiCdComponent },
+
+  // CSS & Design
+  { path: 'learning/article/hierarquia-visual', component: HierarquiaVisualComponent },
+  { path: 'learning/article/cores-e-contraste', component: CoresEContrasteComponent },
+  { path: 'learning/article/tipografia-funcional', component: TipografiaFuncionalComponent },
+  { path: 'learning/article/layouts-com-grid-flexbox', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre layouts com Grid e Flexbox está sendo escrito.' } },
+  { path: 'learning/article/profundidade-com-sombras', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre o uso de sombras está sendo escrito.' } },
+  { path: 'learning/article/fundos-impactantes-gradientes', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre gradientes está sendo escrito.' } },
+  { path: 'learning/article/animacoes-e-transicoes', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre animações e transições está sendo escrito.' } },
+  { path: 'learning/article/formas-com-clip-path', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre clip-path está sendo escrito.' } },
+  { path: 'learning/article/efeitos-com-filtros', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre filtros CSS está sendo escrito.' } },
+  { path: 'learning/article/design-de-dashboards', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre design de dashboards está sendo escrito.' } },
+  { path: 'learning/article/ux-ferramentas-internas', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre UX para ferramentas internas está sendo escrito.' } },
+  { path: 'learning/article/status-pages-efetivas', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre design de status pages está sendo escrito.' } },
+  { path: 'learning/article/feedback-visual-assincrono', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre feedback visual está sendo escrito.' } },
 
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },

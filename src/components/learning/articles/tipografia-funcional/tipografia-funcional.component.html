@@ -1,0 +1,83 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-design-visual-devs" class="hover:text-blue-accent hover:underline">Fundamentos do Design Visual para Devs</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Tipografia que Funciona</h1>
+    <p class="mt-4 text-lg text-gray-400">Escolha fontes legíveis e defina tamanhos e espaçamentos para uma leitura confortável.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Texto Não é Só Conteúdo, é Interface</h2>
+      <p>
+        Em dashboards, logs e ferramentas de linha de comando, 90% da interface é texto. Se o texto for difícil de ler, a ferramenta será difícil de usar. Uma boa <strong>tipografia</strong> não é sobre escolher fontes "bonitas", é sobre apresentar informações de forma clara, rápida e sem esforço para o usuário.
+      </p>
+      <p>Pense na tipografia como a organização de uma documentação técnica: uma boa formatação com títulos, subtítulos e blocos de código torna a leitura fácil; uma má formatação a torna um pesadelo.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">1. Escolhendo a Ferramenta Certa: O Tipo de Fonte</h2>
+      <p>Existem três famílias principais de fontes que você precisa conhecer:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-3">
+        <li>
+          <strong>Serif:</strong> Possuem pequenos "pés" ou traços nas extremidades das letras (ex: Times New Roman). São ótimas para longos blocos de texto impresso (livros, jornais), mas podem ser menos legíveis em telas de baixa resolução.
+        </li>
+        <li>
+          <strong>Sans-Serif ("sem serifa"):</strong> Possuem terminações limpas e retas (ex: Arial, Helvetica, Inter). São a escolha padrão para interfaces digitais (UIs) por sua clareza e legibilidade em qualquer tamanho.
+        </li>
+        <li>
+          <strong>Monospace:</strong> Cada caractere ocupa exatamente a mesma largura. Isso é fundamental para alinhar código, logs ou qualquer dado tabular. (ex: Courier, Fira Code).
+        </li>
+      </ul>
+       <div class="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs">
+          <strong class="font-semibold">Regra de ouro para Devs:</strong> Use uma boa fonte <strong>Sans-Serif</strong> (como a Inter, usada neste site) para toda a UI e uma fonte <strong>Monospace</strong> (como a Fira Code) para qualquer trecho de código ou dado pré-formatado.
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">2. Hierarquia com Tamanho e Peso</h2>
+      <p>
+        Assim como aprendemos no artigo sobre Hierarquia Visual, o tamanho e o peso da fonte são suas principais ferramentas para guiar o olhar do usuário. Crie uma <strong>escala tipográfica</strong> clara.
+      </p>
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
+        <h1 class="text-3xl font-bold text-white">Título Principal (ex: text-3xl font-bold)</h1>
+        <h2 class="text-xl font-semibold text-gray-200 mt-4">Título de Seção (ex: text-xl font-semibold)</h2>
+        <p class="text-base text-gray-300 mt-2">Este é um parágrafo de texto normal, usado para descrições. (ex: text-base)</p>
+        <p class="text-sm text-gray-400 mt-2">Este é um texto de suporte ou legenda, um pouco menor. (ex: text-sm)</p>
+      </div>
+      <p class="mt-2 text-sm text-gray-500">Não exagere no número de tamanhos. 3 a 4 tamanhos de fonte, combinados com diferentes pesos (normal, semi-bold, bold), são suficientes para a maioria das interfaces.</p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">3. A Chave da Leitura: Espaçamento</h2>
+      <p>
+        Um bom espaçamento pode transformar um bloco de texto intimidador em algo agradável de ler.
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+        <li>
+          <strong>Comprimento da Linha (Line Length):</strong> Linhas muito longas cansam o olho, que precisa viajar muito para encontrar o início da próxima linha. Linhas muito curtas quebram o ritmo de leitura. O ideal para texto corrido é entre <strong>50 e 75 caracteres</strong> por linha.
+        </li>
+        <li>
+          <strong>Altura da Linha (Line Height):</strong> É o espaço vertical entre as linhas de texto. Uma altura de linha de 1.5 a 1.7 (ou 150% a 170% do tamanho da fonte) é geralmente confortável para a leitura. Pouco espaço faz o texto parecer denso; muito espaço faz as linhas parecerem desconectadas.
+        </li>
+      </ul>
+    </div>
+    
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Clareza Acima de Tudo</h3>
+      <p>
+        Boa tipografia em ferramentas técnicas não é sobre estética, é sobre <strong>eficiência</strong>. Um log bem formatado, um dashboard com números claros, um formulário com labels legíveis — tudo isso economiza tempo e reduz a carga cognitiva do usuário. Ao dominar esses princípios básicos de fonte, tamanho e espaçamento, você pode melhorar drasticamente a usabilidade de qualquer interface que construir.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-design-visual-devs" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Layouts com Grid e Flexbox
+      </a>
+    </div>
+  </article>
+</div>
