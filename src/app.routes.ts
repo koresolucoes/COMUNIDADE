@@ -129,6 +129,8 @@ import { SegurancaCiCdComponent } from './components/learning/articles/seguranca
 import { HierarquiaVisualComponent } from './components/learning/articles/hierarquia-visual/hierarquia-visual.component';
 import { CoresEContrasteComponent } from './components/learning/articles/cores-e-contraste/cores-e-contraste.component';
 import { TipografiaFuncionalComponent } from './components/learning/articles/tipografia-funcional/tipografia-funcional.component';
+import { LayoutsComGridFlexboxComponent } from './components/learning/articles/layouts-com-grid-flexbox/layouts-com-grid-flexbox.component';
+import { ProfundidadeComSombrasComponent } from './components/learning/articles/profundidade-com-sombras/profundidade-com-sombras.component';
 
 
 export const APP_ROUTES: Routes = [
@@ -242,8 +244,8 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/hierarquia-visual', component: HierarquiaVisualComponent },
   { path: 'learning/article/cores-e-contraste', component: CoresEContrasteComponent },
   { path: 'learning/article/tipografia-funcional', component: TipografiaFuncionalComponent },
-  { path: 'learning/article/layouts-com-grid-flexbox', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre layouts com Grid e Flexbox está sendo escrito.' } },
-  { path: 'learning/article/profundidade-com-sombras', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre o uso de sombras está sendo escrito.' } },
+  { path: 'learning/article/layouts-com-grid-flexbox', component: LayoutsComGridFlexboxComponent },
+  { path: 'learning/article/profundidade-com-sombras', component: ProfundidadeComSombrasComponent },
   { path: 'learning/article/fundos-impactantes-gradientes', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre gradientes está sendo escrito.' } },
   { path: 'learning/article/animacoes-e-transicoes', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre animações e transições está sendo escrito.' } },
   { path: 'learning/article/formas-com-clip-path', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre clip-path está sendo escrito.' } },

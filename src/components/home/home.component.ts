@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, inject, OnInit, computed } from '@a
 import { RouterLink } from '@angular/router';
 import { BlogService } from '../../services/blog.service';
 import { TemplateService } from '../../services/template.service';
+import { LearningService, LearningPath, Subcategory, MainCategory } from '../../services/learning.service';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,7 @@ import { TemplateService } from '../../services/template.service';
 export class HomeComponent implements OnInit {
   private blogService = inject(BlogService);
   private templateService = inject(TemplateService);
+  private learningService = inject(LearningService);
   
   quickAccessTools = [
     {
@@ -59,8 +61,11 @@ export class HomeComponent implements OnInit {
 
   recentPosts = computed(() => this.blogService.posts().slice(0, 4));
 
+  featuredPathData: { path: LearningPath; subcategory: Subcategory; mainCategory: MainCategory } | undefined;
+
   ngOnInit() {
     this.blogService.loadPosts();
     this.templateService.loadTemplates();
+    this.featuredPathData = this.learningService.getPathBySlug('ferramentas-essenciais-dev');
   }
 }

@@ -42,7 +42,26 @@
       </section>
     </div>
 
-    <div class="lg:col-span-1">
+    <div class="lg:col-span-1 space-y-8">
+       <!-- Featured Learning Path -->
+      @if (featuredPathData) {
+        <section>
+          <h2 class="text-2xl font-semibold text-white mb-4">Trilha em Destaque</h2>
+          <div class="bg-gradient-to-br from-gray-900 to-gray-800 p-6 border border-blue-accent/50 rounded-lg hover:border-blue-accent transition-colors block shadow-lg">
+            <div class="flex justify-between items-start">
+              <span class="text-xs font-semibold uppercase tracking-wider text-blue-accent">{{ featuredPathData.mainCategory.name }}</span>
+              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-accent/20 text-green-300">{{ featuredPathData.path.level }}</span>
+            </div>
+            <h3 class="mt-4 text-2xl font-bold text-white">{{ featuredPathData.path.title.replace('2. ', '') }}</h3>
+            <p class="mt-2 text-gray-400 text-sm">{{ featuredPathData.path.description }}</p>
+            <a [routerLink]="['/learning', featuredPathData.path.slug]" class="mt-6 inline-flex items-center justify-center w-full px-4 py-2 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors gap-2">
+              Começar a Aprender
+              <span class="material-icons-outlined text-base">arrow_forward</span>
+            </a>
+          </div>
+        </section>
+      }
+
        <!-- Popular Templates -->
       <section>
         <h2 class="text-2xl font-semibold text-white mb-4">Templates Populares</h2>

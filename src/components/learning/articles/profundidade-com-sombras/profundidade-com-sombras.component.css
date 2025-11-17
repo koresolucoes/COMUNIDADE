@@ -1,0 +1,15 @@
+.shadow-example-box {
+  width: 120px;
+  height: 120px;
+  background-color: #21262d; /* gray-800 */
+  border-radius: 8px;
+  border: 1px solid #30363d; /* gray-700 */
+}
+
+.shadow-hard {
+  box-shadow: 8px 8px 10px #000;
+}
+
+.shadow-layered {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+}

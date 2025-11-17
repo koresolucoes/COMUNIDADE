@@ -1,0 +1,126 @@
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/fundamentos-design-visual-devs" class="hover:text-blue-accent hover:underline">Fundamentos do Design Visual para Devs</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">A Mágica do Espaçamento: Layouts com Grid e Flexbox</h1>
+    <p class="mt-4 text-lg text-gray-400">Entenda os conceitos básicos por trás dos sistemas de layout mais poderosos do CSS.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Desafio do Layout: Arrumando a Sala</h2>
+      <p>
+        Imagine que você está arrumando os móveis em uma sala. Você não joga tudo no meio. Você pensa: "O sofá vai contra esta parede, a TV na frente, e as poltronas uma ao lado da outra". Você está criando um <strong>layout</strong>.
+      </p>
+      <p>
+        Na web, fazer layouts costumava ser um pesadelo. Hoje, temos duas ferramentas incríveis que resolvem 99% dos problemas: <strong>Flexbox</strong> e <strong>CSS Grid</strong>. Elas são os sistemas que usamos para "arrumar os móveis" (nossos elementos HTML) na tela.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Flexbox: O Especialista em Linhas (ou Colunas)</h2>
+      <p>
+        Pense no Flexbox como organizar pessoas em uma fila. Você pode dizer a elas para se alinharem no início, no centro, no fim da fila, ou para se espaçarem igualmente. Flexbox é mestre em alinhar e distribuir itens em <strong>uma única dimensão</strong>, seja uma linha (horizontal) ou uma coluna (vertical).
+      </p>
+
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo Prático: Uma Barra de Navegação</h4>
+        <p class="text-xs text-gray-400 mb-3">Queremos que o logo fique à esquerda e os links de navegação à direita.</p>
+        <div class="bg-gray-900 p-3 rounded-md">
+          <div class="flexbox-example-nav">
+            <div class="font-bold text-white">Meu Site</div>
+            <div class="flex gap-4">
+              <a href="javascript:void(0);">Início</a>
+              <a href="javascript:void(0);">Sobre</a>
+              <a href="javascript:void(0);">Contato</a>
+            </div>
+          </div>
+        </div>
+        <pre class="!bg-gray-950 !p-3 !my-2 text-xs"><code class="language-css">.container-nav {{ '{' }}
+  display: flex;
+  justify-content: space-between; /* Magia! Empurra os itens para as extremidades */
+  align-items: center; /* Centraliza verticalmente */
+{{ '}' }}</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">CSS Grid: O Mestre da Grade Bidimensional</h2>
+      <p>
+        Se o Flexbox organiza uma fila, o Grid organiza uma <strong>planilha ou um tabuleiro de xadrez</strong>. Ele é projetado para alinhar itens em <strong>duas dimensões ao mesmo tempo: colunas E linhas</strong>. Isso o torna a ferramenta perfeita para o layout geral de uma página ou para galerias complexas.
+      </p>
+
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo Prático: Uma Galeria de Cards</h4>
+        <p class="text-xs text-gray-400 mb-3">Queremos uma grade de cards que se ajuste automaticamente ao tamanho da tela.</p>
+        <div class="bg-gray-900 p-3 rounded-md">
+          <div class="grid-example-gallery">
+            <div class="grid-item">Card 1</div>
+            <div class="grid-item">Card 2</div>
+            <div class="grid-item">Card 3</div>
+            <div class="grid-item">Card 4</div>
+            <div class="grid-item">Card 5</div>
+            <div class="grid-item">Card 6</div>
+          </div>
+        </div>
+        <pre class="!bg-gray-950 !p-3 !my-2 text-xs"><code class="language-css">.container-gallery {{ '{' }}
+  display: grid;
+  /* Cria colunas que têm no mínimo 200px, e preenche o espaço
+     disponível, criando mais colunas se couber. */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; /* Espaço entre os cards */
+{{ '}' }}</code></pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Flexbox vs. Grid: Quando Usar Cada Um?</h2>
+      <table class="w-full text-left border-collapse border border-gray-800">
+        <thead class="bg-gray-800">
+          <tr>
+            <th class="p-3 border-b border-gray-700">Use Flexbox para...</th>
+            <th class="p-3 border-b border-gray-700">Use Grid para...</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="border-t border-gray-800">
+            <td class="p-3">Alinhar itens em uma linha (navbar, botões em um card).</td>
+            <td class="p-3">Layout geral da página (sidebar, header, conteúdo, footer).</td>
+          </tr>
+          <tr class="border-t border-gray-800">
+            <td class="p-3">Layouts unidimensionais (uma linha OU uma coluna).</td>
+            <td class="p-3">Layouts bidimensionais (linhas E colunas).</td>
+          </tr>
+          <tr class="border-t border-gray-800">
+            <td class="p-3">Quando o layout é determinado pelo conteúdo (Content-first).</td>
+            <td class="p-3">Quando o layout é predefinido (Layout-first).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">A Dupla Dinâmica: Grid + Flexbox</h3>
+      <p>
+        A pergunta não é "Grid OU Flexbox?", mas sim "Quando usar Grid E Flexbox?". A abordagem mais moderna e poderosa é usar os dois juntos. Use <strong>Grid para o layout macro</strong> da página e <strong>Flexbox para o alinhamento micro</strong> dentro de cada componente.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/tools/construtor-grid-css" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors">
+        <span class="material-icons-outlined">construction</span>
+        Pratique no Construtor de Grid
+      </a>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/fundamentos-design-visual-devs" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_forward</span>
+        Próximo Passo: Profundidade com Sombras
+      </a>
+    </div>
+  </article>
+</div>
