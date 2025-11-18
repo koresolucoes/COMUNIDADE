@@ -7,83 +7,223 @@
       <a routerLink="/learning/python-fundamentos-dados" class="hover:text-blue-accent hover:underline">Fundamentos de Python para Dados</a>
     </div>
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Funções e Modularização</h1>
-    <p class="mt-4 text-lg text-gray-400">Escreva código limpo e reutilizável criando suas próprias mini-ferramentas.</p>
+    <p class="mt-4 text-lg text-gray-400">Escreva código limpo e reutilizável criando suas próprias mini-ferramentas (funções).</p>
   </header>
-  <article class="prose-container space-y-10">
+
+  <article class="prose-container space-y-12">
+    
+    <!-- Intro -->
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
       <h2 class="text-2xl font-semibold text-white !mt-0">O Princípio DRY: "Don't Repeat Yourself"</h2>
       <p>
-        As <strong>funções</strong> são blocos de código nomeados e reutilizáveis. Elas recebem entradas (parâmetros), processam algo e devolvem uma saída (retorno).
+        Imagine que você tem uma receita de bolo. Se você quiser fazer 3 bolos, você não reescreve a receita 3 vezes no papel. Você apenas <strong>chama</strong> a receita novamente.
+      </p>
+      <p>
+        <strong>Funções</strong> são essas receitas. São blocos de código que realizam uma tarefa específica, têm um nome e podem ser reutilizados quantas vezes você quiser. Elas são a base da organização em programação.
       </p>
     </div>
 
-    <!-- Function Lab -->
-    <section class="my-8">
-       <div class="border border-gray-700 rounded-xl overflow-hidden bg-[#0d1117] shadow-2xl">
-         <div class="bg-gray-800 px-4 py-3 border-b border-gray-700 flex justify-between items-center">
-             <h3 class="font-bold text-white flex items-center gap-2">
-                <span class="material-icons-outlined text-purple-400">functions</span> Laboratório de Função
-             </h3>
-         </div>
-         
-         <div class="grid grid-cols-1 lg:grid-cols-2">
-             <!-- Code Visualization -->
-             <div class="p-6 border-b lg:border-b-0 lg:border-r border-gray-700 bg-[#161b22]">
-                <p class="text-xs text-gray-500 mb-2 font-mono"># Definição da Função</p>
-                <pre class="text-sm font-mono text-gray-300"><span class="text-purple-400">def</span> <span class="text-blue-400">calcular_total</span>(valor, taxa):
-    imposto = valor * (taxa / 100)
-    total = valor + imposto
-    <span class="text-purple-400">return</span> total</pre>
+    <!-- INTERACTIVE: The Function Factory -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">1. A Fábrica de Funções</h2>
+      <p class="text-gray-300 mb-6">
+        Pense em uma função como uma máquina em uma fábrica. Ela recebe <strong>Entradas (Parâmetros)</strong>, faz algum <strong>Processamento</strong> interno e cospe uma <strong>Saída (Retorno)</strong>.
+      </p>
+      
+      <div class="bg-[#0d1117] border border-gray-700 rounded-xl overflow-hidden shadow-2xl">
+        <!-- Factory Header / Selector -->
+        <div class="bg-gray-800 p-4 border-b border-gray-700 flex flex-wrap gap-4 items-center justify-between">
+           <div class="flex items-center gap-2">
+               <span class="material-icons-outlined text-yellow-400">factory</span>
+               <span class="font-bold text-white">Escolha a Máquina:</span>
+           </div>
+           <div class="flex bg-gray-900 rounded-lg p-1">
+               @for(preset of presets; track preset.id) {
+                   <button (click)="selectPreset(preset.id)" 
+                           class="px-4 py-2 text-xs font-bold rounded transition-all"
+                           [class.bg-blue-600]="selectedPresetId() === preset.id && preset.id === 'math'"
+                           [class.text-white]="selectedPresetId() === preset.id"
+                           [class.bg-green-600]="selectedPresetId() === preset.id && preset.id === 'text'"
+                           [class.bg-purple-600]="selectedPresetId() === preset.id && preset.id === 'logic'"
+                           [class.text-gray-400]="selectedPresetId() !== preset.id"
+                           [class.hover:text-gray-200]="selectedPresetId() !== preset.id">
+                       {{ preset.name }}()
+                   </button>
+               }
+           </div>
+        </div>
+
+        <!-- Factory Body -->
+        <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- INPUTS (Left) -->
+            <div class="lg:col-span-3 flex flex-col justify-center space-y-6">
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider text-center mb-2">Entradas (Argumentos)</h4>
                 
-                <div class="mt-8 pt-8 border-t border-gray-700">
-                    <p class="text-xs text-gray-500 mb-2 font-mono"># Chamada da Função</p>
-                    <div class="text-sm font-mono text-gray-300">
-                        resultado = <span class="text-blue-400">calcular_total</span>(
-                        <span class="text-green-400 font-bold">{{ valorBase() }}</span>, 
-                        <span class="text-orange-400 font-bold">{{ taxaImposto() }}</span>
-                        )
-                    </div>
+                <!-- Input 1 -->
+                <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 relative group">
+                    <div class="absolute -top-2 -left-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs font-bold text-white">1</div>
+                    <label class="text-xs text-blue-300 block mb-1">{{ activePreset().params[0].label }}</label>
+                    @if(activePreset().params[0].type === 'number') {
+                        <input type="number" [(ngModel)]="val1" [min]="activePreset().params[0].min" [max]="activePreset().params[0].max" [step]="activePreset().params[0].step" class="w-full bg-black/30 border border-gray-600 rounded px-2 py-1 text-white text-center font-mono">
+                        <input type="range" [(ngModel)]="val1" [min]="activePreset().params[0].min" [max]="activePreset().params[0].max" [step]="activePreset().params[0].step" class="w-full mt-2 accent-blue-500">
+                    } @else {
+                        <input type="text" [(ngModel)]="val1" class="w-full bg-black/30 border border-gray-600 rounded px-2 py-1 text-white text-center font-mono">
+                    }
                 </div>
-             </div>
 
-             <!-- Interactive Inputs -->
-             <div class="p-6 flex flex-col justify-center space-y-8">
-                 <div>
-                     <label class="flex justify-between text-sm text-gray-300 mb-2">
-                         <span>Valor Base (R$)</span>
-                         <span class="font-mono text-green-400">{{ valorBase() }}</span>
-                     </label>
-                     <input type="range" min="0" max="1000" step="10" [(ngModel)]="valorBase" class="w-full accent-green-500">
-                 </div>
+                <!-- Input 2 (Optional) -->
+                @if(activePreset().params.length > 1) {
+                    <div class="bg-gray-800 p-3 rounded-lg border border-gray-700 relative group">
+                        <div class="absolute -top-2 -left-2 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-xs font-bold text-white">2</div>
+                         <label class="text-xs text-blue-300 block mb-1">{{ activePreset().params[1].label }}</label>
+                        @if(activePreset().params[1].type === 'number') {
+                             <input type="number" [(ngModel)]="val2" [min]="activePreset().params[1].min" [max]="activePreset().params[1].max" [step]="activePreset().params[1].step" class="w-full bg-black/30 border border-gray-600 rounded px-2 py-1 text-white text-center font-mono">
+                             <input type="range" [(ngModel)]="val2" [min]="activePreset().params[1].min" [max]="activePreset().params[1].max" [step]="activePreset().params[1].step" class="w-full mt-2 accent-blue-500">
+                        } @else {
+                            <select [(ngModel)]="val2" class="w-full bg-black/30 border border-gray-600 rounded px-2 py-1 text-white text-center font-mono text-sm">
+                                <option value="Dia">Dia</option>
+                                <option value="Tarde">Tarde</option>
+                            </select>
+                        }
+                    </div>
+                }
+            </div>
 
-                 <div>
-                     <label class="flex justify-between text-sm text-gray-300 mb-2">
-                         <span>Taxa de Imposto (%)</span>
-                         <span class="font-mono text-orange-400">{{ taxaImposto() }}%</span>
-                     </label>
-                     <input type="range" min="0" max="50" step="1" [(ngModel)]="taxaImposto" class="w-full accent-orange-500">
-                 </div>
+            <!-- PROCESSING (Center) -->
+            <div class="lg:col-span-6 flex flex-col">
+                <div class="flex-1 bg-[#161b22] border border-gray-700 rounded-lg p-4 relative overflow-hidden shadow-inner">
+                    <!-- Decorators -->
+                    <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1 h-4 bg-blue-500/50"></div>
+                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-4 bg-green-500/50"></div>
+                    
+                    <div class="text-xs text-gray-500 font-mono mb-2"># Definição da Função (A Máquina)</div>
+                    <pre class="text-sm font-mono text-gray-300"><span class="text-purple-400">def</span> <span class="text-yellow-200">{{ activePreset().name }}</span>({{ activePreset().params[0].name }}{{ activePreset().params.length > 1 ? ', ' + activePreset().params[1].name : '' }}):
+{{ activePreset().logicDisplay }}</pre>
+                </div>
+                
+                <div class="mt-4 text-center">
+                    <span class="material-icons-outlined text-gray-600 text-3xl animate-bounce">arrow_downward</span>
+                </div>
 
-                 <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                     <div class="flex justify-between items-center mb-1">
-                         <span class="text-xs text-gray-400">Imposto Calculado:</span>
-                         <span class="text-sm text-gray-300 font-mono">+ R$ {{ impostoCalculado() }}</span>
-                     </div>
-                     <div class="flex justify-between items-center pt-2 border-t border-gray-700">
-                         <span class="text-sm font-bold text-white">Retorno (Total):</span>
-                         <span class="text-xl font-bold text-blue-400 font-mono">R$ {{ totalCalculado() }}</span>
-                     </div>
-                 </div>
-             </div>
-         </div>
-       </div>
+                <div class="bg-black/40 border border-gray-700 rounded-lg p-3">
+                    <div class="text-xs text-gray-500 font-mono mb-1"># Chamada da Função (Você usando a máquina)</div>
+                    <code class="text-sm font-mono text-blue-300 block break-all">{{ pythonCallCode() }}</code>
+                </div>
+            </div>
+
+            <!-- OUTPUT (Right) -->
+            <div class="lg:col-span-3 flex flex-col justify-center items-center">
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wider text-center mb-4">Saída (Return)</h4>
+                
+                <div class="w-full bg-green-900/20 border-2 border-green-500/50 rounded-xl p-6 text-center shadow-[0_0_15px_rgba(34,197,94,0.2)] flex flex-col items-center justify-center min-h-[120px]">
+                    <span class="text-xs text-green-400 font-mono mb-2">resultado ==</span>
+                    <span class="text-2xl font-bold text-white break-all">{{ functionResult() }}</span>
+                </div>
+            </div>
+
+        </div>
+      </div>
     </section>
 
-    <div class="pt-8 text-center">
-       <a routerLink="/learning/python-fundamentos-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+    <!-- Concept: Escopo -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">2. Onde as Variáveis Vivem (Escopo)</h2>
+      <p class="text-gray-300 mb-6">
+        Uma variável criada <strong>dentro</strong> de uma função só existe lá dentro. Ela é <strong>Local</strong>. Uma variável criada fora pode ser vista por todos, ela é <strong>Global</strong>.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+          <!-- Simulator Visualization -->
+          <div class="relative h-[300px] bg-[#0d1117] rounded-lg border border-gray-700 overflow-hidden p-4">
+              <!-- Global Scope Container -->
+              <div class="absolute inset-0 border-4 border-blue-900/30 m-2 rounded-lg pointer-events-none"></div>
+              <span class="absolute top-4 right-4 text-xs font-bold text-blue-500 uppercase">Escopo Global</span>
+
+              <!-- Global Variable -->
+              <div class="absolute top-12 left-8 bg-blue-900/40 border border-blue-500 text-blue-100 px-3 py-2 rounded font-mono text-xs shadow-lg transition-all duration-500"
+                   [class.opacity-100]="scopeStep() >= 0"
+                   [class.opacity-0]="scopeStep() < 0">
+                  empresa = "{{ globalVar() }}"
+              </div>
+
+              <!-- Function Scope Container -->
+              <div class="absolute bottom-4 left-4 right-4 height-1/2 bg-gray-800/80 border-2 border-purple-500 rounded-lg p-4 transition-all duration-500 transform origin-bottom"
+                   [class.scale-y-0]="scopeStep() !== 1"
+                   [class.scale-y-100]="scopeStep() === 1"
+                   [class.opacity-0]="scopeStep() !== 1"
+                   [class.opacity-100]="scopeStep() === 1"
+                   style="height: 160px;">
+                  
+                  <span class="text-xs font-bold text-purple-400 uppercase mb-2 block">Escopo Local (Função)</span>
+                  
+                  <!-- Local Variable -->
+                  <div class="bg-purple-900/40 border border-purple-500 text-purple-100 px-3 py-2 rounded font-mono text-xs shadow-lg inline-block mb-2">
+                      linguagem = "{{ localVar() }}"
+                  </div>
+                  
+                  <div class="text-xs text-gray-400 mt-2">
+                      <p>> print(empresa) <span class="text-green-400"># OK (Vê o Global)</span></p>
+                      <p>> print(linguagem) <span class="text-green-400"># OK (Vê o Local)</span></p>
+                  </div>
+              </div>
+
+               <!-- Global Access Attempt -->
+               <div class="absolute top-32 left-8 text-xs font-mono transition-opacity duration-300" [class.opacity-0]="scopeStep() === 1" [class.opacity-100]="scopeStep() !== 1">
+                    <p class="text-gray-400">> print(linguagem)</p>
+                    <p class="text-red-400 font-bold mt-1">Error: name 'linguagem' is not defined</p>
+               </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="flex flex-col justify-center space-y-6">
+              <div>
+                  <h3 class="text-lg font-bold text-white mb-2">{{ scopeStepsInfo[scopeStep()].title }}</h3>
+                  <p class="text-sm text-gray-400">{{ scopeStepsInfo[scopeStep()].desc }}</p>
+              </div>
+              
+              <!-- Step Indicator -->
+              <div class="flex items-center gap-2">
+                  <div class="h-2 w-12 rounded-full transition-colors" [class.bg-blue-500]="scopeStep() >= 0" [class.bg-gray-700]="scopeStep() < 0"></div>
+                  <div class="h-2 w-12 rounded-full transition-colors" [class.bg-purple-500]="scopeStep() >= 1" [class.bg-gray-700]="scopeStep() < 1"></div>
+                  <div class="h-2 w-12 rounded-full transition-colors" [class.bg-gray-500]="scopeStep() >= 2" [class.bg-gray-700]="scopeStep() < 2"></div>
+              </div>
+
+              <button (click)="nextScopeStep()" class="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2">
+                  @if(scopeStep() === 2) {
+                      <span class="material-icons-outlined">replay</span> Reiniciar Simulação
+                  } @else {
+                      <span class="material-icons-outlined">play_arrow</span> Próximo Passo
+                  }
+              </button>
+          </div>
+      </div>
+    </section>
+
+    <!-- Practice: Console -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">3. Desafio no Console</h2>
+      <p class="text-gray-300 mb-4">
+        Use o console abaixo para definir uma função e chamá-la. Tente resolver o desafio proposto no código.
+      </p>
+      
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-xl shadow-lg">
+         <app-python-console [initialCode]="consoleExercise" outputHeight="300px"></app-python-console>
+      </div>
+    </section>
+
+    <!-- Navegação -->
+    <div class="pt-8 flex justify-between items-center border-t border-gray-800">
+       <a routerLink="/learning/article/python-listas-dicionarios" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 rounded-md font-semibold hover:bg-gray-700 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Anterior: Listas e Dicionários
+      </a>
+      
+      <a routerLink="/learning/article/python-arquivos" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-500/40 transform hover:-translate-y-1">
+        Próximo: Arquivos
         <span class="material-icons-outlined">arrow_forward</span>
-        Próximo Passo: Lendo e Escrevendo Arquivos
       </a>
     </div>
+
   </article>
 </div>
