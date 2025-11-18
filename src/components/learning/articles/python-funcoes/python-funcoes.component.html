@@ -1,3 +1,4 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
@@ -5,87 +6,78 @@
       <span class="material-icons-outlined text-base">chevron_right</span>
       <a routerLink="/learning/python-fundamentos-dados" class="hover:text-blue-accent hover:underline">Fundamentos de Python para Dados</a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Funções e Modularização em Python</h1>
-    <p class="mt-4 text-lg text-gray-400">Escreva código limpo e reutilizável criando suas próprias funções e importando módulos.</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Funções e Modularização</h1>
+    <p class="mt-4 text-lg text-gray-400">Escreva código limpo e reutilizável criando suas próprias mini-ferramentas.</p>
   </header>
   <article class="prose-container space-y-10">
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
       <h2 class="text-2xl font-semibold text-white !mt-0">O Princípio DRY: "Don't Repeat Yourself"</h2>
       <p>
-        Imagine que você precisa calcular o imposto sobre um valor em vários lugares do seu código. Você poderia escrever a fórmula <code>valor * 0.07</code> toda vez. Mas e se o imposto mudar para 8%? Você teria que encontrar e corrigir a fórmula em todos os lugares, um processo chato e propenso a erros.
-      </p>
-      <p>
-        As <strong>funções</strong> resolvem isso. Uma função é um bloco de código nomeado e reutilizável que realiza uma tarefa específica. É como criar sua própria mini-ferramenta.
+        As <strong>funções</strong> são blocos de código nomeados e reutilizáveis. Elas recebem entradas (parâmetros), processam algo e devolvem uma saída (retorno).
       </p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-semibold text-white">1. Anatomia de uma Função</h2>
-      <p>Uma função em Python tem três partes principais:</p>
-      <ul class="list-disc list-inside text-gray-400 space-y-1">
-        <li><strong>Definição (`def`):</strong> A palavra-chave <code>def</code>, seguida pelo nome da função e parênteses.</li>
-        <li><strong>Parâmetros (Entradas):</strong> Variáveis dentro dos parênteses que a função recebe como entrada.</li>
-        <li><strong>Retorno (`return`):</strong> O resultado que a função devolve após fazer seu trabalho.</li>
-      </ul>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Função para calcular imposto</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Definindo a função
-def calcular_imposto(valor_base):
-    """
-    Esta é uma docstring. Ela explica o que a função faz.
-    Calcula um imposto de 7% sobre um valor base.
-    """
-    taxa_imposto = 0.07
-    imposto = valor_base * taxa_imposto
-    return imposto
+    <!-- Function Lab -->
+    <section class="my-8">
+       <div class="border border-gray-700 rounded-xl overflow-hidden bg-[#0d1117] shadow-2xl">
+         <div class="bg-gray-800 px-4 py-3 border-b border-gray-700 flex justify-between items-center">
+             <h3 class="font-bold text-white flex items-center gap-2">
+                <span class="material-icons-outlined text-purple-400">functions</span> Laboratório de Função
+             </h3>
+         </div>
+         
+         <div class="grid grid-cols-1 lg:grid-cols-2">
+             <!-- Code Visualization -->
+             <div class="p-6 border-b lg:border-b-0 lg:border-r border-gray-700 bg-[#161b22]">
+                <p class="text-xs text-gray-500 mb-2 font-mono"># Definição da Função</p>
+                <pre class="text-sm font-mono text-gray-300"><span class="text-purple-400">def</span> <span class="text-blue-400">calcular_total</span>(valor, taxa):
+    imposto = valor * (taxa / 100)
+    total = valor + imposto
+    <span class="text-purple-400">return</span> total</pre>
+                
+                <div class="mt-8 pt-8 border-t border-gray-700">
+                    <p class="text-xs text-gray-500 mb-2 font-mono"># Chamada da Função</p>
+                    <div class="text-sm font-mono text-gray-300">
+                        resultado = <span class="text-blue-400">calcular_total</span>(
+                        <span class="text-green-400 font-bold">{{ valorBase() }}</span>, 
+                        <span class="text-orange-400 font-bold">{{ taxaImposto() }}</span>
+                        )
+                    </div>
+                </div>
+             </div>
 
-# Usando (ou "chamando") a função
-preco_produto_a = 100
-imposto_a = calcular_imposto(preco_produto_a)
-print(f"O imposto para o produto A é: R$ {{'{'}}imposto_a{{'}'}}") # Saída: O imposto para o produto A é: R$ 7.0
+             <!-- Interactive Inputs -->
+             <div class="p-6 flex flex-col justify-center space-y-8">
+                 <div>
+                     <label class="flex justify-between text-sm text-gray-300 mb-2">
+                         <span>Valor Base (R$)</span>
+                         <span class="font-mono text-green-400">{{ valorBase() }}</span>
+                     </label>
+                     <input type="range" min="0" max="1000" step="10" [(ngModel)]="valorBase" class="w-full accent-green-500">
+                 </div>
 
-preco_produto_b = 50
-imposto_b = calcular_imposto(preco_produto_b)
-print(f"O imposto para o produto B é: R$ {{'{'}}imposto_b{{'}'}}") # Saída: O imposto para o produto B é: R$ 3.5
-</code></pre>
-         <div class="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs">
-          Agora, se o imposto mudar, você só precisa editar a variável <code>taxa_imposto</code> em <strong>um</strong> lugar: dentro da função!
-      </div>
-      </div>
-    </div>
-    
-    <div>
-      <h2 class="text-2xl font-semibold text-white">2. Modularização: Importando Ferramentas</h2>
-      <p>Você não precisa escrever todas as funções do zero. Python vem com uma vasta "biblioteca padrão" cheia de ferramentas prontas, organizadas em <strong>módulos</strong>. Para usar as ferramentas de um módulo, você precisa importá-lo com a palavra-chave <code>import</code>.</p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Usando o módulo `math` e `random`</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import math
-import random
+                 <div>
+                     <label class="flex justify-between text-sm text-gray-300 mb-2">
+                         <span>Taxa de Imposto (%)</span>
+                         <span class="font-mono text-orange-400">{{ taxaImposto() }}%</span>
+                     </label>
+                     <input type="range" min="0" max="50" step="1" [(ngModel)]="taxaImposto" class="w-full accent-orange-500">
+                 </div>
 
-# Usando uma função do módulo math para arredondar um número para cima
-numero = 9.2
-arredondado_para_cima = math.ceil(numero)
-print(f"O número {{'{'}}numero{{'}'}} arredondado para cima é: {{'{'}}arredondado_para_cima{{'}'}}") # Saída: 10
-
-# Usando uma função do módulo random para escolher um item aleatório de uma lista
-opcoes = ["pedra", "papel", "tesoura"]
-escolha_do_computador = random.choice(opcoes)
-print(f"O computador escolheu: {{'{'}}escolha_do_computador{{'}'}}")
-</code></pre>
-      </div>
-    </div>
-    
-     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
-      <p>
-        Vamos praticar no <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">Google Colab</a>.
-      </p>
-      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
-        <li>Crie uma função chamada <code>formatar_nome</code> que recebe dois parâmetros: <code>nome</code> e <code>sobrenome</code>.</li>
-        <li>Dentro da função, ela deve retornar uma única string formatada como "Sobrenome, Nome" (ex: "Silva, Ana").</li>
-        <li>Chame sua função com seu nome e sobrenome e use <code>print()</code> para ver o resultado.</li>
-      </ol>
-    </div>
+                 <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                     <div class="flex justify-between items-center mb-1">
+                         <span class="text-xs text-gray-400">Imposto Calculado:</span>
+                         <span class="text-sm text-gray-300 font-mono">+ R$ {{ impostoCalculado() }}</span>
+                     </div>
+                     <div class="flex justify-between items-center pt-2 border-t border-gray-700">
+                         <span class="text-sm font-bold text-white">Retorno (Total):</span>
+                         <span class="text-xl font-bold text-blue-400 font-mono">R$ {{ totalCalculado() }}</span>
+                     </div>
+                 </div>
+             </div>
+         </div>
+       </div>
+    </section>
 
     <div class="pt-8 text-center">
        <a routerLink="/learning/python-fundamentos-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">

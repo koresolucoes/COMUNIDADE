@@ -1,0 +1,48 @@
+
+<div class="python-console-wrapper font-mono text-sm bg-[#0d1117] border border-gray-700 rounded-lg shadow-2xl overflow-hidden flex flex-col">
+  <!-- Header -->
+  <div class="bg-gray-800 px-4 py-2 flex items-center justify-between border-b border-gray-700 shrink-0">
+    <div class="flex gap-2">
+      <div class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors cursor-pointer" (click)="clear()" title="Limpar Console"></div>
+      <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+      <div class="w-3 h-3 rounded-full bg-green-500"></div>
+    </div>
+    <span class="text-xs text-gray-400 font-mono opacity-70">python3</span>
+    <div class="w-10"></div> <!-- Spacer -->
+  </div>
+
+  <!-- Output Area -->
+  <div #terminalOutput class="flex-1 p-4 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent" [style.height]="outputHeight()">
+    @for (line of lines(); track $index) {
+      <div class="mb-1 break-words leading-tight">
+        @switch (line.type) {
+          @case ('input') {
+            <span class="text-gray-400 mr-2">{{ line.content }}</span>
+          }
+          @case ('output') {
+            <span class="text-green-400">{{ line.content }}</span>
+          }
+          @case ('error') {
+            <span class="text-red-400">{{ line.content }}</span>
+          }
+          @case ('info') {
+            <span class="text-gray-500 italic">{{ line.content }}</span>
+          }
+        }
+      </div>
+    }
+    
+    <!-- Input Line -->
+    <div class="flex items-center mt-2">
+      <span class="text-blue-400 mr-2 font-bold">>>></span>
+      <input 
+        type="text" 
+        class="bg-transparent border-none outline-none text-gray-200 w-full font-mono placeholder-gray-700"
+        [(ngModel)]="currentInput"
+        (keydown.enter)="handleEnter()"
+        autofocus
+        placeholder="..."
+      >
+    </div>
+  </div>
+</div>

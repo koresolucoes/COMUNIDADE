@@ -1,3 +1,4 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
@@ -5,98 +6,208 @@
       <span class="material-icons-outlined text-base">chevron_right</span>
       <a routerLink="/learning/python-fundamentos-dados" class="hover:text-blue-accent hover:underline">Fundamentos de Python para Dados</a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Variáveis e Tipos de Dados Primitivos</h1>
-    <p class="mt-4 text-lg text-gray-400">Domine os tipos de dados básicos: strings para texto, int e float para números, e booleanos para lógica.</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Variáveis e Tipos de Dados</h1>
+    <p class="mt-4 text-lg text-gray-400">Domine a base da programação: como o computador armazena textos, números e decisões na memória.</p>
   </header>
-  <article class="prose-container space-y-10">
+
+  <article class="prose-container space-y-12">
+    
+    <!-- Intro Section -->
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
-      <h2 class="text-2xl font-semibold text-white !mt-0">O que são Variáveis? Caixas com Etiquetas</h2>
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Conceito da "Caixa com Etiqueta"</h2>
       <p>
-        Um programa precisa lidar com informações. Uma <strong>variável</strong> é como uma caixa com uma etiqueta, onde você pode guardar um dado. A "etiqueta" é o nome da variável, e o conteúdo é o valor que ela armazena. Em Python, criar uma variável é tão simples quanto dar um nome e atribuir um valor com o sinal de igual (<code>=</code>).
+        Imagine a memória do computador como um enorme armazém. Para não perder as informações, guardamos os dados dentro de "caixas" e colamos uma etiqueta nelas.
       </p>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">1. Strings (`str`): O Mundo do Texto</h2>
-      <p>Uma <strong>String</strong> (ou `str`) é usada para armazenar texto. Você pode criá-la usando aspas simples (<code>'</code>) ou duplas (<code>"</code>).</p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Manipulando texto</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">primeiro_nome = "Maria"
-profissao = 'Engenheira de Dados'
-
-# Podemos "somar" strings para juntá-las (concatenação)
-apresentacao = "Nome: " + primeiro_nome + ", Profissão: " + profissao
-print(apresentacao)
-
-# Strings têm "métodos" úteis, como deixar tudo em maiúsculo
-print(profissao.upper())  # Saída: ENGENHEIRA DE DADOS</code></pre>
-      </div>
-
-      <h3 class="text-xl font-bold text-white mt-6">f-strings: A Forma Moderna de Formatar Texto</h3>
-      <p>Juntar strings com `+` pode ser confuso. As <strong>f-strings</strong> (strings formatadas) são a maneira mais limpa e legível de incluir variáveis dentro de um texto.</p>
-       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Comece a string com a letra 'f' e coloque as variáveis entre chaves {{ '{' }}{{ '}' }}
-resumo = f"{{'{'}}primeiro_nome{{'}'}} é uma {{'{'}}profissao{{'}'}}."
-print(resumo)  # Saída: Maria é uma Engenheira de Dados.</code></pre>
-      </div>
-    </div>
-    
-    <div>
-      <h2 class="text-2xl font-semibold text-white">2. Números (`int` e `float`): A Base dos Cálculos</h2>
-      <p>Python tem dois tipos numéricos principais:</p>
-      <ul class="list-disc list-inside text-gray-400 space-y-1">
-        <li><strong>Inteiros (`int`):</strong> Números inteiros, sem casas decimais (ex: <code>10</code>, <code>-50</code>).</li>
-        <li><strong>Ponto Flutuante (`float`):</strong> Números com casas decimais (ex: <code>19.99</code>, <code>3.14</code>).</li>
+      <ul class="list-disc list-inside text-gray-400 mt-4 space-y-2">
+        <li>A <strong>Variável</strong> é a etiqueta (o nome que você dá).</li>
+        <li>O <strong>Valor</strong> é o que está dentro da caixa.</li>
+        <li>O <strong>Tipo de Dado</strong> define o formato da caixa (se cabe texto, número, etc).</li>
       </ul>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Operações matemáticas</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">ano_nascimento = 1990
-altura = 1.75
+    </div>
 
-idade = 2024 - ano_nascimento
-imc = 70 / (altura * altura)  # O resultado da divisão é sempre um float
+    <!-- INTERACTIVE: Type Inspector -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">1. O Inspetor de Tipos</h2>
+      <p class="text-gray-300 mb-6">
+        Em Python, você não precisa dizer o tipo da variável (como em Java ou C++). O Python descobre sozinho. Isso se chama <strong>Tipagem Dinâmica</strong>. Teste abaixo:
+      </p>
 
-print(f"Idade: {{'{'}}idade{{'}'}} anos")
-print(f"IMC: {{'{'}}imc{{'}'}}")</code></pre>
+      <div class="p-6 bg-gradient-to-br from-indigo-900/20 to-gray-900 border border-indigo-500/30 rounded-xl shadow-lg">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <!-- Input Side -->
+            <div class="space-y-6">
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-gray-700/50">
+                    <label class="block text-xs text-gray-400 uppercase tracking-wider mb-2 font-semibold">Seu Código Python</label>
+                    <div class="flex items-center gap-2 font-mono text-lg">
+                        <input type="text" [(ngModel)]="variableName" class="w-1/3 bg-transparent border-b-2 border-gray-600 focus:border-indigo-500 text-green-400 outline-none px-1 transition-colors" placeholder="nome">
+                        <span class="text-gray-500">=</span>
+                        <input type="text" [(ngModel)]="variableValue" class="flex-1 bg-transparent border-b-2 border-gray-600 focus:border-indigo-500 text-blue-300 outline-none px-1 transition-colors" placeholder="valor">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2 italic">Dica: Tente <code>"Texto"</code>, <code>10</code>, <code>10.5</code> ou <code>True</code>.</p>
+                </div>
+            </div>
+
+            <!-- Output Side -->
+            <div class="relative overflow-hidden bg-black/40 p-6 rounded-lg border border-gray-700 flex flex-col items-center justify-center text-center min-h-[180px]">
+                <!-- Background decoration -->
+                <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-indigo-500/10 rounded-full blur-xl"></div>
+
+                <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mb-4 border-2 border-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all duration-300 transform hover:scale-110">
+                    <span class="material-icons-outlined text-3xl text-indigo-300">{{ visualRepresentation() }}</span>
+                </div>
+                
+                <div class="font-mono text-sm text-gray-400 mb-1">Interpretação do Python:</div>
+                <div class="text-white font-mono text-xl bg-gray-800 px-3 py-1 rounded border border-gray-700">
+                    type({{ variableName() }}) == <span class="text-yellow-400 font-bold">&lt;class '{{ detectedType() }}'&gt;</span>
+                </div>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Content: Primitive Types -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="p-5 bg-gray-800 border border-gray-700 rounded-lg hover:border-blue-500 transition-colors">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="material-icons-outlined text-green-400">abc</span>
+            <h3 class="text-lg font-bold text-white">String (str)</h3>
+        </div>
+        <p class="text-sm text-gray-400">Texto. Sempre envolto em aspas simples <code>' '</code> ou duplas <code>" "</code>.</p>
+        <code class="block mt-3 text-xs bg-gray-900 p-2 rounded text-blue-300">nome = "Kore"</code>
+      </div>
+
+      <div class="p-5 bg-gray-800 border border-gray-700 rounded-lg hover:border-blue-500 transition-colors">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="material-icons-outlined text-blue-400">123</span>
+            <h3 class="text-lg font-bold text-white">Numbers</h3>
+        </div>
+        <p class="text-sm text-gray-400">
+            <strong>int:</strong> Inteiros (10, -5).<br>
+            <strong>float:</strong> Decimais (10.5, 3.14). Use ponto, não vírgula!
+        </p>
+        <code class="block mt-3 text-xs bg-gray-900 p-2 rounded text-blue-300">preco = 19.99</code>
+      </div>
+
+      <div class="p-5 bg-gray-800 border border-gray-700 rounded-lg hover:border-blue-500 transition-colors">
+        <div class="flex items-center gap-2 mb-3">
+            <span class="material-icons-outlined text-yellow-400">toggle_on</span>
+            <h3 class="text-lg font-bold text-white">Boolean (bool)</h3>
+        </div>
+        <p class="text-sm text-gray-400">Lógica pura. Apenas dois valores possíveis: <code>True</code> ou <code>False</code>.</p>
+        <code class="block mt-3 text-xs bg-gray-900 p-2 rounded text-yellow-300">ativo = True</code>
       </div>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-semibold text-white">3. Booleanos (`bool`): O Coração da Lógica</h2>
-      <p>Um <strong>Booleano</strong> (`bool`) representa um de dois valores: <code>True</code> (Verdadeiro) ou <code>False</code> (Falso). Eles são o resultado de comparações e a base para a tomada de decisões em condicionais.</p>
-       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Comparações</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">idade = 25
-tem_ingresso = True
+    <!-- INTERACTIVE: String Lab -->
+    <section>
+        <h2 class="text-2xl font-semibold text-white mb-4">2. O Poder das f-strings</h2>
+        <p class="text-gray-300 mb-6">
+            Antigamente, juntar texto e variáveis (concatenação) era chato usando o sinal de <code>+</code>. Hoje, usamos <strong>f-strings</strong>. Basta colocar um <code>f</code> antes das aspas e usar chaves <code>{{ '{' }} {{ '}' }}</code>.
+        </p>
 
-pode_entrar = idade >= 18 and tem_ingresso
+        <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl">
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex-1 space-y-4">
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Variável <code>nome</code></label>
+                        <input type="text" [(ngModel)]="strName" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">Variável <code>cargo</code></label>
+                        <input type="text" [(ngModel)]="strRole" class="w-full bg-gray-800 border border-gray-700 rounded p-2 text-white">
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col justify-center">
+                     <div class="bg-black/50 rounded-lg p-4 border border-gray-700 font-mono text-sm">
+                        <div class="text-gray-500 mb-2"># Código Python:</div>
+                        <div class="text-green-300 break-all">{{ fStringCode() }}</div>
+                        
+                        <div class="text-gray-500 mt-4 mb-2"># Resultado na tela:</div>
+                        <div class="text-white border-l-2 border-blue-500 pl-3 italic">{{ fStringResult() }}</div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-print(f"Pode entrar na festa? {{'{'}}pode_entrar{{'}'}}")  # Saída: Pode entrar na festa? True
+    <!-- INTERACTIVE: Math vs Text Lab -->
+    <section>
+        <h2 class="text-2xl font-semibold text-white mb-4">3. O Perigo dos Tipos (Casting)</h2>
+        <p class="text-gray-300 mb-6">
+            Para o Python, <code>10</code> (número) é diferente de <code>"10"</code> (texto). Somar números faz matemática. Somar textos junta as palavras. Tente misturar os tipos abaixo e veja o que acontece.
+        </p>
 
-# Operadores de comparação comuns: == (igual), != (diferente), >, <, >=, <=
-saldo = 100
-compra_aprovada = saldo > 50
-print(f"Compra aprovada? {{'{'}}compra_aprovada{{'}'}}") # Saída: Compra aprovada? True</code></pre>
-       </div>
-    </div>
-    
-     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
-      <p>
-        Abra seu notebook no <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">Google Colab</a> e experimente!
-      </p>
-      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
-        <li>Crie variáveis com seu nome e ano de nascimento.</li>
-        <li>Use uma f-string para imprimir uma frase como "Meu nome é [nome] e eu tenho [idade] anos." (você terá que calcular a idade!).</li>
-        <li>Verifique o tipo de cada variável usando a função <code>type()</code>. Ex: <code>print(type(seu_nome))</code>. O que ela mostra para cada uma?</li>
-      </ol>
+        <div class="p-6 bg-gray-900 border border-gray-800 rounded-xl flex flex-col items-center">
+            
+            <!-- Equation Builder -->
+            <div class="flex flex-wrap items-center justify-center gap-4 mb-8">
+                <!-- Variable A -->
+                <div class="flex flex-col items-center bg-gray-800 p-3 rounded-lg border" [class.border-blue-500]="typeA() === 'int'" [class.border-green-500]="typeA() === 'str'">
+                    <div class="flex gap-2 mb-2">
+                        <button (click)="typeA.set('int')" class="text-[10px] px-2 py-1 rounded transition-colors" [class.bg-blue-600]="typeA() === 'int'" [class.text-white]="typeA() === 'int'" [class.bg-gray-700]="typeA() !== 'int'">INT</button>
+                        <button (click)="typeA.set('str')" class="text-[10px] px-2 py-1 rounded transition-colors" [class.bg-green-600]="typeA() === 'str'" [class.text-white]="typeA() === 'str'" [class.bg-gray-700]="typeA() !== 'str'">STR</button>
+                    </div>
+                    <input type="text" [(ngModel)]="valA" class="w-20 text-center bg-transparent border-b border-gray-600 text-white font-mono text-lg outline-none">
+                </div>
+
+                <span class="text-2xl font-bold text-gray-500">+</span>
+
+                <!-- Variable B -->
+                <div class="flex flex-col items-center bg-gray-800 p-3 rounded-lg border" [class.border-blue-500]="typeB() === 'int'" [class.border-green-500]="typeB() === 'str'">
+                    <div class="flex gap-2 mb-2">
+                        <button (click)="typeB.set('int')" class="text-[10px] px-2 py-1 rounded transition-colors" [class.bg-blue-600]="typeB() === 'int'" [class.text-white]="typeB() === 'int'" [class.bg-gray-700]="typeB() !== 'int'">INT</button>
+                        <button (click)="typeB.set('str')" class="text-[10px] px-2 py-1 rounded transition-colors" [class.bg-green-600]="typeB() === 'str'" [class.text-white]="typeB() === 'str'" [class.bg-gray-700]="typeB() !== 'str'">STR</button>
+                    </div>
+                    <input type="text" [(ngModel)]="valB" class="w-20 text-center bg-transparent border-b border-gray-600 text-white font-mono text-lg outline-none">
+                </div>
+            </div>
+
+            <!-- Result Display -->
+            <div class="w-full max-w-md bg-black rounded-lg border border-gray-700 p-4 relative overflow-hidden">
+                @if(castingResult().type === 'error') {
+                     <div class="absolute top-0 left-0 w-1 h-full bg-red-500"></div>
+                     <p class="text-red-400 font-mono text-sm mb-2">>>> {{ castingResult().code }}</p>
+                     <p class="text-red-500 font-bold flex items-center gap-2">
+                        <span class="material-icons-outlined">error</span> {{ castingResult().desc }}
+                     </p>
+                } @else {
+                     <div class="absolute top-0 left-0 w-1 h-full" [class.bg-blue-500]="castingResult().type === 'int'" [class.bg-green-500]="castingResult().type === 'str'"></div>
+                     <p class="text-gray-400 font-mono text-sm mb-2">>>> {{ castingResult().code }}</p>
+                     <div class="flex justify-between items-end">
+                        <p class="text-white font-mono text-2xl font-bold">{{ castingResult().val }}</p>
+                        <span class="text-xs px-2 py-1 rounded bg-gray-800 text-gray-300">{{ castingResult().desc }}</span>
+                     </div>
+                }
+            </div>
+            
+            <div class="mt-4 text-sm text-gray-400 bg-gray-800/50 p-3 rounded w-full max-w-md">
+                <p><strong>Como corrigir?</strong> Use as funções de casting:</p>
+                <ul class="flex gap-4 mt-2 font-mono text-xs flex-wrap">
+                    <li><code class="text-blue-300">int("10")</code> -> 10</li>
+                    <li><code class="text-blue-300">float("10.5")</code> -> 10.5</li>
+                    <li><code class="text-green-300">str(10)</code> -> "10"</li>
+                </ul>
+            </div>
+
+        </div>
+    </section>
+
+    <div class="p-6 bg-green-900/20 border border-green-700/30 text-green-200 rounded-lg">
+      <h3 class="font-bold text-lg mb-2">Resumo</h3>
+      <ul class="list-disc list-inside space-y-1 text-green-100/80">
+          <li>Variáveis guardam dados. O Python descobre o tipo automaticamente.</li>
+          <li>Use <strong>Strings</strong> para texto, <strong>Int/Float</strong> para números, <strong>Bool</strong> para lógica.</li>
+          <li>Use <strong>f-strings</strong> para criar textos dinâmicos.</li>
+          <li>Cuidado ao misturar tipos! Converta-os (casting) se necessário.</li>
+      </ul>
     </div>
 
     <div class="pt-8 text-center">
-       <a routerLink="/learning/python-fundamentos-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+       <a routerLink="/learning/article/python-listas-dicionarios" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-500/40 transform hover:-translate-y-1">
+        Próximo: Listas e Dicionários
         <span class="material-icons-outlined">arrow_forward</span>
-        Próximo Passo: Listas e Dicionários
       </a>
     </div>
+
   </article>
 </div>

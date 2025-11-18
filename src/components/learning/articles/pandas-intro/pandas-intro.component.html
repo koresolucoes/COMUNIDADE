@@ -1,3 +1,4 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
@@ -10,84 +11,90 @@
   </header>
   <article class="prose-container space-y-10">
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
-      <h2 class="text-2xl font-semibold text-white !mt-0">O que é Pandas? O "Excel" do Python</h2>
+      <h2 class="text-2xl font-semibold text-white !mt-0">O "Excel" do Python</h2>
       <p>
-        <strong>Pandas</strong> é a biblioteca mais importante para ciência e análise de dados em Python. Pense nela como um "Excel com superpoderes" que você controla através de código. Ela permite carregar, manipular, limpar, analisar e visualizar dados tabulares de forma eficiente.
+        <strong>Pandas</strong> é a biblioteca mais importante para análise de dados em Python. Ela introduz o <strong>DataFrame</strong>: uma tabela poderosa que você controla com código.
       </p>
-      <p>O nome "Pandas" vem de "Panel Data" (Dados em Painel), um termo de econometria para conjuntos de dados multidimensionais.</p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Instalação e Importação</h2>
-      <p>Se você ainda não tem o Pandas, instale-o com o pip. A convenção da comunidade é importar a biblioteca com o apelido <code>pd</code>.</p>
-      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-bash">pip install pandas</code></pre>
-      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-python">import pandas as pd</code></pre>
-    </div>
+    <!-- DataFrame Interactive Viewer -->
+    <section class="my-8 bg-gray-900 border border-gray-700 rounded-xl overflow-hidden">
+        <div class="bg-gray-800 p-4 border-b border-gray-700 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2">
+                <span class="material-icons-outlined text-blue-400">table_chart</span>
+                <span class="font-bold text-white">Visualizador de DataFrame</span>
+            </div>
+            <div class="flex bg-gray-900 rounded-lg p-1">
+                <button (click)="activeView.set('head')" [class.bg-blue-600]="activeView() === 'head'" [class.text-white]="activeView() === 'head'" class="px-3 py-1 text-xs rounded transition-colors text-gray-400 hover:text-gray-200">.head(3)</button>
+                <button (click)="activeView.set('all')" [class.bg-blue-600]="activeView() === 'all'" [class.text-white]="activeView() === 'all'" class="px-3 py-1 text-xs rounded transition-colors text-gray-400 hover:text-gray-200">df (Tudo)</button>
+                <button (click)="activeView.set('describe')" [class.bg-blue-600]="activeView() === 'describe'" [class.text-white]="activeView() === 'describe'" class="px-3 py-1 text-xs rounded transition-colors text-gray-400 hover:text-gray-200">.describe()</button>
+            </div>
+        </div>
+        
+        <div class="p-4 bg-[#0d1117]">
+            <div class="mb-2 font-mono text-xs text-green-400">> {{ currentCommand() }}</div>
+            
+            <div class="overflow-x-auto">
+                @if(activeView() === 'describe') {
+                    <table class="w-full text-left text-sm text-gray-300 border-collapse">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-800">
+                            <tr>
+                                <th class="px-4 py-2"></th>
+                                <th class="px-4 py-2">id</th>
+                                <th class="px-4 py-2">preco</th>
+                                <th class="px-4 py-2">estoque</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             @for(row of describeData; track row.metric) {
+                                <tr class="border-b border-gray-800 hover:bg-gray-800/50 font-mono">
+                                    <td class="px-4 py-2 font-bold text-gray-400">{{ row.metric }}</td>
+                                    <td class="px-4 py-2">{{ row.id }}</td>
+                                    <td class="px-4 py-2">{{ row.preco }}</td>
+                                    <td class="px-4 py-2">{{ row.estoque }}</td>
+                                </tr>
+                             }
+                        </tbody>
+                    </table>
+                } @else {
+                    <table class="w-full text-left text-sm text-gray-300 border-collapse">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-800">
+                            <tr>
+                                <th class="px-4 py-2 w-10">#</th>
+                                <th class="px-4 py-2">id</th>
+                                <th class="px-4 py-2">produto</th>
+                                <th class="px-4 py-2">preco</th>
+                                <th class="px-4 py-2">estoque</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                             @for(row of displayedData(); track row.id; let i = $index) {
+                                <tr class="border-b border-gray-800 hover:bg-gray-800/50 font-mono">
+                                    <td class="px-4 py-2 text-gray-600">{{ i }}</td>
+                                    <td class="px-4 py-2">{{ row.id }}</td>
+                                    <td class="px-4 py-2">{{ row.produto }}</td>
+                                    <td class="px-4 py-2">{{ row.preco }}</td>
+                                    <td class="px-4 py-2">{{ row.estoque }}</td>
+                                </tr>
+                             }
+                        </tbody>
+                    </table>
+                    @if(activeView() === 'head') {
+                        <div class="text-xs text-gray-500 mt-2 italic text-center">... (mais dados ocultos)</div>
+                    }
+                }
+            </div>
+        </div>
+    </section>
 
     <div>
       <h2 class="text-2xl font-semibold text-white">1. A Coluna: `Series`</h2>
-      <p>A primeira estrutura de dados fundamental do Pandas é a <strong>`Series`</strong>. Ela representa uma única coluna de dados, como uma coluna em uma planilha. É um array unidimensional com rótulos (chamados de <strong>índice</strong>).</p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Criando uma `Series` de nomes</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
-
-nomes = ["Ana", "Bruno", "Carla"]
-serie_nomes = pd.Series(nomes)
-
-print(serie_nomes)</code></pre>
-        <p class="text-xs text-gray-400 mt-2">Saída:</p>
-        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-plain">0      Ana
-1    Bruno
-2    Carla
-dtype: object</code></pre>
-        <p class="text-xs text-gray-400 mt-2">Note que o Pandas adicionou automaticamente um índice numérico (0, 1, 2) à esquerda.</p>
-      </div>
+      <p>A primeira estrutura de dados fundamental do Pandas é a <strong>`Series`</strong>. Ela representa uma única coluna de dados, como uma coluna em uma planilha.</p>
     </div>
 
     <div>
       <h2 class="text-2xl font-semibold text-white">2. A Tabela: `DataFrame`</h2>
-      <p>A estrutura de dados mais importante e mais usada é o <strong>`DataFrame`</strong>. Ele representa uma tabela de dados bidimensional, com linhas e colunas, exatamente como uma planilha. Cada coluna de um `DataFrame` é uma `Series`.</p>
-      <p>A forma mais comum de criar um `DataFrame` do zero é a partir de um dicionário Python, onde as chaves são os nomes das colunas e os valores são as listas de dados.</p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Criando um `DataFrame` de usuários</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">import pandas as pd
-
-dados = {{ '{' }}
-    "nome": ["Ana", "Bruno", "Carla"],
-    "idade": [28, 35, 22],
-    "cidade": ["São Paulo", "Rio de Janeiro", "Belo Horizonte"]
-{{ '}' }}
-
-df = pd.DataFrame(dados)
-
-print(df)</code></pre>
-        <p class="text-xs text-gray-400 mt-2">Saída:</p>
-        <pre class="!bg-gray-900 !p-3 !my-2 text-xs"><code class="language-plain">    nome  idade          cidade
-0    Ana     28       São Paulo
-1  Bruno     35  Rio de Janeiro
-2  Carla     22  Belo Horizonte</code></pre>
-      </div>
-    </div>
-    
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Inspecionando seu DataFrame</h2>
-      <p>Depois de carregar ou criar um `DataFrame`, as primeiras coisas que você vai querer fazer são inspecioná-lo para entender seus dados.</p>
-       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Comandos essenciais de inspeção</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Mostra as 5 primeiras linhas do DataFrame
-print(df.head())
-
-# Mostra informações sobre o DataFrame, incluindo tipos de dados e valores nulos
-print(df.info())
-
-# Gera estatísticas descritivas para as colunas numéricas (contagem, média, desvio padrão, etc.)
-print(df.describe())</code></pre>
-       </div>
-    </div>
-
-     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
-      <p>No seu notebook, crie um `DataFrame` para representar uma pequena lista de produtos. Ele deve ter as colunas "produto" (string), "preco" (float) e "estoque" (int). Depois, use <code>.info()</code> e <code>.describe()</code> para inspecioná-lo.</p>
+      <p>A estrutura de dados mais importante e mais usada é o <strong>`DataFrame`</strong>. Ele representa uma tabela de dados bidimensional, com linhas e colunas, exatamente como uma planilha.</p>
     </div>
 
     <div class="pt-8 text-center">

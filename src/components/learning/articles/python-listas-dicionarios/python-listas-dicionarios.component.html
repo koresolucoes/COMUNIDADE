@@ -1,116 +1,112 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
       <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
       <span class="material-icons-outlined text-base">chevron_right</span>
-      <a routerLink="/learning/python-fundamentos-dados" class="hover:text-blue-accent hover:underline">Fundamentos de Python para Dados</a>
+      <a routerLink="/learning/python-automacao-dados" class="hover:text-blue-accent hover:underline">Python para Automação</a>
     </div>
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Estruturas de Dados: Listas e Dicionários</h1>
     <p class="mt-4 text-lg text-gray-400">Aprenda a organizar dados com as duas estruturas mais importantes do Python: listas para coleções ordenadas e dicionários para pares chave-valor.</p>
   </header>
-  <article class="prose-container space-y-10">
-    <p>
-      Os tipos primitivos (strings, números, booleanos) são ótimos, mas raramente trabalhamos com um dado isolado. Geralmente, temos coleções de dados. Python oferece duas estruturas incrivelmente poderosas para isso: <strong>Listas</strong> e <strong>Dicionários</strong>. Dominá-las é fundamental para trabalhar com dados.
-    </p>
 
-    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
-      <h2 class="text-2xl font-semibold text-white !mt-0">1. Listas (`list`): A Estante Organizada</h2>
-      <p>
-        Uma <strong>lista</strong> é uma coleção ordenada e mutável de itens. Pense nela como uma estante com prateleiras numeradas, começando do <strong>zero</strong>. Você pode colocar qualquer tipo de dado em cada prateleira e acessá-lo pelo número (o <strong>índice</strong>). Listas são definidas por colchetes <code>[]</code>.
-      </p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Uma lista de tarefas</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">tarefas = ["Estudar Python", "Limpar dados", "Criar visualização"]
-
-# Acessando o primeiro item (índice 0)
-primeira_tarefa = tarefas[0]
-print(f"Primeira tarefa: {{'{'}}primeira_tarefa{{'}'}}")  # Saída: Primeira tarefa: Estudar Python
-
-# Acessando o último item
-ultima_tarefa = tarefas[-1]
-print(f"Última tarefa: {{'{'}}ultima_tarefa{{'}'}}") # Saída: Última tarefa: Criar visualização
-
-# Adicionando um novo item ao final da lista
-tarefas.append("Apresentar resultados")
-print(f"Lista atualizada: {{'{'}}tarefas{{'}'}}")
-
-# Verificando o tamanho da lista
-print(f"Total de tarefas: {{'{'}}len(tarefas){{'}'}}") # Saída: Total de tarefas: 4</code></pre>
-      </div>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">2. Dicionários (`dict`): O Arquivo Etiquetado</h2>
-      <p>Um <strong>dicionário</strong> é uma coleção não ordenada de pares <strong>chave-valor</strong>. Pense nele como um arquivo de fichas, onde cada ficha tem uma etiqueta (a <strong>chave</strong>) e um conteúdo (o <strong>valor</strong>). Chaves são únicas e geralmente são strings. Dicionários são definidos por chaves <code>{{'{'}}{{ '}' }}</code>.</p>
-      <p>Esta estrutura é a representação em Python do formato JSON que vimos anteriormente.</p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Descrevendo um usuário</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">usuario = {{ '{' }}
-    "nome": "Ana Clara",
-    "email": "ana.clara@example.com",
-    "idade": 28,
-    "ativa": True
-{{ '}' }}
-
-# Acessando um valor pela sua chave
-email_do_usuario = usuario["email"]
-print(f"O email é: {{'{'}}email_do_usuario{{'}'}}")
-
-# Adicionando um novo par chave-valor
-usuario["cidade"] = "São Paulo"
-print(f"Usuário atualizado: {{'{'}}usuario{{'}'}}")
-
-# Modificando um valor existente
-usuario["ativa"] = False
-print(f"Status da conta: {{'{'}}usuario['ativa']{{'}'}}")</code></pre>
-      </div>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Combinando Listas e Dicionários: O Poder Real</h2>
-      <p>A verdadeira mágica acontece quando combinamos essas duas estruturas. Isso nos permite representar praticamente qualquer tipo de dado do mundo real, como uma lista de clientes, onde cada cliente é um dicionário de informações.</p>
-       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Lista de Usuários</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python">usuarios = [
-    {{ '{' }}
-        "nome": "Ana Clara",
-        "email": "ana.clara@example.com",
-        "interesses": ["Python", "Ciência de Dados"]
-    {{ '}' }},
-    {{ '{' }}
-        "nome": "Bruno Costa",
-        "email": "bruno.costa@example.com",
-        "interesses": ["Automação", "APIs", "n8n"]
-    {{ '}' }}
-]
-
-# Para pegar o email do segundo usuário (índice 1):
-email_bruno = usuarios[1]["email"]
-print(f"Email do Bruno: {{'{'}}email_bruno{{'}'}}")
-
-# Para pegar o primeiro interesse da Ana (índice 0):
-interesse_ana = usuarios[0]["interesses"][0]
-print(f"Principal interesse da Ana: {{'{'}}interesse_ana{{'}'}}")</code></pre>
-       </div>
-    </div>
+  <article class="prose-container space-y-12">
     
-     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
+    <!-- Introdução -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">Por que Variáveis Simples não Bastam?</h2>
       <p>
-        Abra seu notebook no <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">Google Colab</a> e pratique.
+        Imagine que você precisa guardar o nome de 100 clientes. Criar <code>cliente1</code>, <code>cliente2</code>, ..., <code>cliente100</code> seria impossível de gerenciar.
       </p>
-      <ol class="!list-none !pl-0 space-y-2 mt-3 text-sm">
-        <li>Crie um dicionário para descrever seu filme ou livro favorito (chaves: "titulo", "autor_diretor", "ano").</li>
-        <li>Crie uma lista com 2 ou 3 desses dicionários.</li>
-        <li>Escreva um código que acesse e imprima o título do segundo item da sua lista.</li>
-      </ol>
+      <p>
+        Para lidar com coleções de dados e informações complexas, o Python nos dá duas "super-caixas": <strong>Listas</strong> e <strong>Dicionários</strong>. Entendê-las é fundamental, pois é assim que dados de planilhas, APIs e bancos de dados são representados no código.
+      </p>
     </div>
 
-    <div class="pt-8 text-center">
-       <a routerLink="/learning/python-fundamentos-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+    <!-- Seção 1: Listas -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
+        <span class="material-icons-outlined text-blue-400">format_list_numbered</span>
+        1. Listas (Lists): A Ordem Importa
+      </h2>
+      <p class="text-gray-300 mb-4">
+        Uma lista é uma coleção ordenada de itens. É como uma estante numerada. O segredo é que a contagem em programação sempre começa no <strong>zero</strong>.
+      </p>
+      <ul class="list-disc list-inside text-gray-400 mb-6 space-y-1">
+        <li>Usamos colchetes <code>[]</code> para criar listas.</li>
+        <li>Usamos o índice (número) para acessar um item: <code>lista[0]</code>.</li>
+        <li>Listas são mutáveis: podemos adicionar, remover ou mudar itens.</li>
+      </ul>
+
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-xl shadow-lg">
+        <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+           <span class="material-icons-outlined text-green-400">terminal</span> Pratique Agora: Listas
+        </h4>
+        <p class="text-xs text-gray-400 mb-3">Clique no console abaixo e pressione <strong>Enter</strong> em cada linha para ver o resultado.</p>
+        <app-python-console [initialCode]="listExerciseCode" outputHeight="250px"></app-python-console>
+      </div>
+    </section>
+
+    <!-- Seção 2: Dicionários -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
+        <span class="material-icons-outlined text-yellow-400">vpn_key</span>
+        2. Dicionários (Dicts): Chave e Valor
+      </h2>
+      <p class="text-gray-300 mb-4">
+        Uma lista é ruim se você quiser encontrar o "email do usuário", pois você teria que saber em qual número (índice) o email está.
+      </p>
+      <p class="text-gray-300 mb-4">
+        Um <strong>Dicionário</strong> resolve isso usando <strong>Chaves</strong> (nomes) em vez de números. É a estrutura perfeita para representar um objeto do mundo real (uma pessoa, um produto, um pedido). É equivalente ao JSON.
+      </p>
+      <ul class="list-disc list-inside text-gray-400 mb-6 space-y-1">
+        <li>Usamos chaves <code>{{ '{' }} {{ '}' }}</code> para criar dicionários.</li>
+        <li>Acessamos o valor usando a chave: <code>dicionario["chave"]</code>.</li>
+      </ul>
+
+      <div class="p-4 bg-gray-800 border border-gray-700 rounded-xl shadow-lg">
+        <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+           <span class="material-icons-outlined text-green-400">terminal</span> Pratique Agora: Dicionários
+        </h4>
+        <app-python-console [initialCode]="dictExerciseCode" outputHeight="250px"></app-python-console>
+      </div>
+    </section>
+
+    <!-- Seção 3: Estruturas Aninhadas -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">3. O Poder Real: Listas dentro de Dicionários</h2>
+      <p class="text-gray-300 mb-4">
+        No mundo real (como no n8n ou em APIs), os dados vêm misturados. Você terá uma <strong>Lista</strong> de <strong>Dicionários</strong> (vários usuários) ou um <strong>Dicionário</strong> contendo uma <strong>Lista</strong> (um usuário com vários telefones).
+      </p>
+      
+      <div class="p-6 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+        <h3 class="font-bold text-blue-200 mb-2">Desafio Final</h3>
+        <p class="text-sm text-gray-400 mb-4">
+          Tente acessar um dado específico dentro de uma estrutura aninhada. Lembre-se: se é lista, use <code>[numero]</code>. Se é dicionário, use <code>["nome"]</code>.
+        </p>
+        <app-python-console [initialCode]="nestedExerciseCode" outputHeight="300px"></app-python-console>
+        
+        <details class="mt-4">
+            <summary class="text-xs text-gray-500 cursor-pointer hover:text-white transition-colors">Ver resposta do desafio</summary>
+            <div class="mt-2 p-2 bg-black/50 rounded border border-gray-700">
+                <code class="text-green-400 text-sm">print(dados["usuarios"][1]["nome"])</code>
+            </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Navegação -->
+    <div class="pt-8 flex justify-between items-center border-t border-gray-800">
+       <a routerLink="/learning/article/python-variaveis-tipos" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-gray-300 rounded-md font-semibold hover:bg-gray-700 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Anterior: Variáveis e Tipos
+      </a>
+      
+      <a routerLink="/learning/article/python-funcoes" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-500/40 transform hover:-translate-y-1">
+        Próximo: Funções e Modularização
         <span class="material-icons-outlined">arrow_forward</span>
-        Próximo Passo: Funções e Modularização
       </a>
     </div>
+
   </article>
 </div>

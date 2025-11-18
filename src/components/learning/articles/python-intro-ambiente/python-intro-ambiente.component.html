@@ -1,86 +1,108 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
       <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
       <span class="material-icons-outlined text-base">chevron_right</span>
-      <a routerLink="/learning/python-fundamentos-dados" class="hover:text-blue-accent hover:underline">Fundamentos de Python para Dados</a>
+      <a routerLink="/learning/python-automacao-dados" class="hover:text-blue-accent hover:underline">Python para Automação</a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Introdução ao Python e Ambiente</h1>
-    <p class="mt-4 text-lg text-gray-400">Configure seu ambiente de desenvolvimento para Python e escreva seu primeiro "Olá, Mundo!".</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Introdução ao Python</h1>
+    <p class="mt-4 text-lg text-gray-400">Dê seus primeiros passos na linguagem mais popular do mundo da automação, sem instalar nada.</p>
   </header>
+
   <article class="prose-container space-y-10">
-    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
-      <h2 class="text-2xl font-semibold text-white !mt-0">O que é Python e por que é o "Canivete Suíço" dos Dados?</h2>
-      <p>
-        Python é uma linguagem de programação de alto nível, famosa por sua sintaxe limpa e legível. Pense nela como uma linguagem que se parece muito com o inglês, o que a torna relativamente fácil de aprender.
-      </p>
-      <p>
-        Para quem trabalha com automação e dados, Python é a ferramenta preferida por três motivos principais:
-      </p>
-      <ul class="list-disc list-inside text-gray-400 space-y-2">
-        <li><strong>Simplicidade:</strong> Você pode escrever scripts poderosos com poucas linhas de código.</li>
-        <li><strong>Ecossistema de Bibliotecas:</strong> Existe uma biblioteca (pacote de código pronto) para quase tudo, especialmente para dados (Pandas, NumPy), APIs (Requests) e web scraping (BeautifulSoup).</li>
-        <li><strong>Versatilidade:</strong> A mesma linguagem que você usa para analisar um arquivo CSV pode ser usada para construir uma API, criar um site ou treinar um modelo de inteligência artificial.</li>
-      </ul>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Configurando seu Ambiente de Trabalho</h2>
-      <p>Para começar a programar em Python, você precisa de duas coisas: o interpretador Python (o "cérebro" que entende a linguagem) e um bom editor de texto (a "cozinha" onde você escreve suas receitas).</p>
-      
-      <h3 class="text-xl font-bold text-white mt-6">Opção 1: O Caminho Rápido (Google Colab)</h3>
-      <p>Para aprender e experimentar, a forma mais fácil é usar o <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer">Google Colaboratory (Colab)</a>. É um ambiente Jupyter Notebook gratuito que roda no seu navegador. Você não precisa instalar nada!</p>
-       <div class="mt-4 p-3 bg-blue-900/30 border border-blue-700/50 text-blue-300 rounded-lg text-xs flex items-start gap-3">
-          <span class="material-icons-outlined text-blue-300 mt-0.5">tips_and_updates</span>
-          <div>
-            <strong class="font-semibold">Recomendação:</strong> Para esta trilha, o Google Colab é perfeito. Ele permite que você se concentre na linguagem sem se preocupar com a instalação.
-          </div>
-      </div>
-      
-      <h3 class="text-xl font-bold text-white mt-6">Opção 2: O Ambiente Profissional (VS Code)</h3>
-      <p>Para projetos mais sérios, você vai querer um ambiente local.</p>
-      <ol class="list-decimal list-inside text-gray-400 space-y-2">
-        <li><strong>Instale Python:</strong> Baixe a versão mais recente em <a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer">python.org</a>. Marque a opção "Add Python to PATH" durante a instalação no Windows.</li>
-        <li><strong>Instale o VS Code:</strong> Baixe em <a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer">code.visualstudio.com</a>.</li>
-        <li><strong>Instale a Extensão Python:</strong> Dentro do VS Code, vá para a aba de Extensões e procure por "Python" da Microsoft e instale-a.</li>
-      </ol>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Seu Primeiro Código: "Olá, Mundo!"</h2>
-      <p>
-        A tradição ao aprender uma nova linguagem é fazer o computador dizer "Olá, Mundo!". Em Python, isso é incrivelmente simples. Usamos a função <code>print()</code>.
-      </p>
-       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">hello.py</h4>
-        <pre class="!bg-gray-900 !p-3 !my-0"><code class="language-python"># Comentários em Python começam com '#' e são ignorados pelo interpretador.
-# Eles servem para deixar anotações para nós, humanos.
-
-# A função print() exibe na tela o que estiver dentro dos parênteses.
-print("Olá, Mundo da Automação com Python!")
-</code></pre>
-      </div>
-    </div>
     
-     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Teste Você Mesmo!</h3>
+    <!-- Seção 1: Por que Python? -->
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Superpoder da Simplicidade</h2>
       <p>
-        Agora é sua vez. Abra o Google Colab, crie um novo "notebook" e execute seu primeiro código.
+        Python se tornou a linguagem número 1 para automação, dados e IA por um motivo simples: <strong>ela lê como inglês</strong>. Enquanto outras linguagens exigem chaves <code>{{ '{' }} {{ '}' }}</code>, pontos e vírgulas <code>;</code> e definições complexas, Python foca na legibilidade.
       </p>
-      <ol class="!list-none !pl-0 space-y-2 mt-3">
-        <li>Acesse <a href="https://colab.research.google.com/" target="_blank" rel="noopener noreferrer" class="font-semibold underline hover:text-green-200">colab.research.google.com</a>.</li>
-        <li>Clique em "Novo notebook".</li>
-        <li>Na primeira célula, digite <code>print("Seu nome aqui!")</code>.</li>
-        <li>Pressione <strong>Shift + Enter</strong> para executar.</li>
-      </ol>
-      <p class="mt-2">Você verá seu nome impresso logo abaixo da célula. Parabéns, você é oficialmente um programador Python!</p>
+      <p>
+        Imagine que você quer dizer ao computador para "imprimir uma mensagem".
+      </p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div class="p-4 bg-red-900/20 border border-red-700/30 rounded-lg opacity-75">
+          <p class="text-xs text-red-300 font-bold mb-2 uppercase">Em Java (Verboso)</p>
+          <pre class="text-xs bg-black/30 p-2 rounded"><code>public class Main {{ '{' }}
+  public static void main(String[] args) {{ '{' }}
+    System.out.println("Olá!");
+  {{ '}' }}
+{{ '}' }}</code></pre>
+        </div>
+        <div class="p-4 bg-green-900/20 border border-green-700/30 rounded-lg">
+          <p class="text-xs text-green-300 font-bold mb-2 uppercase">Em Python (Direto)</p>
+          <pre class="text-xs bg-black/30 p-2 rounded"><code>print("Olá!")</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção 2: O Console Interativo -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">Seu Primeiro Código: Agora</h2>
+      <p class="text-gray-300 mb-6">
+        Você não precisa instalar nada para começar. Abaixo está o nosso <strong>Emulador Python</strong>. Ele simula um terminal real onde você pode digitar comandos e ver a resposta imediatamente.
+      </p>
+      
+      <div class="relative group">
+        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+        <div class="relative">
+            <app-python-console initialCode='print("Olá, Mundo!")'></app-python-console>
+        </div>
+      </div>
+
+      <div class="mt-6 p-4 bg-blue-900/20 border border-blue-700/30 rounded-lg">
+        <h4 class="font-bold text-blue-300 mb-2 flex items-center gap-2">
+          <span class="material-icons-outlined">science</span> Desafios Rápidos
+        </h4>
+        <p class="text-sm text-gray-300 mb-3">Tente digitar estes comandos no console acima e pressione <strong>Enter</strong>:</p>
+        <ul class="space-y-2 text-sm text-gray-400 font-mono">
+          <li class="flex items-center gap-2"><span class="text-green-500">1.</span> <code>print("Meu nome é [Seu Nome]")</code></li>
+          <li class="flex items-center gap-2"><span class="text-green-500">2.</span> <code>10 + 5 * 2</code> <span class="text-gray-600 text-xs">(Matemática básica)</span></li>
+          <li class="flex items-center gap-2"><span class="text-green-500">3.</span> <code>nome = "Kore"</code> <span class="text-gray-600 text-xs">(Depois digite <code>print(nome)</code>)</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Seção 3: O Próximo Nível -->
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Configurando para o "Mundo Real"</h2>
+      <p>
+        O emulador acima é ótimo para aprender a sintaxe, mas para construir automações reais, você precisará de ferramentas profissionais. Existem duas rotas principais:
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <a href="https://colab.research.google.com/" target="_blank" class="block p-6 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-orange-500/50 rounded-xl transition-all group">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-icons-outlined text-orange-400 text-3xl group-hover:scale-110 transition-transform">cloud_queue</span>
+            <h3 class="font-bold text-white">Google Colab</h3>
+          </div>
+          <p class="text-sm text-gray-400"><strong>A opção mais fácil.</strong> Roda 100% no navegador. É como um Google Docs, mas para código. Perfeito para análise de dados e aprendizado sem instalação.</p>
+        </a>
+
+        <a href="https://code.visualstudio.com/" target="_blank" class="block p-6 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-blue-500/50 rounded-xl transition-all group">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-icons-outlined text-blue-400 text-3xl group-hover:scale-110 transition-transform">desktop_windows</span>
+            <h3 class="font-bold text-white">VS Code + Python</h3>
+          </div>
+          <p class="text-sm text-gray-400"><strong>A opção profissional.</strong> Instale o Python no seu computador e use o VS Code. É assim que sistemas e automações complexas são construídos.</p>
+        </a>
+      </div>
+    </div>
+
+    <div class="p-6 bg-green-900/20 border border-green-700/30 text-green-200 rounded-lg mt-8">
+      <h3 class="font-bold text-lg mb-2">Conclusão</h3>
+      <p>
+        Você acabou de executar seus primeiros comandos Python! A barreira de entrada é baixa, mas o teto é infinito. Nos próximos artigos, vamos usar esse mesmo emulador para entender como guardar informações na memória (Variáveis) e como tomar decisões (Lógica).
+      </p>
     </div>
 
     <div class="pt-8 text-center">
-       <a routerLink="/learning/python-fundamentos-dados" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+       <a routerLink="/learning/article/python-variaveis-tipos" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-900/20 hover:shadow-blue-500/40 transform hover:-translate-y-1">
+        Próximo: Variáveis e Tipos de Dados
         <span class="material-icons-outlined">arrow_forward</span>
-        Próximo Passo: Variáveis e Tipos de Dados
       </a>
     </div>
+
   </article>
 </div>
