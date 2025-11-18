@@ -1,3 +1,4 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
@@ -9,77 +10,240 @@
     <p class="mt-4 text-lg text-gray-400">Aprenda a aplicar efeitos como desfoque, sépia e escala de cinza para manipular a aparência de imagens e elementos.</p>
   </header>
 
-  <article class="prose-container space-y-10">
+  <article class="prose-container space-y-16">
+    
+    <!-- Intro -->
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
       <h2 class="text-2xl font-semibold text-white !mt-0">O "Photoshop" do CSS</h2>
-      <p>
-        A propriedade <code>filter</code> do CSS é como ter um conjunto de ferramentas de edição de imagem diretamente no seu navegador. Ela permite aplicar efeitos gráficos a um elemento, como desfoque, alteração de cor e contraste, de forma não destrutiva.
-      </p>
-      <p>
-        Isso é incrivelmente útil para criar efeitos de hover, ajustar imagens dinamicamente ou até mesmo para criar o popular efeito de "vidro fosco" (usando <code>backdrop-filter</code>).
+      <p class="text-gray-300">
+        A propriedade <code>filter</code> do CSS é como ter um estúdio de edição de imagem no navegador. Ela permite aplicar efeitos gráficos a elementos (normalmente imagens, mas funciona em qualquer coisa) antes que eles sejam desenhados na tela.
+        Isso é incrivelmente útil para criar estados de hover, ajustar fotos enviadas por usuários ou criar efeitos artísticos como o popular "Glassmorphism" (usando o primo <code>backdrop-filter</code>).
       </p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Filtros Mais Comuns</h2>
-      <p>Vamos explorar algumas das funções de filtro mais populares.</p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-        <div class="text-center">
-          <img src="https://picsum.photos/id/1080/300/200" alt="Exemplo de filtro blur" class="filter-example-img filter-blur">
-          <h4 class="font-semibold text-gray-200 mt-2">Desfoque (blur)</h4>
-          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>filter: blur(5px);</code></pre>
-        </div>
-        <div class="text-center">
-          <img src="https://picsum.photos/id/1080/300/200" alt="Exemplo de filtro brightness" class="filter-example-img filter-brightness">
-          <h4 class="font-semibold text-gray-200 mt-2">Brilho (brightness)</h4>
-          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>filter: brightness(150%);</code></pre>
-        </div>
-        <div class="text-center">
-          <img src="https://picsum.photos/id/1080/300/200" alt="Exemplo de filtro grayscale" class="filter-example-img filter-grayscale">
-          <h4 class="font-semibold text-gray-200 mt-2">Escala de Cinza (grayscale)</h4>
-          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>filter: grayscale(100%);</code></pre>
-        </div>
-        <div class="text-center">
-          <img src="https://picsum.photos/id/1080/300/200" alt="Exemplo de filtro sepia" class="filter-example-img filter-sepia">
-          <h4 class="font-semibold text-gray-200 mt-2">Sépia (sepia)</h4>
-          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>filter: sepia(80%);</code></pre>
-        </div>
-      </div>
-    </div>
-    
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Combinando Filtros</h2>
-      <p>
-        O verdadeiro poder da propriedade <code>filter</code> vem da combinação de múltiplas funções. Você pode aplicar quantos filtros quiser, separados por um espaço, para criar um efeito único.
+    <!-- Seção 1: Playground -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">1. Laboratório de Filtros</h2>
+      <p class="text-gray-300 mb-6">
+        A melhor maneira de entender filtros é combiná-los. Diferente de outras propriedades, você pode empilhar filtros. 
+        Experimente os controles abaixo para criar seu próprio estilo visual.
       </p>
-       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Efeito Vintage</h4>
-        <p class="text-xs text-gray-400 mb-3">Combinando saturação, contraste e sépia para um look de foto antiga.</p>
-        <div class="flex justify-center">
-           <img src="https://picsum.photos/id/1040/400/250" alt="Exemplo de múltiplos filtros" class="filter-example-img filter-combined rounded-lg">
-        </div>
-        <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>filter: saturate(140%) contrast(90%) sepia(40%);</code></pre>
-       </div>
-    </div>
 
-    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Controle Criativo no Navegador</h3>
-      <p>
-        A propriedade <code>filter</code> oferece um controle criativo imenso sobre a aparência dos seus elementos sem a necessidade de um editor de imagens. É uma ferramenta performática e animável, perfeita para adicionar polimento e interatividade às suas interfaces.
-      </p>
-      <div class="mt-4">
-        <a routerLink="/tools/gerador-filtros-css" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
-          <span class="material-icons-outlined">construction</span>
-          Experimente no Gerador de Filtros
-        </a>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+        <!-- Controles -->
+        <div class="space-y-5">
+          <div class="flex justify-between items-center">
+             <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <span class="material-icons-outlined text-blue-accent">tune</span> Ajustes
+            </h3>
+            <button (click)="resetPlayground()" class="text-xs text-blue-400 hover:text-blue-300 underline">Resetar</button>
+          </div>
+
+          <!-- Blur -->
+          <div>
+            <label class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Blur (Desfoque)</span> <span>{{ blur() }}px</span>
+            </label>
+            <input type="range" min="0" max="20" step="0.5" [ngModel]="blur()" (ngModelChange)="blur.set(+$event)" class="w-full slider-thumb accent-blue-500">
+          </div>
+
+          <!-- Brightness -->
+          <div>
+            <label class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Brightness (Brilho)</span> <span>{{ brightness() }}%</span>
+            </label>
+            <input type="range" min="0" max="200" [ngModel]="brightness()" (ngModelChange)="brightness.set(+$event)" class="w-full slider-thumb accent-blue-500">
+          </div>
+
+          <!-- Contrast -->
+          <div>
+            <label class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Contrast (Contraste)</span> <span>{{ contrast() }}%</span>
+            </label>
+            <input type="range" min="0" max="200" [ngModel]="contrast()" (ngModelChange)="contrast.set(+$event)" class="w-full slider-thumb accent-blue-500">
+          </div>
+
+          <!-- Saturate -->
+          <div>
+            <label class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Saturate (Saturação)</span> <span>{{ saturate() }}%</span>
+            </label>
+            <input type="range" min="0" max="200" [ngModel]="saturate()" (ngModelChange)="saturate.set(+$event)" class="w-full slider-thumb accent-blue-500">
+          </div>
+
+           <!-- Grayscale -->
+           <div>
+            <label class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Grayscale (P&B)</span> <span>{{ grayscale() }}%</span>
+            </label>
+            <input type="range" min="0" max="100" [ngModel]="grayscale()" (ngModelChange)="grayscale.set(+$event)" class="w-full slider-thumb accent-blue-500">
+          </div>
+
+           <!-- Sepia -->
+           <div>
+            <label class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Sepia (Envelhecido)</span> <span>{{ sepia() }}%</span>
+            </label>
+            <input type="range" min="0" max="100" [ngModel]="sepia()" (ngModelChange)="sepia.set(+$event)" class="w-full slider-thumb accent-blue-500">
+          </div>
+
+           <!-- Hue Rotate -->
+           <div>
+            <label class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Hue Rotate (Matiz)</span> <span>{{ hueRotate() }}deg</span>
+            </label>
+            <input type="range" min="0" max="360" [ngModel]="hueRotate()" (ngModelChange)="hueRotate.set(+$event)" class="w-full slider-thumb accent-blue-500">
+          </div>
+
+        </div>
+
+        <!-- Preview -->
+        <div class="lg:col-span-2 flex flex-col gap-4">
+          <div class="bg-black rounded-lg border border-gray-700 overflow-hidden relative group h-[300px] md:h-[400px] flex items-center justify-center">
+            <!-- Imagem base -->
+            <img src="https://picsum.photos/id/28/800/600" alt="Paisagem Floresta" 
+                 class="w-full h-full object-cover transition-all duration-100 ease-linear"
+                 [style.filter]="generatedFilterCss()">
+            
+            <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded text-[10px] text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+                Imagem Original: Unsplash
+            </div>
+          </div>
+
+          <div class="bg-gray-800 p-4 rounded-lg border border-gray-700 font-mono text-xs text-blue-300 overflow-x-auto">
+            filter: {{ generatedFilterCss() }};
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Seção 2: Casos de Uso -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">2. Casos de Uso Comuns</h2>
+      <p class="text-gray-300 mb-6">
+        Filtros não servem apenas para fazer fotos bonitas. Eles têm utilidade prática em UI Design.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="p-5 bg-gray-900 border border-gray-800 rounded-lg">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="material-icons-outlined text-gray-400">disabled_visible</span>
+                <h4 class="font-bold text-white">Desativado (Grayscale)</h4>
+            </div>
+            <p class="text-sm text-gray-400 mb-4">Use <code>grayscale(100%)</code> e <code>opacity(50%)</code> para indicar que um elemento (como um avatar de usuário offline) está inativo sem precisar trocar a imagem.</p>
+            <div class="flex gap-4">
+                <img src="https://i.pravatar.cc/150?img=12" class="w-12 h-12 rounded-full border-2 border-green-500">
+                <img src="https://i.pravatar.cc/150?img=12" class="w-12 h-12 rounded-full border-2 border-gray-600 filter grayscale opacity-50">
+            </div>
+        </div>
+
+        <div class="p-5 bg-gray-900 border border-gray-800 rounded-lg">
+            <div class="flex items-center gap-3 mb-3">
+                <span class="material-icons-outlined text-yellow-400">warning</span>
+                <h4 class="font-bold text-white">Modo Escuro (Invert)</h4>
+            </div>
+            <p class="text-sm text-gray-400 mb-4">Em casos extremos, <code>invert(100%)</code> pode transformar ícones pretos em brancos para um tema escuro instantâneo.</p>
+             <div class="flex gap-4 bg-white p-2 rounded w-fit">
+                <span class="material-icons text-black">settings</span>
+                <span class="material-icons text-black filter invert">settings</span>
+            </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desafio Prático -->
+    <section class="mt-16 border-t border-gray-800 pt-10">
+      <div class="bg-gradient-to-br from-purple-900/20 to-gray-900 border border-purple-500/30 rounded-xl p-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+          <div>
+            <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Desafio Prático</span>
+            <h2 class="text-2xl font-bold text-white mt-1">Resgate a Foto</h2>
+            <p class="text-gray-400 text-sm mt-2">Esta foto está "lavada" (sem vida). Use os filtros para trazer cor e profundidade de volta.</p>
+          </div>
+          
+          <div class="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
+            <div class="text-xs font-medium text-gray-400 mr-2">Correções:</div>
+            <div class="flex gap-1">
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!fixContrast()" [class.bg-purple-500]="fixContrast()" title="Contraste"></div>
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!fixSaturation()" [class.bg-purple-500]="fixSaturation()" title="Saturação"></div>
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!fixWarmth()" [class.bg-purple-500]="fixWarmth()" title="Calor"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Controles -->
+          <div class="space-y-4">
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">1. Corrigir Contraste</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="fixContrast()" (change)="fixContrast.set(!fixContrast())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!fixContrast()" [class.bg-purple-600]="fixContrast()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="fixContrast()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Aumenta a diferença entre claros e escuros.</p>
+            </div>
+
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">2. Aumentar Saturação</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="fixSaturation()" (change)="fixSaturation.set(!fixSaturation())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!fixSaturation()" [class.bg-purple-600]="fixSaturation()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="fixSaturation()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Torna as cores mais vibrantes e vivas.</p>
+            </div>
+            
+             <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">3. Adicionar Calor (Sépia)</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="fixWarmth()" (change)="fixWarmth.set(!fixWarmth())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!fixWarmth()" [class.bg-purple-600]="fixWarmth()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="fixWarmth()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Um toque sutil de sépia para dar uma atmosfera nostálgica.</p>
+            </div>
+          </div>
+
+          <!-- Preview Final -->
+          <div class="lg:col-span-2 rounded-xl relative overflow-hidden min-h-[300px] flex items-center justify-center border border-gray-800 bg-black">
+            
+             <!-- Mensagem de Sucesso -->
+            @if(isChallengeComplete()) {
+               <div class="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 animate-fade-in">
+                <span class="material-icons-outlined text-6xl text-purple-400 mb-4">photo_camera</span>
+                <h3 class="text-2xl font-bold text-white mb-2">Foto Revelada!</h3>
+                <p class="text-gray-300 mb-6 max-w-md">Você usou filtros CSS para fazer color grading profissional diretamente no navegador.</p>
+                <button (click)="resetChallenge()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full text-sm font-medium transition-colors">
+                  Refazer
+                </button>
+              </div>
+            }
+
+            <!-- Imagem do Desafio -->
+            <img src="https://picsum.photos/id/325/600/400" alt="Floresta Nebulosa" 
+                 class="w-full h-full object-cover transition-all duration-700"
+                 [style.filter]="challengeFilter()">
+
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="pt-8 text-center">
-       <a routerLink="/learning/css-interativo-moderno" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+       <a routerLink="/learning/article/formas-com-clip-path" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Anterior: Formas e Clip-path
+      </a>
+       <a routerLink="/learning/article/animacoes-e-transicoes" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
+        Próximo: Animações
         <span class="material-icons-outlined">arrow_forward</span>
-        Próximo Passo: Animações e Transições
       </a>
     </div>
   </article>
