@@ -1,3 +1,4 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
@@ -5,96 +6,242 @@
       <span class="material-icons-outlined text-base">chevron_right</span>
       <a routerLink="/learning/css-interativo-moderno" class="hover:text-blue-accent hover:underline">CSS Interativo e Moderno</a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">A Primeira Impressão: Criando Fundos Impactantes com Gradientes</h1>
-    <p class="mt-4 text-lg text-gray-400">Aprenda a teoria por trás dos gradientes e como usá-los para criar backgrounds modernos e vibrantes.</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Fundos Impactantes com Gradientes</h1>
+    <p class="mt-4 text-lg text-gray-400">Domine a teoria das cores e direções para criar backgrounds modernos que dão vida e profundidade à sua interface.</p>
   </header>
 
-  <article class="prose-container space-y-10">
+  <article class="prose-container space-y-16">
+    
+    <!-- Intro -->
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
       <h2 class="text-2xl font-semibold text-white !mt-0">Por que Sair da Cor Sólida?</h2>
-      <p>
-        Fundos de cor sólida são seguros e funcionais, mas gradientes adicionam profundidade, energia e um toque profissional ao design. Eles podem guiar o olhar do usuário, criar uma atmosfera e fazer com que sua interface se destaque. Em vez de uma imagem de fundo pesada, um gradiente CSS é leve, escalável e fácil de animar.
+      <p class="text-gray-300">
+        Fundos de cor sólida são seguros, mas gradientes adicionam <strong>energia e direção</strong>. Eles imitam a luz do mundo real, onde raramente vemos uma cor perfeitamente plana. Um bom gradiente pode guiar o olhar do usuário de cima para baixo ou destacar uma área específica sem precisar de bordas.
       </p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-semibold text-white">1. Gradientes Lineares: A Transição Direta</h2>
-      <p>
-        O <code>linear-gradient()</code> é o tipo mais comum. Ele cria uma transição de cores suave ao longo de uma linha reta. Sua sintaxe básica define a direção e as cores que devem ser usadas.
+    <!-- Seção 1: Gradientes Lineares -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">1. Gradientes Lineares: A Transição Direta</h2>
+      <p class="text-gray-300 mb-6">
+        O <code>linear-gradient</code> cria uma transição ao longo de uma linha reta. O segredo para um gradiente moderno não é misturar cores opostas (como vermelho e verde, que criam marrom no meio), mas sim cores análogas ou variações de luminosidade da mesma cor.
       </p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplos Práticos</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <div class="gradient-preview linear-example-1"></div>
-            <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: linear-gradient(to right, #58a6ff, #3fb950);</code></pre>
-          </div>
-          <div>
-            <div class="gradient-preview linear-example-2"></div>
-            <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: linear-gradient(45deg, #f857a6, #ff5858);</code></pre>
-          </div>
-        </div>
-        <p class="text-xs text-gray-400 mt-3">
-          Você pode definir a direção com palavras-chave (<code>to right</code>, <code>to bottom left</code>) ou com um ângulo em graus (<code>45deg</code>).
-        </p>
-      </div>
-    </div>
-    
-    <div>
-      <h2 class="text-2xl font-semibold text-white">2. Gradientes Radiais: A Explosão de Cores</h2>
-      <p>
-        O <code>radial-gradient()</code> cria uma transição de cores que irradia a partir de um ponto central. É perfeito para criar efeitos de vinheta, focos de luz ou fundos mais orgânicos.
-      </p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplos Práticos</h4>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <div class="gradient-preview radial-example-1"></div>
-            <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: radial-gradient(circle, #ff5858, #0d1117);</code></pre>
-          </div>
-          <div>
-            <div class="gradient-preview radial-example-2"></div>
-            <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: radial-gradient(ellipse at top left, #3fb950, #58a6ff);</code></pre>
-          </div>
-        </div>
-         <p class="text-xs text-gray-400 mt-3">
-          Você pode controlar a forma (<code>circle</code> ou <code>ellipse</code>) e a posição do centro do gradiente (<code>at top left</code>, <code>at 25% 75%</code>).
-        </p>
-      </div>
-    </div>
-    
-    <div>
-      <h2 class="text-2xl font-semibold text-white">3. Paradas de Cor (Color Stops)</h2>
-      <p>
-        Para um controle mais preciso, você pode definir exatamente em que ponto da transição uma cor deve estar. Isso é feito adicionando uma porcentagem após a cor.
-      </p>
-      <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <div class="gradient-preview linear-example-3"></div>
-        <pre class="!bg-gray-900 !p-2 !mt-2 !text-xs"><code>background-image: linear-gradient(to right, 
-  #58a6ff 0%,   /* O azul começa no início */
-  #3fb950 50%,  /* O verde está no meio */
-  #f59e0b 100% /* O amarelo está no fim */
-);</code></pre>
-      </div>
-    </div>
 
-    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Fundos como Elemento de Design</h3>
-      <p>
-        Gradientes são uma ferramenta simples, mas extremamente eficaz para elevar o nível do seu design. Eles são performáticos, flexíveis e, quando bem utilizados, podem transformar uma interface comum em algo memorável.
-      </p>
-      <div class="mt-4">
-        <a routerLink="/tools/gerador-gradiente-css" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
-          <span class="material-icons-outlined">construction</span>
-          Pratique agora no Gerador de Gradiente
-        </a>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+        <!-- Controles -->
+        <div class="space-y-6">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-icons-outlined text-blue-accent">linear_scale</span> Configure o Fluxo
+          </h3>
+          
+          <div>
+            <label class="flex justify-between text-xs text-gray-400 mb-1">
+              <span>Ângulo (Direção)</span> <span>{{ linearAngle() }}deg</span>
+            </label>
+            <input type="range" min="0" max="360" [ngModel]="linearAngle()" (ngModelChange)="linearAngle.set(+$event)" class="w-full accent-blue-500">
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+               <label class="text-xs text-gray-400 mb-1 block">Cor Inicial</label>
+               <div class="flex items-center gap-2">
+                 <input type="color" [ngModel]="linearColor1()" (ngModelChange)="linearColor1.set($event)" class="h-8 w-full bg-transparent border border-gray-600 rounded cursor-pointer">
+               </div>
+            </div>
+            <div>
+               <label class="text-xs text-gray-400 mb-1 block">Cor Final</label>
+               <div class="flex items-center gap-2">
+                 <input type="color" [ngModel]="linearColor2()" (ngModelChange)="linearColor2.set($event)" class="h-8 w-full bg-transparent border border-gray-600 rounded cursor-pointer">
+               </div>
+            </div>
+          </div>
+          
+          <div class="p-3 bg-black/30 rounded border border-gray-700 font-mono text-xs text-blue-300 break-all">
+            background: {{ linearStyle() }};
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="rounded-lg shadow-2xl flex items-center justify-center p-8 min-h-[240px] transition-all duration-200"
+             [style.background]="linearStyle()">
+          <div class="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center shadow-lg max-w-[200px]">
+             <span class="material-icons-outlined text-4xl text-white mb-2">diamond</span>
+             <h4 class="text-white font-bold">Card de Vidro</h4>
+             <p class="text-white/80 text-xs mt-1">O gradiente fundo realça o efeito de vidro.</p>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Seção 2: Gradientes Radiais -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">2. Gradientes Radiais: Focos de Luz</h2>
+      <p class="text-gray-300 mb-6">
+        O <code>radial-gradient</code> irradia do centro para fora. É perfeito para criar "vinhetas" (bordas escuras) ou para simular um ponto de luz atrás de um objeto, dando destaque a ele.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+        <!-- Controles -->
+        <div class="space-y-6">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-icons-outlined text-purple-400">radio_button_checked</span> Configure o Foco
+          </h3>
+
+          <div>
+            <label class="text-xs text-gray-400 mb-2 block">Forma</label>
+            <div class="flex gap-2">
+              <button (click)="radialShape.set('circle')" [class.bg-purple-600]="radialShape() === 'circle'" class="px-3 py-1 rounded border border-gray-600 text-xs text-white hover:bg-gray-700 transition-colors">Círculo</button>
+              <button (click)="radialShape.set('ellipse')" [class.bg-purple-600]="radialShape() === 'ellipse'" class="px-3 py-1 rounded border border-gray-600 text-xs text-white hover:bg-gray-700 transition-colors">Elipse</button>
+            </div>
+          </div>
+
+          <div>
+             <label class="text-xs text-gray-400 mb-2 block">Posição do Centro</label>
+             <select [ngModel]="radialPosition()" (ngModelChange)="radialPosition.set($event)" class="w-full bg-gray-800 border border-gray-600 text-white rounded p-2 text-sm">
+               <option value="center">Centro (center)</option>
+               <option value="top">Topo (top)</option>
+               <option value="top left">Canto Superior Esq. (top left)</option>
+               <option value="bottom right">Canto Inferior Dir. (bottom right)</option>
+             </select>
+          </div>
+          
+          <div class="p-3 bg-black/30 rounded border border-gray-700 font-mono text-xs text-purple-300 break-all">
+            background: {{ radialStyle() }};
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="rounded-lg shadow-2xl flex items-center justify-center p-8 min-h-[240px] relative overflow-hidden border border-gray-700">
+          <div class="absolute inset-0 transition-all duration-300" [style.background]="radialStyle()"></div>
+          
+          <!-- Mockup de Produto -->
+          <div class="relative z-10 w-32 h-48 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl transform rotate-[-5deg] flex flex-col items-center justify-center">
+             <div class="w-12 h-12 rounded-full bg-gray-800 mb-2"></div>
+             <div class="w-16 h-2 bg-gray-700 rounded"></div>
+             <div class="w-10 h-2 bg-gray-800 rounded mt-1"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desafio Prático -->
+    <section class="mt-16 border-t border-gray-800 pt-10">
+      <div class="bg-gradient-to-br from-orange-900/20 to-gray-900 border border-orange-500/30 rounded-xl p-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+          <div>
+            <span class="text-xs font-bold text-orange-400 uppercase tracking-wider">Desafio Prático</span>
+            <h2 class="text-2xl font-bold text-white mt-1">O Hero Heroico</h2>
+            <p class="text-gray-400 text-sm mt-2">Este cabeçalho de site (Hero) está monótono. Use gradientes para torná-lo vibrante e moderno.</p>
+          </div>
+          
+          <div class="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
+            <div class="text-xs font-medium text-gray-400 mr-2">Aplicado:</div>
+            <div class="flex gap-1">
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!heroDirection()" [class.bg-orange-500]="heroDirection()" title="Direção"></div>
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!heroColor()" [class.bg-orange-500]="heroColor()" title="Cor"></div>
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!heroOverlay()" [class.bg-orange-500]="heroOverlay()" title="Textura"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Controles -->
+          <div class="space-y-4">
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">1. Adicionar Cor Vibrante</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="heroColor()" (change)="heroColor.set(!heroColor())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!heroColor()" [class.bg-orange-500]="heroColor()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="heroColor()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Sai do cinza para um gradiente colorido (Roxo -> Azul).</p>
+            </div>
+
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">2. Ajustar Direção (Ângulo)</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="heroDirection()" (change)="heroDirection.set(!heroDirection())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!heroDirection()" [class.bg-orange-500]="heroDirection()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="heroDirection()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Muda de horizontal para diagonal (135deg) para mais dinamismo.</p>
+            </div>
+
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">3. Camada de Textura</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="heroOverlay()" (change)="heroOverlay.set(!heroOverlay())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!heroOverlay()" [class.bg-orange-500]="heroOverlay()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="heroOverlay()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Adiciona um gradiente radial sutil por cima para profundidade.</p>
+            </div>
+          </div>
+
+          <!-- Preview Final -->
+          <div class="lg:col-span-2 rounded-xl relative overflow-hidden min-h-[300px] flex items-center justify-center border border-gray-800">
+            
+             <!-- Mensagem de Sucesso -->
+            @if(isChallengeComplete()) {
+               <div class="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 animate-fade-in">
+                <span class="material-icons-outlined text-6xl text-orange-400 mb-4">star</span>
+                <h3 class="text-2xl font-bold text-white mb-2">Design de Impacto!</h3>
+                <p class="text-gray-300 mb-6 max-w-md">Você criou um fundo que não apenas decora, mas energiza a página.</p>
+                <button (click)="resetChallenge()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full text-sm font-medium transition-colors">
+                  Refazer
+                </button>
+              </div>
+            }
+
+            <!-- Fundo Dinâmico -->
+            <div class="absolute inset-0 transition-all duration-700"
+                 [class.bg-gray-800]="!heroColor()"
+                 [class.bg-gradient-to-r]="heroColor() && !heroDirection()"
+                 [class.from-purple-600]="heroColor()"
+                 [class.to-blue-600]="heroColor()"
+                 [class.bg-gradient-135]="heroDirection()"> <!-- Custom class or inline style logic below for angle -->
+                 
+                 <!-- Inline style override for direction if needed, utilizing tailwind classes is cleaner but angle specific might need style -->
+                 @if(heroColor() && heroDirection()) {
+                    <div class="absolute inset-0" style="background: linear-gradient(135deg, #7c3aed 0%, #2563eb 100%);"></div>
+                 }
+            </div>
+
+            <!-- Overlay Texture -->
+            <div class="absolute inset-0 transition-opacity duration-700 pointer-events-none mix-blend-overlay"
+                 [class.opacity-0]="!heroOverlay()"
+                 [class.opacity-100]="heroOverlay()"
+                 style="background: radial-gradient(circle at top left, rgba(255,255,255,0.3), transparent 70%);">
+            </div>
+
+            <!-- Conteúdo do Hero -->
+            <div class="relative z-10 text-center p-8 max-w-md">
+              <h1 class="text-4xl font-bold text-white mb-4 drop-shadow-md">O Futuro é Agora</h1>
+              <p class="text-lg text-white/80 mb-6">Construa aplicações web modernas com velocidade e estilo.</p>
+              <button class="px-6 py-3 bg-white text-gray-900 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300">
+                Começar Grátis
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="pt-8 text-center">
        <a routerLink="/learning/css-interativo-moderno" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+       <a routerLink="/learning/article/formas-com-clip-path" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
+        Próximo: Formas com Clip-Path
         <span class="material-icons-outlined">arrow_forward</span>
-        Próximo Passo: Formas com Clip-Path
       </a>
     </div>
   </article>

@@ -1,55 +1,313 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
       <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
       <span class="material-icons-outlined text-base">chevron_right</span>
-      <a routerLink="/learning/fundamentos-design-visual-devs" class="hover:text-blue-accent hover:underline">Fundamentos do Design Visual para Devs</a>
+      <a routerLink="/learning/fundamentos-design-visual-devs" class="hover:text-blue-accent hover:underline">Fundamentos do Design Visual</a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">A Hierarquia Visual: Guiando o Olhar do Usuário</h1>
-    <p class="mt-4 text-lg text-gray-400">Aprenda a usar tamanho, cor e espaço para criar interfaces claras e fáceis de entender.</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">A Hierarquia Visual</h1>
+    <p class="mt-4 text-lg text-gray-400">Como guiar o olho do usuário e transformar caos em clareza.</p>
   </header>
 
-  <article class="prose-container space-y-10">
+  <article class="prose-container space-y-16">
+    
+    <!-- Introdução -->
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
       <h2 class="text-2xl font-semibold text-white !mt-0">O que é Hierarquia Visual?</h2>
-      <p>
-        <strong>Hierarquia Visual</strong> é o princípio de organizar os elementos em uma tela de forma que o olho do usuário seja guiado para as informações mais importantes primeiro. É o que transforma uma tela caótica em uma interface clara e intuitiva.
-      </p>
-      <p>
-        Pense em uma página de jornal: o título da matéria principal é enorme, os subtítulos são menores, e o corpo do texto é ainda menor. Seu olho sabe exatamente por onde começar. Em um dashboard de DevOps, o mesmo princípio se aplica: o status geral do sistema deve "gritar" mais alto que os detalhes de um log específico.
+      <p class="text-gray-300 leading-relaxed">
+        Hierarquia Visual é a organização e apresentação dos elementos de forma que o usuário entenda o nível de importância de cada um. 
+        Sem ela, tudo na tela grita por atenção ao mesmo tempo, criando confusão. Com ela, você conta uma história: "Olhe isto primeiro, depois isto, e se quiser saber mais, olhe aquilo".
       </p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-semibold text-white">As Ferramentas da Hierarquia</h2>
-      <p>Você não precisa ser um designer para criar uma boa hierarquia. Basta dominar três ferramentas básicas:</p>
-
-      <h3 class="text-xl font-bold text-white mt-6">1. Tamanho e Escala</h3>
-      <p><strong>Regra simples: coisas maiores são mais importantes.</strong> Use tamanhos de fonte diferentes para criar uma distinção clara entre títulos, subtítulos e corpo do texto. Em um dashboard, o número principal (como "99.9% Uptime") deve ser a maior coisa na tela.</p>
-
-      <h3 class="text-xl font-bold text-white mt-6">2. Cor e Contraste</h3>
-      <p>Cores brilhantes e com alto contraste em relação ao fundo chamam a atenção. Use uma cor de destaque (como um azul ou verde vibrante) para os botões de ação principal (os "Call to Actions"). Em uma lista de logs, use vermelho para erros, amarelo para avisos e cinza para informações normais. O contraste guia o olho para o que precisa de atenção imediata.</p>
-
-      <h3 class="text-xl font-bold text-white mt-6">3. Espaço em Branco (Whitespace)</h3>
-      <p>O espaço em branco (ou espaço negativo) é uma das ferramentas mais poderosas e subestimadas. Ele não é "espaço vazio", é um elemento de design ativo que:</p>
-      <ul class="list-disc list-inside text-gray-400">
-          <li><strong>Agrupa elementos relacionados:</strong> Itens próximos uns dos outros são percebidos como um grupo.</li>
-          <li><strong>Separa elementos não relacionados:</strong> Um bom espaçamento entre seções diferentes de uma página cria clareza.</li>
-          <li><strong>Reduz a carga cognitiva:</strong> Uma tela "respirada" é menos cansativa e mais fácil de escanear.</li>
-      </ul>
-    </div>
-    
-    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Ordem no Caos</h3>
-      <p>
-        Ao aplicar conscientemente os princípios de tamanho, cor e espaçamento, você pode transformar uma interface confusa em uma que comunica informações de forma eficaz. Para um engenheiro de DevOps, isso significa criar dashboards onde os problemas são vistos instantaneamente e ferramentas internas que são rápidas e intuitivas de usar.
+    <!-- Seção 1: Tamanho e Escala -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">1. Tamanho e Escala</h2>
+      <p class="text-gray-300 mb-6">
+        A regra mais básica: <strong>o que é maior, é mais importante</strong>. O olho humano é naturalmente atraído por objetos grandes. Se o título tem o mesmo tamanho do parágrafo, o usuário não sabe onde o conteúdo começa.
       </p>
-    </div>
+
+      <!-- Playground Tamanho -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+        <div class="space-y-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-icons-outlined text-blue-accent">tune</span> Laboratório de Escala
+          </h3>
+          <p class="text-sm text-gray-400">Aumente o tamanho do título para ver como ele se destaca do corpo do texto.</p>
+          
+          <div>
+            <label class="block text-xs text-gray-500 mb-1">Tamanho do Título: {{ headingSize() }}px</label>
+            <input type="range" min="16" max="48" [ngModel]="headingSize()" (ngModelChange)="headingSize.set(+$event)" class="w-full accent-blue-accent">
+          </div>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 flex flex-col justify-center">
+          <h1 class="font-bold text-white transition-all duration-300 leading-tight mb-2" [style.font-size.px]="headingSize()">
+            Deploy em Produção
+          </h1>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            O processo de deploy foi iniciado com sucesso. Todos os testes passaram e a nova versão estará disponível em instantes.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 2: Cor e Contraste -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">2. Cor e Contraste</h2>
+      <p class="text-gray-300 mb-6">
+        A cor não serve apenas para deixar bonito; ela serve para <strong>direcionar a ação</strong>. Elementos com cores vibrantes ou alto contraste atraem o olhar imediatamente. Use cores neutras para informações secundárias e cores fortes para a ação principal (Call to Action).
+      </p>
+
+      <!-- Playground Cor -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+        <div class="space-y-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-icons-outlined text-pink-400">palette</span> Laboratório de Contraste
+          </h3>
+          <p class="text-sm text-gray-400">Ligue o "Modo Destaque" para ver como o botão principal se torna óbvio.</p>
+          
+          <label class="flex items-center cursor-pointer p-3 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-750 transition-colors">
+            <div class="relative">
+              <input type="checkbox" class="sr-only" [checked]="useAccentColor()" (change)="useAccentColor.set(!useAccentColor())">
+              <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!useAccentColor()" [class.bg-pink-500]="useAccentColor()"></div>
+              <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="useAccentColor()"></div>
+            </div>
+            <span class="ml-3 text-sm font-medium text-gray-200">Ativar Cor de Destaque</span>
+          </label>
+        </div>
+
+        <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 flex flex-col items-start gap-4">
+          <div class="w-full h-4 bg-gray-700 rounded w-3/4"></div>
+          <div class="w-full h-4 bg-gray-700 rounded w-1/2"></div>
+          
+          <div class="flex gap-3 mt-2 w-full">
+            <button class="px-4 py-2 rounded text-sm font-medium transition-all duration-300 flex-1 border border-gray-600 text-gray-300 hover:bg-gray-700">
+              Cancelar
+            </button>
+            <button 
+              class="px-4 py-2 rounded text-sm font-medium transition-all duration-300 flex-1 border"
+              [class.bg-gray-700]="!useAccentColor()"
+              [class.text-gray-300]="!useAccentColor()"
+              [class.border-gray-600]="!useAccentColor()"
+              [class.bg-pink-500]="useAccentColor()"
+              [class.text-white]="useAccentColor()"
+              [class.border-pink-500]="useAccentColor()"
+              [class.shadow-lg]="useAccentColor()"
+              [class.shadow-pink-500/20]="useAccentColor()"
+            >
+              Confirmar
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 3: Espaço em Branco -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">3. Espaço em Branco (Whitespace)</h2>
+      <p class="text-gray-300 mb-6">
+        O espaço vazio não é espaço desperdiçado; é um elemento ativo de design. Ele agrupa informações relacionadas e separa as não relacionadas. Uma interface "respirada" é mais fácil de escanear e parece mais profissional.
+      </p>
+
+      <!-- Playground Espaço -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+        <div class="space-y-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span class="material-icons-outlined text-green-400">space_dashboard</span> Laboratório de Espaço
+          </h3>
+          <p class="text-sm text-gray-400">Aumente o nível de espaçamento para organizar o card.</p>
+          
+          <div class="flex gap-2">
+            <button (click)="spacingLevel.set(0)" [class.bg-green-500]="spacingLevel() === 0" [class.text-white]="spacingLevel() === 0" class="px-3 py-1 rounded border border-gray-600 text-gray-400 text-xs hover:bg-gray-700 transition-colors">Sem Espaço</button>
+            <button (click)="spacingLevel.set(1)" [class.bg-green-500]="spacingLevel() === 1" [class.text-white]="spacingLevel() === 1" class="px-3 py-1 rounded border border-gray-600 text-gray-400 text-xs hover:bg-gray-700 transition-colors">Médio</button>
+            <button (click)="spacingLevel.set(2)" [class.bg-green-500]="spacingLevel() === 2" [class.text-white]="spacingLevel() === 2" class="px-3 py-1 rounded border border-gray-600 text-gray-400 text-xs hover:bg-gray-700 transition-colors">Bom</button>
+          </div>
+        </div>
+
+        <div class="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden transition-all duration-300"
+             [class.p-0]="spacingLevel() === 0"
+             [class.p-4]="spacingLevel() === 1"
+             [class.p-8]="spacingLevel() === 2">
+          <div class="bg-gray-700 rounded p-3">
+            <div class="flex items-center transition-all duration-300" [class.gap-0]="spacingLevel() === 0" [class.gap-2]="spacingLevel() === 1" [class.gap-4]="spacingLevel() === 2">
+              <div class="w-10 h-10 bg-gray-600 rounded-full flex-shrink-0"></div>
+              <div class="flex-1">
+                <div class="h-3 bg-gray-500 rounded w-1/3 mb-1"></div>
+                <div class="h-2 bg-gray-600 rounded w-2/3"></div>
+              </div>
+            </div>
+            <div class="mt-3 space-y-1 transition-all duration-300" [class.mt-0]="spacingLevel() === 0" [class.mt-2]="spacingLevel() === 1" [class.mt-4]="spacingLevel() === 2">
+               <div class="h-2 bg-gray-600 rounded w-full"></div>
+               <div class="h-2 bg-gray-600 rounded w-5/6"></div>
+               <div class="h-2 bg-gray-600 rounded w-4/6"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desafio Prático -->
+    <section class="mt-16 border-t border-gray-800 pt-10">
+      <div class="bg-gradient-to-br from-blue-900/20 to-gray-900 border border-blue-500/30 rounded-xl p-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+          <div>
+            <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">Desafio Prático</span>
+            <h2 class="text-2xl font-bold text-white mt-1">Conserte a Interface</h2>
+            <p class="text-gray-400 text-sm mt-2">Este card de monitoramento está um desastre. Use os controles para aplicar os princípios de hierarquia visual e torná-lo legível.</p>
+          </div>
+          
+          <div class="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
+            <div class="text-xs font-medium text-gray-400 mr-2">Progresso:</div>
+            <div class="flex gap-1">
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!fixType()" [class.bg-green-500]="fixType()"></div>
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!fixColor()" [class.bg-green-500]="fixColor()"></div>
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!fixSpace()" [class.bg-green-500]="fixSpace()"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Controles do Desafio -->
+          <div class="space-y-4">
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">1. Corrigir Tipografia</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="fixType()" (change)="fixType.set(!fixType())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!fixType()" [class.bg-blue-500]="fixType()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="fixType()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Aumenta o título e reduz o texto secundário para criar distinção.</p>
+            </div>
+
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">2. Corrigir Espaçamento</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="fixSpace()" (change)="fixSpace.set(!fixSpace())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!fixSpace()" [class.bg-blue-500]="fixSpace()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="fixSpace()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Adiciona respiro (padding/gap) para agrupar informações lógicas.</p>
+            </div>
+
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">3. Corrigir Cor</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="fixColor()" (change)="fixColor.set(!fixColor())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!fixColor()" [class.bg-blue-500]="fixColor()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="fixColor()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Destaca o status crítico e o botão de ação principal.</p>
+            </div>
+          </div>
+
+          <!-- Preview do Desafio -->
+          <div class="lg:col-span-2 flex items-center justify-center bg-black/20 rounded-xl p-8 relative overflow-hidden">
+            
+            <!-- Mensagem de Sucesso (Overlay) -->
+            @if(isChallengeComplete()) {
+              <div class="absolute inset-0 z-10 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 animate-fade-in">
+                <span class="material-icons-outlined text-6xl text-green-400 mb-4 animate-bounce">emoji_events</span>
+                <h3 class="text-2xl font-bold text-white mb-2">Excelente Trabalho!</h3>
+                <p class="text-gray-300 mb-6 max-w-md">Você aplicou os 3 pilares da hierarquia visual. O card agora é legível, organizado e acionável.</p>
+                <button (click)="resetChallenge()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full text-sm font-medium transition-colors">
+                  Refazer Desafio
+                </button>
+              </div>
+            }
+
+            <!-- O Card Quebrado/Consertado -->
+            <div class="bg-gray-800 rounded-lg w-full max-w-md border border-gray-700 transition-all duration-500 ease-in-out"
+                 [class.p-2]="!fixSpace()" [class.p-6]="fixSpace()"
+                 [class.shadow-sm]="!fixSpace()" [class.shadow-2xl]="fixSpace()">
+              
+              <!-- Header do Card -->
+              <div class="flex items-start justify-between transition-all duration-500" [class.mb-1]="!fixSpace()" [class.mb-6]="fixSpace()">
+                <div class="flex items-center transition-all duration-500" [class.gap-1]="!fixSpace()" [class.gap-4]="fixSpace()">
+                  <div class="rounded-lg bg-gray-700 flex items-center justify-center transition-all duration-500"
+                       [class.w-8]="!fixSpace()" [class.h-8]="!fixSpace()"
+                       [class.w-12]="fixSpace()" [class.h-12]="fixSpace()">
+                    <span class="material-icons-outlined text-gray-400">dns</span>
+                  </div>
+                  <div>
+                    <h3 class="text-white font-bold transition-all duration-500"
+                        [class.text-xs]="!fixType()" [class.text-lg]="fixType()">
+                      Server-US-East-1
+                    </h3>
+                    <p class="text-gray-400 transition-all duration-500"
+                       [class.text-xs]="!fixType()" [class.text-sm]="fixType()">
+                      i-0a1b2c3d4e
+                    </p>
+                  </div>
+                </div>
+                <span class="rounded-full font-bold border transition-all duration-500 flex items-center gap-1"
+                      [class.text-[10px]]="!fixType()" [class.px-1]="!fixType()" 
+                      [class.text-xs]="fixType()" [class.px-3]="fixType()" [class.py-1]="fixType()"
+                      
+                      [class.bg-gray-700]="!fixColor()" [class.text-gray-300]="!fixColor()" [class.border-gray-600]="!fixColor()"
+                      [class.bg-red-500/10]="fixColor()" [class.text-red-400]="fixColor()" [class.border-red-500/20]="fixColor()">
+                  @if(fixColor()) { <span class="material-icons-outlined text-[14px]">error</span> }
+                  CRITICAL
+                </span>
+              </div>
+
+              <!-- Métricas -->
+              <div class="grid grid-cols-3 transition-all duration-500 border-y border-gray-700/50"
+                   [class.gap-1]="!fixSpace()" [class.py-2]="!fixSpace()"
+                   [class.gap-4]="fixSpace()" [class.py-6]="fixSpace()">
+                
+                <div class="text-center">
+                  <div class="text-gray-500 uppercase transition-all duration-500" [class.text-[8px]]="!fixType()" [class.text-xs]="fixType()" [class.font-bold]="fixType()">CPU</div>
+                  <div class="text-white font-mono transition-all duration-500" [class.text-xs]="!fixType()" [class.text-xl]="fixType()" [class.text-red-400]="fixColor()">98%</div>
+                </div>
+                <div class="text-center border-x border-gray-700/50">
+                  <div class="text-gray-500 uppercase transition-all duration-500" [class.text-[8px]]="!fixType()" [class.text-xs]="fixType()" [class.font-bold]="fixType()">RAM</div>
+                  <div class="text-white font-mono transition-all duration-500" [class.text-xs]="!fixType()" [class.text-xl]="fixType()">45%</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-gray-500 uppercase transition-all duration-500" [class.text-[8px]]="!fixType()" [class.text-xs]="fixType()" [class.font-bold]="fixType()">DISK</div>
+                  <div class="text-white font-mono transition-all duration-500" [class.text-xs]="!fixType()" [class.text-xl]="fixType()">22%</div>
+                </div>
+              </div>
+
+              <!-- Ações -->
+              <div class="flex transition-all duration-500" [class.mt-1]="!fixSpace()" [class.mt-6]="fixSpace()" [class.gap-2]="!fixSpace()" [class.gap-4]="fixSpace()">
+                <button class="flex-1 rounded transition-all duration-500 border border-gray-600 text-gray-300 hover:bg-gray-700"
+                        [class.text-[10px]]="!fixType()" [class.py-1]="!fixSpace()"
+                        [class.text-sm]="fixType()" [class.font-medium]="fixType()" [class.py-2]="fixSpace()">
+                  Logs
+                </button>
+                <button class="flex-1 rounded transition-all duration-500 border"
+                        [class.text-[10px]]="!fixType()" [class.py-1]="!fixSpace()"
+                        [class.text-sm]="fixType()" [class.font-medium]="fixType()" [class.py-2]="fixSpace()"
+                        
+                        [class.bg-gray-700]="!fixColor()" [class.text-gray-300]="!fixColor()" [class.border-gray-600]="!fixColor()"
+                        [class.bg-blue-600]="fixColor()" [class.text-white]="fixColor()" [class.border-blue-600]="fixColor()" [class.hover:bg-blue-500]="fixColor()">
+                  Reiniciar
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="pt-8 text-center">
        <a routerLink="/learning/fundamentos-design-visual-devs" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+       <a routerLink="/learning/article/cores-e-contraste" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
+        Próximo: Cores e Contraste
         <span class="material-icons-outlined">arrow_forward</span>
-        Próximo Passo: O Poder das Cores e do Contraste
       </a>
     </div>
   </article>

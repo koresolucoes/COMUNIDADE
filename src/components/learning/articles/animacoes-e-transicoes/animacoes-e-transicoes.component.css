@@ -1,40 +1,91 @@
-.transition-example-button {
-  background-color: #58a6ff; /* blue-accent */
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.375rem;
-  font-weight: 600;
-  transform: scale(1);
-  transition: background-color 0.3s ease, transform 0.3s ease;
+
+.slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 0.5rem;
+  background: #30363d;
+  border-radius: 9999px;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
 }
 
-.transition-example-button:hover {
-  background-color: #3fb950; /* green-accent */
-  transform: scale(1.1);
+.slider-thumb:hover {
+  opacity: 1;
 }
 
-.animation-example-loader {
-  width: 50px;
-  height: 50px;
+.slider-thumb::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #58a6ff;
+  cursor: pointer;
   border-radius: 50%;
-  background-color: #58a6ff; /* blue-accent */
-  animation-name: pulse;
-  animation-duration: 2s;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
+  border: 2px solid #161b22;
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.7;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
+.slider-thumb::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #58a6ff;
+  cursor: pointer;
+  border-radius: 50%;
+  border: 2px solid #161b22;
+}
+
+/* Heart Pop Animation */
+@keyframes heartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.animate-heart-pop {
+  animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Particles Ring Effect (Simplified) */
+.particle-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-shadow: 
+    0 -30px 0 -5px #e0245e, 
+    30px 0 0 -5px #e0245e, 
+    0 30px 0 -5px #e0245e, 
+    -30px 0 0 -5px #e0245e,
+    20px -20px 0 -5px #e0245e,
+    20px 20px 0 -5px #e0245e,
+    -20px 20px 0 -5px #e0245e,
+    -20px -20px 0 -5px #e0245e;
+  animation: particles 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes particles {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
+
+/* SVG Drawing Animation */
+.checkmark-path {
+  stroke-dasharray: 30; /* Tamanho aproximado do path do checkmark */
+  stroke-dashoffset: 30; /* Começa totalmente escondido */
+}
+
+.animate-draw {
+  animation: drawCheck 0.5s ease-out forwards 0.2s; /* 0.2s delay to wait for button morph */
+}
+
+@keyframes drawCheck {
+  to {
+    stroke-dashoffset: 0;
   }
 }
