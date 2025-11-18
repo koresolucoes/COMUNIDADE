@@ -1,4 +1,6 @@
 
+
+
 import { Component, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -28,7 +30,7 @@ export class CssAnimationGeneratorComponent {
   timingFunction = signal('ease');
 
   // --- UI State ---
-  activeAnimationName = signal(''); // Changed: controls the live animation-name
+  isAnimating = signal(true); // Controls the live animation class
   classCopyText = signal('Copiar Classe');
   keyframesCopyText = signal('Copiar @keyframes');
 
@@ -196,14 +198,13 @@ export class CssAnimationGeneratorComponent {
 
   // --- Methods ---
   replayAnimation(): void {
-    // Set to 'none' to stop the current animation
-    this.activeAnimationName.set('none');
+    // Toggling a class is a robust way to restart a CSS animation
+    this.isAnimating.set(false);
     
-    // Use setTimeout to re-apply the animation name in the next browser tick.
-    // This forces the browser to restart the animation.
+    // Use setTimeout to re-apply the class in the next browser tick
     setTimeout(() => {
-      this.activeAnimationName.set(this.selectedAnimation());
-    }, 0);
+      this.isAnimating.set(true);
+    }, 50);
   }
   
   copyCss(type: 'class' | 'keyframes') {

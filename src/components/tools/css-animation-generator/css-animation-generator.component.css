@@ -1,4 +1,3 @@
-
 /* Re-using slider styles for consistency */
 .slider-thumb {
   -webkit-appearance: none;
@@ -36,14 +35,30 @@
   border: none;
 }
 
+/* preview box básico */
 .preview-box {
-  width: 100px;
-  height: 100px;
-  background-color: #58a6ff; /* blue-accent */
+  width: 120px;
+  height: 120px;
+  background: #3b82f6;
   border-radius: 8px;
-  /* animation properties are applied via style binding */
-  animation-fill-mode: both; /* Ensures element stays at the end state */
+  /* estado padrão: sem animação visível (se quiser) */
+  opacity: 0;
+  transform: translateZ(0); /* força layer compositing para desempenho */
 }
+
+/* quando is-animating for true, aplica as propriedades vindas das variáveis */
+.preview-box.is-animating {
+  animation-name: var(--animation-name);
+  animation-duration: var(--animation-duration);
+  animation-delay: var(--animation-delay);
+  animation-iteration-count: var(--animation-iteration-count);
+  animation-direction: var(--animation-direction);
+  animation-timing-function: var(--animation-timing-function);
+  animation-fill-mode: both;
+  /* garante que o primeiro frame seja aplicado imediatamente (caso a keyframe mude) */
+  will-change: transform, opacity;
+}
+
 
 /* 
   All keyframes are defined here so they are available globally for the component.

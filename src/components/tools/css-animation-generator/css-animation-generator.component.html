@@ -12,10 +12,11 @@
       <!-- Animation Type -->
       <div>
         <label for="animation-select" class="block text-sm font-medium text-gray-400 mb-2">Animação</label>
-        <select id="animation-select" [ngModel]="selectedAnimation()" (ngModelChange)="selectedAnimation.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent">
-          @for(anim of animations; track anim.name) {
-            <option [value]="anim.name">{{ anim.displayName }}</option>
-          }
+        <select id="animation-select"
+                [ngModel]="selectedAnimation()"
+                (ngModelChange)="selectedAnimation.set($event)"
+                class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent">
+          <option *ngFor="let anim of animations" [value]="anim.name">{{ anim.displayName }}</option>
         </select>
       </div>
 
@@ -77,12 +78,13 @@
       <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[250px] flex flex-col items-center justify-center">
         <div 
           class="preview-box"
-          [style.animation-name]="activeAnimationName()"
-          [style.animation-duration]="duration() + 's'"
-          [style.animation-delay]="delay() + 's'"
-          [style.animation-iteration-count]="iterationCount()"
-          [style.animation-direction]="direction()"
-          [style.animation-timing-function]="timingFunction()">
+          [class.is-animating]="isAnimating()"
+          [style.--animation-name]="selectedAnimation()"
+          [style.--animation-duration]="duration() + 's'"
+          [style.--animation-delay]="delay() + 's'"
+          [style.--animation-iteration-count]="iterationCount()"
+          [style.--animation-direction]="direction()"
+          [style.--animation-timing-function]="timingFunction()">
         </div>
         <button (click)="replayAnimation()" class="mt-8 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center gap-2 text-sm">
           <span class="material-icons-outlined">replay</span>
