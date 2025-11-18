@@ -1,220 +1,369 @@
 
-
-
 import { Component, ChangeDetectionStrategy, signal, computed, effect } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ToolInfoSectionComponent, InfoSection } from '../../shared/tool-info-section/tool-info-section.component';
+import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
 
-interface AnimationOption {
+interface AnimationPreset {
   name: string;
-  displayName: string;
+  label: string;
   keyframes: string;
+  defaultDuration: number;
+  defaultTiming: string;
 }
 
 @Component({
   selector: 'app-css-animation-generator',
   standalone: true,
-  imports: [FormsModule, CommonModule, ToolInfoSectionComponent],
+  imports: [FormsModule, CommonModule, ToolInfoSectionComponent, SafeHtmlPipe],
   templateUrl: './css-animation-generator.component.html',
   styleUrls: ['./css-animation-generator.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CssAnimationGeneratorComponent {
-  // --- Animation Properties ---
-  selectedAnimation = signal('fadeIn');
-  duration = signal(1);
-  delay = signal(0);
-  iterationCount = signal('1');
-  direction = signal('normal');
+  // --- Animation Config State ---
+  animationName = signal('minhaAnimacao');
+  duration = signal(1.0);
   timingFunction = signal('ease');
+  delay = signal(0);
+  iterationCount = signal('infinite');
+  direction = signal('normal');
+  fillMode = signal('forwards');
+
+  // --- Keyframes State ---
+  // We store the body of the keyframes here
+  keyframesBody = signal<string>(`
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  `.trim());
 
   // --- UI State ---
-  isAnimating = signal(true); // Controls the live animation class
-  classCopyText = signal('Copiar Classe');
-  keyframesCopyText = signal('Copiar @keyframes');
-
-  // --- Computed CSS ---
-  animationClassCss = computed(() => {
-    return `
-.animated-element {
-  animation-name: ${this.selectedAnimation()};
-  animation-duration: ${this.duration()}s;
-  animation-timing-function: ${this.timingFunction()};
-  animation-delay: ${this.delay()}s;
-  animation-iteration-count: ${this.iterationCount()};
-  animation-direction: ${this.direction()};
-  animation-fill-mode: both;
-}
-    `.trim();
-  });
-
-  animationKeyframesCss = computed(() => {
-    return this.animations.find(a => a.name === this.selectedAnimation())?.keyframes || '';
-  });
-
-  infoSections = computed<InfoSection[]>(() => [
-    {
-        title: 'Introdução e Valor da Ferramenta',
-        content: `
-            <h4>O que é o Gerador de Animação CSS?</h4>
-            <p>Esta ferramenta oferece uma coleção de animações CSS pré-construídas que você pode personalizar e aplicar aos seus projetos. Ela permite que você ajuste propriedades como duração, atraso, repetição e curva de aceleração, e gera tanto a classe CSS quanto a regra <code>@keyframes</code> necessária para a animação funcionar.</p>
-            
-            <h4>Por que usar Animações CSS?</h4>
-            <p>Animações dão vida às interfaces, tornando a experiência do usuário mais agradável e intuitiva. Elas são excelentes para:</p>
-            <ul>
-                <li>Fornecer feedback visual para ações do usuário (ex: um item tremendo ao falhar a validação).</li>
-                <li>Chamar a atenção para elementos importantes (ex: um botão pulsando).</li>
-                <li>Criar transições de página ou de estado mais suaves e elegantes.</li>
-                <li>Adicionar um toque de personalidade e polimento ao seu design.</li>
-            </ul>
-
-            <h4>Características ⚡️</h4>
-            <ul>
-                <li><strong>Biblioteca de Presets:</strong> Escolha entre animações populares como Fade, Slide, Bounce e Pulse.</li>
-                <li><strong>Personalização Completa:</strong> Controle a duração, atraso, número de repetições, direção e a curva de tempo da animação.</li>
-                <li><strong>Pré-visualização e Repetição:</strong> Veja sua animação em ação e repita-a com um clique.</li>
-                <li><strong>Código Separado:</strong> Copie a classe CSS e os <code>@keyframes</code> separadamente para uma melhor organização do seu código.</li>
-            </ul>
-        `
-    },
-    {
-        title: 'Guia de Uso e Exemplos',
-        content: `
-            <h4>Como Usar o Gerador de Animações</h4>
-            <ol>
-                <li><strong>Escolha uma Animação:</strong> Selecione um dos presets no menu "Animação". A pré-visualização será atualizada automaticamente.</li>
-                <li><strong>Ajuste as Propriedades:</strong> Use os sliders e menus para customizar a duração, o atraso, o número de repetições, a direção e a curva de aceleração (timing-function).</li>
-                <li><strong>Teste a Animação:</strong> Clique no botão "Repetir Animação" a qualquer momento para ver o resultado de suas customizações.</li>
-                <li><strong>Copie o Código:</strong> Copie a classe CSS e os <code>@keyframes</code> separadamente para uma melhor organização do seu código e cole no seu projeto.</li>
-            </ol>
-            
-            <h4>Exemplos Interativos</h4>
-            <p>Passe o mouse sobre os cards abaixo para ver a animação em ação e copie o código pronto para uso.</p>
-            <div class="presets-grid">
-                <div class="preset-card">
-                    <h5>Fade In</h5>
-                    <div class="preset-preview-wrapper">
-                        <div class="preset-preview anim-fadeIn"></div>
-                    </div>
-                    <div class="code-wrapper">
-                        <pre><code>animation: fadeIn 1s ease both;</code></pre>
-                        <button class="copy-button" data-copy-code="animation: fadeIn 1s ease both;">Copiar</button>
-                    </div>
-                </div>
-                <div class="preset-card">
-                    <h5>Slide In (Esquerda)</h5>
-                    <div class="preset-preview-wrapper">
-                        <div class="preset-preview anim-slideInLeft"></div>
-                    </div>
-                    <div class="code-wrapper">
-                        <pre><code>animation: slideInLeft 0.8s ease-out both;</code></pre>
-                        <button class="copy-button" data-copy-code="animation: slideInLeft 0.8s ease-out both;">Copiar</button>
-                    </div>
-                </div>
-                <div class="preset-card">
-                    <h5>Bounce</h5>
-                    <div class="preset-preview-wrapper">
-                        <div class="preset-preview anim-bounce"></div>
-                    </div>
-                    <div class="code-wrapper">
-                        <pre><code>animation: bounce 1s ease both;</code></pre>
-                        <button class="copy-button" data-copy-code="animation: bounce 1s ease both;">Copiar</button>
-                    </div>
-                </div>
-                <div class="preset-card">
-                    <h5>Pulse</h5>
-                    <div class="preset-preview-wrapper">
-                        <div class="preset-preview anim-pulse"></div>
-                    </div>
-                    <div class="code-wrapper">
-                        <pre><code>animation: pulse 2s ease-in-out infinite;</code></pre>
-                        <button class="copy-button" data-copy-code="animation: pulse 2s ease-in-out infinite;">Copiar</button>
-                    </div>
-                </div>
-            </div>
-        `
-    },
-    {
-        title: 'Melhores Práticas e Contexto Técnico',
-        content: `
-            <h4>Performance é Essencial</h4>
-            <p>Para animações suaves (60fps), o navegador deve evitar operações custosas como "layout" e "paint". As propriedades mais performáticas para animar são <code>transform</code> e <code>opacity</code>, pois elas podem ser aceleradas pela GPU.</p>
-            <ul>
-                <li><strong>Prefira:</strong> Animações que usam <code>transform: translateX()</code>, <code>transform: scale()</code>, ou <code>opacity</code> (como 'Fade In' e 'Slide In').</li>
-                <li><strong>Use com Cuidado:</strong> Animações que alteram propriedades como <code>width</code>, <code>height</code>, <code>top</code>, <code>left</code>, ou <code>box-shadow</code>, pois elas forçam o navegador a recalcular o layout e repintar a tela, o que pode causar "engasgos".</li>
-            </ul>
-
-            <h4>Acessibilidade com <code>prefers-reduced-motion</code></h4>
-            <p>Alguns usuários podem ter sensibilidade a movimento e preferem desativar animações. É uma boa prática respeitar essa preferência usando a media query <code>prefers-reduced-motion</code> para desabilitar ou reduzir a intensidade das animações.</p>
-            <pre><code>@media (prefers-reduced-motion: reduce) {
-  .animated-element {
-    animation: none;
-    transition: none;
-  }
-}
-</code></pre>
-        `
-    },
-    {
-        title: 'Perguntas Frequentes (FAQ)',
-        content: `
-            <h4>Qual a diferença entre <code>animation</code> e <code>transition</code>?</h4>
-            <p><code>transition</code> é usada para animar a mudança de um estado para outro (ex: de uma cor para outra no <code>:hover</code>). <code>animation</code> é mais poderosa e usa <code>@keyframes</code> para definir múltiplos estágios de uma animação complexa, sem depender de uma mudança de estado.</p>
-            
-            <h4>O que é a propriedade <code>animation-fill-mode</code>?</h4>
-            <p>Ela define como o elemento se parece antes e depois da animação. O valor <code>both</code>, usado por este gerador, garante que o estilo do primeiro keyframe seja aplicado antes do início da animação (respeitando o <code>animation-delay</code>) e que o estilo do último keyframe permaneça após o fim da animação.</p>
-
-            <h4>Posso combinar animações?</h4>
-            <p>Sim, você pode aplicar múltiplas animações a um elemento separando os valores por vírgula. Exemplo: <code>animation: slideInLeft 1s, fadeIn 1s;</code>. No entanto, gerenciar isso pode se tornar complexo rapidamente.</p>
-        `
-    }
-]);
-
-  // --- Animation Definitions ---
-  animations: AnimationOption[] = [
-    { name: 'fadeIn', displayName: 'Fade In', keyframes: `@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }` },
-    { name: 'slideInLeft', displayName: 'Slide In (Esquerda)', keyframes: `@keyframes slideInLeft { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }` },
-    { name: 'slideInRight', displayName: 'Slide In (Direita)', keyframes: `@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }` },
-    { name: 'bounce', displayName: 'Bounce', keyframes: `@keyframes bounce { 0%, 20%, 53%, 80%, 100% { transform: translateY(0); } 40%, 43% { transform: translateY(-30px); } 70% { transform: translateY(-15px); } 90% { transform: translateY(-4px); } }` },
-    { name: 'pulse', displayName: 'Pulse', keyframes: `@keyframes pulse { from { transform: scale3d(1, 1, 1); } 50% { transform: scale3d(1.05, 1.05, 1.05); } to { transform: scale3d(1, 1, 1); } }` },
-    { name: 'tada', displayName: 'Tada', keyframes: `@keyframes tada { from { transform: scale3d(1, 1, 1); } 10%, 20% { transform: scale3d(.9, .9, .9) rotate3d(0, 0, 1, -3deg); } 30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); } 40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); } to { transform: scale3d(1, 1, 1); } }`},
-    { name: 'shake', displayName: 'Shake', keyframes: `@keyframes shake { from, to { transform: translate3d(0, 0, 0); } 10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); } 20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); } }`},
-  ];
+  isPlaying = signal(true);
+  copyButtonText = signal('Copiar CSS');
   
-  constructor() {
-    effect(() => {
-      // Track all animation properties. When any change, trigger a restart.
-      this.selectedAnimation();
-      this.duration();
-      this.delay();
-      this.iterationCount();
-      this.direction();
-      this.timingFunction();
-      
-      this.replayAnimation();
-    }, { allowSignalWrites: true });
+  // --- Presets Definition ---
+  presets: AnimationPreset[] = [
+    {
+      name: 'fadeIn',
+      label: 'Fade In',
+      defaultDuration: 1,
+      defaultTiming: 'ease-in',
+      keyframes: `
+  from { opacity: 0; }
+  to { opacity: 1; }`
+    },
+    {
+      name: 'fadeInUp',
+      label: 'Fade In Up',
+      defaultDuration: 0.8,
+      defaultTiming: 'ease-out',
+      keyframes: `
+  from {
+    opacity: 0;
+    transform: translate3d(0, 40px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }`
+    },
+    {
+      name: 'slideInLeft',
+      label: 'Slide In Left',
+      defaultDuration: 0.5,
+      defaultTiming: 'ease-out',
+      keyframes: `
+  from {
+    transform: translate3d(-100%, 0, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }`
+    },
+    {
+      name: 'slideInRight',
+      label: 'Slide In Right',
+      defaultDuration: 0.5,
+      defaultTiming: 'ease-out',
+      keyframes: `
+  from {
+    transform: translate3d(100%, 0, 0);
+    visibility: visible;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }`
+    },
+    {
+      name: 'zoomIn',
+      label: 'Zoom In',
+      defaultDuration: 0.5,
+      defaultTiming: 'ease',
+      keyframes: `
+  from {
+    opacity: 0;
+    transform: scale3d(0.3, 0.3, 0.3);
+  }
+  50% {
+    opacity: 1;
+  }`
+    },
+    {
+      name: 'bounce',
+      label: 'Bounce',
+      defaultDuration: 1,
+      defaultTiming: 'ease',
+      keyframes: `
+  from, 20%, 53%, 80%, to {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }`
+    },
+    {
+      name: 'pulse',
+      label: 'Pulse',
+      defaultDuration: 1,
+      defaultTiming: 'ease-in-out',
+      keyframes: `
+  from {
+    transform: scale3d(1, 1, 1);
+  }
+  50% {
+    transform: scale3d(1.05, 1.05, 1.05);
+  }
+  to {
+    transform: scale3d(1, 1, 1);
+  }`
+    },
+    {
+      name: 'rubberBand',
+      label: 'Rubber Band',
+      defaultDuration: 1,
+      defaultTiming: 'ease',
+      keyframes: `
+  from { transform: scale3d(1, 1, 1); }
+  30% { transform: scale3d(1.25, 0.75, 1); }
+  40% { transform: scale3d(0.75, 1.25, 1); }
+  50% { transform: scale3d(1.15, 0.85, 1); }
+  65% { transform: scale3d(0.95, 1.05, 1); }
+  75% { transform: scale3d(1.05, 0.95, 1); }
+  to { transform: scale3d(1, 1, 1); }`
+    },
+    {
+      name: 'shake',
+      label: 'Shake',
+      defaultDuration: 1,
+      defaultTiming: 'ease',
+      keyframes: `
+  from, to { transform: translate3d(0, 0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate3d(-10px, 0, 0); }
+  20%, 40%, 60%, 80% { transform: translate3d(10px, 0, 0); }`
+    },
+    {
+      name: 'wobble',
+      label: 'Wobble',
+      defaultDuration: 1,
+      defaultTiming: 'ease',
+      keyframes: `
+  from { transform: translate3d(0, 0, 0); }
+  15% { transform: translate3d(-25%, 0, 0) rotate3d(0, 0, 1, -5deg); }
+  30% { transform: translate3d(20%, 0, 0) rotate3d(0, 0, 1, 3deg); }
+  45% { transform: translate3d(-15%, 0, 0) rotate3d(0, 0, 1, -3deg); }
+  60% { transform: translate3d(10%, 0, 0) rotate3d(0, 0, 1, 2deg); }
+  75% { transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -1deg); }
+  to { transform: translate3d(0, 0, 0); }`
+    },
+    {
+      name: 'jello',
+      label: 'Jello',
+      defaultDuration: 0.9,
+      defaultTiming: 'ease',
+      keyframes: `
+  from, 11.1%, to { transform: translate3d(0, 0, 0); }
+  22.2% { transform: skewX(-12.5deg) skewY(-12.5deg); }
+  33.3% { transform: skewX(6.25deg) skewY(6.25deg); }
+  44.4% { transform: skewX(-3.125deg) skewY(-3.125deg); }
+  55.5% { transform: skewX(1.5625deg) skewY(1.5625deg); }
+  66.6% { transform: skewX(-0.78125deg) skewY(-0.78125deg); }
+  77.7% { transform: skewX(0.390625deg) skewY(0.390625deg); }
+  88.8% { transform: skewX(-0.1953125deg) skewY(-0.1953125deg); }`
+    },
+    {
+      name: 'rotate',
+      label: 'Rotate',
+      defaultDuration: 2,
+      defaultTiming: 'linear',
+      keyframes: `
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }`
+    },
+    {
+      name: 'flipInX',
+      label: 'Flip In X',
+      defaultDuration: 1,
+      defaultTiming: 'ease-in',
+      keyframes: `
+  from {
+    transform: perspective(400px) rotate3d(1, 0, 0, 90deg);
+    animation-timing-function: ease-in;
+    opacity: 0;
+  }
+  40% {
+    transform: perspective(400px) rotate3d(1, 0, 0, -20deg);
+    animation-timing-function: ease-in;
+  }
+  60% {
+    transform: perspective(400px) rotate3d(1, 0, 0, 10deg);
+    opacity: 1;
+  }
+  80% {
+    transform: perspective(400px) rotate3d(1, 0, 0, -5deg);
+  }
+  to {
+    transform: perspective(400px);
+  }`
+    },
+    {
+      name: 'swing',
+      label: 'Swing',
+      defaultDuration: 1,
+      defaultTiming: 'ease-in-out',
+      keyframes: `
+  20% { transform: rotate3d(0, 0, 1, 15deg); }
+  40% { transform: rotate3d(0, 0, 1, -10deg); }
+  60% { transform: rotate3d(0, 0, 1, 5deg); }
+  80% { transform: rotate3d(0, 0, 1, -5deg); }
+  to { transform: rotate3d(0, 0, 1, 0deg); }`
+    }
+  ];
+
+  // --- Computed Styles ---
+  
+  // Generates the full CSS block for display and copy
+  generatedCss = computed(() => {
+    const name = this.animationName();
+    const dur = this.duration();
+    const timing = this.timingFunction();
+    const del = this.delay();
+    const iter = this.iterationCount();
+    const dir = this.direction();
+    const fill = this.fillMode();
+    const kf = this.keyframesBody();
+
+    return `
+.animado {
+  animation-name: ${name};
+  animation-duration: ${dur}s;
+  animation-timing-function: ${timing};
+  animation-delay: ${del}s;
+  animation-iteration-count: ${iter};
+  animation-direction: ${dir};
+  animation-fill-mode: ${fill};
+}
+
+@keyframes ${name} {
+${kf}
+}`.trim();
+  });
+
+  // Generates the style tag content to inject into the DOM for the preview
+  previewStyleTag = computed(() => {
+     const name = this.animationName();
+     const kf = this.keyframesBody();
+     return `<style>
+      @keyframes ${name} {
+        ${kf}
+      }
+     </style>`;
+  });
+
+  // Style object for the preview element
+  previewElementStyle = computed(() => {
+    if (!this.isPlaying()) return {};
+    return {
+      'animation-name': this.animationName(),
+      'animation-duration': `${this.duration()}s`,
+      'animation-timing-function': this.timingFunction(),
+      'animation-delay': `${this.delay()}s`,
+      'animation-iteration-count': this.iterationCount(),
+      'animation-direction': this.direction(),
+      'animation-fill-mode': this.fillMode(),
+    };
+  });
+
+  infoSections: InfoSection[] = [
+    {
+      title: 'Fundamentos da Animação CSS',
+      content: `
+        <h4>O que são Animações CSS?</h4>
+        <p>As animações CSS permitem animar transições de uma configuração de estilo CSS para outra. Elas consistem em dois componentes: um estilo que descreve a animação (<code>animation</code>) e um conjunto de quadros-chave (<code>@keyframes</code>) que indicam os estados inicial, final e intermediários.</p>
+        
+        <h4>Propriedades Principais</h4>
+        <ul>
+          <li><strong>Duration:</strong> Quanto tempo a animação leva para completar um ciclo.</li>
+          <li><strong>Timing Function:</strong> Como a animação progride (ex: <code>linear</code> é constante, <code>ease</code> começa devagar, acelera e termina devagar).</li>
+          <li><strong>Iteration Count:</strong> Quantas vezes a animação deve rodar. <code>infinite</code> faz ela rodar para sempre.</li>
+          <li><strong>Keyframes:</strong> A "receita" da animação. Define o que acontece em 0%, 50%, 100% do tempo.</li>
+        </ul>
+      `
+    },
+    {
+      title: 'Performance e Melhores Práticas',
+      content: `
+        <h4>O que animar?</h4>
+        <p>Para garantir 60 quadros por segundo (60fps) e uma experiência suave, prefira animar propriedades que não causam "reflow" (recalcular o layout) ou "repaint" (redesenhar pixels). As melhores propriedades para animar são:</p>
+        <ul>
+          <li><code>transform</code> (mover, escalar, rotacionar)</li>
+          <li><code>opacity</code> (transparência)</li>
+        </ul>
+        <p>Evite animar propriedades como <code>width</code>, <code>height</code>, <code>margin</code> ou <code>top/left</code>, pois elas forçam o navegador a recalcular o layout da página, o que pode causar lentidão em dispositivos móveis.</p>
+      `
+    }
+  ];
+
+  applyPreset(preset: AnimationPreset) {
+    this.animationName.set(preset.name);
+    this.keyframesBody.set(preset.keyframes.trim());
+    this.duration.set(preset.defaultDuration);
+    this.timingFunction.set(preset.defaultTiming);
+    
+    // Reset dynamic properties
+    this.delay.set(0);
+    this.direction.set('normal');
+    this.replayAnimation();
   }
 
-  // --- Methods ---
-  replayAnimation(): void {
-    // Toggling a class is a robust way to restart a CSS animation
-    this.isAnimating.set(false);
-    
-    // Use setTimeout to re-apply the class in the next browser tick
+  replayAnimation() {
+    this.isPlaying.set(false);
+    // Force reflow hack to restart animation
     setTimeout(() => {
-      this.isAnimating.set(true);
+      this.isPlaying.set(true);
     }, 50);
   }
-  
-  copyCss(type: 'class' | 'keyframes') {
-    const textToCopy = type === 'class' ? this.animationClassCss() : this.animationKeyframesCss();
-    const signalToUpdate = type === 'class' ? this.classCopyText : this.keyframesCopyText;
-    const originalText = type === 'class' ? 'Copiar Classe' : 'Copiar @keyframes';
 
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      signalToUpdate.set('Copiado!');
-      setTimeout(() => signalToUpdate.set(originalText), 2000);
+  copyCss() {
+    navigator.clipboard.writeText(this.generatedCss()).then(() => {
+      this.copyButtonText.set('Copiado!');
+      setTimeout(() => this.copyButtonText.set('Copiar CSS'), 2000);
     });
   }
 }

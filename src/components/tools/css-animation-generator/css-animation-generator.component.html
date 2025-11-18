@@ -1,120 +1,154 @@
+
 <div class="space-y-8">
   <div>
     <h1 class="text-3xl md:text-4xl font-bold text-white">Gerador de Animação CSS</h1>
-    <p class="mt-2 text-gray-400">Selecione, personalize e copie animações CSS prontas para usar.</p>
+    <p class="mt-2 text-gray-400">Crie animações customizadas com @keyframes e visualize em tempo real.</p>
   </div>
+
+  <!-- Inject Dynamic Keyframes -->
+  <div [innerHTML]="previewStyleTag() | safeHtml"></div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <!-- Controls Column -->
-    <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-4">
-      <h2 class="text-xl font-semibold text-white">Configurações da Animação</h2>
-      
-      <!-- Animation Type -->
-      <div>
-        <label for="animation-select" class="block text-sm font-medium text-gray-400 mb-2">Animação</label>
-        <select id="animation-select"
-                [ngModel]="selectedAnimation()"
-                (ngModelChange)="selectedAnimation.set($event)"
-                class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent">
-          <option *ngFor="let anim of animations" [value]="anim.name">{{ anim.displayName }}</option>
-        </select>
-      </div>
-
-      <!-- Duration -->
-      <div class="space-y-2">
-        <div class="flex justify-between items-center text-sm font-medium">
-          <label for="duration" class="text-gray-300">Duração</label>
-          <span class="text-white font-mono">{{ duration() }}s</span>
-        </div>
-        <input id="duration" type="range" min="0.1" max="5" step="0.1" [ngModel]="duration()" (ngModelChange)="duration.set(+$event)" class="w-full slider-thumb">
-      </div>
-
-      <!-- Delay -->
-      <div class="space-y-2">
-        <div class="flex justify-between items-center text-sm font-medium">
-          <label for="delay" class="text-gray-300">Atraso (Delay)</label>
-          <span class="text-white font-mono">{{ delay() }}s</span>
-        </div>
-        <input id="delay" type="range" min="0" max="5" step="0.1" [ngModel]="delay()" (ngModelChange)="delay.set(+$event)" class="w-full slider-thumb">
-      </div>
-      
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <!-- Iteration Count -->
-        <div>
-          <label for="iterationCount" class="block text-sm font-medium text-gray-400 mb-2">Repetições</label>
-          <select id="iterationCount" [ngModel]="iterationCount()" (ngModelChange)="iterationCount.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="infinite">Infinito</option>
-          </select>
-        </div>
-        <!-- Direction -->
-        <div>
-          <label for="direction" class="block text-sm font-medium text-gray-400 mb-2">Direção</label>
-          <select id="direction" [ngModel]="direction()" (ngModelChange)="direction.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
-            <option value="normal">Normal</option>
-            <option value="reverse">Reverso</option>
-            <option value="alternate">Alternado</option>
-            <option value="alternate-reverse">Alternado Reverso</option>
-          </select>
-        </div>
-        <!-- Timing Function -->
-        <div>
-          <label for="timingFunction" class="block text-sm font-medium text-gray-400 mb-2">Curva</label>
-          <select id="timingFunction" [ngModel]="timingFunction()" (ngModelChange)="timingFunction.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 focus:ring-blue-accent focus:border-blue-accent text-sm">
-            <option value="ease">Ease</option>
-            <option value="linear">Linear</option>
-            <option value="ease-in">Ease In</option>
-            <option value="ease-out">Ease Out</option>
-            <option value="ease-in-out">Ease In Out</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Preview & Code Column -->
-    <div class="space-y-6">
-      <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[250px] flex flex-col items-center justify-center">
-        <div 
-          class="preview-box"
-          [class.is-animating]="isAnimating()"
-          [style.--animation-name]="selectedAnimation()"
-          [style.--animation-duration]="duration() + 's'"
-          [style.--animation-delay]="delay() + 's'"
-          [style.--animation-iteration-count]="iterationCount()"
-          [style.--animation-direction]="direction()"
-          [style.--animation-timing-function]="timingFunction()">
-        </div>
-        <button (click)="replayAnimation()" class="mt-8 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors flex items-center gap-2 text-sm">
-          <span class="material-icons-outlined">replay</span>
-          Repetir Animação
+    <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-semibold text-white">Configurações</h2>
+        <button (click)="replayAnimation()" class="text-sm text-blue-accent hover:underline flex items-center gap-1">
+          <span class="material-icons-outlined text-base">replay</span>
+          Reiniciar
         </button>
       </div>
-
-      <!-- CSS Class -->
-      <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
-        <h3 class="text-lg font-semibold text-white mb-3">Classe CSS</h3>
-        <div class="relative">
-          <pre class="w-full bg-gray-800 rounded-md p-4 text-cyan-300 font-mono text-sm overflow-x-auto"><code>{{ animationClassCss() }}</code></pre>
-          <button (click)="copyCss('class')" class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs">
-            {{ classCopyText() }}
-          </button>
+      
+      <!-- Presets -->
+      <div class="space-y-2">
+        <label class="block text-xs text-gray-400 font-medium uppercase tracking-wider">Exemplos Prontos (Presets)</label>
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+          @for(preset of presets; track preset.name) {
+            <button 
+              (click)="applyPreset(preset)"
+              class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs rounded-md transition-colors border border-transparent hover:border-gray-600 truncate"
+              [class.border-blue-accent]="animationName() === preset.name"
+              [class.text-white]="animationName() === preset.name"
+              [title]="preset.label">
+              {{ preset.label }}
+            </button>
+          }
         </div>
       </div>
 
-      <!-- Keyframes -->
-       <div class="bg-gray-900 border border-gray-800 rounded-lg p-4">
-        <h3 class="text-lg font-semibold text-white mb-3">@keyframes</h3>
-        <div class="relative">
-          <pre class="w-full bg-gray-800 rounded-md p-4 text-pink-400 font-mono text-sm overflow-x-auto"><code>{{ animationKeyframesCss() }}</code></pre>
-          <button (click)="copyCss('keyframes')" class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs">
-            {{ keyframesCopyText() }}
+      <hr class="border-gray-800">
+
+      <!-- Properties -->
+      <div class="space-y-4">
+        
+        <!-- Duration & Delay -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="duration" class="block text-xs text-gray-300 mb-1">Duração (s)</label>
+            <div class="flex items-center gap-2">
+               <input id="duration" type="range" min="0.1" max="5" step="0.1" [ngModel]="duration()" (ngModelChange)="duration.set(+$event)" class="flex-1 slider-thumb">
+               <span class="text-white font-mono text-xs w-8 text-right">{{ duration() }}s</span>
+            </div>
+          </div>
+          <div>
+            <label for="delay" class="block text-xs text-gray-300 mb-1">Atraso (s)</label>
+             <div class="flex items-center gap-2">
+               <input id="delay" type="range" min="0" max="5" step="0.1" [ngModel]="delay()" (ngModelChange)="delay.set(+$event)" class="flex-1 slider-thumb">
+               <span class="text-white font-mono text-xs w-8 text-right">{{ delay() }}s</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timing & Iteration -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+             <label for="timing" class="block text-xs text-gray-300 mb-1">Curva de Tempo</label>
+             <select id="timing" [ngModel]="timingFunction()" (ngModelChange)="timingFunction.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm focus:ring-blue-accent focus:border-blue-accent">
+               <option value="ease">ease</option>
+               <option value="linear">linear</option>
+               <option value="ease-in">ease-in</option>
+               <option value="ease-out">ease-out</option>
+               <option value="ease-in-out">ease-in-out</option>
+               <option value="cubic-bezier(0.68, -0.55, 0.27, 1.55)">bouncy (bezier)</option>
+             </select>
+          </div>
+          <div>
+             <label for="iteration" class="block text-xs text-gray-300 mb-1">Repetições</label>
+             <select id="iteration" [ngModel]="iterationCount()" (ngModelChange)="iterationCount.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm focus:ring-blue-accent focus:border-blue-accent">
+               <option value="infinite">Infinito</option>
+               <option value="1">1</option>
+               <option value="2">2</option>
+               <option value="3">3</option>
+               <option value="5">5</option>
+               <option value="10">10</option>
+             </select>
+          </div>
+        </div>
+        
+         <!-- Direction & Fill Mode -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+             <label for="direction" class="block text-xs text-gray-300 mb-1">Direção</label>
+             <select id="direction" [ngModel]="direction()" (ngModelChange)="direction.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm focus:ring-blue-accent focus:border-blue-accent">
+               <option value="normal">Normal</option>
+               <option value="reverse">Reversa</option>
+               <option value="alternate">Alternada (Yo-Yo)</option>
+               <option value="alternate-reverse">Alternada Reversa</option>
+             </select>
+          </div>
+          <div>
+             <label for="fillmode" class="block text-xs text-gray-300 mb-1">Fill Mode</label>
+             <select id="fillmode" [ngModel]="fillMode()" (ngModelChange)="fillMode.set($event)" class="w-full bg-gray-800 border-gray-700 text-white rounded-md p-2 text-sm focus:ring-blue-accent focus:border-blue-accent">
+               <option value="none">None</option>
+               <option value="forwards">Forwards (Manter final)</option>
+               <option value="backwards">Backwards</option>
+               <option value="both">Both</option>
+             </select>
+          </div>
+        </div>
+        
+        <!-- Keyframes Editor -->
+        <div>
+            <label for="keyframes" class="block text-xs text-gray-300 mb-2">Keyframes (CSS)</label>
+            <textarea 
+                id="keyframes"
+                rows="8"
+                [ngModel]="keyframesBody()"
+                (ngModelChange)="keyframesBody.set($event)"
+                class="w-full bg-gray-800 border border-gray-700 font-mono text-gray-300 text-xs rounded-md p-3 focus:ring-blue-accent focus:border-blue-accent resize-y"
+                spellcheck="false"></textarea>
+             <p class="text-xs text-gray-500 mt-1">Edite as porcentagens e propriedades CSS acima.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Preview & Code Column -->
+    <div class="flex flex-col gap-6">
+      <!-- Preview Area -->
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-6 min-h-[300px] flex items-center justify-center relative overflow-hidden checkerboard">
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-10">
+            <div class="w-px h-full bg-gray-500"></div>
+            <div class="h-px w-full bg-gray-500 absolute"></div>
+        </div>
+        
+        <div class="preview-object shadow-lg" [ngStyle]="previewElementStyle()">
+            <span class="text-xs font-bold text-white opacity-80">KORE</span>
+        </div>
+      </div>
+
+      <!-- Code Output -->
+      <div class="bg-gray-900 border border-gray-800 rounded-lg p-4 flex-grow flex flex-col">
+        <h3 class="text-lg font-semibold text-white mb-3">Código CSS Final</h3>
+        <div class="relative flex-grow">
+          <pre class="w-full h-full bg-gray-800 rounded-md p-4 text-cyan-300 font-mono text-xs overflow-auto"><code>{{ generatedCss() }}</code></pre>
+          <button (click)="copyCss()" class="absolute top-2 right-2 px-3 py-1 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-xs">
+            {{ copyButtonText() }}
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <app-tool-info-section [sections]="infoSections()"></app-tool-info-section>
+  <app-tool-info-section [sections]="infoSections"></app-tool-info-section>
 </div>
