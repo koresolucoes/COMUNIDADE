@@ -1,3 +1,4 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
@@ -6,88 +7,288 @@
       <a routerLink="/learning/css-interativo-moderno" class="hover:text-blue-accent hover:underline">CSS Interativo e Moderno</a>
     </div>
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Além dos Retângulos: Formas com Clip-Path</h1>
-    <p class="mt-4 text-lg text-gray-400">Descubra como a propriedade `clip-path` pode ser usada para criar layouts e galerias de imagens criativas.</p>
+    <p class="mt-4 text-lg text-gray-400">Descubra como a propriedade `clip-path` pode ser usada para criar layouts criativos, cortando elementos em formas geométricas.</p>
   </header>
 
-  <article class="prose-container space-y-10">
+  <article class="prose-container space-y-16">
+    
+    <!-- Intro -->
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
-      <h2 class="text-2xl font-semibold text-white !mt-0">Quebrando a Grade</h2>
-      <p>
-        A web é, por natureza, feita de caixas e retângulos. Mas o design não precisa ser. A propriedade CSS <code>clip-path</code> é uma ferramenta poderosa que permite "cortar" um elemento em uma forma específica, mostrando apenas o conteúdo que está dentro dessa forma.
-      </p>
-      <p>
-        Isso abre um leque de possibilidades criativas, desde avatares circulares e imagens hexagonais até efeitos de transição complexos, tudo sem precisar de arquivos de imagem com transparência.
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Tesoura do CSS</h2>
+      <p class="text-gray-300">
+        A web é feita de caixas (o Box Model). Tudo é retangular. A propriedade <code>clip-path</code> nos permite quebrar essa monotonia. Ela define uma região de recorte: tudo o que está dentro da forma é mostrado, tudo o que está fora é escondido (mas continua ocupando espaço no layout).
       </p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Formas Básicas</h2>
-      <p>A propriedade <code>clip-path</code> aceita várias funções de forma. As mais comuns são:</p>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
-        <div class="text-center">
-          <img src="https://picsum.photos/id/1025/300/200" alt="Exemplo de clip-path circle" class="clip-example-img clip-circle">
-          <h4 class="font-semibold text-gray-200 mt-2">Círculo</h4>
-          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>clip-path: circle(50% at 50% 50%);</code></pre>
+    <!-- Seção 1: Formas Básicas -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">1. Formas Básicas: Círculos e Recortes</h2>
+      <p class="text-gray-300 mb-6">
+        As funções mais simples são <code>circle()</code>, <code>ellipse()</code> e <code>inset()</code>. Elas são responsivas e fáceis de animar.
+      </p>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+        <!-- Controles -->
+        <div class="space-y-6">
+          <div class="flex p-1 bg-gray-800 rounded-lg border border-gray-700">
+            <button (click)="shapeType.set('circle')" [class.bg-blue-600]="shapeType() === 'circle'" [class.text-white]="shapeType() === 'circle'" class="flex-1 py-2 text-xs font-medium text-gray-400 rounded transition-colors">Circle</button>
+            <button (click)="shapeType.set('ellipse')" [class.bg-blue-600]="shapeType() === 'ellipse'" [class.text-white]="shapeType() === 'ellipse'" class="flex-1 py-2 text-xs font-medium text-gray-400 rounded transition-colors">Ellipse</button>
+            <button (click)="shapeType.set('inset')" [class.bg-blue-600]="shapeType() === 'inset'" [class.text-white]="shapeType() === 'inset'" class="flex-1 py-2 text-xs font-medium text-gray-400 rounded transition-colors">Inset</button>
+          </div>
+
+          @if(shapeType() === 'circle' || shapeType() === 'ellipse') {
+            <div>
+              <label class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Tamanho (Raio)</span> <span>{{ circleRadius() }}%</span>
+              </label>
+              <input type="range" min="0" max="100" [ngModel]="circleRadius()" (ngModelChange)="circleRadius.set(+$event)" class="w-full accent-blue-500">
+            </div>
+            <div>
+              <label class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Posição X (Horizontal)</span> <span>{{ circleX() }}%</span>
+              </label>
+              <input type="range" min="0" max="100" [ngModel]="circleX()" (ngModelChange)="circleX.set(+$event)" class="w-full accent-blue-500">
+            </div>
+             <div>
+              <label class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Posição Y (Vertical)</span> <span>{{ circleY() }}%</span>
+              </label>
+              <input type="range" min="0" max="100" [ngModel]="circleY()" (ngModelChange)="circleY.set(+$event)" class="w-full accent-blue-500">
+            </div>
+          }
+
+          @if(shapeType() === 'inset') {
+             <div>
+              <label class="flex justify-between text-xs text-gray-400 mb-1">
+                <span>Margem Interna</span> <span>{{ insetVal() }}%</span>
+              </label>
+              <input type="range" min="0" max="50" [ngModel]="insetVal()" (ngModelChange)="insetVal.set(+$event)" class="w-full accent-blue-500">
+              <p class="text-[10px] text-gray-500 mt-2"><code>inset</code> recorta a partir das bordas para dentro.</p>
+            </div>
+          }
+
+          <div class="p-3 bg-black/30 rounded border border-gray-700 font-mono text-xs text-blue-300">
+            clip-path: {{ generatedBasicClip() }};
+          </div>
         </div>
-        <div class="text-center">
-          <img src="https://picsum.photos/id/1025/300/200" alt="Exemplo de clip-path ellipse" class="clip-example-img clip-ellipse">
-          <h4 class="font-semibold text-gray-200 mt-2">Elipse</h4>
-          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>clip-path: ellipse(50% 30% at 50% 50%);</code></pre>
-        </div>
-        <div class="text-center">
-          <img src="https://picsum.photos/id/1025/300/200" alt="Exemplo de clip-path inset" class="clip-example-img clip-inset">
-          <h4 class="font-semibold text-gray-200 mt-2">Recorte (Inset)</h4>
-          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>clip-path: inset(20% 10% round 15%);</code></pre>
-        </div>
-        <div class="text-center">
-          <img src="https://picsum.photos/id/1025/300/200" alt="Exemplo de clip-path polygon" class="clip-example-img clip-polygon">
-          <h4 class="font-semibold text-gray-200 mt-2">Polígono</h4>
-          <pre class="!bg-gray-800 !p-2 !mt-1 !text-xs"><code>clip-path: polygon(50% 0%, 0% 100%, 100% 100%);</code></pre>
+
+        <!-- Preview -->
+        <div class="flex items-center justify-center bg-gray-800 rounded-lg border border-gray-700 min-h-[250px] checkerboard overflow-hidden">
+           <img src="https://picsum.photos/id/237/300/300" alt="Cachorro" 
+                class="transition-all duration-300 shadow-2xl max-w-[80%] h-auto"
+                [style.clip-path]="generatedBasicClip()">
         </div>
       </div>
-    </div>
-    
-    <div>
-      <h2 class="text-2xl font-semibold text-white">Animando o `clip-path`</h2>
-      <p>
-        Uma das características mais interessantes do <code>clip-path</code> é que ele é animável com a propriedade <code>transition</code>. Isso permite criar efeitos de revelação e hover muito elegantes.
+    </section>
+
+    <!-- Seção 2: Polígonos -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">2. Polígonos: O Controle Total</h2>
+      <p class="text-gray-300 mb-6">
+        A função <code>polygon()</code> permite definir múltiplos pares de coordenadas X Y (separados por vírgula) para desenhar qualquer forma com linhas retas.
       </p>
-       <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <h4 class="text-sm font-semibold text-gray-300 mb-2">Exemplo: Efeito de Hover</h4>
-        <p class="text-xs text-gray-400 mb-3">Passe o mouse sobre a imagem para ver o efeito.</p>
-        <div class="flex justify-center">
-            <div class="clip-hover-example">
-              <img src="https://picsum.photos/id/1062/300/300" alt="Exemplo de animação de clip-path">
-              <div class="overlay">
-                <h3>Efeito de Revelação</h3>
-              </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 p-6 bg-gray-900 border border-gray-800 rounded-xl">
+         <!-- Preview -->
+        <div class="flex items-center justify-center bg-gray-800 rounded-lg border border-gray-700 min-h-[250px] checkerboard overflow-hidden order-2 md:order-1">
+           <div class="w-48 h-48 bg-gradient-to-br from-pink-500 to-orange-400 transition-all duration-500"
+                [style.clip-path]="polyClip()">
+           </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="space-y-6 order-1 md:order-2">
+          <h3 class="font-bold text-white">Escolha uma Forma:</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <button (click)="polyShape.set('triangle')" [class.border-pink-500]="polyShape() === 'triangle'" class="p-3 bg-gray-800 border border-gray-700 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors">Triângulo</button>
+            <button (click)="polyShape.set('hexagon')" [class.border-pink-500]="polyShape() === 'hexagon'" class="p-3 bg-gray-800 border border-gray-700 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors">Hexágono</button>
+            <button (click)="polyShape.set('star')" [class.border-pink-500]="polyShape() === 'star'" class="p-3 bg-gray-800 border border-gray-700 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors">Estrela</button>
+            <button (click)="polyShape.set('message')" [class.border-pink-500]="polyShape() === 'message'" class="p-3 bg-gray-800 border border-gray-700 hover:bg-gray-700 rounded text-sm text-gray-300 transition-colors">Balão</button>
+          </div>
+
+          <div class="p-3 bg-black/30 rounded border border-gray-700 font-mono text-[10px] text-pink-300 break-words">
+            clip-path: {{ polyClip() }};
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 3: Animação e Revelação -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">3. Animando o Recorte</h2>
+      <p class="text-gray-300 mb-6">
+        Como <code>clip-path</code> é animável, podemos criar efeitos de revelação incríveis. O segredo é garantir que a forma inicial e final tenham o mesmo número de pontos (especialmente para polígonos).
+      </p>
+      
+      <div class="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center">
+        <p class="text-sm text-gray-400 mb-4">Passe o mouse (ou toque) na imagem abaixo:</p>
+        
+        <div class="inline-block relative group cursor-pointer rounded-lg overflow-hidden w-[400px] h-[250px]">
+            <!-- Imagem Original (Fundo) -->
+            <img src="https://picsum.photos/id/1015/400/250" alt="Paisagem" class="block opacity-30 filter grayscale w-full h-full object-cover">
+            
+            <!-- Imagem Revelada (Sobreposta com Clip-Path) -->
+            <div class="absolute inset-0 bg-cover bg-center transition-all duration-700 ease-out group-hover:clip-path-full"
+                 style="background-image: url('https://picsum.photos/id/1015/400/250'); clip-path: circle(10% at 50% 50%);">
+            </div>
+            
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none group-hover:opacity-0 transition-opacity duration-300">
+                <span class="bg-black/50 text-white px-3 py-1 rounded text-sm backdrop-blur-sm">Passe o mouse para revelar</span>
             </div>
         </div>
-        <p class="text-xs text-gray-400 mt-3">
-          <strong>Importante:</strong> Para que a transição funcione, a forma inicial e final devem ter o <strong>mesmo número de pontos</strong>. Por isso, animar de um <code>circle()</code> para um <code>polygon()</code> pode não funcionar suavemente.
-        </p>
-       </div>
-    </div>
-
-    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Design sem Limites</h3>
-      <p>
-        O <code>clip-path</code> é uma porta de entrada para um design web mais criativo e menos quadriculado. Ele permite que você pense em formas, e não apenas em caixas, para construir seus layouts e componentes.
-      </p>
-      <div class="mt-4">
-        <a routerLink="/tools/gerador-clip-path" class="inline-flex items-center gap-2 px-4 py-2 bg-green-accent/20 text-white rounded-md font-semibold hover:bg-green-accent/30 transition-colors">
-          <span class="material-icons-outlined">construction</span>
-          Crie suas formas no Gerador de Clip-Path
-        </a>
       </div>
-    </div>
+    </section>
+
+    <!-- Desafio Prático -->
+    <section class="mt-16 border-t border-gray-800 pt-10">
+      <div class="bg-gradient-to-br from-yellow-900/20 to-gray-900 border border-yellow-500/30 rounded-xl p-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8">
+          <div>
+            <span class="text-xs font-bold text-yellow-400 uppercase tracking-wider">Desafio Prático</span>
+            <h2 class="text-2xl font-bold text-white mt-1">Crachá Cyberpunk</h2>
+            <p class="text-gray-400 text-sm mt-2">Este ID Card está muito "quadrado" para o ano 2077. Use clip-path para dar um visual futurista.</p>
+          </div>
+          
+          <div class="flex items-center gap-2 bg-gray-800/50 p-2 rounded-lg border border-gray-700">
+            <div class="text-xs font-medium text-gray-400 mr-2">Objetivos:</div>
+            <div class="flex gap-1">
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!cutCorners()" [class.bg-yellow-500]="cutCorners()" title="Cantos Cortados"></div>
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!hexAvatar()" [class.bg-yellow-500]="hexAvatar()" title="Avatar Hexagonal"></div>
+              <div class="w-3 h-3 rounded-full transition-colors duration-300" [class.bg-gray-600]="!revealData()" [class.bg-yellow-500]="revealData()" title="Revelar Dados"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Controles -->
+          <div class="space-y-4">
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">1. Cortar Cantos (Card)</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="cutCorners()" (change)="cutCorners.set(!cutCorners())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!cutCorners()" [class.bg-yellow-600]="cutCorners()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="cutCorners()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Aplica um <code>polygon()</code> para criar um formato angular no container.</p>
+            </div>
+
+            <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">2. Avatar Hexagonal</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="hexAvatar()" (change)="hexAvatar.set(!hexAvatar())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!hexAvatar()" [class.bg-yellow-600]="hexAvatar()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="hexAvatar()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Transforma a foto quadrada em um hexágono.</p>
+            </div>
+            
+             <div class="p-4 bg-gray-800 rounded-lg border border-gray-700 hover:border-gray-600 transition-colors">
+              <label class="flex items-center justify-between cursor-pointer">
+                <span class="text-sm font-medium text-gray-200">3. Revelar Acesso</span>
+                <div class="relative">
+                  <input type="checkbox" class="sr-only" [checked]="revealData()" (change)="revealData.set(!revealData())">
+                  <div class="block w-10 h-6 rounded-full transition-colors" [class.bg-gray-600]="!revealData()" [class.bg-yellow-600]="revealData()"></div>
+                  <div class="dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform" [class.translate-x-4]="revealData()"></div>
+                </div>
+              </label>
+              <p class="text-xs text-gray-500 mt-2">Anima um <code>inset()</code> para mostrar o código de barras oculto.</p>
+            </div>
+          </div>
+
+          <!-- Preview Final -->
+          <div class="lg:col-span-2 rounded-xl relative overflow-hidden min-h-[300px] flex items-center justify-center border border-gray-800 bg-[#050505]">
+            
+             <!-- Mensagem de Sucesso -->
+            @if(isChallengeComplete()) {
+               <div class="absolute inset-0 z-20 bg-black/80 backdrop-blur-sm flex flex-col items-center justify-center text-center p-6 animate-fade-in">
+                <span class="material-icons-outlined text-6xl text-yellow-400 mb-4">vpn_key</span>
+                <h3 class="text-2xl font-bold text-white mb-2">Acesso Concedido!</h3>
+                <p class="text-gray-300 mb-6 max-w-md">Design futurista aplicado com sucesso usando apenas CSS.</p>
+                <button (click)="resetChallenge()" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-full text-sm font-medium transition-colors">
+                  Refazer
+                </button>
+              </div>
+            }
+
+            <!-- O Card Cyberpunk -->
+            <div class="relative w-80 bg-gray-800 border-l-4 border-yellow-400 p-6 transition-all duration-500 shadow-2xl group"
+                 [class.cyber-clip]="cutCorners()">
+                 
+                 <!-- Header -->
+                 <div class="flex justify-between items-start mb-6">
+                    <div class="text-yellow-400 font-mono text-xs tracking-widest">SEC-LEVEL: 5</div>
+                    <span class="material-icons-outlined text-gray-600">nfc</span>
+                 </div>
+
+                 <div class="flex items-center gap-4 mb-6">
+                    <!-- Avatar -->
+                    <div class="w-16 h-16 bg-gray-700 overflow-hidden transition-all duration-500"
+                         [class.hex-clip]="hexAvatar()" [class.rounded-full]="!hexAvatar()">
+                        <img src="https://i.pravatar.cc/150?img=11" alt="Avatar" class="w-full h-full object-cover">
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-white font-bold text-lg leading-tight">Alex Chen</h3>
+                        <p class="text-gray-400 text-sm">Netrunner</p>
+                    </div>
+                 </div>
+
+                 <!-- Hidden Data Area -->
+                 <div class="bg-black/30 h-12 rounded relative overflow-hidden border border-gray-700/50">
+                    <div class="absolute inset-0 flex items-center justify-center font-mono text-xs text-gray-500 z-10">
+                        ACCESS CODE HIDDEN
+                    </div>
+                    
+                    <!-- A Camada de Revelação (Barcode) -->
+                    <div class="absolute inset-0 bg-yellow-400 flex items-center justify-center z-20 transition-all duration-700 ease-in-out"
+                         [style.clip-path]="revealData() ? 'inset(0 0 0 0)' : 'inset(0 100% 0 0)'">
+                        <div class="h-8 w-3/4 bg-black" style="mask-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4gMWEQYg78A5iAAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAWSURBVAjXY2Hg4PjPgAyYGBgYWBgYAA8OAv6o778CAAAAAElFTkSuQmCC'); mask-size: cover;"></div>
+                    </div>
+                 </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="pt-8 text-center">
-       <a routerLink="/learning/css-interativo-moderno" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+       <a routerLink="/learning/article/fundos-impactantes-gradientes" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Anterior: Gradientes
+      </a>
+       <a routerLink="/learning/article/efeitos-com-filtros" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
+        Próximo: Efeitos com Filtros
         <span class="material-icons-outlined">arrow_forward</span>
-        Próximo Passo: Efeitos Visuais com a Propriedade Filter
       </a>
     </div>
   </article>
 </div>
+
+<!-- Estilos locais para clip-paths complexos e animação de hover -->
+<style>
+    .group-hover\:clip-path-full:hover {
+        clip-path: circle(100% at 50% 50%) !important;
+    }
+    
+    /* Desafio Classes */
+    .cyber-clip {
+        clip-path: polygon(
+            0 0, 
+            100% 0, 
+            100% 85%, 
+            90% 100%, 
+            0 100%, 
+            0 15%
+        );
+    }
+    
+    .hex-clip {
+        clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    }
+</style>

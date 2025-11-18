@@ -22,24 +22,29 @@ export class AnimacoesETransicoesComponent {
   isAnimatingLike = signal(false);
 
   toggleLike() {
+    // Evita spam de cliques durante a animação
     if (this.isAnimatingLike()) return;
     
     this.isLiked.update(v => !v);
-    this.isAnimatingLike.set(true);
     
-    // Reseta a animação após ela terminar
-    setTimeout(() => {
-      this.isAnimatingLike.set(false);
-    }, 1000); // Tempo da animação CSS
+    // Se curtiu, dispara a animação
+    if (this.isLiked()) {
+        this.isAnimatingLike.set(true);
+        setTimeout(() => {
+          this.isAnimatingLike.set(false);
+        }, 1000); // Tempo suficiente para a animação CSS terminar
+    }
   }
 
   // --- Playground 3: SVG Drawing ---
-  // O comprimento total do path do SVG (aproximado para o exemplo)
+  // O comprimento total do path do SVG (aproximado para o exemplo visual)
   pathLength = 300; 
   drawProgress = signal(0); // 0 a 100%
 
   svgDashOffset = computed(() => {
     // Offset vai de pathLength (invisível) a 0 (totalmente visível)
+    // Quando progress é 0, offset é 300 (escondido)
+    // Quando progress é 100, offset é 0 (visível)
     return this.pathLength - (this.pathLength * this.drawProgress() / 100);
   });
 
@@ -49,12 +54,12 @@ export class AnimacoesETransicoesComponent {
   startProcess() {
     if (this.buttonState() !== 'idle') return;
 
-    // Estado 1: Carregando
+    // Estado 1: Carregando (Botão encolhe e mostra spinner)
     this.buttonState.set('loading');
 
-    // Simula uma requisição de rede (3 segundos)
+    // Simula uma requisição de rede (2.5 segundos)
     setTimeout(() => {
-      // Estado 2: Sucesso
+      // Estado 2: Sucesso (Botão fica verde e desenha check)
       this.buttonState.set('success');
       
       // Reseta após um tempo para o usuário brincar de novo

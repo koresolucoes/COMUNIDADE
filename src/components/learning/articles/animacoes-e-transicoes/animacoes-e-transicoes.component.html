@@ -32,7 +32,7 @@
         <div class="space-y-6">
           <div>
             <label class="block text-sm text-gray-400 mb-2">Duração: {{ transitionDuration() }}s</label>
-            <input type="range" min="0.1" max="2" step="0.1" [ngModel]="transitionDuration()" (ngModelChange)="transitionDuration.set(+$event)" class="w-full accent-blue-500">
+            <input type="range" min="0.1" max="2" step="0.1" [ngModel]="transitionDuration()" (ngModelChange)="transitionDuration.set(+$event)" class="w-full slider-thumb">
           </div>
 
           <div>
@@ -40,12 +40,12 @@
             <div class="grid grid-cols-2 gap-2">
               <button (click)="transitionTiming.set('linear')" [class.bg-blue-600]="transitionTiming() === 'linear'" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 transition-colors">linear</button>
               <button (click)="transitionTiming.set('ease')" [class.bg-blue-600]="transitionTiming() === 'ease'" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 transition-colors">ease</button>
-              <button (click)="transitionTiming.set('ease-out')" [class.bg-blue-600]="transitionTiming() === 'ease-out'" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 transition-colors">ease-out (Suave)</button>
-              <button (click)="transitionTiming.set('cubic-bezier(0.68, -0.55, 0.27, 1.55)' )" [class.bg-blue-600]="transitionTiming().includes('cubic')" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 transition-colors">spring (Elástico)</button>
+              <button (click)="transitionTiming.set('ease-out')" [class.bg-blue-600]="transitionTiming() === 'ease-out'" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 transition-colors">ease-out</button>
+              <button (click)="transitionTiming.set('cubic-bezier(0.68, -0.55, 0.27, 1.55)')" [class.bg-blue-600]="transitionTiming().includes('cubic')" class="px-3 py-2 bg-gray-800 border border-gray-700 rounded text-xs text-gray-300 transition-colors">spring (Elástico)</button>
             </div>
           </div>
           
-          <div class="text-xs text-gray-500 bg-black/20 p-3 rounded">
+          <div class="text-xs text-gray-500 bg-black/20 p-3 rounded border border-gray-700">
             <code>transition: all {{ transitionDuration() }}s {{ transitionTiming() }};</code>
           </div>
         </div>
@@ -67,7 +67,7 @@
     <section>
       <h2 class="text-2xl font-semibold text-white mb-4">2. Micro-interações com Keyframes</h2>
       <p class="text-gray-300 mb-6">
-        Quando você precisa de uma coreografia com múltiplos passos (ex: explodir, girar, depois voltar), <code>transition</code> não basta. Use <code>@keyframes</code>. Abaixo, recriamos o famoso efeito de "Like" do Twitter.
+        Quando você precisa de uma coreografia com múltiplos passos (ex: explodir, girar, depois voltar), <code>transition</code> não basta. Use <code>@keyframes</code>. Abaixo, recriamos o famoso efeito de "Like" do Twitter usando apenas CSS.
       </p>
 
       <div class="flex flex-col items-center justify-center p-12 bg-gray-900 border border-gray-800 rounded-xl relative">
@@ -82,7 +82,7 @@
               </span>
             </div>
 
-            <!-- Partículas (Simuladas com CSS circles) -->
+            <!-- Partículas (Simuladas com CSS circles e box-shadow) -->
             @if(isAnimatingLike()) {
               <div class="absolute inset-0 pointer-events-none">
                  <div class="particle-ring"></div>
@@ -105,18 +105,18 @@
         <div class="space-y-6">
           <div>
              <h3 class="font-bold text-white mb-2">Controle Manual</h3>
-             <p class="text-sm text-gray-400 mb-4">Arraste o slider para entender como o traço é revelado.</p>
-             <input type="range" min="0" max="100" [ngModel]="drawProgress()" (ngModelChange)="drawProgress.set(+$event)" class="w-full accent-green-500">
+             <p class="text-sm text-gray-400 mb-4">Arraste o slider para entender como o traço é revelado. É como puxar uma cortina sobre a linha.</p>
+             <input type="range" min="0" max="100" [ngModel]="drawProgress()" (ngModelChange)="drawProgress.set(+$event)" class="w-full slider-thumb">
              <div class="flex justify-between text-xs text-gray-500 mt-1">
-               <span>0% (Escondido)</span>
+               <span>0% (Invisível)</span>
                <span>100% (Visível)</span>
              </div>
           </div>
           
           <div class="p-4 bg-black/30 rounded border border-gray-700 font-mono text-xs text-blue-300">
-            <div class="text-gray-500">// CSS Logic</div>
+            <div class="text-gray-500 mb-1">// A Lógica CSS</div>
             <div>stroke-dasharray: {{ pathLength }};</div>
-            <div>stroke-dashoffset: {{ svgDashOffset().toFixed(0) }};</div>
+            <div class="text-white">stroke-dashoffset: {{ svgDashOffset().toFixed(0) }};</div>
           </div>
           
           <p class="text-xs text-gray-400">
@@ -125,12 +125,12 @@
         </div>
 
         <div class="flex items-center justify-center bg-gray-800 rounded-lg border border-gray-700 p-8">
-           <!-- SVG Logo Kore Simplificado -->
-           <svg width="120" height="120" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Fundo para referência -->
+           <!-- SVG Abstrato -->
+           <svg width="150" height="150" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Fundo para referência (cinza escuro) -->
               <path d="M20 20 L50 50 L20 80 M50 50 L80 20 M50 50 L80 80" stroke="#374151" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
               
-              <!-- O Path Animado -->
+              <!-- O Path Animado (Colorido) -->
               <path d="M20 20 L50 50 L20 80 M50 50 L80 20 M50 50 L80 80" 
                     stroke="#3fb950" 
                     stroke-width="8" 
@@ -152,13 +152,14 @@
             <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Desafio Prático</span>
             <h2 class="text-2xl font-bold text-white mt-1">O Botão Morphing</h2>
             <p class="text-gray-400 text-sm mt-2">
-              Combine tudo o que aprendeu (Transição + Keyframes + SVG) para criar um botão de "Enviar" que se transforma em um loader e depois em um sucesso.
+              Este botão combina tudo: transição de forma (CSS), troca de estado e animação de desenho SVG. Clique para ver a mágica.
             </p>
           </div>
         </div>
 
         <div class="flex flex-col items-center justify-center min-h-[200px] bg-gray-900/50 rounded-xl border border-gray-700/50 p-8">
           
+          <!-- Botão Principal -->
           <button (click)="startProcess()" 
                   class="relative h-12 flex items-center justify-center text-white font-bold shadow-lg transition-all duration-500 overflow-hidden"
                   [class.w-40]="buttonState() === 'idle'"
@@ -170,25 +171,27 @@
                   [class.bg-green-500]="buttonState() === 'success'"
                   [class.cursor-default]="buttonState() !== 'idle'">
             
-            <!-- Texto -->
-            <span class="absolute transition-all duration-300 delay-100"
+            <!-- Texto "ENVIAR" -->
+            <span class="absolute transition-all duration-300 delay-100 whitespace-nowrap"
                   [class.opacity-100]="buttonState() === 'idle'"
                   [class.opacity-0]="buttonState() !== 'idle'"
                   [class.translate-y-0]="buttonState() === 'idle'"
                   [class.translate-y-10]="buttonState() !== 'idle'">
-              ENVIAR
+              ENVIAR PEDIDO
             </span>
 
-            <!-- Spinner -->
-            <svg class="absolute w-6 h-6 text-blue-400 animate-spin transition-opacity duration-300"
+            <!-- Spinner SVG -->
+            <svg class="absolute w-6 h-6 text-blue-400 animate-spin transition-all duration-300"
                  [class.opacity-100]="buttonState() === 'loading'"
                  [class.opacity-0]="buttonState() !== 'loading'"
+                 [class.scale-100]="buttonState() === 'loading'"
+                 [class.scale-0]="buttonState() !== 'loading'"
                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
               <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
 
-            <!-- SVG Checkmark (Desenhado) -->
+            <!-- Checkmark SVG (Desenhado) -->
             <svg class="absolute w-6 h-6 text-white transition-opacity duration-300"
                  [class.opacity-100]="buttonState() === 'success'"
                  [class.opacity-0]="buttonState() !== 'success'"
@@ -199,7 +202,7 @@
             </svg>
           </button>
 
-          <p class="mt-8 text-xs text-gray-500">Clique para iniciar a sequência</p>
+          <p class="mt-8 text-xs text-gray-500">Estado: <span class="font-mono text-purple-300">{{ buttonState() }}</span></p>
 
         </div>
       </div>
@@ -210,8 +213,8 @@
         <span class="material-icons-outlined">arrow_back</span>
         Anterior: Formas e Clip-path
       </a>
-       <a routerLink="/learning/article/design-de-dashboards" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
-        Próximo: Design de Dashboards
+       <a routerLink="/learning/article/fundos-impactantes-gradientes" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
+        Próximo: Gradientes
         <span class="material-icons-outlined">arrow_forward</span>
       </a>
     </div>

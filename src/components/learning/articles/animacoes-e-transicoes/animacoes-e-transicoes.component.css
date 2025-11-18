@@ -1,4 +1,5 @@
 
+/* Estilos para o Slider customizado */
 .slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -35,7 +36,7 @@
   border: 2px solid #161b22;
 }
 
-/* Heart Pop Animation */
+/* Animação Keyframe: Heart Pop */
 @keyframes heartPop {
   0% { transform: scale(1); }
   50% { transform: scale(1.4); }
@@ -46,7 +47,7 @@
   animation: heartPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Particles Ring Effect (Simplified) */
+/* Animação Keyframe: Particles Ring (Simulado) */
 .particle-ring {
   position: absolute;
   top: 50%;
@@ -55,15 +56,16 @@
   height: 100%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
+  /* Cria múltiplos "pontos" usando box-shadow */
   box-shadow: 
-    0 -30px 0 -5px #e0245e, 
-    30px 0 0 -5px #e0245e, 
-    0 30px 0 -5px #e0245e, 
-    -30px 0 0 -5px #e0245e,
-    20px -20px 0 -5px #e0245e,
-    20px 20px 0 -5px #e0245e,
-    -20px 20px 0 -5px #e0245e,
-    -20px -20px 0 -5px #e0245e;
+    0 -30px 0 -5px #ef4444, 
+    30px 0 0 -5px #ef4444, 
+    0 30px 0 -5px #ef4444, 
+    -30px 0 0 -5px #ef4444,
+    20px -20px 0 -5px #ef4444,
+    20px 20px 0 -5px #ef4444,
+    -20px 20px 0 -5px #ef4444,
+    -20px -20px 0 -5px #ef4444;
   animation: particles 0.5s ease-out forwards;
   opacity: 0;
 }
@@ -74,14 +76,15 @@
   100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
 }
 
-/* SVG Drawing Animation */
+/* Animação SVG Draw (Desenho de Linha) */
 .checkmark-path {
   stroke-dasharray: 30; /* Tamanho aproximado do path do checkmark */
   stroke-dashoffset: 30; /* Começa totalmente escondido */
 }
 
 .animate-draw {
-  animation: drawCheck 0.5s ease-out forwards 0.2s; /* 0.2s delay to wait for button morph */
+  /* Inicia o desenho com um leve delay para esperar o botão terminar de encolher/carregar */
+  animation: drawCheck 0.5s ease-out forwards 0.1s; 
 }
 
 @keyframes drawCheck {
