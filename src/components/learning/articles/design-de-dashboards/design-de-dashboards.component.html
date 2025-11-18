@@ -1,0 +1,137 @@
+
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ui-ux-ferramentas-devops" class="hover:text-blue-accent hover:underline">UI/UX para Ferramentas de DevOps</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Design de Dashboards: Visualizando Dados com Clareza</h1>
+    <p class="mt-4 text-lg text-gray-400">Princípios de densidade de informação, escolha de gráficos e layout para dashboards de monitoramento eficazes.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Problema do "Painel de Avião"</h2>
+      <p>
+        Engenheiros adoram dados. Quando construímos dashboards (Grafana, Datadog, etc.), a tentação é colocar <em>tudo</em> na tela. O resultado é o "efeito cockpit de avião": centenas de mostradores, luzes e gráficos competindo por atenção.
+      </p>
+      <p>
+        Em um incidente crítico às 3 da manhã, você não quer dados; você quer <strong>respostas</strong>. O design de dashboards deve focar na redução da carga cognitiva.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Princípio 1: Relação Sinal-Ruído (Data-Ink Ratio)</h2>
+      <p>
+        Edward Tufte, pioneiro na visualização de dados, cunhou o termo "Data-Ink Ratio". Basicamente: tudo o que não comunica dados é ruído. Bordas excessivas, fundos coloridos desnecessários, efeitos 3D e grids pesados apenas distraem.
+      </p>
+      
+      <div class="p-6 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+        <div class="flex justify-between items-center mb-4">
+          <h4 class="text-sm font-semibold text-gray-300">Comparativo Interativo</h4>
+          <button (click)="toggleNoise()" class="px-3 py-1.5 text-xs font-medium rounded-md transition-colors"
+            [class.bg-red-500]="showNoise()" [class.text-white]="showNoise()"
+            [class.bg-green-600]="!showNoise()" [class.text-white]="!showNoise()">
+            {{ showNoise() ? 'Modo Ruidoso (Ruim)' : 'Modo Limpo (Bom)' }}
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-500">
+            <!-- Card 1 -->
+            <div class="rounded-lg p-4 transition-all duration-500" 
+                 [class.bg-gray-700]="showNoise()" [class.border-4]="showNoise()" [class.border-gray-600]="showNoise()" [class.shadow-xl]="showNoise()"
+                 [class.bg-transparent]="!showNoise()" [class.border-b]="!showNoise()" [class.border-gray-700]="!showNoise()">
+                <h5 class="text-center mb-2 font-bold" [class.text-yellow-300]="showNoise()" [class.text-gray-400]="!showNoise()" [class.text-xs]="!showNoise()" [class.uppercase]="!showNoise()">Uso de CPU</h5>
+                <div class="h-24 flex items-end justify-around gap-1 p-2" [class.bg-black]="showNoise()">
+                    <div class="w-full bg-blue-500 h-[40%]"></div>
+                    <div class="w-full bg-blue-500 h-[60%]"></div>
+                    <div class="w-full bg-blue-500 h-[80%]"></div>
+                    <div class="w-full bg-blue-500 h-[50%]"></div>
+                </div>
+            </div>
+             <!-- Card 2 -->
+             <div class="rounded-lg p-4 transition-all duration-500" 
+                 [class.bg-gray-700]="showNoise()" [class.border-4]="showNoise()" [class.border-gray-600]="showNoise()" [class.shadow-xl]="showNoise()"
+                 [class.bg-transparent]="!showNoise()" [class.border-b]="!showNoise()" [class.border-gray-700]="!showNoise()">
+                <h5 class="text-center mb-2 font-bold" [class.text-yellow-300]="showNoise()" [class.text-gray-400]="!showNoise()" [class.text-xs]="!showNoise()" [class.uppercase]="!showNoise()">Memória</h5>
+                <div class="h-24 flex items-center justify-center relative" [class.bg-black]="showNoise()">
+                    <div class="text-3xl font-bold text-white">64%</div>
+                    @if(showNoise()) { <div class="absolute inset-0 border-2 border-dashed border-gray-500 rounded-full m-1"></div> }
+                </div>
+            </div>
+             <!-- Card 3 -->
+             <div class="rounded-lg p-4 transition-all duration-500" 
+                 [class.bg-gray-700]="showNoise()" [class.border-4]="showNoise()" [class.border-gray-600]="showNoise()" [class.shadow-xl]="showNoise()"
+                 [class.bg-transparent]="!showNoise()" [class.border-b]="!showNoise()" [class.border-gray-700]="!showNoise()">
+                <h5 class="text-center mb-2 font-bold" [class.text-yellow-300]="showNoise()" [class.text-gray-400]="!showNoise()" [class.text-xs]="!showNoise()" [class.uppercase]="!showNoise()">Latência</h5>
+                <div class="h-24 flex items-end p-2" [class.bg-black]="showNoise()">
+                    <svg viewBox="0 0 100 50" class="w-full h-full overflow-visible">
+                        <path d="M0,50 Q25,10 50,30 T100,20" fill="none" stroke="#3fb950" stroke-width="3" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <p class="text-xs text-center mt-4 text-gray-500">
+            {{ showNoise() ? 'Muitas bordas, fundos desnecessários e contrastes errados roubam a atenção dos dados.' : 'Removendo o "ruído visual", os dados se tornam os protagonistas.' }}
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Princípio 2: Escolhendo o Gráfico Certo</h2>
+      <p>A escolha errada do tipo de visualização pode esconder o problema. Aqui está um guia rápido para DevOps:</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+          <div class="p-4 border border-gray-700 rounded-lg">
+              <h4 class="font-semibold text-white mb-2">Linha (Line Chart)</h4>
+              <p class="text-sm text-gray-400"><strong>Use para:</strong> Tendências ao longo do tempo. Ex: CPU, Memória, Requisições/seg.</p>
+          </div>
+          <div class="p-4 border border-gray-700 rounded-lg">
+              <h4 class="font-semibold text-white mb-2">Barra (Bar Chart)</h4>
+              <p class="text-sm text-gray-400"><strong>Use para:</strong> Comparação categórica. Ex: Erros por endpoint, uso de disco por host.</p>
+          </div>
+          <div class="p-4 border border-gray-700 rounded-lg">
+              <h4 class="font-semibold text-white mb-2">Valor Único (Stat/Gauge)</h4>
+              <p class="text-sm text-gray-400"><strong>Use para:</strong> Status atual e imediato. Ex: Uptime atual, número de pods ativos.</p>
+          </div>
+           <div class="p-4 border border-gray-700 rounded-lg">
+              <h4 class="font-semibold text-white mb-2">Heatmap</h4>
+              <p class="text-sm text-gray-400"><strong>Use para:</strong> Padrões em grandes volumes de dados. Ex: Latência por hora do dia.</p>
+          </div>
+      </div>
+      <div class="mt-4 p-3 bg-red-900/30 border border-red-700/50 text-red-300 rounded-lg text-xs">
+          <strong class="font-semibold">Evite:</strong> Gráficos de Pizza (Pie Charts). Eles são difíceis de comparar visualmente. Use barras em vez disso.
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Princípio 3: Layout e Contexto</h2>
+      <p>
+        Organize seu dashboard de cima para baixo, do mais geral para o mais específico (Drill-down).
+      </p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+          <li><strong>Topo (Nível Executivo):</strong> As métricas vitais. (O sistema está online? O SLA está sendo cumprido?)</li>
+          <li><strong>Meio (Nível de Serviço):</strong> Métricas por serviço ou componente (Latência da API, Erros do Banco de Dados).</li>
+          <li><strong>Fundo (Nível de Infra):</strong> Detalhes técnicos (CPU por núcleo, IOPS de disco).</li>
+      </ul>
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Design Salva Vidas (de Sistemas)</h3>
+      <p>
+        Um dashboard bem projetado reduz o MTTR (Mean Time To Recovery). Se você consegue olhar para uma tela e identificar a anomalia em 5 segundos em vez de 5 minutos, você economizou dinheiro e reputação para a empresa. Design é uma funcionalidade crítica em ferramentas de observabilidade.
+      </p>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ui-ux-ferramentas-devops" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <a routerLink="/learning/article/ux-ferramentas-internas" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
+        Próximo: UX de Ferramentas Internas
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </article>
+</div>

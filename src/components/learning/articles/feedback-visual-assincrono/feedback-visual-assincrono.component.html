@@ -1,0 +1,132 @@
+
+<div class="max-w-4xl mx-auto relative"> <!-- Relative needed for absolute positioning of toast if simulated within container -->
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ui-ux-ferramentas-devops" class="hover:text-blue-accent hover:underline">UI/UX para Ferramentas de DevOps</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Feedback Visual para Ações Assíncronas</h1>
+    <p class="mt-4 text-lg text-gray-400">Como usar spinners, skeleton screens e toasts para manter o usuário informado durante processos demorados.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Medo do "Travou?"</h2>
+      <p>
+        Em ferramentas de DevOps, muitas ações demoram. Provisionar um banco de dados, rodar um build, reiniciar um pod... tudo isso leva tempo (de segundos a minutos).
+      </p>
+      <p>
+        Se o usuário clica em um botão e nada acontece instantaneamente, ele assume que a aplicação travou. Ele clica de novo. E de novo. Isso pode disparar múltiplos processos duplicados e causar caos. O <strong>Feedback Visual</strong> é a maneira da interface dizer: "Eu te ouvi, estou trabalhando nisso, espere um pouco".
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Tipos de Feedback de Carregamento</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
+          <!-- Spinner -->
+          <div class="p-6 bg-gray-800 rounded-lg border border-gray-700">
+              <h4 class="font-bold text-white mb-2">1. Spinner / Loader</h4>
+              <p class="text-sm text-gray-400 mb-4">Melhor para ações curtas (1-3 segundos) ou quando não sabemos a estrutura do conteúdo que vai chegar.</p>
+              <div class="flex justify-center py-4">
+                  <svg class="animate-spin h-8 w-8 text-blue-accent" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+              </div>
+          </div>
+
+          <!-- Skeleton -->
+          <div class="p-6 bg-gray-800 rounded-lg border border-gray-700">
+              <h4 class="font-bold text-white mb-2">2. Skeleton Screen</h4>
+              <p class="text-sm text-gray-400 mb-4">Melhor para carregamento de páginas ou listas. Dá a sensação de que o carregamento é mais rápido.</p>
+              <div class="space-y-3 py-2 animate-pulse">
+                  <div class="h-4 bg-gray-600 rounded w-3/4"></div>
+                  <div class="h-4 bg-gray-600 rounded w-1/2"></div>
+                  <div class="h-4 bg-gray-600 rounded w-5/6"></div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Feedback de Sucesso: O "Toast"</h2>
+      <p>
+        A ação terminou. O usuário precisa saber o resultado sem ter que sair da tela atual ou recarregar a página. Notificações "Toast" (aquelas que aparecem no canto e somem) são ideais para isso.
+      </p>
+    </div>
+
+    <div class="p-8 bg-gray-800 border border-gray-700 rounded-xl text-center">
+        <h3 class="text-xl font-bold text-white mb-4">Experimente a Experiência Completa</h3>
+        <p class="text-gray-400 mb-6">Clique abaixo para simular uma ação assíncrona (como "Deploy"). Observe o estado de carregamento no botão e a notificação de sucesso.</p>
+        
+        <button 
+            (click)="startLoading()" 
+            [disabled]="loadingState() === 'loading'"
+            class="px-6 py-3 rounded-md font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 mx-auto min-w-[160px]"
+            [class.bg-blue-accent]="loadingState() === 'idle'"
+            [class.hover:bg-blue-accent/90]="loadingState() === 'idle'"
+            [class.bg-gray-600]="loadingState() === 'loading'"
+            [class.cursor-not-allowed]="loadingState() === 'loading'"
+            [class.bg-green-600]="loadingState() === 'success'">
+            
+            @if(loadingState() === 'loading') {
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Deploying...</span>
+            } @else if (loadingState() === 'success') {
+                <span class="material-icons-outlined">check</span>
+                <span>Deploy Feito!</span>
+            } @else {
+                <span>Iniciar Deploy</span>
+            }
+        </button>
+        
+        @if(loadingState() === 'success') {
+            <button (click)="reset()" class="mt-4 text-sm text-gray-500 hover:text-white underline">Resetar demo</button>
+        }
+    </div>
+
+    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
+      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Gerenciando Expectativas</h3>
+      <p>
+        Feedback visual não faz o sistema ser mais rápido, mas faz ele <strong>parecer</strong> mais rápido e responsivo. Reduz a ansiedade do usuário e evita erros operacionais causados por impaciência. É um pequeno detalhe de UI com enorme impacto na UX.
+      </p>
+    </div>
+
+    <div class="pt-8 flex justify-between items-center">
+       <a routerLink="/learning/ui-ux-ferramentas-devops" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors text-sm">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+       <div class="px-4 py-2 bg-green-accent text-white rounded-md font-semibold flex items-center gap-2 text-sm">
+        <span class="material-icons-outlined">workspace_premium</span>
+        Trilha Concluída!
+      </div>
+    </div>
+  </article>
+
+  <!-- Toast Notification (Positioned Fixed usually, here absolute for context) -->
+  @if(showToast()) {
+      <div class="fixed bottom-8 right-8 bg-gray-900 border border-green-500/50 text-white px-4 py-3 rounded-lg shadow-2xl flex items-center gap-3 animate-bounce-in z-50">
+          <span class="material-icons-outlined text-green-500">check_circle</span>
+          <div>
+              <h4 class="font-bold text-sm">Sucesso</h4>
+              <p class="text-xs text-gray-400">O deploy foi iniciado com sucesso.</p>
+          </div>
+      </div>
+  }
+</div>
+
+<style>
+    @keyframes bounce-in {
+        0% { transform: translateY(20px); opacity: 0; }
+        100% { transform: translateY(0); opacity: 1; }
+    }
+    .animate-bounce-in {
+        animation: bounce-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+</style>

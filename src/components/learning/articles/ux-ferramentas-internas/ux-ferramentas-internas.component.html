@@ -1,0 +1,128 @@
+
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ui-ux-ferramentas-devops" class="hover:text-blue-accent hover:underline">UI/UX para Ferramentas de DevOps</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">A UX de Ferramentas Internas: Foco na Eficiência</h1>
+    <p class="mt-4 text-lg text-gray-400">Como projetar interfaces para velocidade e clareza em ferramentas que sua equipe usa todos os dias.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">O Mito do "É só para uso interno"</h2>
+      <p>
+        Muitas vezes, negligenciamos o design de ferramentas internas (painéis de administração, scripts de deploy, gestores de configuração) porque "os usuários são obrigados a usar, então não importa se é feio".
+      </p>
+      <p>
+        Isso é um erro caro. Uma UX ruim em ferramentas internas leva a:
+      </p>
+      <ul class="list-disc list-inside text-gray-400">
+          <li><strong>Lentidão operacional:</strong> Tarefas que deveriam levar segundos levam minutos.</li>
+          <li><strong>Erros humanos:</strong> Botões confusos ou falta de confirmação causam outages.</li>
+          <li><strong>Frustração da equipe:</strong> Ninguém gosta de lutar contra a ferramenta.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Densidade de Informação: Cards vs. Tabelas</h2>
+      <p>
+        Em ferramentas de consumo (como Airbnb ou Netflix), usamos cards grandes e bonitos com muito espaço em branco. Em ferramentas profissionais (como AWS Console ou VS Code), precisamos de <strong>densidade</strong>. Engenheiros precisam escanear centenas de linhas de logs ou recursos rapidamente.
+      </p>
+      
+      <div class="p-6 bg-gray-800 border border-gray-700 rounded-lg mt-4">
+        <div class="flex justify-center gap-4 mb-6">
+            <button (click)="displayMode.set('card')" class="px-4 py-2 rounded-md text-sm font-medium transition-colors" [class.bg-blue-accent]="displayMode() === 'card'" [class.text-white]="displayMode() === 'card'" [class.bg-gray-700]="displayMode() !== 'card'">Modo Card (Baixa Densidade)</button>
+            <button (click)="displayMode.set('table')" class="px-4 py-2 rounded-md text-sm font-medium transition-colors" [class.bg-blue-accent]="displayMode() === 'table'" [class.text-white]="displayMode() === 'table'" [class.bg-gray-700]="displayMode() !== 'table'">Modo Tabela (Alta Densidade)</button>
+        </div>
+
+        <div class="transition-all duration-300">
+            @if(displayMode() === 'card') {
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    @for(item of mockData; track item.id) {
+                        <div class="bg-gray-900 p-6 rounded-lg border border-gray-700 shadow-lg">
+                            <div class="text-lg font-bold text-white mb-2">{{ item.id }}</div>
+                            <div class="space-y-2 text-gray-400">
+                                <p>Status: <span class="px-2 py-0.5 rounded text-xs text-white" [class.bg-green-600]="item.status === 'Running'" [class.bg-red-600]="item.status === 'Stopped'" [class.bg-yellow-600]="item.status === 'Pending'">{{ item.status }}</span></p>
+                                <p>Type: {{ item.type }}</p>
+                                <p>IP: {{ item.ip }}</p>
+                            </div>
+                            <button class="mt-4 w-full py-2 bg-gray-800 hover:bg-gray-700 rounded text-sm text-blue-300">Gerenciar</button>
+                        </div>
+                    }
+                </div>
+                <p class="text-xs text-center mt-4 text-gray-500">Ótimo para poucos itens, mas requer muita rolagem se você tiver 50 servidores.</p>
+            } @else {
+                <div class="overflow-x-auto bg-gray-900 rounded-lg border border-gray-700">
+                    <table class="w-full text-left text-sm text-gray-400">
+                        <thead class="bg-gray-800 text-xs uppercase text-gray-200">
+                            <tr>
+                                <th class="px-4 py-3">ID</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Type</th>
+                                <th class="px-4 py-3">IP</th>
+                                <th class="px-4 py-3 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-800">
+                             @for(item of mockData; track item.id) {
+                                <tr class="hover:bg-gray-800/50">
+                                    <td class="px-4 py-2 font-mono text-white">{{ item.id }}</td>
+                                    <td class="px-4 py-2"><span class="px-2 py-0.5 rounded text-xs text-white" [class.bg-green-600]="item.status === 'Running'" [class.bg-red-600]="item.status === 'Stopped'" [class.bg-yellow-600]="item.status === 'Pending'">{{ item.status }}</span></td>
+                                    <td class="px-4 py-2">{{ item.type }}</td>
+                                    <td class="px-4 py-2 font-mono">{{ item.ip }}</td>
+                                    <td class="px-4 py-2 text-right text-blue-300 cursor-pointer hover:underline">Gerenciar</td>
+                                </tr>
+                             }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-center mt-4 text-gray-500">Muito mais eficiente para escanear e comparar dados.</p>
+            }
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Design para "Power Users"</h2>
+      <p>Seus usuários são especialistas. Respeite o tempo deles com recursos de eficiência:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-3">
+          <li><strong>Atalhos de Teclado:</strong> Permita que eles naveguem e executem ações sem tirar a mão do teclado. (Ex: <code>/</code> para focar na busca, <code>Cmd+Enter</code> para submeter formulários).</li>
+          <li><strong>IDs Copiáveis:</strong> IDs de recursos (UUIDs, hashes) devem ser fáceis de copiar. Um clique deve bastar.</li>
+          <li><strong>Busca Fuzzy:</strong> Não exija que o usuário digite o nome exato. Se ele digitar "db prod", deve encontrar "database-production-v1".</li>
+          <li><strong>Logs Monospace:</strong> Sempre exiba logs e código com fontes monoespaçadas para manter o alinhamento vertical.</li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Segurança na UI: O "Modo Perigo"</h2>
+      <p>
+        Ações destrutivas (deletar banco de dados, reiniciar cluster) precisam de atrito intencional.
+      </p>
+      <div class="p-4 border border-red-500/30 bg-red-900/10 rounded-lg">
+        <h4 class="text-red-400 font-bold mb-2">Zona de Perigo</h4>
+        <p class="text-sm text-gray-300 mb-4">Ações irreversíveis devem exigir confirmação explícita, de preferência pedindo para o usuário digitar o nome do recurso.</p>
+        <div class="bg-gray-900 p-4 rounded border border-gray-700">
+            <label class="block text-sm mb-2 text-gray-400">Para confirmar a exclusão, digite <strong>production-db</strong> abaixo:</label>
+            <div class="flex gap-2">
+                <input type="text" class="bg-gray-800 border border-gray-600 rounded px-3 py-1 text-sm w-full" placeholder="production-db">
+                <button class="bg-red-600 text-white px-4 py-1 rounded text-sm font-semibold opacity-50 cursor-not-allowed">Excluir</button>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ui-ux-ferramentas-devops" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <a routerLink="/learning/article/status-pages-efetivas" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
+        Próximo: Status Pages Efetivas
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </article>
+</div>

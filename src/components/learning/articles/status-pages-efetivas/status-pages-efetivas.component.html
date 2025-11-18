@@ -1,0 +1,118 @@
+
+<div class="max-w-4xl mx-auto">
+  <header class="mb-12">
+    <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
+      <a routerLink="/learning" class="hover:text-blue-accent hover:underline">Trilhas de Aprendizagem</a>
+      <span class="material-icons-outlined text-base">chevron_right</span>
+      <a routerLink="/learning/ui-ux-ferramentas-devops" class="hover:text-blue-accent hover:underline">UI/UX para Ferramentas de DevOps</a>
+    </div>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Criando Status Pages Efetivas</h1>
+    <p class="mt-4 text-lg text-gray-400">Qual informação é crucial, como exibir a saúde do sistema de forma clara e como construir confiança durante incidentes.</p>
+  </header>
+
+  <article class="prose-container space-y-10">
+    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
+      <h2 class="text-2xl font-semibold text-white !mt-0">A Interface da Confiança</h2>
+      <p>
+        Quando algo quebra, a primeira coisa que um usuário faz é perguntar: "O problema é comigo ou com eles?". Uma Status Page (Página de Status) é a sua resposta oficial para essa pergunta.
+      </p>
+      <p>
+        Uma boa página de status não é apenas sobre monitoramento técnico; é uma ferramenta de <strong>comunicação de crise</strong> e <strong>gerenciamento de reputação</strong>. O objetivo é construir confiança através da transparência.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Os 3 Estados Universais</h2>
+      <p>Não complique. Usuários só querem saber se podem trabalhar ou não. Use um semáforo simples:</p>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+          <button (click)="setMockStatus('operational')" class="p-4 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 transition-colors text-left group">
+             <div class="flex items-center gap-2 mb-2">
+                 <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                 <span class="font-bold text-green-500">Operacional</span>
+             </div>
+             <p class="text-xs text-gray-400 group-hover:text-gray-300">Tudo funcionando como esperado.</p>
+          </button>
+          <button (click)="setMockStatus('degraded')" class="p-4 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 transition-colors text-left group">
+             <div class="flex items-center gap-2 mb-2">
+                 <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                 <span class="font-bold text-yellow-500">Degradado</span>
+             </div>
+             <p class="text-xs text-gray-400 group-hover:text-gray-300">Lentidão ou erros parciais, mas usável.</p>
+          </button>
+          <button (click)="setMockStatus('outage')" class="p-4 rounded-lg border border-gray-700 bg-gray-800 hover:bg-gray-700 transition-colors text-left group">
+             <div class="flex items-center gap-2 mb-2">
+                 <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                 <span class="font-bold text-red-500">Interrupção (Outage)</span>
+             </div>
+             <p class="text-xs text-gray-400 group-hover:text-gray-300">O serviço está completamente fora do ar.</p>
+          </button>
+      </div>
+
+      <div class="mt-6 p-6 bg-black rounded-xl border border-gray-800 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-4 mb-4">
+            <div class="font-bold text-lg text-white">Kore Status</div>
+            <div class="text-xs text-gray-500">Atualizado agora</div>
+        </div>
+        
+        <!-- Dynamic Banner -->
+        <div class="p-4 rounded-lg flex items-start gap-4 mb-6 transition-colors duration-300"
+             [class]="statusConfig[systemStatus()].color + '/10 border ' + statusConfig[systemStatus()].color + '/20'">
+            <span class="material-icons-outlined text-2xl" [class]="statusConfig[systemStatus()].color.replace('bg-', 'text-')">{{ statusConfig[systemStatus()].icon }}</span>
+            <div>
+                <h3 class="font-bold text-lg" [class]="statusConfig[systemStatus()].color.replace('bg-', 'text-')">{{ statusConfig[systemStatus()].text }}</h3>
+                <p class="text-sm text-gray-300 mt-1">{{ statusConfig[systemStatus()].message }}</p>
+            </div>
+        </div>
+
+        <!-- Components List -->
+        <div class="space-y-3">
+            <div class="flex justify-between items-center p-3 bg-gray-900 rounded border border-gray-800">
+                <span class="text-gray-300 font-medium">API Gateway</span>
+                <span class="text-xs font-bold px-2 py-1 rounded bg-green-900/30 text-green-500">Operacional</span>
+            </div>
+             <div class="flex justify-between items-center p-3 bg-gray-900 rounded border border-gray-800">
+                <span class="text-gray-300 font-medium">Banco de Dados</span>
+                 @if(systemStatus() === 'outage') {
+                    <span class="text-xs font-bold px-2 py-1 rounded bg-red-900/30 text-red-500">Interrupção</span>
+                 } @else if (systemStatus() === 'degraded') {
+                    <span class="text-xs font-bold px-2 py-1 rounded bg-green-900/30 text-green-500">Operacional</span>
+                 } @else {
+                    <span class="text-xs font-bold px-2 py-1 rounded bg-green-900/30 text-green-500">Operacional</span>
+                 }
+            </div>
+            <div class="flex justify-between items-center p-3 bg-gray-900 rounded border border-gray-800">
+                <span class="text-gray-300 font-medium">Webhooks</span>
+                @if(systemStatus() === 'degraded') {
+                    <span class="text-xs font-bold px-2 py-1 rounded bg-yellow-900/30 text-yellow-500">Lentidão</span>
+                 } @else {
+                    <span class="text-xs font-bold px-2 py-1 rounded bg-green-900/30 text-green-500">Operacional</span>
+                 }
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Anatomia de um Incidente</h2>
+      <p>Quando as coisas quebram, a comunicação é tão importante quanto a correção. Uma atualização de incidente deve conter:</p>
+      <ul class="list-disc list-inside text-gray-400 space-y-2">
+          <li><strong>Investigando:</strong> "Estamos cientes do problema e investigando a causa raiz." (Reconhecimento imediato).</li>
+          <li><strong>Identificado:</strong> "Identificamos que uma falha no provedor de nuvem está afetando o banco de dados." (Causa encontrada).</li>
+          <li><strong>Monitorando:</strong> "Aplicamos uma correção e estamos monitorando a estabilidade." (Solução aplicada).</li>
+          <li><strong>Resolvido:</strong> "O incidente foi resolvido. Todos os sistemas estão operacionais." (Fim).</li>
+      </ul>
+    </div>
+
+    <div class="pt-8 text-center">
+       <a routerLink="/learning/ui-ux-ferramentas-devops" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">
+        <span class="material-icons-outlined">arrow_back</span>
+        Voltar para a Trilha
+      </a>
+      <a routerLink="/learning/article/feedback-visual-assincrono" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-accent text-white rounded-md font-semibold hover:bg-blue-accent/90 transition-colors ml-4">
+        Próximo: Feedback Visual Assíncrono
+        <span class="material-icons-outlined">arrow_forward</span>
+      </a>
+    </div>
+  </article>
+</div>

@@ -1,3 +1,4 @@
+
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { ToolsIndexComponent } from './components/tools/tools-index/tools-index.component';
@@ -136,6 +137,11 @@ import { AnimacoesETransicoesComponent } from './components/learning/articles/an
 import { FormasComClipPathComponent } from './components/learning/articles/formas-com-clip-path/formas-com-clip-path.component';
 import { EfeitosComFiltrosComponent } from './components/learning/articles/efeitos-com-filtros/efeitos-com-filtros.component';
 
+// CSS Path 3: UI/UX para Ferramentas de DevOps
+import { DesignDeDashboardsComponent } from './components/learning/articles/design-de-dashboards/design-de-dashboards.component';
+import { UxFerramentasInternasComponent } from './components/learning/articles/ux-ferramentas-internas/ux-ferramentas-internas.component';
+import { StatusPagesEfetivasComponent } from './components/learning/articles/status-pages-efetivas/status-pages-efetivas.component';
+import { FeedbackVisualAssincronoComponent } from './components/learning/articles/feedback-visual-assincrono/feedback-visual-assincrono.component';
 
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
@@ -254,10 +260,12 @@ export const APP_ROUTES: Routes = [
   { path: 'learning/article/animacoes-e-transicoes', component: AnimacoesETransicoesComponent },
   { path: 'learning/article/formas-com-clip-path', component: FormasComClipPathComponent },
   { path: 'learning/article/efeitos-com-filtros', component: EfeitosComFiltrosComponent },
-  { path: 'learning/article/design-de-dashboards', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre design de dashboards está sendo escrito.' } },
-  { path: 'learning/article/ux-ferramentas-internas', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre UX para ferramentas internas está sendo escrito.' } },
-  { path: 'learning/article/status-pages-efetivas', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre design de status pages está sendo escrito.' } },
-  { path: 'learning/article/feedback-visual-assincrono', component: PlaceholderComponent, data: { title: 'Artigo em Breve', message: 'Este artigo sobre feedback visual está sendo escrito.' } },
+  
+  // CSS & UI/UX for DevOps
+  { path: 'learning/article/design-de-dashboards', component: DesignDeDashboardsComponent },
+  { path: 'learning/article/ux-ferramentas-internas', component: UxFerramentasInternasComponent },
+  { path: 'learning/article/status-pages-efetivas', component: StatusPagesEfetivasComponent },
+  { path: 'learning/article/feedback-visual-assincrono', component: FeedbackVisualAssincronoComponent },
 
   { path: 'tools', component: ToolsIndexComponent },
   { path: 'tools/gerador-box-shadow', component: BoxShadowGeneratorComponent },
