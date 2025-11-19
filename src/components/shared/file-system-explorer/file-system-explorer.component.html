@@ -1,0 +1,26 @@
+<div class="file-explorer-wrapper">
+  <!-- Left Panel: File Tree -->
+  <div class="file-tree">
+    <h4 class="tree-header">ARQUIVOS VIRTUAIS</h4>
+    <ul>
+      @for(filePath of fileList(); track filePath) {
+        <li (click)="onFileClick(filePath)" [class.active]="selectedPath() === filePath">
+          <span class="material-icons-outlined">description</span>
+          <span>{{ filePath }}</span>
+        </li>
+      }
+      @if(fileList().length === 0) {
+        <li class="empty-state">Nenhum arquivo.</li>
+      }
+    </ul>
+  </div>
+
+  <!-- Right Panel: File Content -->
+  <div class="file-content">
+     <div class="content-header">
+        <span class="material-icons-outlined">edit_document</span>
+        <span>{{ selectedPath() || 'Nenhum arquivo selecionado' }}</span>
+     </div>
+     <pre class="content-body"><code>{{ selectedFileContent() }}</code></pre>
+  </div>
+</div>
