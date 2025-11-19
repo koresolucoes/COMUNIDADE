@@ -1,3 +1,4 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
@@ -8,7 +9,7 @@
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">O que é Machine Learning?</h1>
     <p class="mt-4 text-lg text-gray-400">Entenda os conceitos fundamentais de Machine Learning e a diferença entre aprendizado supervisionado e não-supervisionado.</p>
   </header>
-  <article class="prose-container space-y-10">
+  <article class="prose-container space-y-12">
     <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
       <h2 class="text-2xl font-semibold text-white !mt-0">A Analogia: Ensinando uma Criança a Reconhecer Gatos</h2>
       <p>
@@ -25,16 +26,22 @@
     <div>
       <h2 class="text-2xl font-semibold text-white">Os Dois Principais Tipos de Aprendizado</h2>
       <p>A maioria dos problemas de Machine Learning se encaixa em duas categorias principais:</p>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="p-4 bg-gray-800/50 rounded-lg">
-          <h4 class="font-semibold text-gray-200">1. Aprendizado Supervisionado</h4>
-          <p class="text-sm text-gray-400 mt-2">É como aprender com um professor. Você fornece ao algoritmo dados de entrada (as "características" ou "features") e as respostas corretas (os "rótulos" ou "labels"). O objetivo é que o algoritmo aprenda a mapear as entradas para as saídas.</p>
-          <p class="text-xs text-gray-500 mt-2"><strong>Exemplos:</strong> Prever o preço de uma casa (entrada: área, nº de quartos; saída: preço), ou classificar um e-mail como spam (entrada: texto do e-mail; saída: "spam" ou "não spam").</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div class="p-6 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-blue-500/50 transition-colors">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-icons-outlined text-blue-400 text-3xl">school</span>
+            <h4 class="font-bold text-lg text-white">Aprendizado Supervisionado</h4>
+          </div>
+          <p class="text-sm text-gray-400">É como aprender com um professor. Você fornece ao algoritmo dados de entrada (as "características" ou "features") e as respostas corretas (os "rótulos" ou "labels"). O objetivo é que o algoritmo aprenda a mapear as entradas para as saídas.</p>
+          <p class="text-xs text-gray-500 mt-4"><strong>Exemplos:</strong> Prever o preço de uma casa (entrada: área, nº de quartos; saída: preço), ou classificar um e-mail como spam (entrada: texto do e-mail; saída: "spam" ou "não spam").</p>
         </div>
-        <div class="p-4 bg-gray-800/50 rounded-lg">
-          <h4 class="font-semibold text-gray-200">2. Aprendizado Não-Supervisionado</h4>
-          <p class="text-sm text-gray-400 mt-2">É como aprender por observação. Você fornece ao algoritmo apenas os dados de entrada, sem as respostas. O objetivo é que o algoritmo encontre estruturas ou padrões ocultos nos próprios dados.</p>
-           <p class="text-xs text-gray-500 mt-2"><strong>Exemplos:</strong> Agrupar clientes com comportamentos de compra semelhantes (clustering), ou detectar transações anômalas em um sistema financeiro (detecção de anomalias).</p>
+        <div class="p-6 bg-gray-800/50 rounded-lg border border-gray-700 hover:border-purple-500/50 transition-colors">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="material-icons-outlined text-purple-400 text-3xl">lightbulb</span>
+            <h4 class="font-bold text-lg text-white">Aprendizado Não-Supervisionado</h4>
+          </div>
+          <p class="text-sm text-gray-400">É como aprender por observação. Você fornece ao algoritmo apenas os dados de entrada, sem as respostas. O objetivo é que o algoritmo encontre estruturas ou padrões ocultos nos próprios dados.</p>
+           <p class="text-xs text-gray-500 mt-4"><strong>Exemplos:</strong> Agrupar clientes com comportamentos de compra semelhantes (clustering), ou detectar transações anômalas em um sistema financeiro (detecção de anomalias).</p>
         </div>
       </div>
     </div>
@@ -53,12 +60,56 @@
       <p>A beleza do Scikit-learn está na sua API consistente: todos os "estimadores" (modelos) funcionam da mesma maneira, com os métodos <code>.fit()</code> para treinar e <code>.predict()</code> para fazer previsões.</p>
     </div>
 
-    <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
-      <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: Da Programação à Predição</h3>
-      <p>
-        Machine Learning é uma mudança de paradigma: em vez de programar regras, você programa um sistema para aprender as regras a partir dos dados. Nas próximas lições, vamos colocar a mão na massa com o Scikit-learn para treinar nosso primeiro modelo preditivo.
-      </p>
-    </div>
+    <!-- Interactive Quiz -->
+    <section class="mt-16 border-t border-gray-800 pt-10">
+      <div class="bg-gradient-to-br from-blue-900/20 to-gray-900 border border-blue-500/30 rounded-xl p-8">
+        <h2 class="text-2xl font-bold text-white text-center mb-2">Teste seu Conhecimento</h2>
+        <p class="text-gray-400 text-sm text-center mb-8">Classifique os problemas abaixo como Aprendizado Supervisionado ou Não-Supervisionado.</p>
+
+        <div class="space-y-4 max-w-2xl mx-auto">
+          @for(item of quizItems(); track item.id) {
+            <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
+              <p class="text-gray-300 mb-3">{{ item.question }}</p>
+              <div class="flex flex-col sm:flex-row gap-2">
+                <div (click)="!item.userAnswer && answer(item, 'supervised')" 
+                    class="quiz-option supervised"
+                    [class.selected]="item.userAnswer === 'supervised'"
+                    [class.correct]="showResults() && item.type === 'supervised'"
+                    [class.incorrect]="showResults() && item.userAnswer === 'supervised' && item.type !== 'supervised'"
+                    [class.disabled]="!!item.userAnswer">
+                    <span class="icon-radio material-icons-outlined"></span>
+                    <span class="icon-type material-icons-outlined">school</span>
+                    <span class="option-text">Supervisionado</span>
+                </div>
+                <div (click)="!item.userAnswer && answer(item, 'unsupervised')"
+                    class="quiz-option unsupervised"
+                    [class.selected]="item.userAnswer === 'unsupervised'"
+                    [class.correct]="showResults() && item.type === 'unsupervised'"
+                    [class.incorrect]="showResults() && item.userAnswer === 'unsupervised' && item.type !== 'unsupervised'"
+                    [class.disabled]="!!item.userAnswer">
+                    <span class="icon-radio material-icons-outlined"></span>
+                    <span class="icon-type material-icons-outlined">lightbulb</span>
+                    <span class="option-text">Não-Supervisionado</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <div class="text-center mt-8">
+          @if(answeredCount() === quizItems().length) {
+            @if(showResults()) {
+              <div class="animate-pop-in">
+                <p class="text-xl font-bold text-white">Você acertou {{ correctCount() }} de {{ quizItems().length }}!</p>
+                <button (click)="resetQuiz()" class="mt-4 px-6 py-2 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600">Tentar Novamente</button>
+              </div>
+            } @else {
+              <button (click)="checkResults()" class="px-8 py-3 bg-blue-600 text-white rounded-md font-bold hover:bg-blue-500 transition-transform hover:scale-105">Verificar Respostas</button>
+            }
+          }
+        </div>
+      </div>
+    </section>
 
     <div class="pt-8 text-center">
        <a routerLink="/learning/python-machine-learning-sklearn" class="inline-flex items-center gap-2 px-6 py-3 bg-gray-700 text-white rounded-md font-semibold hover:bg-gray-600 transition-colors">

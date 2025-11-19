@@ -1,0 +1,90 @@
+
+.quiz-option {
+  @apply flex-1 flex items-center gap-3 px-4 py-3 rounded-lg border-2 border-gray-700 bg-gray-900/50 transition-all duration-200;
+}
+.quiz-option:not(.disabled) {
+  @apply cursor-pointer;
+}
+.quiz-option:not(.disabled):hover {
+  @apply border-gray-500 bg-gray-800;
+}
+.quiz-option.disabled {
+  @apply cursor-not-allowed;
+}
+
+/* Radio Icon States */
+.quiz-option .icon-radio::before {
+  content: 'radio_button_unchecked';
+  @apply text-gray-500 transition-colors;
+}
+.quiz-option.selected .icon-radio::before {
+  content: 'radio_button_checked';
+}
+
+/* General Text and Icon Styles */
+.quiz-option .option-text {
+  @apply text-sm font-semibold text-gray-300;
+}
+
+/* Supervised styles */
+.quiz-option.supervised .icon-type {
+  @apply text-blue-300;
+}
+.quiz-option.supervised.selected {
+  @apply border-blue-500 bg-blue-900/50 transform scale-[1.02];
+}
+.quiz-option.supervised.selected .icon-radio {
+  @apply text-blue-400;
+}
+.quiz-option.supervised.selected .option-text {
+  @apply text-white;
+}
+
+/* Unsupervised styles */
+.quiz-option.unsupervised .icon-type {
+  @apply text-purple-300;
+}
+.quiz-option.unsupervised.selected {
+  @apply border-purple-500 bg-purple-900/50 transform scale-[1.02];
+}
+.quiz-option.unsupervised.selected .icon-radio {
+  @apply text-purple-400;
+}
+.quiz-option.unsupervised.selected .option-text {
+  @apply text-white;
+}
+
+/* Result styles */
+.quiz-option.correct {
+  @apply border-green-500 bg-green-900/30;
+}
+.quiz-option.correct .icon-type,
+.quiz-option.correct .option-text {
+  @apply text-green-300;
+}
+.quiz-option.correct.selected .icon-radio::before {
+  content: 'check_circle';
+  @apply text-green-400;
+}
+
+.quiz-option.incorrect {
+  @apply border-red-500 bg-red-900/30 opacity-70;
+}
+.quiz-option.incorrect .icon-type,
+.quiz-option.incorrect .option-text {
+  @apply text-red-400;
+}
+.quiz-option.incorrect.selected .icon-radio::before {
+  content: 'cancel';
+  @apply text-red-400;
+}
+
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pop-in {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}

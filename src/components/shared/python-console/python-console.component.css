@@ -3,6 +3,25 @@
   width: 100%;
 }
 
+.is-expanded-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background-color: rgba(13, 17, 23, 0.8); /* gray-950 with opacity */
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.python-console-wrapper.is-expanded-content {
+  width: 100%;
+  height: 100%;
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
 .run-button {
   display: flex;
   align-items: center;
@@ -31,6 +50,15 @@
   min-height: 120px;
 }
 
+.python-console-wrapper.is-expanded-content .code-input-area {
+  flex-basis: auto; /* Let flexbox handle it */
+  min-height: 0;
+}
+
+.python-console-wrapper.is-expanded-content .output-area {
+  height: auto !important; /* Override inline style from input */
+}
+
 .code-textarea {
   width: 100%;
   height: 100%;
@@ -42,6 +70,11 @@
   padding: 1rem;
   resize: none;
   font-size: 0.8rem;
+  transition: font-size 0.3s;
+}
+
+.python-console-wrapper.is-expanded-content .code-textarea {
+  font-size: 0.875rem; /* 14px */
 }
 
 .output-area {

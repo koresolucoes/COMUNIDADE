@@ -1,3 +1,4 @@
+
 <div class="max-w-4xl mx-auto">
   <header class="mb-12">
     <div class="text-sm text-gray-400 mb-3 flex items-center gap-2">
@@ -5,94 +6,58 @@
       <span class="material-icons-outlined text-base">chevron_right</span>
       <a routerLink="/learning/python-machine-learning-sklearn" class="hover:text-blue-accent hover:underline">Introdução ao Machine Learning com Scikit-learn</a>
     </div>
-    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Seu Primeiro Modelo Preditivo com Scikit-learn</h1>
-    <p class="mt-4 text-lg text-gray-400">Treine seu primeiro modelo de regressão para prever valores numéricos e entenda o ciclo de `fit` e `predict`.</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight">Laboratório: Seu Primeiro Modelo Preditivo</h1>
+    <p class="mt-4 text-lg text-gray-400">Treine um modelo de regressão passo a passo para prever valores numéricos e entenda o ciclo de `fit` e `predict`.</p>
   </header>
-  <article class="prose-container space-y-10">
+  <article class="prose-container space-y-12">
     <p>
-      Vamos colocar a teoria em prática! Nesta lição, construiremos um modelo de Machine Learning do início ao fim. Nosso objetivo será prever o preço mediano de casas na Califórnia com base em características da região, como a renda média dos moradores. Este é um problema clássico de <strong>regressão</strong> (prever um valor contínuo).
+      Vamos colocar a teoria em prática! Nesta lição, construiremos um modelo de Machine Learning do início ao fim. Nosso objetivo será prever o preço mediano de casas na Califórnia com base em características da região. Este é um problema clássico de <strong>regressão</strong> (prever um valor contínuo).
     </p>
 
-    <div class="p-6 bg-gray-900 border border-gray-800 rounded-lg">
-      <h2 class="text-2xl font-semibold text-white !mt-0">1. Carregando os Dados</h2>
-      <p>
-        O Scikit-learn já vem com alguns conjuntos de dados clássicos para aprendizado. Vamos usar o "California Housing".
+    <!-- Passo 1 -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">1. Carregando os Dados</h2>
+      <p class="text-gray-300 mb-6">
+        O Scikit-learn já vem com alguns conjuntos de dados clássicos para aprendizado. Vamos usar o "California Housing" e colocá-lo em um DataFrame do Pandas para facilitar a visualização. Clique em 'Run' para carregar os dados.
       </p>
-      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-python">import pandas as pd
-from sklearn.datasets import fetch_california_housing
+      <app-python-console [initialCode]="codeLoadData" outputHeight="250px"></app-python-console>
+    </section>
 
-# Carrega o conjunto de dados
-housing = fetch_california_housing()
-
-# Para facilitar a visualização, vamos colocá-lo em um DataFrame do Pandas
-df = pd.DataFrame(housing.data, columns=housing.feature_names)
-df['MedHouseVal'] = housing.target # 'target' é a nossa coluna alvo (o que queremos prever)
-
-print(df.head())</code></pre>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">2. Separando "Perguntas" e "Respostas" (Features e Target)</h2>
-      <p>
+    <!-- Passo 2 -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">2. Separando "Perguntas" e "Respostas"</h2>
+      <p class="text-gray-300 mb-6">
         O modelo precisa saber o que são as "perguntas" (as características, ou <strong>features</strong>) e o que é a "resposta" que ele deve aprender a prever (o <strong>target</strong>). Por convenção, chamamos as features de <code>X</code> e o target de <code>y</code>.
       </p>
-      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-python"># X contém todas as colunas, exceto nosso alvo
-X = df.drop('MedHouseVal', axis=1)
+      <app-python-console [initialCode]="codeSplitXY" [setupCode]="setupCodeSplitXY" outputHeight="150px"></app-python-console>
+    </section>
 
-# y contém apenas a coluna alvo
-y = df['MedHouseVal']
-
-print("Formato de X:", X.shape)
-print("Formato de y:", y.shape)</code></pre>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">3. Dividindo os Dados: Treino e Teste</h2>
-      <p>
-        Este é o passo mais crucial. Nunca devemos avaliar nosso modelo com os mesmos dados que usamos para treiná-lo. Seria como dar ao aluno as respostas da prova antes do teste! Por isso, dividimos nossos dados em dois conjuntos:
+    <!-- Passo 3 -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">3. Dividindo os Dados: Treino e Teste</h2>
+      <p class="text-gray-300 mb-6">
+        Este é o passo mais crucial. Nunca devemos avaliar nosso modelo com os mesmos dados que usamos para treiná-lo. Seria como dar ao aluno as respostas da prova antes do teste! Dividimos os dados em um conjunto para treinar e outro para testar o quão bem o modelo generaliza para dados novos.
       </p>
-      <ul class="list-disc list-inside text-gray-400">
-        <li><strong>Conjunto de Treino:</strong> Usado para o modelo aprender os padrões.</li>
-        <li><strong>Conjunto de Teste:</strong> Usado para ver o quão bem o modelo se sai em dados que ele nunca viu antes.</li>
-      </ul>
-      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-python">from sklearn.model_selection import train_test_split
+       <app-python-console [initialCode]="codeTrainTest" [setupCode]="setupCodeTrainTest" outputHeight="150px"></app-python-console>
+    </section>
 
-# test_size=0.2 significa que 20% dos dados serão para teste
-# random_state=42 garante que a divisão seja a mesma toda vez que rodarmos o código
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)</code></pre>
-    </div>
-
-    <div>
-      <h2 class="text-2xl font-semibold text-white">4. Escolhendo e Treinando o Modelo</h2>
-      <p>
-        Vamos começar com o modelo mais simples para regressão: a <strong>Regressão Linear</strong>. Ele tentará encontrar uma linha reta (ou um plano, em múltiplas dimensões) que melhor se ajusta aos dados.
+    <!-- Passo 4 -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">4. Escolhendo e Treinando o Modelo</h2>
+      <p class="text-gray-300 mb-6">
+        Vamos começar com o modelo mais simples para regressão: a <strong>Regressão Linear</strong>. Ele tentará encontrar a melhor "linha" que se ajusta aos dados. O treinamento acontece com o método <code>.fit()</code>. É aqui que o modelo "estuda" os dados de treino para aprender a relação entre as features (<code>X_train</code>) e o target (<code>y_train</code>).
       </p>
-      <p>
-        O treinamento acontece com o método <code>.fit()</code>. É aqui que o modelo "estuda" os dados de treino para aprender a relação entre as features (<code>X_train</code>) e o target (<code>y_train</code>).
-      </p>
-      <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-python">from sklearn.linear_model import LinearRegression
-
-# 1. Cria uma instância do modelo
-model = LinearRegression()
-
-# 2. Treina o modelo com os dados de treino
-model.fit(X_train, y_train)
-
-print("Modelo treinado com sucesso!")</code></pre>
-    </div>
+      <app-python-console [initialCode]="codeTrainModel" [setupCode]="setupCodeTrainModel" outputHeight="150px"></app-python-console>
+    </section>
     
-    <div>
-      <h2 class="text-2xl font-semibold text-white">5. Fazendo Previsões</h2>
-      <p>
-        Com o modelo treinado, podemos usar o método <code>.predict()</code> para fazer previsões nos nossos dados de teste, que o modelo nunca viu.
+    <!-- Passo 5 -->
+    <section>
+      <h2 class="text-2xl font-semibold text-white mb-4">5. Fazendo Previsões</h2>
+      <p class="text-gray-300 mb-6">
+        Com o modelo treinado, podemos usar o método <code>.predict()</code> para fazer previsões nos nossos dados de teste, que o modelo nunca viu antes.
       </p>
-       <pre class="!bg-gray-950 !p-3 !my-2"><code class="language-python"># Fazendo previsões no conjunto de teste
-predictions = model.predict(X_test)
-
-# Vamos comparar as 5 primeiras previsões com os valores reais
-for i in range(5):
-    print(f"Previsão: {{'{'}}predictions[i]:.2f{{'}'}} | Valor Real: {{'{'}}y_test.iloc[i]{{'}'}}")</code></pre>
-    </div>
+       <app-python-console [initialCode]="codePredict" [setupCode]="setupCodePredict" outputHeight="220px"></app-python-console>
+    </section>
 
     <div class="p-6 bg-green-900/30 border border-green-700/50 text-green-300 rounded-lg">
       <h3 class="font-semibold text-green-200 text-lg mb-2">Conclusão: O Ciclo `fit`/`predict`</h3>
