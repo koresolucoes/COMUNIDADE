@@ -1,4 +1,6 @@
-<div class="flex h-screen bg-gray-950">
+<app-particle-background class="fixed inset-0 z-0"></app-particle-background>
+
+<div class="relative z-10 flex h-screen bg-transparent">
   <app-sidebar [isExpanded]="isSidebarExpanded()" (toggle)="toggleSidebar()" class="hidden md:flex"></app-sidebar>
   
   <div class="flex flex-col flex-1 w-full overflow-hidden">

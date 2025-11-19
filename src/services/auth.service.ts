@@ -1,5 +1,7 @@
 import { Injectable, signal, effect } from '@angular/core';
-import { createClient, SupabaseClient, Session, User } from '@supabase/supabase-js';
+// Fix: Changed to type-only imports for Session and User
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
 
 export interface Profile {

@@ -22,7 +22,7 @@
             (click)="handleNavigation(item)"
             routerLinkActive="active" 
             [routerLinkActiveOptions]="{exact: item.path === '/'}"
-            class="flex items-center justify-between h-12 text-gray-400 hover:text-white hover:bg-gray-800 mx-3 rounded-lg transition-colors">
+            class="relative flex items-center justify-between h-12 text-gray-400 hover:text-white hover:bg-gray-800 mx-3 rounded-lg transition-colors">
             
             <div class="flex items-center" [class.justify-center]="!isExpanded()">
               <span class="w-12 h-12 flex items-center justify-center">
@@ -44,11 +44,11 @@
             <ul class="mt-1 ml-8 space-y-1">
               @for(child of item.children; track child.isCategory ? child.label : child.path) {
                 @if (child.isCategory) {
-                  <li class="px-3 pt-4 pb-2">
-                    <div class="flex items-center justify-center gap-2 w-full bg-blue-accent/20 rounded-md py-1.5 text-blue-200 text-xs font-semibold uppercase tracking-wider">
+                  <li class="px-3 pt-4 pb-1">
+                    <h4 class="flex items-center gap-2 text-xs font-semibold uppercase text-gray-500 tracking-wider">
                       <span class="material-icons-outlined text-base">{{ child.icon }}</span>
                       <span>{{ child.label }}</span>
-                    </div>
+                    </h4>
                   </li>
                 } @else {
                   <li>

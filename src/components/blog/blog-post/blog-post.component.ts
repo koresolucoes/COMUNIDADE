@@ -1,7 +1,8 @@
 
+
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { BlogService } from '../../../services/blog.service';
+import { BlogService, BlogPost } from '../../../services/blog.service';
 import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
 import { map, switchMap } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';

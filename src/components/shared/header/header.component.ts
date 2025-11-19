@@ -1,6 +1,7 @@
 import { Component, ChangeDetectionStrategy, output, input, signal, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { User } from '@supabase/supabase-js';
+// Fix: Changed to type-only import for User
+import type { User } from '@supabase/supabase-js';
 import { Profile } from '../../../services/auth.service';
 
 @Component({

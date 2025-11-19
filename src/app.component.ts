@@ -1,4 +1,5 @@
 
+
 import { Component, ChangeDetectionStrategy, signal, effect, inject } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { HeaderComponent } from './components/shared/header/header.component';
@@ -6,13 +7,14 @@ import { BottomNavComponent } from './components/shared/bottom-nav/bottom-nav.co
 import { CommandPaletteComponent } from './components/shared/command-palette/command-palette.component';
 import { SidebarComponent } from './components/shared/sidebar/sidebar.component';
 import { AuthService } from './services/auth.service';
+import { ParticleBackgroundComponent } from './components/shared/particle-background/particle-background.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, BottomNavComponent, CommandPaletteComponent, SidebarComponent],
+  imports: [RouterOutlet, HeaderComponent, BottomNavComponent, CommandPaletteComponent, SidebarComponent, ParticleBackgroundComponent],
   host: {
     '(keydown.meta.k)': 'toggleCommandPalette($event)',
     '(keydown.control.k)': 'toggleCommandPalette($event)',

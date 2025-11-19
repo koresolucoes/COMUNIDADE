@@ -1,6 +1,6 @@
-<header class="flex h-16 shrink-0 items-center justify-between border-b border-gray-800 bg-gray-900 px-4 md:px-6 relative z-40">
+<header class="flex h-16 shrink-0 items-center justify-between border-b border-white/10 bg-gray-950/50 backdrop-blur-lg px-4 md:px-6 relative z-40">
   <div class="flex items-center gap-4">
-    <a routerLink="/" class="flex items-center gap-2 font-semibold text-lg">
+    <a routerLink="/" class="flex items-center gap-2 font-semibold text-lg text-white transition-all hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
       <img src="https://i.imgur.com/21b7sou.png" alt="Kore Logo" class="h-8">
       <span class="text-white">Kore</span>
     </a>
@@ -8,7 +8,7 @@
   
   <!-- Search bar for md and up -->
   <div class="flex-1 hidden md:flex justify-center px-4">
-    <button (click)="openCommandPalette.emit()" class="w-full max-w-md flex items-center justify-between text-sm text-gray-400 bg-gray-800 border border-gray-700 rounded-md px-3 py-2 hover:bg-gray-700 transition-colors">
+    <button (click)="openCommandPalette.emit()" class="w-full max-w-md flex items-center justify-between text-sm text-gray-400 bg-white/5 border border-white/10 rounded-md px-3 py-2 hover:bg-white/10 transition-colors">
       <span>Buscar qualquer coisa...</span>
       <span class="border border-gray-600 rounded px-1.5 py-0.5 text-xs">⌘K</span>
     </button>
@@ -45,10 +45,10 @@
           }
         </button>
         @if(isProfileMenuVisible()) {
-          <div class="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg py-1 z-50">
-            <div class="px-4 py-2 text-xs text-gray-400 border-b border-gray-700 truncate">{{ displayName() }}</div>
-            <a routerLink="/profile" (click)="isProfileMenuVisible.set(false)" class="cursor-pointer block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 w-full text-left">Meu Perfil</a>
-            <a (click)="logout.emit(); isProfileMenuVisible.set(false)" class="cursor-pointer block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 w-full text-left">Sair</a>
+          <div class="absolute right-0 mt-2 w-48 bg-gray-900/80 backdrop-blur-lg border border-white/10 rounded-md shadow-lg py-1 z-50">
+            <div class="px-4 py-2 text-xs text-gray-400 border-b border-white/10 truncate">{{ displayName() }}</div>
+            <a routerLink="/profile" (click)="isProfileMenuVisible.set(false)" class="cursor-pointer block px-4 py-2 text-sm text-gray-300 hover:bg-blue-accent/20 w-full text-left">Meu Perfil</a>
+            <a (click)="logout.emit(); isProfileMenuVisible.set(false)" class="cursor-pointer block px-4 py-2 text-sm text-gray-300 hover:bg-blue-accent/20 w-full text-left">Sair</a>
           </div>
         }
       </div>

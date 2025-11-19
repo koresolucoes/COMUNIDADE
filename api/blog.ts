@@ -90,7 +90,7 @@ const readRequestBody = (req: any): Promise<any> => {
 };
 
 const handleGet = async (req: any, res: any) => {
-    const { slug } = req.query || {};
+    const { slug, page = '1', limit = '6' } = req.query || {};
 
     try {
         if (slug) {
@@ -109,16 +109,22 @@ const handleGet = async (req: any, res: any) => {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify(data));
         } else {
-            const { data, error } = await supabase
+            const pageNum = parseInt(page as string, 10) || 1;
+            const limitNum = parseInt(limit as string, 10) || 6;
+            const from = (pageNum - 1) * limitNum;
+            const to = from + limitNum - 1;
+
+            const { data, error, count } = await supabase
                 .from('posts')
-                .select('*')
-                .order('published_at', { ascending: false });
+                .select('*', { count: 'exact' })
+                .order('published_at', { ascending: false })
+                .range(from, to);
 
             if (error) throw error;
             
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify(data));
+            res.end(JSON.stringify({ data, count }));
         }
     } catch (error) {
         console.error('Supabase GET error:', error);
@@ -142,7 +148,8 @@ const handlePost = async (req: any, res: any) => {
     if (masterKey && token === masterKey) {
         userId = null; 
     } else {
-        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+        // Fix: Changed destructuring of getUser response to match updated API shape.
+        const { data: user, error: authError } = await supabase.auth.getUser(token);
 
         if (authError || !user) {
             res.statusCode = 401;
@@ -233,7 +240,8 @@ const handleUpdate = async (req: any, res: any) => {
         const query = supabase.from('posts').update(updateData).eq('slug', slug);
 
         if (!masterKey || token !== masterKey) {
-            const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+            // Fix: Changed destructuring of getUser response to match updated API shape.
+            const { data: user, error: authError } = await supabase.auth.getUser(token);
             if (authError || !user) {
                 res.statusCode = 401;
                 return res.end(JSON.stringify({ error: 'Token inválido ou você não tem permissão para editar este post.' }));
@@ -276,7 +284,8 @@ const handleDelete = async (req: any, res: any) => {
         const query = supabase.from('posts').delete().eq('slug', slug);
 
         if (!masterKey || token !== masterKey) {
-             const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+             // Fix: Changed destructuring of getUser response to match updated API shape.
+             const { data: user, error: authError } = await supabase.auth.getUser(token);
             if (authError || !user) {
                 res.statusCode = 401;
                 return res.end(JSON.stringify({ error: 'Token inválido ou você não tem permissão para deletar este post.' }));

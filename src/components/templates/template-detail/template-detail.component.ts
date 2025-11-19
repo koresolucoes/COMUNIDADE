@@ -1,4 +1,5 @@
 
+
 import { Component, ChangeDetectionStrategy, inject, signal, computed, effect } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TemplateService, Template, TemplateComment } from '../../../services/template.service';
@@ -116,7 +117,8 @@ export class TemplateDetailComponent {
   template = toSignal(this.template$, { initialValue: null });
   
   workflowData = computed(() => {
-    const t = this.template();
+    // Fix: Cast template signal to correct type to resolve type inference issue.
+    const t = this.template() as Template | null;
     if (!t || !t.workflow_json) {
       return null;
     }
@@ -286,7 +288,8 @@ export class TemplateDetailComponent {
 
   constructor() {
     effect(() => {
-      const t = this.template();
+      // Fix: Cast template signal to correct type to resolve type inference issue.
+      const t = this.template() as Template | null;
       if(t) {
         this.loadComments(t.id);
       }
@@ -382,7 +385,8 @@ export class TemplateDetailComponent {
 
   downloadWorkflow() {
     const workflowJson = this.workflowData();
-    const t = this.template();
+    // Fix: Cast template signal to correct type to resolve type inference issue.
+    const t = this.template() as Template | null;
     if (!workflowJson || !t) return;
 
     const jsonString = JSON.stringify(workflowJson, null, 2);
@@ -401,7 +405,8 @@ export class TemplateDetailComponent {
   }
   
   async sendToN8n() {
-    const t = this.template();
+    // Fix: Cast template signal to correct type to resolve type inference issue.
+    const t = this.template() as Template | null;
     const workflowJson = this.workflowData();
     if (!t || !workflowJson) return;
 
@@ -443,7 +448,8 @@ export class TemplateDetailComponent {
   }
 
   async postComment() {
-    const t = this.template();
+    // Fix: Cast template signal to correct type to resolve type inference issue.
+    const t = this.template() as Template | null;
     if (!this.newCommentContent().trim() || !t) return;
 
     this.commentsLoading.set(true);

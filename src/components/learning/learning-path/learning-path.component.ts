@@ -3,7 +3,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { map, switchMap } from 'rxjs/operators';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { from, of } from 'rxjs';
-import { LearningService, LearningStep } from '../../../services/learning.service';
+import { LearningService, LearningStep, LearningPath, Subcategory, MainCategory } from '../../../services/learning.service';
 import { LearningProgressService } from '../../../services/learning-progress.service';
 import { AuthService } from '../../../services/auth.service';
 
@@ -33,7 +33,8 @@ export class LearningPathComponent {
     )
   );
 
-  path = computed(() => this.pathData()?.path);
+  // Fix: Cast the result of pathData() to its expected type to resolve the type inference issue with toSignal.
+  path = computed(() => (this.pathData() as { path: LearningPath; subcategory: Subcategory; mainCategory: MainCategory; } | undefined)?.path);
 
   pathProgress = computed(() => {
     const p = this.path();

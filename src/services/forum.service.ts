@@ -1,6 +1,9 @@
 
+
 import { Injectable, inject } from '@angular/core';
-import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+// Fix: Changed to type-only import for User
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import { environment } from '../environments/environment';
 import { AuthService } from './auth.service';
 

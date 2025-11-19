@@ -2,6 +2,17 @@ a.active, a.active-parent {
   @apply bg-gray-800 text-white;
 }
 
+/* New active state indicator */
+a.active::before, a.active-parent::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 3px;
+  @apply bg-blue-accent rounded-r-full;
+}
+
 a.active .material-icons-outlined, a.active-parent .material-icons-outlined {
   @apply text-blue-accent;
 }

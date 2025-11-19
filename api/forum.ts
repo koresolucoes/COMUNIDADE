@@ -96,17 +96,19 @@ const handlePost = async (req: any, res: any) => {
             // The forum tables require a user_id (NOT NULL).
             // As a fallback for admin posts without a specified user,
             // we assign it to the first user created in the system (assumed to be an admin).
-            const { data: { users }, error: adminError } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
+            // Fix: Changed destructuring of listUsers response to be more robust.
+            const { data, error: adminError } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
             
-            if (adminError || users.length === 0) {
+            if (adminError || !data || data.users.length === 0) {
                 console.error('Forum API Master Key Error: Could not find a default user to assign the post to.', adminError);
                 res.statusCode = 500;
                 return res.end(JSON.stringify({ error: 'Não foi possível encontrar um usuário padrão para a postagem. Ao usar a chave mestra, forneça um "user_id" no corpo da requisição.' }));
             }
-            userId = users[0].id;
+            userId = data.users[0].id;
         }
     } else {
-        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+        // Fix: Changed destructuring of getUser response to match updated API shape.
+        const { data: user, error: authError } = await supabase.auth.getUser(token);
 
         if (authError || !user) {
             res.statusCode = 401;
@@ -206,7 +208,8 @@ const handleUpdate = async (req: any, res: any) => {
         }
 
         if (!isMaster) {
-            const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+            // Fix: Changed destructuring of getUser response to match updated API shape.
+            const { data: user, error: authError } = await supabase.auth.getUser(token);
             if (authError || !user) {
                 res.statusCode = 401;
                 return res.end(JSON.stringify({ error: 'Token inválido ou permissão negada.' }));
@@ -254,7 +257,8 @@ const handleDelete = async (req: any, res: any) => {
         }
 
         if (!isMaster) {
-            const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+            // Fix: Changed destructuring of getUser response to match updated API shape.
+            const { data: user, error: authError } = await supabase.auth.getUser(token);
             if (authError || !user) {
                 res.statusCode = 401;
                 return res.end(JSON.stringify({ error: 'Token inválido ou permissão negada.' }));

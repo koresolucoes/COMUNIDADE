@@ -26,17 +26,55 @@ Endpoint base: `/api/blog`
 ### 1. Obter Posts
 
 -   **Método**: `GET`
--   **Descrição**: Retorna uma lista de todos os posts do blog ou um post específico se o parâmetro `slug` for fornecido.
+-   **Descrição**: Retorna uma lista paginada de todos os posts do blog ou um post específico se o parâmetro `slug` for fornecido.
 -   **Autenticação**: Não requerida.
 
 #### Parâmetros de Query
 
--   `slug` (opcional): O slug único de um post para obter apenas aquele post.
+-   `slug` (opcional): O slug único de um post para obter apenas aquele post. Se fornecido, os parâmetros de paginação são ignorados.
+-   `page` (opcional): O número da página a ser retornada. Padrão: `1`.
+-   `limit` (opcional): O número de posts por página. Padrão: `6`.
 
-#### Exemplo: Listar todos os posts
+#### Resposta (Listagem Paginada)
+
+A resposta para uma listagem é um objeto contendo os dados e a contagem total de todos os posts no banco.
+
+```json
+{
+  "data": [
+    {
+      "id": "uuid-do-post-1",
+      "slug": "meu-post-1",
+      "title": "Meu Post 1",
+      "author": "Autor",
+      "summary": "Resumo...",
+      "content": "...",
+      "published_at": "2024-07-29T18:30:00.000Z",
+      "user_id": "uuid-do-usuario"
+    }
+  ],
+  "count": 50
+}
+```
+
+#### Resposta (Post Específico)
+
+A resposta para um post específico (usando `?slug=...`) é o objeto do post diretamente.
+
+```json
+{
+  "id": "uuid-do-post-1",
+  "slug": "meu-post-1",
+  "title": "Meu Post 1",
+  "..." : "..."
+}
+```
+
+#### Exemplo: Listar a segunda página de posts
 
 ```bash
-curl -X GET "https://<URL_DA_SUA_APP>/api/blog"
+# Pede a página 2, com 6 itens por página
+curl -X GET "https://<URL_DA_SUA_APP>/api/blog?page=2&limit=6"
 ```
 
 #### Exemplo: Obter um post específico
