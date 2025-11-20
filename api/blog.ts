@@ -149,7 +149,7 @@ const handlePost = async (req: any, res: any) => {
         userId = null; 
     } else {
         // Fix: Changed destructuring of getUser response to match updated API shape.
-        const { data: user, error: authError } = await supabase.auth.getUser(token);
+        const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
         if (authError || !user) {
             res.statusCode = 401;
@@ -241,7 +241,7 @@ const handleUpdate = async (req: any, res: any) => {
 
         if (!masterKey || token !== masterKey) {
             // Fix: Changed destructuring of getUser response to match updated API shape.
-            const { data: user, error: authError } = await supabase.auth.getUser(token);
+            const { data: { user }, error: authError } = await supabase.auth.getUser(token);
             if (authError || !user) {
                 res.statusCode = 401;
                 return res.end(JSON.stringify({ error: 'Token inválido ou você não tem permissão para editar este post.' }));
@@ -285,7 +285,7 @@ const handleDelete = async (req: any, res: any) => {
 
         if (!masterKey || token !== masterKey) {
              // Fix: Changed destructuring of getUser response to match updated API shape.
-             const { data: user, error: authError } = await supabase.auth.getUser(token);
+             const { data: { user }, error: authError } = await supabase.auth.getUser(token);
             if (authError || !user) {
                 res.statusCode = 401;
                 return res.end(JSON.stringify({ error: 'Token inválido ou você não tem permissão para deletar este post.' }));
