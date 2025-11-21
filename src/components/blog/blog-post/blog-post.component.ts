@@ -1,6 +1,4 @@
-
-
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService, BlogPost } from '../../../services/blog.service';
 import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
@@ -22,7 +20,7 @@ export class BlogPostComponent {
   private route: ActivatedRoute = inject(ActivatedRoute);
   blogService = inject(BlogService);
 
-  post = toSignal(
+  private rawPost = toSignal(
     this.route.paramMap.pipe(
       map(params => params.get('slug')),
       switchMap(slug => {
@@ -33,4 +31,15 @@ export class BlogPostComponent {
       })
     )
   );
+
+  post = computed(() => {
+    const p = this.rawPost();
+    if (!p) return undefined;
+
+    // HTML adjustment function to remove all inline styles, ensuring
+    // consistent rendering and transparent backgrounds.
+    const adjustedContent = (p.content || '').replace(/\sstyle=(['"]).*?\1/g, '');
+    
+    return { ...p, content: adjustedContent };
+  });
 }
