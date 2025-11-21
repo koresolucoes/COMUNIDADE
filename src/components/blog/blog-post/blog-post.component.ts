@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { BlogService, BlogPost } from '../../../services/blog.service';
 import { SafeHtmlPipe } from '../../../pipes/safe-html.pipe';
@@ -32,43 +32,5 @@ export class BlogPostComponent {
     )
   );
 
-  post = computed(() => {
-    const p = this.rawPost();
-    if (!p) return undefined;
-
-    // HTML adjustment function to selectively remove only background-related
-    // inline styles, ensuring transparent backgrounds while keeping other styles.
-    const adjustedContent = (p.content || '').replace(
-      /\sstyle=(['"])(.*?)\1/g,
-      (match, quote, styleString) => {
-        if (!styleString) {
-          return '';
-        }
-
-        const filteredDeclarations = styleString
-          .split(';')
-          .map(declaration => declaration.trim())
-          .filter(declaration => {
-            // Keep declarations that are valid (contain a colon)
-            // AND do not start with 'background'
-            return (
-              declaration &&
-              declaration.includes(':') &&
-              !declaration.toLowerCase().startsWith('background')
-            );
-          });
-
-        if (filteredDeclarations.length === 0) {
-          return ''; // Remove empty style attribute
-        }
-        
-        // Reconstruct the style string, adding a trailing semicolon for validity
-        const newStyleString = filteredDeclarations.join('; ') + ';';
-
-        return ` style="${newStyleString}"`;
-      }
-    );
-    
-    return { ...p, content: adjustedContent };
-  });
+  post = this.rawPost;
 }
