@@ -36,9 +36,38 @@ export class BlogPostComponent {
     const p = this.rawPost();
     if (!p) return undefined;
 
-    // HTML adjustment function to remove all inline styles, ensuring
-    // consistent rendering and transparent backgrounds.
-    const adjustedContent = (p.content || '').replace(/\sstyle=(['"]).*?\1/g, '');
+    // HTML adjustment function to selectively remove only background-related
+    // inline styles, ensuring transparent backgrounds while keeping other styles.
+    const adjustedContent = (p.content || '').replace(
+      /\sstyle=(['"])(.*?)\1/g,
+      (match, quote, styleString) => {
+        if (!styleString) {
+          return '';
+        }
+
+        const filteredDeclarations = styleString
+          .split(';')
+          .map(declaration => declaration.trim())
+          .filter(declaration => {
+            // Keep declarations that are valid (contain a colon)
+            // AND do not start with 'background'
+            return (
+              declaration &&
+              declaration.includes(':') &&
+              !declaration.toLowerCase().startsWith('background')
+            );
+          });
+
+        if (filteredDeclarations.length === 0) {
+          return ''; // Remove empty style attribute
+        }
+        
+        // Reconstruct the style string, adding a trailing semicolon for validity
+        const newStyleString = filteredDeclarations.join('; ') + ';';
+
+        return ` style="${newStyleString}"`;
+      }
+    );
     
     return { ...p, content: adjustedContent };
   });
