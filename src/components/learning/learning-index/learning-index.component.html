@@ -1,20 +1,34 @@
-<div class="space-y-12">
+<div class="space-y-8">
   <section>
     <h1 class="text-3xl md:text-4xl font-bold text-white">Trilhas de Aprendizagem</h1>
     <p class="mt-2 text-gray-400">Cursos guiados para dominar ferramentas e conceitos de automação, passo a passo.</p>
+    
+    <!-- Search Bar -->
+    <div class="mt-6 relative max-w-md">
+      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <span class="material-icons-outlined text-gray-500">search</span>
+      </div>
+      <input 
+        type="text" 
+        [(ngModel)]="searchQuery"
+        placeholder="Buscar trilhas..." 
+        class="w-full bg-gray-900 border border-gray-800 text-white rounded-lg pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-accent focus:border-transparent placeholder-gray-600 transition-all"
+      >
+    </div>
   </section>
 
-  @if (mainCategories().length === 0) {
+  @if (filteredCategories().length === 0) {
     <div class="text-center py-16 bg-gray-900 border border-dashed border-gray-800 rounded-lg">
-      <span class="material-icons-outlined text-5xl text-gray-600">school</span>
-      <p class="mt-4 text-gray-500">Nenhuma trilha de aprendizagem disponível no momento.</p>
+      <span class="material-icons-outlined text-5xl text-gray-600">search_off</span>
+      <p class="mt-4 text-gray-500">Nenhuma trilha encontrada para sua busca.</p>
+      <button (click)="searchQuery.set('')" class="mt-2 text-blue-accent hover:underline text-sm">Limpar busca</button>
     </div>
   } @else {
     <div class="space-y-12">
-      @for(mainCat of mainCategories(); track mainCat.id) {
+      @for(mainCat of filteredCategories(); track mainCat.id) {
         <section>
-          <h2 class="text-3xl font-bold text-white mb-8 pb-3 border-b border-gray-800 flex items-center gap-4">
-            <span class="material-icons-outlined text-blue-accent text-4xl">{{ mainCat.icon }}</span>
+          <h2 class="text-2xl md:text-3xl font-bold text-white mb-8 pb-3 border-b border-gray-800 flex items-center gap-4">
+            <span class="material-icons-outlined text-blue-accent text-3xl md:text-4xl">{{ mainCat.icon }}</span>
             <span>{{ mainCat.name }}</span>
           </h2>
           <div class="space-y-10">
@@ -24,39 +38,52 @@
                   <span class="material-icons-outlined text-gray-400">{{ subCat.icon }}</span>
                   <h3 class="text-xl font-semibold text-gray-200">{{ subCat.name }}</h3>
                 </div>
-                <p class="text-sm text-gray-500 mb-6 ml-9">{{ subCat.description }}</p>
+                <p class="text-sm text-gray-500 mb-6 ml-0 md:ml-9">{{ subCat.description }}</p>
                 
-                @if(subCat.paths.length > 0) {
-                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-9">
-                    @for(path of subCat.paths; track path.slug) {
-                      @let progress = learningProgressService.getPathProgress(path);
-                      <a [routerLink]="['/learning', path.slug]" class="relative block p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 group hover:z-10">
-                        @if(progress.completed > 0) {
-                          <div class="absolute top-4 left-4 text-xs font-semibold flex items-center gap-1.5" [class.text-green-accent]="progress.percentage === 100" [class.text-blue-accent]="progress.percentage < 100" [title]="progress.percentage.toFixed(0) + '% Concluído'">
-                            @if(progress.percentage === 100) {
-                              <span class="material-icons-outlined">check_circle</span>
-                            } @else {
-                              <span class="material-icons-outlined">task_alt</span>
-                            }
-                            <span>{{progress.completed}} / {{progress.total}}</span>
-                          </div>
-                        }
-                        <span class="absolute top-4 right-4 text-xs font-semibold px-2 py-1 rounded-full"
-                          [class.bg-green-accent/20]="path.level === 'Fundamentos' || path.level === 'Básico'" [class.text-green-300]="path.level === 'Fundamentos' || path.level === 'Básico'"
-                          [class.bg-yellow-500/20]="path.level === 'Intermediário'" [class.text-yellow-300]="path.level === 'Intermediário'"
-                          [class.bg-red-500/20]="path.level === 'Avançado'" [class.text-red-300]="path.level === 'Avançado'">
-                          {{ path.level }}
-                        </span>
-                        <h4 class="text-lg font-semibold text-white group-hover:text-blue-accent transition-colors pt-8">{{ path.title }}</h4>
-                        <p class="mt-2 text-sm text-gray-400">{{ path.description }}</p>
-                      </a>
-                    }
-                  </div>
-                } @else {
-                   <div class="ml-9 text-center py-8 bg-gray-900/50 border border-dashed border-gray-800 rounded-lg">
-                    <p class="text-gray-500 text-sm">Nenhuma trilha disponível nesta subcategoria ainda.</p>
-                  </div>
-                }
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 md:ml-9">
+                  @for(path of subCat.paths; track path.slug) {
+                    @let progress = learningProgressService.getPathProgress(path);
+                    <!-- Card Interativo -->
+                    <div 
+                      (click)="openPreview(path)"
+                      class="relative flex flex-col p-6 bg-gray-900 border border-gray-800 rounded-lg hover:border-blue-accent transition-all duration-200 transform hover:-translate-y-1 group hover:z-10 cursor-pointer active:scale-95 md:active:scale-100">
+                      
+                      @if(progress.completed > 0) {
+                        <div class="absolute top-4 left-4 text-xs font-semibold flex items-center gap-1.5" [class.text-green-accent]="progress.percentage === 100" [class.text-blue-accent]="progress.percentage < 100">
+                          @if(progress.percentage === 100) {
+                            <span class="material-icons-outlined text-sm">check_circle</span>
+                          } @else {
+                            <span class="material-icons-outlined text-sm">task_alt</span>
+                          }
+                          <span>{{progress.completed}} / {{progress.total}}</span>
+                        </div>
+                      }
+                      
+                      <span class="absolute top-4 right-4 text-[10px] uppercase font-bold tracking-wider px-2 py-1 rounded-full border"
+                        [class.bg-green-900]="path.level === 'Fundamentos' || path.level === 'Básico'" 
+                        [class.text-green-300]="path.level === 'Fundamentos' || path.level === 'Básico'"
+                        [class.border-green-800]="path.level === 'Fundamentos' || path.level === 'Básico'"
+                        
+                        [class.bg-yellow-900]="path.level === 'Intermediário'" 
+                        [class.text-yellow-300]="path.level === 'Intermediário'"
+                        [class.border-yellow-800]="path.level === 'Intermediário'"
+
+                        [class.bg-red-900]="path.level === 'Avançado'" 
+                        [class.text-red-300]="path.level === 'Avançado'"
+                        [class.border-red-800]="path.level === 'Avançado'">
+                        {{ path.level }}
+                      </span>
+
+                      <h4 class="text-lg font-semibold text-white group-hover:text-blue-accent transition-colors pt-8 mb-2">{{ path.title }}</h4>
+                      <p class="text-sm text-gray-400 line-clamp-3">{{ path.description }}</p>
+                      
+                      <div class="mt-auto pt-4 flex items-center text-blue-400 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span>Ver Detalhes</span>
+                        <span class="material-icons-outlined text-sm ml-1">arrow_forward</span>
+                      </div>
+                    </div>
+                  }
+                </div>
               </div>
             }
           </div>
@@ -65,3 +92,61 @@
     </div>
   }
 </div>
+
+<!-- Modal Preview (Bottom Sheet on Mobile) -->
+@if(isModalOpen() && selectedPath()) {
+  @let activePath = selectedPath()!;
+  @let activeProgress = learningProgressService.getPathProgress(activePath);
+
+  <div class="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 animate-in fade-in duration-200" (click)="closeModal()">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+
+    <!-- Modal Content -->
+    <div (click)="stopProp($event)" 
+         class="relative w-full max-w-lg bg-gray-900 border-t md:border border-gray-700 rounded-t-2xl md:rounded-xl shadow-2xl p-6 md:p-8 transform transition-transform duration-300 animate-in slide-in-from-bottom-10 md:slide-in-from-bottom-5">
+      
+      <!-- Drag handle for mobile feel -->
+      <div class="md:hidden w-12 h-1.5 bg-gray-700 rounded-full mx-auto mb-6"></div>
+
+      <div class="flex justify-between items-start mb-4">
+        <span class="text-xs font-bold uppercase tracking-wider px-2 py-1 rounded bg-gray-800 text-gray-300 border border-gray-700">
+          {{ activePath.level }}
+        </span>
+        <button (click)="closeModal()" class="text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 p-1 rounded-full transition-colors">
+          <span class="material-icons-outlined">close</span>
+        </button>
+      </div>
+
+      <h2 class="text-2xl font-bold text-white mb-3 leading-tight">{{ activePath.title }}</h2>
+      <p class="text-gray-300 text-base leading-relaxed mb-6">{{ activePath.description }}</p>
+
+      <div class="bg-gray-800/50 rounded-lg p-4 mb-8 border border-gray-800">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-sm text-gray-400 font-medium">Seu Progresso</span>
+          <span class="text-sm font-bold text-white">{{ activeProgress.completed }} / {{ activeProgress.total }} Aulas</span>
+        </div>
+        <div class="w-full bg-gray-700 rounded-full h-2">
+          <div class="h-2 rounded-full transition-all duration-500" 
+               [class.bg-blue-500]="activeProgress.percentage < 100" 
+               [class.bg-green-500]="activeProgress.percentage === 100"
+               [style.width.%]="activeProgress.percentage"></div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2 text-right">{{ activeProgress.percentage.toFixed(0) }}% Concluído</p>
+      </div>
+
+      <button (click)="navigateToPath()" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold text-lg shadow-lg shadow-blue-900/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+        @if(activeProgress.completed === 0) {
+          <span>Começar Trilha</span>
+          <span class="material-icons-outlined">play_arrow</span>
+        } @else if (activeProgress.percentage === 100) {
+          <span>Revisar Trilha</span>
+          <span class="material-icons-outlined">restart_alt</span>
+        } @else {
+          <span>Continuar</span>
+          <span class="material-icons-outlined">arrow_forward</span>
+        }
+      </button>
+    </div>
+  </div>
+}
