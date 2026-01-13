@@ -29,6 +29,77 @@
       }
     }
   </script>
+  <style type="text/tailwindcss">
+    @layer components {
+      /* Estilos globais para conteúdo de artigos e tutoriais */
+      .prose-container {
+        @apply text-gray-300 leading-relaxed max-w-none;
+      }
+      
+      .prose-container h2 {
+        @apply text-2xl md:text-3xl font-bold text-white mt-12 mb-4 pb-3 border-b border-gray-800;
+      }
+
+      .prose-container h3 {
+        @apply text-xl md:text-2xl font-bold text-white mt-8 mb-3;
+      }
+
+      .prose-container h4 {
+        @apply text-lg font-bold text-white mt-6 mb-2;
+      }
+
+      .prose-container p {
+        @apply mb-6;
+      }
+
+      .prose-container ul, 
+      .prose-container ol {
+        @apply mb-6 pl-6 space-y-2;
+      }
+
+      .prose-container ul {
+        @apply list-disc;
+      }
+
+      .prose-container ol {
+        @apply list-decimal;
+      }
+
+      .prose-container li::marker {
+        @apply text-gray-600;
+      }
+
+      .prose-container a {
+        @apply text-blue-accent hover:underline decoration-blue-accent/50;
+      }
+
+      .prose-container blockquote {
+        @apply border-l-4 border-gray-700 pl-4 italic text-gray-400 my-8;
+      }
+
+      /* Correção crítica para mobile: overflow-x-auto em blocos de código */
+      .prose-container pre {
+        @apply bg-gray-900 border border-gray-800 rounded-lg p-4 my-6 overflow-x-auto max-w-full text-sm font-mono;
+      }
+
+      .prose-container code {
+        @apply font-mono bg-gray-800 text-cyan-300 text-sm px-1.5 py-1 rounded;
+      }
+      
+      /* Reset para code dentro de pre para evitar duplo padding/bg */
+      .prose-container pre code {
+        @apply bg-transparent p-0 text-inherit text-xs md:text-sm;
+      }
+      
+      .prose-container img {
+        @apply rounded-lg border border-gray-700 max-w-full h-auto my-6;
+      }
+      
+      .prose-container hr {
+        @apply border-gray-800 my-12;
+      }
+    }
+  </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
