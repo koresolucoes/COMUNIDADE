@@ -210,4 +210,26 @@ export class LearningService {
     }
     return undefined;
   }
+
+  getNavigationContext(currentPath: string): {
+    prevStep?: LearningStep;
+    nextStep?: LearningStep;
+    parentPath?: LearningPath;
+  } | undefined {
+    for (const mainCat of this.data()) {
+      for (const subCat of mainCat.subcategories) {
+        for (const path of subCat.paths) {
+          const index = path.steps.findIndex(s => s.path === currentPath);
+          if (index !== -1) {
+            return {
+              prevStep: path.steps[index - 1],
+              nextStep: path.steps[index + 1],
+              parentPath: path
+            };
+          }
+        }
+      }
+    }
+    return undefined;
+  }
 }

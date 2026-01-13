@@ -1,10 +1,11 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LearningNavigationComponent } from '../../shared/learning-navigation/learning-navigation.component';
 
 @Component({
   selector: 'app-hello-world-nodejs',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, LearningNavigationComponent],
   templateUrl: './hello-world-nodejs.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

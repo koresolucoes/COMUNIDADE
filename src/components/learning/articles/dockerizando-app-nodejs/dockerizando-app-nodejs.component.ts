@@ -1,10 +1,11 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LearningNavigationComponent } from '../../shared/learning-navigation/learning-navigation.component';
 
 @Component({
   selector: 'app-dockerizando-app-nodejs',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, LearningNavigationComponent],
   templateUrl: './dockerizando-app-nodejs.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -14,7 +15,7 @@ export class DockerizandoAppNodejsComponent {
 # 'alpine' é uma versão minúscula, ótima para produção.
 FROM node:18-alpine
 
-# PASSO 2: Cria uma pasta dentro do contêiner para colocar nosso código.
+# PASSO 2: Cria uma pasta dentro do contêiner para colocar seu código.
 WORKDIR /app
 
 # PASSO 3: Otimização! Copia APENAS os arquivos de dependências primeiro.

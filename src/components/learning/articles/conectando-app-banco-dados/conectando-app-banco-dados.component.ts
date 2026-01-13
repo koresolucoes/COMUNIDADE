@@ -1,10 +1,11 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { LearningNavigationComponent } from '../../shared/learning-navigation/learning-navigation.component';
 
 @Component({
   selector: 'app-conectando-app-banco-dados',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, LearningNavigationComponent],
   templateUrl: './conectando-app-banco-dados.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
