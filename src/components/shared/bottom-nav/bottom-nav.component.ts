@@ -18,6 +18,7 @@ interface NavItem {
 export class BottomNavComponent {
   navItems: NavItem[] = [
     { path: '/', label: 'Início', icon: 'home' },
+    { path: '/learning', label: 'Trilhas', icon: 'school' },
     { path: '/blog', label: 'Blog', icon: 'article' },
     { path: '/forum', label: 'Fórum', icon: 'forum' },
     { path: '/templates', label: 'Templates', icon: 'folder_copy' },
