@@ -61,4 +61,48 @@
         <li>No campo de texto grande, apague o conteúdo existente e cole o seguinte JSON:</li>
       </ol>
        <div class="p-4 bg-gray-800 border border-gray-700 rounded-lg mt-4">
-        <pre class="!bg-gray-900 !
+        <pre class="!bg-gray-900 !p-4 rounded text-sm text-green-400 font-mono overflow-x-auto">
+{{ '{' }}
+  "mensagem": "Olá, Mundo da Automação!",
+  "status": "sucesso"
+{{ '}' }}
+        </pre>
+      </div>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Passo 5: Executando o Workflow</h2>
+      <p>
+        Agora que tudo está conectado e configurado, é hora de testar.
+      </p>
+      <ol class="list-decimal list-inside text-gray-400 space-y-2 mt-4">
+        <li>Localize o botão verde <strong>"Execute Workflow"</strong> na parte inferior da tela.</li>
+        <li>Clique nele.</li>
+        <li>Observe os nós ficarem verdes, indicando que a execução foi bem-sucedida.</li>
+      </ol>
+    </div>
+
+    <div>
+      <h2 class="text-2xl font-semibold text-white">Passo 6: Verificando o Resultado</h2>
+      <p>
+        Para ver o que aconteceu, clique no nó "Set" novamente (se o painel de parâmetros não estiver aberto).
+      </p>
+      <p class="mt-2">
+        No painel de saída (Output Data), você verá um item JSON contendo a mensagem que configuramos. Parabéns! Você acabou de criar e executar seu primeiro fluxo de dados automatizado.
+      </p>
+    </div>
+
+    <div class="mt-12 p-6 bg-blue-900/20 border border-blue-800 rounded-lg">
+      <h3 class="text-xl font-semibold text-blue-100 mb-2">Próximos Passos</h3>
+      <p class="text-blue-200">
+        Este foi um exemplo simples, mas fundamental. A lógica de "Gatilho -> Processamento -> Ação" é a base de tudo no n8n. No próximo módulo, vamos conectar isso a serviços reais como Google Sheets e Telegram.
+      </p>
+      <div class="mt-6">
+        <a routerLink="/learning" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-colors">
+          Voltar para Trilhas
+          <span class="material-icons-outlined ml-2 text-sm">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </article>
+</div>
