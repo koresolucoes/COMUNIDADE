@@ -161,4 +161,45 @@ export class UserDataService {
       throw error;
     }
   }
+
+  // --- New Interactive Learning Methods ---
+
+  async getLessonProgress(lessonId: string): Promise<any> {
+    const userId = await this.getUserId();
+    if (!userId) return null;
+
+    const { data, error } = await this.supabase
+      .from('user_lesson_progress')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('lesson_id', lessonId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 is "Row not found"
+      console.error('Error fetching lesson progress:', error);
+    }
+    return data;
+  }
+
+  async updateLessonProgress(lessonId: string, status: 'started' | 'completed', score: number = 0, metadata: any = {}): Promise<void> {
+    const userId = await this.getUserId();
+    if (!userId) throw new Error('User not authenticated.');
+
+    const { error } = await this.supabase
+      .from('user_lesson_progress')
+      .upsert({
+        user_id: userId,
+        lesson_id: lessonId,
+        status,
+        score,
+        metadata,
+        updated_at: new Date().toISOString(),
+        completed_at: status === 'completed' ? new Date().toISOString() : undefined
+      }, { onConflict: 'user_id, lesson_id' });
+
+    if (error) {
+      console.error('Error updating lesson progress:', error);
+      throw error;
+    }
+  }
 }

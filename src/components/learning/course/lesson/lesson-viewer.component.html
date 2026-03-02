@@ -20,12 +20,18 @@
         </div>
       </div>
       <div *ngSwitchCase="'quiz'">
-        <!-- Render Quiz Content -->
-        <p>Quiz Component Placeholder</p>
+        <app-quiz 
+          *ngIf="activeLesson() as lesson" 
+          [lesson]="lesson"
+          (completed)="onInteractiveComplete($event)">
+        </app-quiz>
       </div>
       <div *ngSwitchCase="'challenge'">
-        <!-- Render Challenge Content -->
-        <p>Challenge Component Placeholder</p>
+        <app-code-challenge 
+          *ngIf="activeLesson() as lesson" 
+          [lesson]="lesson"
+          (completed)="onInteractiveComplete()">
+        </app-code-challenge>
       </div>
     </ng-container>
   </div>

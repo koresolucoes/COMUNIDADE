@@ -4,11 +4,13 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CourseService } from '../../../../services/course.service';
 import { LearningProgressService } from '../../../../services/learning-progress.service';
+import { QuizComponent } from '../quiz/quiz.component';
+import { CodeChallengeComponent } from '../code-challenge/code-challenge.component';
 
 @Component({
   selector: 'app-lesson-viewer',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, QuizComponent, CodeChallengeComponent],
   templateUrl: './lesson-viewer.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -42,6 +44,17 @@ export class LessonViewerComponent {
     const lesson = this.activeLesson();
     if (lesson) {
       this.learningProgressService.toggleStepCompletion(lesson.id);
+    }
+  }
+
+  onInteractiveComplete(result?: { score: number }) {
+    const lesson = this.activeLesson();
+    if (lesson) {
+      // For interactive content, we just mark as complete for now.
+      // In the future, we can save the score using a new method in LearningProgressService.
+      if (!this.isCompleted()) {
+        this.learningProgressService.toggleStepCompletion(lesson.id);
+      }
     }
   }
 
