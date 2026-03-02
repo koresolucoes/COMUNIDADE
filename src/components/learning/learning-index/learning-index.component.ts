@@ -1,76 +1,106 @@
 import { Component, ChangeDetectionStrategy, inject, OnInit, signal, computed } from '@angular/core';
-import { Router } from '@angular/router';
-import { LearningService, LearningPath, MainCategory } from '../../../services/learning.service';
-import { LearningProgressService } from '../../../services/learning-progress.service';
-import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { CourseService, Course } from '../../../services/course.service';
+import { LearningService } from '../../../services/learning.service';
+import { LearningProgressService } from '../../../services/learning-progress.service';
+
+interface CourseCategory {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  courses: Course[];
+}
 
 @Component({
   selector: 'app-learning-index',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './learning-index.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LearningIndexComponent implements OnInit {
-  private learningService = inject(LearningService);
+  private courseService = inject(CourseService);
+  private learningService = inject(LearningService); // Keep for legacy content
   public learningProgressService = inject(LearningProgressService);
   private router = inject(Router);
 
-  // Data
-  mainCategories = this.learningService.getLearningData();
+  // New Course System
+  allCourses = signal<Course[]>([]);
+  isLoading = signal(true);
   
-  // Search State
-  searchQuery = signal('');
-
   // Modal State
-  selectedPath = signal<LearningPath | null>(null);
+  selectedPath = signal<Course | null>(null);
   isModalOpen = signal(false);
 
-  // Computed Filtered Data
-  filteredCategories = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    const categories = this.mainCategories();
-
-    if (!query) return categories;
-
-    // Deep filter: Filter paths, then subcategories, then main categories
-    return categories.map(cat => ({
-      ...cat,
-      subcategories: cat.subcategories.map(sub => ({
-        ...sub,
-        paths: sub.paths.filter(p => 
-          p.title.toLowerCase().includes(query) || 
-          p.description.toLowerCase().includes(query)
-        )
-      })).filter(sub => sub.paths.length > 0)
-    })).filter(cat => cat.subcategories.length > 0);
+  // Computed Categories
+  courseCategories = computed<CourseCategory[]>(() => {
+    const courses = this.allCourses();
+    
+    return [
+      {
+        id: 'beginner',
+        title: 'Nível 1: Explorador (Iniciante)',
+        description: 'Construa sua base sólida. Domine a lógica, entenda como a web funciona e dê seus primeiros passos na automação.',
+        icon: 'explore',
+        courses: courses.filter(c => c.category === 'Iniciante' || c.metadata?.difficulty === 'Iniciante')
+      },
+      {
+        id: 'intermediate',
+        title: 'Nível 2: Construtor (Intermediário)',
+        description: 'Transforme conhecimento em ferramentas. Crie fluxos complexos, integre APIs e manipule dados como um engenheiro.',
+        icon: 'construction',
+        courses: courses.filter(c => c.category === 'Intermediário' || c.metadata?.difficulty === 'Intermediário')
+      },
+      {
+        id: 'professional',
+        title: 'Nível 3: Arquiteto (Profissional)',
+        description: 'Escalabilidade, segurança e performance. Aprenda a pensar como um arquiteto de soluções enterprise.',
+        icon: 'architecture',
+        courses: courses.filter(c => c.category === 'Profissional' || c.metadata?.difficulty === 'Avançado' || c.metadata?.difficulty === 'Expert')
+      }
+    ];
   });
 
-  ngOnInit(): void {
-    this.learningProgressService.loadCompletedSteps();
+  // Legacy Content (Reference)
+  legacyCategories = this.learningService.getLearningData();
+
+  async ngOnInit() {
+    this.isLoading.set(true);
+    try {
+      const courses = await this.courseService.getAllCourses();
+      this.allCourses.set(courses);
+    } catch (error) {
+      console.error('Failed to load courses', error);
+    } finally {
+      this.isLoading.set(false);
+    }
   }
 
-  openPreview(path: LearningPath) {
-    this.selectedPath.set(path);
+  navigateToCourse(slug: string) {
+    this.router.navigate(['/learning/course', slug]);
+  }
+
+  openPreview(course: Course) {
+    this.selectedPath.set(course);
     this.isModalOpen.set(true);
   }
 
   closeModal() {
     this.isModalOpen.set(false);
-    setTimeout(() => this.selectedPath.set(null), 300); // Clear after animation
+    this.selectedPath.set(null);
+  }
+
+  stopProp(event: Event) {
+    event.stopPropagation();
   }
 
   navigateToPath() {
-    const path = this.selectedPath();
-    if (path) {
-      this.router.navigate(['/learning', path.slug]);
+    const course = this.selectedPath();
+    if (course) {
+      this.navigateToCourse(course.slug);
       this.closeModal();
     }
-  }
-
-  // Helper to prevent closing when clicking content
-  stopProp(event: Event) {
-    event.stopPropagation();
   }
 }

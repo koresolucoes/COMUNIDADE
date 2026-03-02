@@ -144,6 +144,10 @@ import { UxFerramentasInternasComponent } from './components/learning/articles/u
 import { StatusPagesEfetivasComponent } from './components/learning/articles/status-pages-efetivas/status-pages-efetivas.component';
 import { FeedbackVisualAssincronoComponent } from './components/learning/articles/feedback-visual-assincrono/feedback-visual-assincrono.component';
 
+import { CourseLayoutComponent } from './components/learning/course/layout/course-layout.component';
+import { CourseOverviewComponent } from './components/learning/course/overview/course-overview.component';
+import { LessonViewerComponent } from './components/learning/course/lesson/lesson-viewer.component';
+
 export const APP_ROUTES: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'profile', component: ProfileComponent },
@@ -157,6 +161,14 @@ export const APP_ROUTES: Routes = [
   { path: 'templates/:id', component: TemplateDetailComponent },
   { path: 'learning', component: LearningIndexComponent },
   { path: 'learning/:slug', component: LearningPathComponent },
+  {
+    path: 'learning/course/:courseSlug',
+    component: CourseLayoutComponent,
+    children: [
+      { path: '', component: CourseOverviewComponent },
+      { path: ':lessonSlug', component: LessonViewerComponent }
+    ]
+  },
   
   // Jornada do Desenvolvedor
   { path: 'learning/article/o-que-e-programacao', component: OQueEProgramacaoComponent },

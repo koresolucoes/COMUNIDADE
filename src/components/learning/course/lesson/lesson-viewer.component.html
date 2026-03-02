@@ -1,0 +1,71 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-white">{{ activeLesson()?.title }}</h1>
+    <p class="mt-2 text-sm text-gray-400">
+      {{ activeLesson()?.duration }} • {{ activeLesson()?.type | titlecase }}
+    </p>
+  </div>
+
+  <div class="prose prose-invert max-w-none mb-12">
+    <!-- Content Rendering -->
+    <ng-container [ngSwitch]="activeLesson()?.type">
+      <div *ngSwitchCase="'article'">
+        <!-- Render Article Content -->
+        <div [innerHTML]="activeLesson()?.content"></div>
+      </div>
+      <div *ngSwitchCase="'video'">
+        <!-- Render Video Content -->
+        <div class="aspect-w-16 aspect-h-9">
+          <iframe [src]="sanitizedVideoUrl" frameborder="0" allowfullscreen></iframe>
+        </div>
+      </div>
+      <div *ngSwitchCase="'quiz'">
+        <!-- Render Quiz Content -->
+        <p>Quiz Component Placeholder</p>
+      </div>
+      <div *ngSwitchCase="'challenge'">
+        <!-- Render Challenge Content -->
+        <p>Challenge Component Placeholder</p>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Navigation & Actions -->
+  <div class="flex items-center justify-between border-t border-gray-700 pt-8">
+    <a 
+      *ngIf="prevLesson()"
+      [routerLink]="prevLesson()"
+      class="text-gray-400 hover:text-white flex items-center gap-2"
+    >
+      <span class="material-icons-outlined">arrow_back</span>
+      Anterior
+    </a>
+    <div *ngIf="!prevLesson()"></div>
+
+    <button 
+      (click)="markAsComplete()"
+      class="px-6 py-2 rounded-md font-medium transition-colors flex items-center gap-2"
+      [class.bg-green-600]="isCompleted()"
+      [class.hover:bg-green-500]="isCompleted()"
+      [class.text-white]="isCompleted()"
+      [class.bg-blue-600]="!isCompleted()"
+      [class.hover:bg-blue-500]="!isCompleted()"
+      [class.text-white]="!isCompleted()"
+    >
+      <span class="material-icons-outlined">
+        {{ isCompleted() ? 'check_circle' : 'check_circle_outline' }}
+      </span>
+      {{ isCompleted() ? 'Concluído' : 'Marcar como Concluído' }}
+    </button>
+
+    <a 
+      *ngIf="nextLesson()"
+      [routerLink]="nextLesson()"
+      class="text-gray-400 hover:text-white flex items-center gap-2"
+    >
+      Próximo
+      <span class="material-icons-outlined">arrow_forward</span>
+    </a>
+    <div *ngIf="!nextLesson()"></div>
+  </div>
+</div>

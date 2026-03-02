@@ -1,0 +1,40 @@
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+  <div class="text-center">
+    <h1 class="text-4xl font-extrabold text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
+      {{ activeCourse()?.title }}
+    </h1>
+    <p class="mt-5 max-w-xl mx-auto text-xl text-gray-400">
+      {{ activeCourse()?.description }}
+    </p>
+  </div>
+
+  <div class="mt-12">
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <div *ngFor="let module of activeCourse()?.modules" class="pt-6">
+        <div class="flow-root bg-gray-800 rounded-lg px-6 pb-8">
+          <div class="-mt-6">
+            <div>
+              <span class="inline-flex items-center justify-center p-3 bg-blue-500 rounded-md shadow-lg">
+                <span class="material-icons-outlined text-white text-2xl">view_module</span>
+              </span>
+            </div>
+            <h3 class="mt-8 text-lg font-medium text-white tracking-tight">{{ module.title }}</h3>
+            <p class="mt-5 text-base text-gray-400">
+              {{ module.lessons.length }} lições
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10 flex justify-center">
+    <a 
+      *ngIf="activeCourse()?.modules?.[0]?.lessons?.[0] as firstLesson"
+      [routerLink]="['/learning/course', activeCourse()?.slug, firstLesson.slug]"
+      class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+    >
+      Começar Curso
+    </a>
+  </div>
+</div>

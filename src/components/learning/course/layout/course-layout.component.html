@@ -1,0 +1,99 @@
+<div class="flex h-screen bg-gray-900 text-white overflow-hidden relative">
+  
+  <!-- Mobile Backdrop -->
+  <div 
+    *ngIf="isSidebarOpen() && isMobile()"
+    class="fixed inset-0 bg-black/50 z-40 md:hidden"
+    (click)="toggleSidebar()"
+  ></div>
+
+  <!-- Sidebar -->
+  <aside 
+    class="fixed md:relative z-50 h-full bg-gray-800 border-r border-gray-700 transition-transform duration-300 ease-in-out flex flex-col w-64"
+    [class.-translate-x-full]="!isSidebarOpen()"
+    [class.translate-x-0]="isSidebarOpen()"
+  >
+    <!-- Sidebar Header -->
+    <div class="p-4 border-b border-gray-700 flex items-center justify-between">
+      <h2 class="font-bold text-lg truncate">{{ activeCourse()?.title }}</h2>
+      <button (click)="toggleSidebar()" class="text-gray-400 hover:text-white focus:outline-none md:hidden">
+        <span class="material-icons-outlined">close</span>
+      </button>
+      <button (click)="toggleSidebar()" class="text-gray-400 hover:text-white focus:outline-none hidden md:block">
+        <span class="material-icons-outlined">menu_open</span>
+      </button>
+    </div>
+
+    <!-- Modules List -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-6">
+      <div *ngIf="courseService.isLoading()" class="flex justify-center py-4">
+        <span class="material-icons-outlined animate-spin text-blue-500">sync</span>
+      </div>
+
+      <div *ngFor="let module of activeCourse()?.modules" class="space-y-2">
+        <h3 class="text-xs font-semibold text-gray-400 uppercase tracking-wider">{{ module.title }}</h3>
+        <ul class="space-y-1">
+          <li *ngFor="let lesson of module.lessons">
+            <a 
+              [routerLink]="['/learning/course', activeCourse()?.slug, lesson.slug]"
+              routerLinkActive="bg-blue-600 text-white"
+              (click)="closeSidebarOnMobile()"
+              class="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-gray-300 hover:bg-gray-700 hover:text-white transition-colors group"
+            >
+              <!-- Status Icon -->
+              <span class="material-icons-outlined text-base" 
+                [class.text-green-400]="isLessonCompleted(lesson.id)"
+                [class.text-gray-500]="!isLessonCompleted(lesson.id)"
+              >
+                {{ isLessonCompleted(lesson.id) ? 'check_circle' : 'circle' }}
+              </span>
+              
+              <span class="truncate">{{ lesson.title }}</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Sidebar Footer (Progress) -->
+    <div class="p-4 border-t border-gray-700 bg-gray-800/50">
+      <div class="flex justify-between text-xs text-gray-400 mb-1">
+        <span>Progresso</span>
+        <span>{{ progressPercentage }}%</span>
+      </div>
+      <div class="w-full bg-gray-700 rounded-full h-2">
+        <div class="bg-green-500 h-2 rounded-full transition-all duration-500" [style.width.%]="progressPercentage"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col min-w-0 bg-gray-900 relative w-full">
+    <!-- Mobile Toggle (Visible only when sidebar is closed on mobile, or always on desktop if we want a persistent toggle) -->
+    <div class="md:hidden p-4 border-b border-gray-800 flex items-center gap-3">
+       <button 
+        (click)="toggleSidebar()"
+        class="p-2 -ml-2 text-gray-400 hover:text-white"
+      >
+        <span class="material-icons-outlined">menu</span>
+      </button>
+      <span class="font-semibold text-white truncate">{{ activeLesson()?.title || activeCourse()?.title }}</span>
+    </div>
+
+    <!-- Desktop Toggle (When sidebar is closed) -->
+    <button 
+      *ngIf="!isSidebarOpen()"
+      (click)="toggleSidebar()"
+      class="absolute top-4 left-4 z-40 p-2 bg-gray-800 rounded-md text-gray-400 hover:text-white shadow-lg hidden md:block"
+    >
+      <span class="material-icons-outlined">menu</span>
+    </button>
+
+    <!-- Content Area -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-10">
+      <div class="max-w-4xl mx-auto">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </main>
+</div>
