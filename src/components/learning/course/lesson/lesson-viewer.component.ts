@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, SafeHtml } from '@angular/platform-browser';
 import { CourseService } from '../../../../services/course.service';
 import { LearningProgressService } from '../../../../services/learning-progress.service';
 import { QuizComponent } from '../quiz/quiz.component';
@@ -35,9 +35,25 @@ export class LessonViewerComponent {
   get sanitizedVideoUrl(): SafeResourceUrl | null {
     const lesson = this.activeLesson();
     if (lesson?.type === 'video' && lesson.content) {
-      return this.sanitizer.bypassSecurityTrustResourceUrl(lesson.content);
+      const url = typeof lesson.content === 'string' ? lesson.content : lesson.content.url;
+      return url ? this.sanitizer.bypassSecurityTrustResourceUrl(url) : null;
     }
     return null;
+  }
+
+  get lessonContent(): SafeHtml | string {
+    const lesson = this.activeLesson();
+    if (!lesson?.content) return '';
+    
+    if (typeof lesson.content === 'string') {
+      return this.sanitizer.bypassSecurityTrustHtml(lesson.content);
+    }
+    
+    if (lesson.type === 'article' && lesson.content.html) {
+      return this.sanitizer.bypassSecurityTrustHtml(lesson.content.html);
+    }
+    
+    return '';
   }
 
   markAsComplete() {

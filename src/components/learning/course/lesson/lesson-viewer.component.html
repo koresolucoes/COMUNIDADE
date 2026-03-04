@@ -11,7 +11,7 @@
     <ng-container [ngSwitch]="activeLesson()?.type">
       <div *ngSwitchCase="'article'">
         <!-- Render Article Content -->
-        <div [innerHTML]="activeLesson()?.content"></div>
+        <div [innerHTML]="lessonContent"></div>
       </div>
       <div *ngSwitchCase="'video'">
         <!-- Render Video Content -->
